@@ -1,57 +1,24 @@
-TEMPLATE = lib
-TARGET = TeXSample
+CONFIG += ordered
+TEMPLATE = subdirs
 
-VERSION = 1.0.0
-VER_MAJ = 1
-VER_MIN = 0
-VER_PAT = 0
+SUBDIRS = src
 
-CONFIG += release
+##############################################################################
+################################ Generating translations #####################
+##############################################################################
 
-QT = core
-BEQT = core
-
-isEmpty(BEQT_PREFIX) {
-    #TODO: Add MacOS support
-    mac|unix {
-        BEQT_PREFIX=/usr/share/beqt
-    } else:win32 {
-        BEQT_PREFIX=$$(systemdrive)/PROGRA~1/BeQt
-    }
+#Gets a file name
+#Returns the given file name.
+#On Windows slash characters will be replaced by backslashes
+defineReplace(nativeFileName) {
+    fileName=$${1}
+    win32:fileName=$$replace(fileName, "/", "\\")
+    return($${fileName})
 }
-include($${BEQT_PREFIX}/depend.pri)
 
-DEFINES += TSMP_BUILD_LIB
-
-HEADERS += \
-    src/tglobal.h \
-    src/tsampleinfo.h
-
-SOURCES += \
-    src/tglobal.cpp \
-    src/tsampleinfo.cpp
-
-#mac {
-    #isEmpty(TSMP_PREFIX):TSMP_PREFIX=/Library
-    #TODO: Add ability to create bundles
-#} else:unix:!mac {
-#TODO: Add MacOS support
-mac|unix {
-    isEmpty(TSMP_PREFIX):TSMP_PREFIX=/usr
-    equals(TSMP_PREFIX, "/")|equals(TSMP_PREFIX, "/usr")|equals(TSMP_PREFIX, "/usr/local") {
-        isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include/texsample
-        isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-        isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}/share/texsample
-    } else {
-        isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include
-        isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-        isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}
-    }
-} else:win32 {
-    isEmpty(TSMP_PREFIX):TSMP_PREFIX=$$(systemdrive)/PROGRA~1/TeXSample
-    isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include
-    isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-    isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}
+tsmpTranslationsTs=$$files($${PWD}/translations/*.ts)
+for(fileName, tsmpTranslationsTs) {
+    system(lrelease $$nativeFileName($${fileName}))
 }
 
 ##############################################################################
@@ -60,8 +27,7 @@ mac|unix {
 
 !contains(CONFIG, tsmp_no_install) {
 
-target.path = $${TSMP_LIBS_INSTALLS_PATH}
-INSTALLS = target
+include(prefix.pri)
 
 ##############################################################################
 ################################ Headers #####################################
