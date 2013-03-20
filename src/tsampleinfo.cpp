@@ -41,6 +41,7 @@ public:
     quint8 rating;
     QDateTime creationDT;
     QDateTime modificationDT;
+    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TSampleInfoPrivate)
 };
@@ -83,6 +84,7 @@ void TSampleInfoPrivate::init()
     rating = 0;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
+    updateDT.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -217,6 +219,11 @@ void TSampleInfo::setModificationDateTime(const QDateTime &dt)
     d_func()->modificationDT = dt.toUTC();
 }
 
+void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
+{
+    d_func()->updateDT = dt.toUTC();
+}
+
 quint64 TSampleInfo::id() const
 {
     return d_func()->id;
@@ -298,6 +305,11 @@ QDateTime TSampleInfo::modificationDateTime(Qt::TimeSpec spec) const
     return d_func()->modificationDT.toTimeSpec(spec);
 }
 
+QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
+{
+    return d_func()->updateDT.toTimeSpec(spec);
+}
+
 bool TSampleInfo::isValid() const
 {
     const B_D(TSampleInfo);
@@ -322,6 +334,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->rating = dd->rating;
     d->creationDT = dd->creationDT;
     d->modificationDT = dd->modificationDT;
+    d->updateDT = dd->updateDT;
     return *this;
 }
 
@@ -356,6 +369,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     stream << d->rating;
     stream << d->creationDT;
     stream << d->modificationDT;
+    stream << d->updateDT;
     return stream;
 }
 
@@ -379,6 +393,9 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     stream >> d->modificationDT;
     if (d->modificationDT.timeSpec() != Qt::UTC)
         d->modificationDT = d->modificationDT.toUTC();
+    stream >> d->updateDT;
+    if (d->updateDT.timeSpec() != Qt::UTC)
+        d->updateDT = d->updateDT.toUTC();
     return stream;
 }
 
@@ -387,6 +404,6 @@ QDebug operator <<(QDebug dbg, const TSampleInfo &info)
     const TSampleInfoPrivate *d = info.d_func();
     dbg.nospace() << "TSampleInfo(" << d->id << "," << d->authorId << "," << d->authorName << "," << d->title << ","
                   << info.typeString() << "," << info.ratingString() << "," << d->creationDT << ","
-                  << d->modificationDT << ")";
+                  << d->modificationDT << "," << d->updateDT << ")";
     return dbg.space();
 }
