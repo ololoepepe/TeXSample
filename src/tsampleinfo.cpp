@@ -1,5 +1,4 @@
 #include "tsampleinfo.h"
-
 #include "tglobal.h"
 
 #include <BeQtGlobal>

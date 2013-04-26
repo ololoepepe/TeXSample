@@ -25,11 +25,17 @@ DEFINES += TSMP_BUILD_LIB
 
 HEADERS += \
     tglobal.h \
-    tsampleinfo.h
+    tsampleinfo.h \
+    tprojectfile.h \
+    tproject.h \
+    ttexttools.h
 
 SOURCES += \
     tglobal.cpp \
-    tsampleinfo.cpp
+    tsampleinfo.cpp \
+    tprojectfile.cpp \
+    tproject.cpp \
+    ttexttools.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 

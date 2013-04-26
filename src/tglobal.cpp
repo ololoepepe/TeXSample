@@ -15,5 +15,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "1.0.0-pa";
+    return "0.1.0-pa";
 }
