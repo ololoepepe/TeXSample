@@ -33,14 +33,14 @@ SOURCES += \
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 
-contains(CONFIG, tsmp_builtin_resources) {
+contains(TSMP_CONFIG, builtin_resources) {
     DEFINES += TSMP_BUILTIN_RESOURCES
     RESOURCES += \
         texsample.qrc \
         ../translations/texsample_translations.qrc
 }
 
-!contains(CONFIG, tsmp_no_install) {
+!contains(TSMP_CONFIG, no_install) {
 
 include(../prefix.pri)
 
@@ -49,4 +49,4 @@ message($${TSMP_LIBS_INSTALLS_PATH})
 target.path = $${TSMP_LIBS_INSTALLS_PATH}
 INSTALLS = target
 
-} #end !contains(CONFIG, tsmp_no_install)
+} #end !contains(TSMP_CONFIG, no_install)

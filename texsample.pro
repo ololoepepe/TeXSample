@@ -25,7 +25,7 @@ for(fileName, tsmpTranslationsTs) {
 ################################ Installing ##################################
 ##############################################################################
 
-!contains(CONFIG, tsmp_no_install) {
+!contains(TSMP_CONFIG, no_install) {
 
 include(prefix.pri)
 
@@ -94,12 +94,12 @@ defineReplace(getActualPrivateHeaders) {
     return($${actualHeaderPaths})
 }
 
-!contains(CONFIG, tsmp_no_headers) {
+!contains(TSMP_CONFIG, no_headers) {
     #Global
     tsmpInstallsHeaders.files=$$getActualHeaders()
     tsmpInstallsHeaders.path=$${TSMP_HEADERS_INSTALLS_PATH}
     INSTALLS += tsmpInstallsHeaders
-    contains(CONFIG, tsmp_private_headers) {
+    contains(TSMP_CONFIG, private_headers) {
         tsmpInstallsPrivateHeaders.files=$$getActualPrivateHeaders()
         tsmpInstallsPrivateHeaders.path=$${TSMP_HEADERS_INSTALLS_PATH}/private
         INSTALLS += tsmpInstallsPrivateHeaders
@@ -110,4 +110,4 @@ defineReplace(getActualPrivateHeaders) {
     INSTALLS += tsmpInstallsDepend
 }
 
-} #end !contains(CONFIG, tsmp_no_install)
+} #end !contains(TSMP_CONFIG, no_install)
