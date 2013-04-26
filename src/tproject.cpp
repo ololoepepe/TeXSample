@@ -1,6 +1,7 @@
 #include "tproject.h"
 #include "tglobal.h"
 #include "tprojectfile.h"
+#include "ttexttools.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -16,6 +17,8 @@
 #include <QTextCodec>
 #include <QStringList>
 #include <QFileInfo>
+#include <QRegExp>
+#include <QDir>
 
 /*============================================================================
 ================================ TProjectPrivate =============================
@@ -48,13 +51,21 @@ private:
 
 QStringList TProjectPrivate::dependencies(const QString &text, const QString &path, QTextCodec *codec, bool *ok)
 {
+    if (text.isEmpty() || path.isEmpty() || !QDir(path).exists())
+        return bRet(ok, false, QStringList());
     QStringList list;
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
+    {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    if (!codec)
+        codec = QTextCodec::codecForName("UTF-8");
+    TTextTools::SearchResults r = TTextTools::match(text, QRegExp("\\S+"),
+                                                    QRegExp("\\s*\\\\includegraphics(\\[.+\\])?\\{"), QRegExp("\\}"));
+    qDebug() << r.size();
     /*
-    bool b = !path.isEmpty();
-    if (text.isEmpty())
-        return list;
-    if (b && !QDir(path).exists())
-        return bRet(ok, false, list);
     QStringList patterns;
     patterns << "((?<=\\includegraphics)(.+)(?=\\}))"; //includegraphics[...]{...}
     if (b)

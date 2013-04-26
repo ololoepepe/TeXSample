@@ -146,8 +146,12 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                 int prind = prefixedBy.indexIn(line.mid(0, pos));
                 if (prind < 0 || prind + prefixedBy.matchedLength() != pos)
                 {
-                    pos = what.indexIn(line, pos + len);
-                    continue;
+                    prind = prefixedBy.indexIn(line.mid(pos, len));
+                    if (prind == 0)
+                    {
+                        pos += prefixedBy.matchedLength();
+                        len -= prefixedBy.matchedLength();
+                    }
                 }
             }
             if (!postfixedBy.isEmpty() && postfixedBy.isValid())
@@ -155,12 +159,15 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                 int poind = postfixedBy.indexIn(line.mid(pos + len));
                 if (poind != 0)
                 {
-                    pos = what.indexIn(line, pos + len);
-                    continue;
+                    QString s = line.mid(pos, len);
+                    poind = postfixedBy.indexIn(s);
+                    if (poind >= 0 && poind + postfixedBy.matchedLength() == s.length())
+                        len -= postfixedBy.matchedLength();
                 }
             }
-            list << SearchResult(&text, coveredLength + pos, len);
-            pos = what.indexIn(line, pos + len);
+            if (line.mid(pos, len).contains(what))
+                list << SearchResult(&text, coveredLength + pos, len);
+            pos = what.indexIn(line, pos + (len ? len : 1));
         }
         coveredLength += line.length() + 1;
     }
