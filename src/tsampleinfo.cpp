@@ -374,6 +374,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
 
 QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 {
+    static const QList<int> types = bRangeD(TSampleInfo::Unverified, TSampleInfo::Rejected);
     TSampleInfoPrivate *d = info.d_func();
     stream >> d->id;
     stream >> d->authorId;
@@ -381,7 +382,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     stream >> d->title;
     int t = TSampleInfo::Unverified;
     stream >> t;
-    d->type = static_cast<TSampleInfo::Type>(t);
+    d->type = types.contains(t) ? static_cast<TSampleInfo::Type>(t) : TSampleInfo::Unverified;
     stream >> d->tags;
     stream >> d->comment;
     stream >> d->remark;

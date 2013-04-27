@@ -28,14 +28,16 @@ HEADERS += \
     tsampleinfo.h \
     tprojectfile.h \
     tproject.h \
-    ttexttools.h
+    ttexttools.h \
+    tuserinfo.h
 
 SOURCES += \
     tglobal.cpp \
     tsampleinfo.cpp \
     tprojectfile.cpp \
     tproject.cpp \
-    ttexttools.cpp
+    ttexttools.cpp \
+    tuserinfo.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 
