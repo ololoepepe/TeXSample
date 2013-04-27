@@ -11,6 +11,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QByteArray>
+#include <QString>
 
 /*============================================================================
 ================================ TUserInfoPrivate ============================
@@ -19,8 +20,6 @@
 class TUserInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TUserInfo)
-public:
-   //
 public:
    explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
@@ -43,10 +42,6 @@ private:
 ================================ TUserInfoPrivate ============================
 ============================================================================*/
 
-/*============================== Static public methods =====================*/
-
-//
-
 /*============================== Public constructors =======================*/
 
 TUserInfoPrivate::TUserInfoPrivate(TUserInfo *q) :
@@ -64,6 +59,7 @@ TUserInfoPrivate::~TUserInfoPrivate()
 
 void TUserInfoPrivate::init()
 {
+    id = 0;
     accessLevel = TUserInfo::NoLevel;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);

@@ -8,6 +8,7 @@ class QDateTime;
 class QVariant;
 class QDebug;
 class QByteArray;
+class QString;
 
 #include "tglobal.h"
 
@@ -15,7 +16,6 @@ class QByteArray;
 #include <BBase>
 
 #include <QMetaType>
-#include <QString>
 #include <QCoreApplication>
 
 /*============================================================================
