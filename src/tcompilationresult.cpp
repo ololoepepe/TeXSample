@@ -54,7 +54,7 @@ TCompilationResultPrivate::~TCompilationResultPrivate()
 void TCompilationResultPrivate::init()
 {
     success = false;
-    exitCode = 0;
+    exitCode = -1;
 }
 
 /*============================================================================
@@ -63,10 +63,11 @@ void TCompilationResultPrivate::init()
 
 /*============================== Public constructors =======================*/
 
-TCompilationResult::TCompilationResult() :
+TCompilationResult::TCompilationResult(const QString &errs) :
     BBase(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
+    setErrorString(errs);
 }
 
 TCompilationResult::TCompilationResult(const TCompilationResult &other) :

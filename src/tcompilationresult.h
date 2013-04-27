@@ -6,7 +6,6 @@ class TCompilationResultPrivate;
 class QDataStream;
 class QVariant;
 class QDebug;
-class QString;
 
 #include "tglobal.h"
 
@@ -14,6 +13,7 @@ class QString;
 #include <BBase>
 
 #include <QMetaType>
+#include <QString>
 
 /*============================================================================
 ================================ TCompilationResult ==========================
@@ -23,7 +23,7 @@ class TSMP_EXPORT TCompilationResult : public BBase
 {
     B_DECLARE_PRIVATE(TCompilationResult)
 public:
-    explicit TCompilationResult();
+    explicit TCompilationResult(const QString &errs = QString());
     TCompilationResult(const TCompilationResult &other);
     ~TCompilationResult();
 public:
