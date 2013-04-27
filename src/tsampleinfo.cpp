@@ -13,6 +13,7 @@
 #include <QRegExp>
 #include <QVariant>
 #include <QDebug>
+#include <QFileInfo>
 
 /*============================================================================
 ================================ TSampleInfoPrivate ==========================
@@ -34,6 +35,7 @@ public:
     QString authorName;
     QString title;
     TSampleInfo::Type type;
+    QString fileName;
     QStringList tags;
     QString comment;
     QString remark;
@@ -188,9 +190,19 @@ void TSampleInfo::setType(Type t)
     d_func()->type = t;
 }
 
+void TSampleInfo::setFileName(const QString &fileName)
+{
+    d_func()->fileName = !fileName.isEmpty() ? QFileInfo(fileName).fileName() : QString();
+}
+
 void TSampleInfo::setTags(const QStringList &list)
 {
     d_func()->tags = list;
+}
+
+void TSampleInfo::setTags(const QString &s)
+{
+    setTags(tagsFromString(s));
 }
 
 void TSampleInfo::setComment(const QString &s)
@@ -263,6 +275,11 @@ QString TSampleInfo::typeString() const
     return typeToString(d_func()->type);
 }
 
+QString TSampleInfo::fileName() const
+{
+    return d_func()->fileName;
+}
+
 QStringList TSampleInfo::tags() const
 {
     return d_func()->tags;
@@ -312,7 +329,7 @@ QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
 bool TSampleInfo::isValid() const
 {
     const B_D(TSampleInfo);
-    return d->id && d->authorId && !d->authorName.isEmpty() && !d->title.isEmpty()
+    return d->id && d->authorId && !d->authorName.isEmpty() && !d->title.isEmpty() && !d->fileName.isEmpty()
             && d->creationDT.isValid() && d->modificationDT.isValid();
 }
 
@@ -327,6 +344,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->authorName = dd->authorName;
     d->title = dd->title;
     d->type = dd->type;
+    d->fileName = dd->fileName;
     d->tags = dd->tags;
     d->comment = dd->comment;
     d->remark = dd->remark;
@@ -362,6 +380,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     stream << d->authorName;
     stream << d->title;
     stream << (int) d->type;
+    stream << d->fileName;
     stream << d->tags;
     stream << d->comment;
     stream << d->remark;
@@ -383,6 +402,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     int t = TSampleInfo::Unverified;
     stream >> t;
     d->type = types.contains(t) ? static_cast<TSampleInfo::Type>(t) : TSampleInfo::Unverified;
+    stream >> d->fileName;
     stream >> d->tags;
     stream >> d->comment;
     stream >> d->remark;
@@ -403,7 +423,7 @@ QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
     dbg.nospace() << "TSampleInfo(" << d->id << "," << d->authorId << "," << d->authorName << "," << d->title << ","
-                  << info.typeString() << "," << info.ratingString() << "," << d->creationDT << ","
+                  << info.typeString() << "," << d->fileName << "," << info.ratingString() << "," << d->creationDT << ","
                   << d->modificationDT << "," << d->updateDT << ")";
     return dbg.space();
 }

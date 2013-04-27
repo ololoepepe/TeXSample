@@ -52,7 +52,9 @@ public:
     void setAuthorName(const QString &name);
     void setTitle(const QString &title);
     void setType(Type t);
+    void setFileName(const QString &fileName);
     void setTags(const QStringList &list);
+    void setTags(const QString &s);
     void setComment(const QString &s);
     void setAdminRemark(const QString &s);
     void setRating(quint8 r);
@@ -67,6 +69,7 @@ public:
     QString title() const;
     Type type() const;
     QString typeString() const;
+    QString fileName() const;
     QStringList tags() const;
     QString tagsString() const;
     QString comment() const;
