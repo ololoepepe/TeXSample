@@ -79,14 +79,14 @@ QString TUserInfo::accessLevelToString(AccessLevel lvl, bool singular)
         switch (lvl)
         {
         case UserLevel:
-            return tr("User", "type (singular)");
+            return tr("User", "accessLevel (singular)");
         case ModeratorLevel:
-            return tr("Moderator", "type (singular)");
+            return tr("Moderator", "accessLevel (singular)");
         case AdminLevel:
-            return tr("Administrator", "type (singular)");
+            return tr("Administrator", "accessLevel (singular)");
         case NoLevel:
         default:
-            return tr("No", "type (singular)");
+            return tr("No", "accessLevel (singular)");
         }
     }
     else
@@ -94,14 +94,14 @@ QString TUserInfo::accessLevelToString(AccessLevel lvl, bool singular)
         switch (lvl)
         {
         case UserLevel:
-            return tr("Users", "type (plural)");
+            return tr("Users", "accessLevel (plural)");
         case ModeratorLevel:
-            return tr("Moderators", "type (plural)");
+            return tr("Moderators", "accessLevel (plural)");
         case AdminLevel:
-            return tr("Administrators", "type (plural)");
+            return tr("Administrators", "accessLevel (plural)");
         case NoLevel:
         default:
-            return tr("No", "type (singular)");
+            return tr("No", "accessLevel (singular)");
         }
     }
 }

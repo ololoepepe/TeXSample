@@ -37,7 +37,6 @@ public:
 public:
     void init();
 public:
-    QString codecName;
     TProjectFile rootFile;
     QList<TProjectFile> files;
 private:
@@ -224,14 +223,8 @@ TProject::~TProject()
 void TProject::clear()
 {
     B_D(TProject);
-    d->codecName.clear();
     d->rootFile.clear();
     d->files.clear();
-}
-
-QString TProject::codecName() const
-{
-    return d_func()->codecName;
 }
 
 TProjectFile *TProject::rootFile()
@@ -265,12 +258,12 @@ bool TProject::load(const QString &rootFileName, const QString &rootFileText, co
     if (rootFileName.isEmpty() || rootFileText.isEmpty())
         return false;
     B_D(TProject);
-    d->codecName = !codecName.isEmpty() ? codecName : QString("UTF-8");
+    QString cn = !codecName.isEmpty() ? codecName : QString("UTF-8");
     QString path = QFileInfo(rootFileName).path();
     d->rootFile.setFileName(rootFileName);
     d->rootFile.setText(rootFileText);
     bool ok = false;
-    QStringList list = TProjectPrivate::dependencies(rootFileText, QFileInfo(rootFileName).path(), d->codecName, &ok);
+    QStringList list = TProjectPrivate::dependencies(rootFileText, QFileInfo(rootFileName).path(), cn, &ok);
     if (!ok)
     {
         clear();
@@ -281,7 +274,7 @@ bool TProject::load(const QString &rootFileName, const QString &rootFileText, co
         static const QStringList suffixes = QStringList() << "tex" << "pic";
         bool text = suffixes.contains(QFileInfo(fn).suffix().toLower());
         QString subdir = QFileInfo(fn).path().remove(0, path.length());
-        TProjectFile f(fn, text ? TProjectFile::Text : TProjectFile::Binary, d->codecName, subdir);
+        TProjectFile f(fn, text ? TProjectFile::Text : TProjectFile::Binary, cn, subdir);
         if (!f.isValid())
         {
             clear();
@@ -344,7 +337,6 @@ TProject &TProject::operator =(const TProject &other)
 {
     B_D(TProject);
     const TProjectPrivate *dd = other.d_func();
-    d->codecName = dd->codecName;
     d->rootFile = dd->rootFile;
     d->files = dd->files;
     return *this;
@@ -354,8 +346,7 @@ bool TProject::operator ==(const TProject &other) const
 {
     const B_D(TProject);
     const TProjectPrivate *dd = other.d_func();
-    return !d->codecName.compare(dd->codecName, Qt::CaseInsensitive)
-            && d->rootFile == dd->rootFile && d->files == dd->files;
+    return d->rootFile == dd->rootFile && d->files == dd->files;
 }
 
 TProject::operator QVariant() const
@@ -368,7 +359,6 @@ TProject::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TProject &project)
 {
     const TProjectPrivate *d = project.d_func();
-    stream << d->codecName;
     stream << d->rootFile;
     stream << d->files;
     return stream;
@@ -377,7 +367,6 @@ QDataStream &operator <<(QDataStream &stream, const TProject &project)
 QDataStream &operator >>(QDataStream &stream, TProject &project)
 {
     TProjectPrivate *d = project.d_func();
-    stream >> d->codecName;
     stream >> d->rootFile;
     stream >> d->files;
     return stream;
@@ -385,7 +374,6 @@ QDataStream &operator >>(QDataStream &stream, TProject &project)
 
 QDebug operator <<(QDebug dbg, const TProject &project)
 {
-    const TProjectPrivate *d = project.d_func();
-    dbg.nospace() << "TProject(" << d->codecName << "," << project.size() << ")";
+    dbg.nospace() << "TProject(" << project.size() << ")";
     return dbg.space();
 }

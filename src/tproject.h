@@ -38,7 +38,6 @@ public:
     ~TProject();
 public:
     void clear();
-    QString codecName() const;
     TProjectFile *rootFile();
     const TProjectFile *rootFile() const;
     QList<TProjectFile> *files();

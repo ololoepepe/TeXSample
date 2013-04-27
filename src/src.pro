@@ -30,7 +30,8 @@ HEADERS += \
     tproject.h \
     ttexttools.h \
     tuserinfo.h \
-    tinviteinfo.h
+    tinviteinfo.h \
+    tcompilerparameters.h
 
 SOURCES += \
     tglobal.cpp \
@@ -39,7 +40,8 @@ SOURCES += \
     tproject.cpp \
     ttexttools.cpp \
     tuserinfo.cpp \
-    tinviteinfo.cpp
+    tinviteinfo.cpp \
+    tcompilerparameters.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 
