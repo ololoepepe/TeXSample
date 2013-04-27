@@ -31,7 +31,8 @@ HEADERS += \
     ttexttools.h \
     tuserinfo.h \
     tinviteinfo.h \
-    tcompilerparameters.h
+    tcompilerparameters.h \
+    tcompilationresult.h
 
 SOURCES += \
     tglobal.cpp \
@@ -41,7 +42,8 @@ SOURCES += \
     ttexttools.cpp \
     tuserinfo.cpp \
     tinviteinfo.cpp \
-    tcompilerparameters.cpp
+    tcompilerparameters.cpp \
+    tcompilationresult.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 

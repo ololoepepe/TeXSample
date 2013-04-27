@@ -17,6 +17,7 @@ class QDebug;
 #include <QMetaType>
 #include <QString>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TSampleInfo =================================
@@ -26,6 +27,8 @@ class TSMP_EXPORT TSampleInfo : public BBase
 {
     B_DECLARE_PRIVATE(TSampleInfo)
     Q_DECLARE_TR_FUNCTIONS(TSampleInfo)
+public:
+    typedef QList<TSampleInfo> SamplesList;
 public:
     enum Type
     {
