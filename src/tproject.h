@@ -25,8 +25,12 @@ class TSMP_EXPORT TProject : BBase
 {
     B_DECLARE_PRIVATE(TProject)
 public:
+    static QStringList externalFiles(const QString &text, bool *ok = 0);
+    static QStringList externalFiles(const QString &fileName, QTextCodec *codec, bool *ok = 0);
+    static QStringList externalFiles(const QString &fileName, const QString &codecName, bool *ok = 0);
+public:
     explicit TProject();
-    explicit TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec = 0);
+    explicit TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
     explicit TProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
     explicit TProject(const QString &rootFileName, QTextCodec *codec = 0);
     explicit TProject(const QString &rootFileName, const QString &codecName);

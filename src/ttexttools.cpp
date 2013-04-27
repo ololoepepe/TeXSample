@@ -12,6 +12,12 @@
 namespace TTextTools
 {
 
+/*============================================================================
+================================ SearchResult ================================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
 SearchResult::SearchResult(const QString *const t, int p, int l)
 {
     txt = t;
@@ -24,7 +30,7 @@ SearchResult::SearchResult(const SearchResult &other)
     *this = other;
 }
 
-//
+/*============================== Public methods ============================*/
 
 QString SearchResult::text() const
 {
@@ -41,7 +47,7 @@ int SearchResult::length() const
     return len;
 }
 
-//
+/*============================== Public operators ==========================*/
 
 SearchResult &SearchResult::operator =(const SearchResult &other)
 {
@@ -56,15 +62,36 @@ bool SearchResult::operator ==(const SearchResult &other) const
     return txt == other.txt && pos == other.pos && len == other.len;
 }
 
-//
+/*============================================================================
+================================ SearchResults ===============================
+============================================================================*/
+
+/*============================== Public methods ============================*/
+
+QStringList SearchResults::texts() const
+{
+    QStringList list;
+    foreach (const SearchResult r, *this)
+        list << r.text();
+    return list;
+}
+
+/*============================== Public operators ==========================*/
+
+SearchResults::operator QStringList() const
+{
+    return texts();
+}
+
+/*============================================================================
+================================ Functions ===================================
+============================================================================*/
 
 QStringList removeDuplicates(const QStringList &list, Qt::CaseSensitivity cs, int *count)
 {
     QStringList nlist = list;
     int c = removeDuplicates(&nlist, cs);
-    if (count)
-        *count = c;
-    return nlist;
+    return bRet(count, c, nlist);
 }
 
 int removeDuplicates(QStringList *list, Qt::CaseSensitivity cs)
@@ -81,6 +108,29 @@ int removeDuplicates(QStringList *list, Qt::CaseSensitivity cs)
                 list->removeAt(j);
                 ++count;
             }
+        }
+    }
+    return count;
+}
+
+QStringList removeAll(const QStringList &list, const QString &what, Qt::CaseSensitivity cs, int *count)
+{
+    QStringList nlist = list;
+    int c = removeAll(&nlist, what, cs);
+    return bRet(count, c, nlist);
+}
+
+int removeAll(QStringList *list, const QString &what, Qt::CaseSensitivity cs)
+{
+    if (!list)
+        return 0;
+    int count = 0;
+    foreach (int i, bRangeR(list->size() - 1, 0))
+    {
+        if (!what.compare(list->at(i), cs))
+        {
+            list->removeAt(i);
+            ++count;
         }
     }
     return count;
@@ -129,7 +179,7 @@ void sortComprising(QStringList *list, Qt::CaseSensitivity cs)
 
 SearchResults match(const QString &text, const QRegExp &what, const QRegExp &prefixedBy, const QRegExp &postfixedBy)
 {
-    QList<SearchResult> list;
+    SearchResults list;
     if (text.isEmpty() || !what.isValid())
         return list;
     QStringList sl = text.split('\n');
@@ -140,6 +190,7 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
         int pos = what.indexIn(line);
         while (pos >= 0)
         {
+            bool b = true;
             int len = what.matchedLength();
             if (!prefixedBy.isEmpty() && prefixedBy.isValid())
             {
@@ -152,6 +203,14 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                         pos += prefixedBy.matchedLength();
                         len -= prefixedBy.matchedLength();
                     }
+                    else
+                    {
+                        b = false;
+                    }
+                }
+                else
+                {
+                    b = false;
                 }
             }
             if (!postfixedBy.isEmpty() && postfixedBy.isValid())
@@ -163,9 +222,15 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                     poind = postfixedBy.indexIn(s);
                     if (poind >= 0 && poind + postfixedBy.matchedLength() == s.length())
                         len -= postfixedBy.matchedLength();
+                    else
+                        b = false;
+                }
+                else
+                {
+                    b = false;
                 }
             }
-            if (line.mid(pos, len).contains(what))
+            if (b && line.mid(pos, len).contains(what))
                 list << SearchResult(&text, coveredLength + pos, len);
             pos = what.indexIn(line, pos + (len ? len : 1));
         }

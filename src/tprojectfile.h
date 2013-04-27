@@ -32,24 +32,28 @@ public:
     };
 public:
     explicit TProjectFile();
-    explicit TProjectFile(const QString &fileName, const QByteArray &data);
-    explicit TProjectFile(const QString &fileName, const QString &text);
-    explicit TProjectFile(const QString &fileName, Type type, QTextCodec *codec = 0);
-    explicit TProjectFile(const QString &fileName, Type type, const QString &codecName);
+    explicit TProjectFile(const QString &fileName, const QByteArray &data, const QString &subdir = QString());
+    explicit TProjectFile(const QString &fileName, const QString &text, const QString &subdir = QString());
+    explicit TProjectFile(const QString &fileName, Type type, QTextCodec *codec = 0,
+                          const QString &subdir = QString());
+    explicit TProjectFile(const QString &fileName, Type type, const QString &codecName,
+                          const QString &subdir = QString());
     TProjectFile(const TProjectFile &other);
     ~TProjectFile();
 public:
     void setFileName(const QString &fileName);
+    void setSubdir(const QString &subdir);
     void setData(const QByteArray &data);
     void setText(const QString &text);
     void clear();
     QString fileName() const;
+    QString subdir() const;
     Type type() const;
     QByteArray data() const;
     QString text() const;
-    bool loadAsBinary(const QString &fileName);
-    bool loadAsText(const QString &fileName, QTextCodec *codec = 0);
-    bool loadAsText(const QString &fileName, const QString &codecName);
+    bool loadAsBinary(const QString &fileName, const QString &subdir);
+    bool loadAsText(const QString &fileName, QTextCodec *codec = 0, const QString &subdir = QString());
+    bool loadAsText(const QString &fileName, const QString &codecName, const QString &subdir = QString());
     bool save(const QString &dir, QTextCodec *codec = 0) const;
     bool save(const QString &dir, const QString &codecName) const;
     bool isValid() const;

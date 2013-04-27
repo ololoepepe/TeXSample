@@ -7,6 +7,7 @@
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
+#include <BeQt>
 
 #include <QObject>
 #include <QDataStream>
@@ -53,7 +54,6 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
 {
     if (text.isEmpty() || path.isEmpty() || !QDir(path).exists())
         return bRet(ok, false, QStringList());
-    QStringList list;
     init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
     {
 #if defined(Q_OS_WIN)
@@ -62,69 +62,32 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
     }
     if (!codec)
         codec = QTextCodec::codecForName("UTF-8");
-    TTextTools::SearchResults r = TTextTools::match(text, QRegExp("\\S+"),
-                                                    QRegExp("\\s*\\\\includegraphics(\\[.+\\])?\\{"), QRegExp("\\}"));
-    qDebug() << r.size();
-    /*
-    QStringList patterns;
-    patterns << "((?<=\\includegraphics)(.+)(?=\\}))"; //includegraphics[...]{...}
-    if (b)
+    bool bok = false;
+    QStringList list = TProject::externalFiles(text, &bok);
+    if (!bok)
+        return bRet(ok, false, list);
+    TTextTools::sortComprising(&list, cs);
+    foreach (int i, bRangeR(list.size() - 1, 0))
+        list[i].prepend(path + "/");
+    foreach (const QString &fn, list)
     {
-        //TODO
-        patterns << "((?<=\\\\input )(\\S+))"; //input "..."
+        if (QFileInfo(fn).suffix().compare("tex", Qt::CaseInsensitive))
+            continue;
+        bok = false;
+        QStringList xlist = TProject::externalFiles(fn, codec, &bok);
+        if (!bok)
+            return bRet(ok, false, list);
+        list << xlist;
     }
-    else
-    {
-        patterns << "((?<=\\\\href\\{)(.+)(?=#))"; //href{...}{...}
-        patterns << "((?<=\\\\href\\{run\\:)(.+)(?=\\}))"; //href{run:...}{...}
-    }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    QRegularExpressionMatchIterator i = QRegularExpression("(" + patterns.join('|') + ")").globalMatch(text);
-    while ( i.hasNext() )
-        list << i.next().capturedTexts();
-    list.removeAll("");
-    QStringList schemes = QStringList() << "http" << "https" << "ftp";
-    if ( !list.isEmpty() )
-    {
-        foreach (int i, bRangeR(list.size() - 1, 0))
-        {
-            list[i].remove(QRegExp("^(\\[.*\\])?\\{"));
-            if (list.at(i).right(1) == "\\")
-                list[i].remove(list.at(i).length() - 1, 1);
-            list[i] = BeQt::unwrapped(list.at(i));
-            foreach (const QString &s, schemes) //Skip external (network) links
-                if (list.at(i).left((s + "://").length()) == s + "://")
-                    list.removeAt(i);
-        }
-    }
-    if (b)
-    {
-        list.removeAll("texsample.tex"); //Removing global dependency
-        foreach (const QString &fn, list)
-        {
-            if (QFileInfo(fn).suffix().compare("tex", Qt::CaseInsensitive))
-                continue;
-            bool bok = false;
-            QString t = BDirTools::readTextFile(path + "/" + fn, codec, &bok);
-            if (!bok)
-                return bRet(ok, false, list);
-            if (t.isEmpty())
-                continue;
-            bok = false;
-            list << auxFileNames(t, path, codec, &bok);
-            if (!bok)
-                return bRet(ok, false, list);
-        }
-    }
-    list.removeDuplicates();
-#endif
-    */
+    TTextTools::removeDuplicates(&list, cs);
+    TTextTools::sortComprising(&list, cs);
     return bRet(ok, true, list);
 }
 
 QStringList TProjectPrivate::dependencies(const QString &text, const QString &path, const QString &codecName, bool *ok)
 {
-    return dependencies(text, path, !codecName.isEmpty() ? codecName.toLatin1() : QByteArray("UTF-8"), ok);
+    return dependencies(text, path, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
+                                                                                    QByteArray("UTF-8")), ok);
 }
 
 /*============================== Public constructors =======================*/
@@ -150,6 +113,63 @@ void TProjectPrivate::init()
 /*============================================================================
 ================================ TProject ====================================
 ============================================================================*/
+
+/*============================== Static public methods =====================*/
+
+QStringList TProject::externalFiles(const QString &text, bool *ok)
+{
+    if (text.isEmpty())
+        return bRet(ok, true, QStringList());
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
+    {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    static const QStringList schemes = QStringList() << "http" << "https" << "ftp";
+    QRegExp what(".+");
+    QRegExp pref("\\s*\\\\includegraphics(\\[.*\\])?\\{");
+    QRegExp post("\\}");
+    QStringList list = TTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
+    pref.setPattern("\\s*\\\\input\\s+");
+    post.setPattern("");
+    list << TTextTools::match(text, what, pref, post); // \input "..."
+    pref.setPattern("\\\\href\\{(run\\:)?");
+    post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
+    list << TTextTools::match(text, what, pref, post); // \href{run:...}{...}
+    TTextTools::removeDuplicates(&list, cs);
+    TTextTools::removeAll(&list, "texsample.tex", cs);
+    foreach (int i, bRangeR(list.size() - 1, 0))
+    {
+        list[i] = BeQt::unwrapped(list.at(i));
+        if (QFileInfo(list.at(i)).isAbsolute())
+            return bRet(ok, false, list);
+        foreach (const QString &s, schemes)
+        {
+            if (list.at(i).left((s + "://").length()) == s + "://")
+            {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    return bRet(ok, true, list);
+}
+
+QStringList TProject::externalFiles(const QString &fileName, QTextCodec *codec, bool *ok)
+{
+    bool bok = false;
+    QString text = BDirTools::readTextFile(fileName, codec, &bok);
+    if (!bok)
+        return bRet(ok, false, QStringList());
+    return externalFiles(text, ok);
+}
+
+QStringList TProject::externalFiles(const QString &fileName, const QString &codecName, bool *ok)
+{
+    return externalFiles(fileName, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
+                                                                                   QByteArray("UTF-8")), ok);
+}
 
 /*============================== Public constructors =======================*/
 
@@ -246,6 +266,7 @@ bool TProject::load(const QString &rootFileName, const QString &rootFileText, co
         return false;
     B_D(TProject);
     d->codecName = !codecName.isEmpty() ? codecName : QString("UTF-8");
+    QString path = QFileInfo(rootFileName).path();
     d->rootFile.setFileName(rootFileName);
     d->rootFile.setText(rootFileText);
     bool ok = false;
@@ -257,14 +278,16 @@ bool TProject::load(const QString &rootFileName, const QString &rootFileText, co
     }
     foreach (const QString &fn, list)
     {
-        static const QStringList suffixes = QStringList() << "tex";
-        TProjectFile f(fn, suffixes.contains(QFileInfo(fn).suffix().toLower()) ? TProjectFile::Text :
-                                                                                 TProjectFile::Binary, d->codecName);
+        static const QStringList suffixes = QStringList() << "tex" << "pic";
+        bool text = suffixes.contains(QFileInfo(fn).suffix().toLower());
+        QString subdir = QFileInfo(fn).path().remove(0, path.length());
+        TProjectFile f(fn, text ? TProjectFile::Text : TProjectFile::Binary, d->codecName, subdir);
         if (!f.isValid())
         {
             clear();
             return false;
         }
+        d->files << f;
     }
     return true;
 }

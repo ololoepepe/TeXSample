@@ -11,6 +11,10 @@
 namespace TTextTools
 {
 
+/*============================================================================
+================================ SearchResult ================================
+============================================================================*/
+
 class TSMP_EXPORT SearchResult
 {
 public:
@@ -29,10 +33,27 @@ private:
     int len;
 };
 
-typedef QList<SearchResult> SearchResults;
+/*============================================================================
+================================ SearchResults ===============================
+============================================================================*/
+
+class TSMP_EXPORT SearchResults : public QList<SearchResult>
+{
+public:
+    QStringList texts() const;
+public:
+    operator QStringList() const;
+};
+
+/*============================================================================
+================================ Functions ===================================
+============================================================================*/
 
 TSMP_EXPORT QStringList removeDuplicates(const QStringList &list, Qt::CaseSensitivity cs = Qt::CaseSensitive, int *count  = 0);
 TSMP_EXPORT int removeDuplicates(QStringList *list, Qt::CaseSensitivity cs = Qt::CaseSensitive);
+TSMP_EXPORT QStringList removeAll(const QStringList &list, const QString &what,
+                                  Qt::CaseSensitivity cs = Qt::CaseSensitive, int *count  = 0);
+TSMP_EXPORT int removeAll(QStringList *list, const QString &what, Qt::CaseSensitivity cs = Qt::CaseSensitive);
 TSMP_EXPORT QStringList sortComprising(const QStringList &list, Qt::CaseSensitivity cs = Qt::CaseSensitive);
 TSMP_EXPORT void sortComprising(QStringList *list, Qt::CaseSensitivity cs = Qt::CaseSensitive);
 TSMP_EXPORT SearchResults match(const QString &text, const QRegExp &what, const QRegExp &prefixedBy = QRegExp(),
