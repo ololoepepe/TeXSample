@@ -33,7 +33,9 @@ HEADERS += \
     tinviteinfo.h \
     tcompilerparameters.h \
     tcompilationresult.h \
-    tcompiledproject.h
+    tcompiledproject.h \
+    toperationresult.h \
+    toperationresult_p.h
 
 SOURCES += \
     tglobal.cpp \
@@ -45,7 +47,8 @@ SOURCES += \
     tinviteinfo.cpp \
     tcompilerparameters.cpp \
     tcompilationresult.cpp \
-    tcompiledproject.cpp
+    tcompiledproject.cpp \
+    toperationresult.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 

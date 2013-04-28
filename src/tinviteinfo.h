@@ -16,6 +16,7 @@ class QString;
 #include <BBase>
 
 #include <QMetaType>
+#include <QList>
 
 /*============================================================================
 ================================ TInviteInfo =================================
@@ -24,6 +25,8 @@ class QString;
 class TSMP_EXPORT TInviteInfo : public BBase
 {
     B_DECLARE_PRIVATE(TInviteInfo)
+public:
+    typedef QList<TInviteInfo> InvitesList;
 public:
     explicit TInviteInfo();
     TInviteInfo(const TInviteInfo &other);
@@ -38,7 +41,7 @@ public:
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
     QUuid uuid() const;
-    QString uuidString(bool unwrapped = true) const;
+    QString uuidString(bool pure = true) const;
     quint64 creatorId() const;
     QString creatorIdString(int fixedLength = -1) const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;

@@ -65,7 +65,6 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
     QStringList list = TProject::externalFiles(text, &bok);
     if (!bok)
         return bRet(ok, false, list);
-    TTextTools::sortComprising(&list, cs);
     foreach (int i, bRangeR(list.size() - 1, 0))
         list[i].prepend(path + "/");
     foreach (const QString &fn, list)
@@ -136,8 +135,6 @@ QStringList TProject::externalFiles(const QString &text, bool *ok)
     pref.setPattern("\\\\href\\{(run\\:)?");
     post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
     list << TTextTools::match(text, what, pref, post); // \href{run:...}{...}
-    TTextTools::removeDuplicates(&list, cs);
-    TTextTools::removeAll(&list, "texsample.tex", cs);
     foreach (int i, bRangeR(list.size() - 1, 0))
     {
         list[i] = BeQt::unwrapped(list.at(i));
@@ -152,6 +149,9 @@ QStringList TProject::externalFiles(const QString &text, bool *ok)
             }
         }
     }
+    TTextTools::removeDuplicates(&list, cs);
+    TTextTools::removeAll(&list, "texsample.tex", cs);
+    TTextTools::sortComprising(&list, cs);
     return bRet(ok, true, list);
 }
 

@@ -146,9 +146,9 @@ QUuid TInviteInfo::uuid() const
     return d_func()->uuid;
 }
 
-QString TInviteInfo::uuidString(bool unwrapped) const
+QString TInviteInfo::uuidString(bool pure) const
 {
-    return unwrapped ? BeQt::pureUuidText(d_func()->uuid) : d_func()->uuid.toString();
+    return pure ? BeQt::pureUuidText(d_func()->uuid) : d_func()->uuid.toString();
 }
 
 quint64 TInviteInfo::creatorId() const

@@ -1,5 +1,7 @@
 #include "tcompilationresult.h"
 #include "tglobal.h"
+#include "toperationresult.h"
+#include "toperationresult_p.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -15,7 +17,7 @@
 ================================ TCompilationResultPrivate ===================
 ============================================================================*/
 
-class TCompilationResultPrivate : public BBasePrivate
+class TCompilationResultPrivate : public TOperationResultPrivate
 {
     B_DECLARE_PUBLIC(TCompilationResult)
 public:
@@ -24,10 +26,8 @@ public:
 public:
     void init();
 public:
-    bool success;
     int exitCode;
     QString log;
-    QString error;
 private:
     Q_DISABLE_COPY(TCompilationResultPrivate)
 };
@@ -39,7 +39,7 @@ private:
 /*============================== Public constructors =======================*/
 
 TCompilationResultPrivate::TCompilationResultPrivate(TCompilationResult *q) :
-    BBasePrivate(q)
+    TOperationResultPrivate(q)
 {
     //
 }
@@ -53,7 +53,6 @@ TCompilationResultPrivate::~TCompilationResultPrivate()
 
 void TCompilationResultPrivate::init()
 {
-    success = false;
     exitCode = -1;
 }
 
@@ -63,15 +62,23 @@ void TCompilationResultPrivate::init()
 
 /*============================== Public constructors =======================*/
 
+TCompilationResult::TCompilationResult(bool success, const QString &errs) :
+    TOperationResult(*new TCompilationResultPrivate(this))
+{
+    d_func()->init();
+    setSuccess(success);
+    setErrorString(errs);
+}
+
 TCompilationResult::TCompilationResult(const QString &errs) :
-    BBase(*new TCompilationResultPrivate(this))
+    TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
     setErrorString(errs);
 }
 
 TCompilationResult::TCompilationResult(const TCompilationResult &other) :
-    BBase(*new TCompilationResultPrivate(this))
+    TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
     *this = other;
@@ -84,11 +91,6 @@ TCompilationResult::~TCompilationResult()
 
 /*============================== Public methods ============================*/
 
-void TCompilationResult::setSuccess(bool b)
-{
-    d_func()->success = b;
-}
-
 void TCompilationResult::setExitCode(int code)
 {
     d_func()->exitCode = code;
@@ -97,16 +99,6 @@ void TCompilationResult::setExitCode(int code)
 void TCompilationResult::setLog(const QString &l)
 {
     d_func()->log = l;
-}
-
-void TCompilationResult::setErrorString(const QString &s)
-{
-    d_func()->error = s;
-}
-
-bool TCompilationResult::success() const
-{
-    return d_func()->success;
 }
 
 int TCompilationResult::exitCode() const
@@ -119,21 +111,20 @@ QString TCompilationResult::log() const
     return d_func()->log;
 }
 
-QString TCompilationResult::errorString() const
-{
-    return d_func()->error;
-}
-
 /*============================== Public operators ==========================*/
 
 TCompilationResult &TCompilationResult::operator =(const TCompilationResult &other)
 {
     B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
-    d->success = dd->success;
     d->exitCode = dd->exitCode;
     d->log = dd->log;
-    d->error = dd->error;
+    return *this;
+}
+
+TCompilationResult &TCompilationResult::operator =(const TOperationResult &other)
+{
+    (TOperationResult) *this = other;
     return *this;
 }
 
@@ -141,7 +132,7 @@ bool TCompilationResult::operator ==(const TCompilationResult &other) const
 {
     const B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
-    return d->success == dd->success && d->exitCode == dd->exitCode && d->log == dd->log && d->error == dd->error;
+    return (TOperationResult) *this == (TOperationResult) other && d->exitCode == dd->exitCode && d->log == dd->log;
 }
 
 TCompilationResult::operator QVariant() const
@@ -154,20 +145,20 @@ TCompilationResult::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    stream << d->success;
+    stream << (TOperationResult) result;
     stream << d->exitCode;
     stream << d->log;
-    stream << d->error;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TCompilationResult &result)
 {
     TCompilationResultPrivate *d = result.d_func();
-    stream >> d->success;
+    TOperationResult r;
+    stream >> r;
+    result = r;
     stream >> d->exitCode;
     stream >> d->log;
-    stream >> d->error;
     return stream;
 }
 

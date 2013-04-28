@@ -8,6 +8,7 @@ class QVariant;
 class QDebug;
 
 #include "tglobal.h"
+#include "toperationresult.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -19,24 +20,22 @@ class QDebug;
 ================================ TCompilationResult ==========================
 ============================================================================*/
 
-class TSMP_EXPORT TCompilationResult : public BBase
+class TSMP_EXPORT TCompilationResult : public TOperationResult
 {
     B_DECLARE_PRIVATE(TCompilationResult)
 public:
+    explicit TCompilationResult(bool success, const QString &errs = QString());
     explicit TCompilationResult(const QString &errs = QString());
     TCompilationResult(const TCompilationResult &other);
     ~TCompilationResult();
 public:
-    void setSuccess(bool b);
     void setExitCode(int code);
     void setLog(const QString &l);
-    void setErrorString(const QString &s);
-    bool success() const;
     int exitCode() const;
     QString log() const;
-    QString errorString() const;
 public:
     TCompilationResult &operator =(const TCompilationResult &other);
+    TCompilationResult &operator =(const TOperationResult &other);
     bool operator ==(const TCompilationResult &other) const;
     operator QVariant() const;
 public:
