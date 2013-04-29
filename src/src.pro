@@ -35,7 +35,8 @@ HEADERS += \
     tcompilationresult.h \
     tcompiledproject.h \
     toperationresult.h \
-    toperationresult_p.h
+    toperationresult_p.h \
+    tclientinfo.h
 
 SOURCES += \
     tglobal.cpp \
@@ -48,7 +49,8 @@ SOURCES += \
     tcompilerparameters.cpp \
     tcompilationresult.cpp \
     tcompiledproject.cpp \
-    toperationresult.cpp
+    toperationresult.cpp \
+    tclientinfo.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 
