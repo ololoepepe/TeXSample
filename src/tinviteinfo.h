@@ -28,6 +28,11 @@ class TSMP_EXPORT TInviteInfo : public BBase
 public:
     typedef QList<TInviteInfo> InvitesList;
 public:
+    enum Context
+    {
+        GeneralContext
+    };
+public:
     explicit TInviteInfo();
     TInviteInfo(const TInviteInfo &other);
     ~TInviteInfo();
@@ -46,7 +51,7 @@ public:
     QString creatorIdString(int fixedLength = -1) const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    bool isValid() const;
+    bool isValid(Context c = GeneralContext) const;
 public:
     TInviteInfo &operator =(const TInviteInfo &other);
     bool operator ==(const TInviteInfo &other) const;

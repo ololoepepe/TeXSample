@@ -140,6 +140,11 @@ TCompilationResult::operator QVariant() const
     return QVariant::fromValue(*this);
 }
 
+TCompilationResult::operator bool() const
+{
+    return d_func()->success;
+}
+
 /*============================== Public friend operators ===================*/
 
 QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)

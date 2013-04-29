@@ -38,6 +38,7 @@ public:
     TOperationResult &operator =(const TOperationResult &other);
     bool operator ==(const TOperationResult &other) const;
     operator QVariant() const;
+    operator bool() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TOperationResult &result);
     friend QDataStream &operator >>(QDataStream &stream, TOperationResult &result);

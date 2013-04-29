@@ -298,7 +298,7 @@ bool TProject::load(const QString &rootFileName, const QString &codecName)
     return ok && load(rootFileName, text, codecName);
 }
 
-bool TProject::save(const QString &dir, QTextCodec *codec)
+bool TProject::save(const QString &dir, QTextCodec *codec) const
 {
     if (!isValid() || dir.isEmpty() || !rootFile()->save(dir, codec))
         return false;
@@ -308,7 +308,7 @@ bool TProject::save(const QString &dir, QTextCodec *codec)
     return true;
 }
 
-bool TProject::save(const QString &dir, const QString &codecName)
+bool TProject::save(const QString &dir, const QString &codecName) const
 {
     return save(dir, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() : QByteArray("UTF-8")));
 }

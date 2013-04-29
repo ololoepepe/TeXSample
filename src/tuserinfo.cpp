@@ -12,6 +12,8 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QString>
+#include <QSettings>
+#include <QCryptographicHash>
 
 /*============================================================================
 ================================ TUserInfoPrivate ============================
@@ -21,19 +23,25 @@ class TUserInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TUserInfo)
 public:
+   static TUserInfo::AccessLevel accessLevelFromInt(int lvl);
+public:
    explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
 public:
     void init();
+    QString storageKey(const QString &subkey) const;
 public:
     quint64 id;
     QString login;
+    QByteArray password;
     TUserInfo::AccessLevel accessLevel;
     QString realName;
     QByteArray avatar;
     QDateTime creationDT;
     QDateTime modificationDT;
     QDateTime updateDT;
+    QSettings *storage;
+    QString storageSubkey;
 private:
     Q_DISABLE_COPY(TUserInfoPrivate)
 };
@@ -41,6 +49,14 @@ private:
 /*============================================================================
 ================================ TUserInfoPrivate ============================
 ============================================================================*/
+
+/*============================== Static public methods =====================*/
+
+TUserInfo::AccessLevel TUserInfoPrivate::accessLevelFromInt(int lvl)
+{
+    static const QList<int> levels = bRangeD(TUserInfo::NoLevel, TUserInfo::AdminLevel);
+    return levels.contains(lvl) ? static_cast<TUserInfo::AccessLevel>(lvl) : TUserInfo::NoLevel;
+}
 
 /*============================== Public constructors =======================*/
 
@@ -64,6 +80,13 @@ void TUserInfoPrivate::init()
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
     updateDT.setTimeSpec(Qt::UTC);
+    storage = 0;
+}
+
+QString TUserInfoPrivate::storageKey(const QString &subkey) const
+{
+    return QString("user_info") + (!storageSubkey.isEmpty() ? "_" : "") + storageSubkey
+            + (!subkey.isEmpty() ? "/" : "") + subkey;
 }
 
 /*============================================================================
@@ -108,10 +131,12 @@ QString TUserInfo::accessLevelToString(AccessLevel lvl, bool singular)
 
 /*============================== Public constructors =======================*/
 
-TUserInfo::TUserInfo() :
+TUserInfo::TUserInfo(QSettings *storage, const QString &storageSubkey) :
     BBase(*new TUserInfoPrivate(this))
 {
     d_func()->init();
+    setStorage(storage);
+    setStorageSubkey(storageSubkey);
 }
 
 TUserInfo::TUserInfo(const TUserInfo &other) :
@@ -130,127 +155,219 @@ TUserInfo::~TUserInfo()
 
 void TUserInfo::setId(quint64 id)
 {
-    d_func()->id = id;
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("id"), d->id);
+    else
+        d->id = id;
 }
 
 void TUserInfo::setLogin(const QString &login)
 {
-    d_func()->login = login;
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("login"), login);
+    else
+        d->login = login;
 }
 
-void TUserInfo::setAccessLevel(AccessLevel lvl)
+void TUserInfo::setPassword(const QString &s)
 {
-    d_func()->accessLevel = lvl;
+    setPassword(QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1));
+}
+
+void TUserInfo::setPassword(const QByteArray &data)
+{
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("password"), data);
+    else
+        d->password = data;
+}
+
+void TUserInfo::setAccessLevel(int lvl)
+{
+    AccessLevel alvl = TUserInfoPrivate::accessLevelFromInt(lvl);
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("access_level"), alvl);
+    else
+        d->accessLevel = alvl;
 }
 
 void TUserInfo::setRealName(const QString &name)
 {
-    d_func()->realName = name;
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("real_name"), name);
+    else
+        d->realName = name;
 }
 
 void TUserInfo::setAvatar(const QByteArray &data)
 {
-    d_func()->avatar = data;
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("avatar"), data);
+    else
+        d->avatar = data;
 }
 
 void TUserInfo::setCreationDateTime(const QDateTime &dt)
 {
-    d_func()->creationDT = dt.toUTC();
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("creation_dt"), dt.toUTC());
+    else
+        d->creationDT = dt.toUTC();
 }
 
 void TUserInfo::setModificationDateTime(const QDateTime &dt)
 {
-    d_func()->modificationDT = dt.toUTC();
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("modification_dt"), dt.toUTC());
+    else
+        d->modificationDT = dt.toUTC();
 }
 
 void TUserInfo::setUpdateDateTime(const QDateTime &dt)
 {
-    d_func()->updateDT = dt.toUTC();
+    B_D(TUserInfo);
+    if (d->storage)
+        d->storage->setValue(d->storageKey("update_dt"), dt.toUTC());
+    else
+        d->updateDT = dt.toUTC();
+}
+
+void TUserInfo::setStorage(QSettings *s)
+{
+    d_func()->storage = s;
+}
+
+void TUserInfo::setStorageSubkey(const QString &subkey)
+{
+    d_func()->storageSubkey = subkey;
 }
 
 quint64 TUserInfo::id() const
 {
-    return d_func()->id;
+    const B_D(TUserInfo);
+    return d->storage ? d->storage->value(d->storageKey("id")).toULongLong() : d->id;
 }
 
 QString TUserInfo::idString(int fixedLength) const
 {
-    QString s = QString::number(d_func()->id);
+    QString s = QString::number(id());
     int dlen = fixedLength - s.length();
     if (dlen > 0)
-        s.prepend( QString().fill('0', dlen) );
+        s.prepend(QString().fill('0', dlen));
     return s;
 }
 
 QString TUserInfo::login() const
 {
-    return d_func()->login;
+    const B_D(TUserInfo);
+    return d->storage ? d->storage->value(d->storageKey("login")).toString() : d->login;
+}
+
+QByteArray TUserInfo::password() const
+{
+    const B_D(TUserInfo);
+    return d->storage ? d->storage->value(d->storageKey("password")).toByteArray() : d->password;
 }
 
 TUserInfo::AccessLevel TUserInfo::accessLevel() const
 {
-    return d_func()->accessLevel;
+    const B_D(TUserInfo);
+    return d->storage ?
+                TUserInfoPrivate::accessLevelFromInt(d->storage->value(d->storageKey("access_level")).toInt()) :
+                d->accessLevel;
 }
 
 QString TUserInfo::accessLevelString() const
 {
-    return accessLevelToString(d_func()->accessLevel);
+    return accessLevelToString(accessLevel());
 }
 
 QString TUserInfo::realName() const
 {
-    return d_func()->realName;
+    const B_D(TUserInfo);
+    return d->storage ? d->storage->value(d->storageKey("real_name")).toString() : d->realName;
 }
 
 QByteArray TUserInfo::avatar() const
 {
-    return d_func()->avatar;
+    const B_D(TUserInfo);
+    return d->storage ? d->storage->value(d->storageKey("avatar")).toByteArray() : d->avatar;
 }
 
 QDateTime TUserInfo::creationDateTime(Qt::TimeSpec spec) const
 {
-    return d_func()->creationDT.toTimeSpec(spec);
+    const B_D(TUserInfo);
+    return (d->storage ? d->storage->value(d->storageKey("creation_dt")).toDateTime() :
+                         d->creationDT).toTimeSpec(spec);
 }
 
 QDateTime TUserInfo::modificationDateTime(Qt::TimeSpec spec) const
 {
-    return d_func()->modificationDT.toTimeSpec(spec);
+    const B_D(TUserInfo);
+    return (d->storage ? d->storage->value(d->storageKey("modification_dt")).toDateTime() :
+                         d->modificationDT).toTimeSpec(spec);
 }
 
 QDateTime TUserInfo::updateDateTime(Qt::TimeSpec spec) const
 {
-    return d_func()->updateDT.toTimeSpec(spec);
+    const B_D(TUserInfo);
+    return (d->storage ? d->storage->value(d->storageKey("update_dt")).toDateTime() : d->updateDT).toTimeSpec(spec);
 }
 
-bool TUserInfo::isValid() const
+QSettings *TUserInfo::storage() const
+{
+    return d_func()->storage;
+}
+
+QString TUserInfo::storageSubkey() const
+{
+    return d_func()->storageSubkey;
+}
+
+bool TUserInfo::isValid(Context c) const
 {
     const B_D(TUserInfo);
-    return d->id && !d->login.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
-    return true;
+    switch (c)
+    {
+    case AddContext:
+        return !d->login.isEmpty() && !d->password.isEmpty();
+    case UpdateContext:
+        return d->id;
+    case GeneralContext:
+    default:
+        return d->id && !d->login.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
+    }
 }
 
 /*============================== Public operators ==========================*/
 
 TUserInfo &TUserInfo::operator =(const TUserInfo &other)
 {
-    B_D(TUserInfo);
-    const TUserInfoPrivate *dd = other.d_func();
-    d->id = dd->id;
-    d->login = dd->login;
-    d->accessLevel = dd->accessLevel;
-    d->realName = dd->realName;
-    d->avatar = dd->avatar;
-    d->creationDT = dd->creationDT;
-    d->modificationDT = dd->modificationDT;
-    d->updateDT = dd->updateDT;
+    setId(other.id());
+    setLogin(other.login());
+    setPassword(other.password());
+    setAccessLevel(other.accessLevel());
+    setRealName(other.realName());
+    setAvatar(other.avatar());
+    setCreationDateTime(other.creationDateTime());
+    setModificationDateTime(other.modificationDateTime());
+    setUpdateDateTime(other.updateDateTime());
+    setStorage(other.storage());
+    setStorageSubkey(other.storageSubkey());
     return *this;
 }
 
 bool TUserInfo::operator ==(const TUserInfo &other) const
 {
-    const B_D(TUserInfo);
-    const TUserInfoPrivate *dd = other.d_func();
-    return d->id == dd->id;
+    return id() == other.id();
 }
 
 TUserInfo::operator QVariant() const
@@ -262,45 +379,56 @@ TUserInfo::operator QVariant() const
 
 QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
 {
-    const TUserInfoPrivate *d = info.d_func();
-    stream << d->id;
-    stream << d->login;
-    stream << (int) d->accessLevel;
-    stream << d->realName;
-    stream << d->avatar;
-    stream << d->creationDT;
-    stream << d->modificationDT;
-    stream << d->updateDT;
+    stream << info.id();
+    stream << info.login();
+    stream << info.password();
+    stream << (int) info.accessLevel();
+    stream << info.realName();
+    stream << info.avatar();
+    stream << info.creationDateTime();
+    stream << info.modificationDateTime();
+    stream << info.updateDateTime();
+    stream << info.storageSubkey();
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
 {
-    static const QList<int> levels = bRangeD(TUserInfo::NoLevel, TUserInfo::AdminLevel);
-    TUserInfoPrivate *d = info.d_func();
-    stream >> d->id;
-    stream >> d->login;
-    int l = TUserInfo::NoLevel;
-    stream >> l;
-    d->accessLevel = levels.contains(l) ? static_cast<TUserInfo::AccessLevel>(l) : TUserInfo::NoLevel;
-    stream >> d->realName;
-    stream >> d->avatar;
-    stream >> d->creationDT;
-    if (d->creationDT.timeSpec() != Qt::UTC)
-        d->creationDT = d->creationDT.toUTC();
-    stream >> d->modificationDT;
-    if (d->modificationDT.timeSpec() != Qt::UTC)
-        d->modificationDT = d->modificationDT.toUTC();
-    stream >> d->updateDT;
-    if (d->updateDT.timeSpec() != Qt::UTC)
-        d->updateDT = d->updateDT.toUTC();
+    quint64 id = 0;
+    QString login;
+    QByteArray password;
+    int accessLevel = 0;
+    QString realName;
+    QByteArray avatar;
+    QDateTime creationDT;
+    QDateTime modificationDT;
+    QDateTime updateDT;
+    QString storageSubkey;
+    stream >> id;
+    stream >> login;
+    stream >> password;
+    stream >> accessLevel;
+    stream >> realName;
+    stream >> avatar;
+    stream >> creationDT;
+    stream >> modificationDT;
+    stream >> updateDT;
+    stream >> storageSubkey;
+    info.setId(id);
+    info.setLogin(login);
+    info.setPassword(password);
+    info.setAccessLevel(TUserInfoPrivate::accessLevelFromInt(accessLevel));
+    info.setRealName(realName);
+    info.setAvatar(avatar);
+    info.setCreationDateTime(creationDT);
+    info.setModificationDateTime(modificationDT);
+    info.setUpdateDateTime(updateDT);
+    info.setStorageSubkey(storageSubkey);
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TUserInfo &info)
 {
-    const TUserInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TUserInfo(" << d->id << "," << d->login << "," << info.accessLevelString() << ","
-                  << d->creationDT << "," << d->modificationDT << "," << d->updateDT << ")";
+    dbg.nospace() << "TUserInfo(" << info.id() << "," << info.login() << "," << info.accessLevelString() << ")";
     return dbg.space();
 }

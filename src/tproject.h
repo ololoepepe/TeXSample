@@ -46,8 +46,8 @@ public:
     bool load(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
     bool load(const QString &rootFileName, QTextCodec *codec = 0);
     bool load(const QString &rootFileName, const QString &codecName);
-    bool save(const QString &dir, QTextCodec *codec = 0);
-    bool save(const QString &dir, const QString &codecName);
+    bool save(const QString &dir, QTextCodec *codec = 0) const;
+    bool save(const QString &dir, const QString &codecName) const;
     bool isValid() const;
     int size() const;
 public:

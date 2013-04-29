@@ -38,6 +38,7 @@ public:
     TCompilationResult &operator =(const TOperationResult &other);
     bool operator ==(const TCompilationResult &other) const;
     operator QVariant() const;
+    operator bool() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result);
     friend QDataStream &operator >>(QDataStream &stream, TCompilationResult &result);

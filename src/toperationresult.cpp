@@ -123,6 +123,11 @@ TOperationResult::operator QVariant() const
     return QVariant::fromValue(*this);
 }
 
+TOperationResult::operator bool() const
+{
+    return d_func()->success;
+}
+
 /*============================== Public friend operators ===================*/
 
 QDataStream &operator <<(QDataStream &stream, const TOperationResult &result)
