@@ -42,6 +42,7 @@ public:
         CurrentContext,
         GeneralContext,
         AddContext,
+        EditContext,
         UpdateContext
     };
 public:
@@ -60,7 +61,7 @@ public:
     void setAuthor(const TUserInfo &author);
     void setExtraAuthors(const QList<TUserInfo> &list);
     void setTitle(const QString &title);
-    void setType(Type t);
+    void setType(int t);
     void setFileName(const QString &fileName);
     void setTags(const QStringList &list);
     void setTags(const QString &s);
@@ -69,7 +70,6 @@ public:
     void setRating(quint8 r);
     void setCreationDateTime(const QDateTime &dt);
     void setModificationDateTime(const QDateTime &dt);
-    void setUpdateDateTime(const QDateTime &dt);
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
@@ -87,7 +87,6 @@ public:
     QString ratingString(const QString &format = "") const; //%r - rating
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TSampleInfo &operator =(const TSampleInfo &other);

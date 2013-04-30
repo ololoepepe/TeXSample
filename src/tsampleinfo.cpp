@@ -26,6 +26,7 @@ class TSampleInfoPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TSampleInfo)
 public:
    static TSampleInfo::Context contextFromInt(int c);
+    static TSampleInfo::Type typeFromInt(int t);
 public:
    explicit TSampleInfoPrivate(TSampleInfo *q);
     ~TSampleInfoPrivate();
@@ -45,7 +46,6 @@ public:
     quint8 rating;
     QDateTime creationDT;
     QDateTime modificationDT;
-    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TSampleInfoPrivate)
 };
@@ -60,6 +60,12 @@ TSampleInfo::Context TSampleInfoPrivate::contextFromInt(int c)
 {
     static const QList<int> contexts = bRangeD(TSampleInfo::GeneralContext, TSampleInfo::UpdateContext);
     return contexts.contains(c) ? static_cast<TSampleInfo::Context>(c) : TSampleInfo::GeneralContext;
+}
+
+TSampleInfo::Type TSampleInfoPrivate::typeFromInt(int t)
+{
+    static const QList<int> types = bRangeD(TSampleInfo::Unverified, TSampleInfo::Rejected);
+    return types.contains(t) ? static_cast<TSampleInfo::Type>(t) : TSampleInfo::Unverified;
 }
 
 /*============================== Public constructors =======================*/
@@ -85,7 +91,6 @@ void TSampleInfoPrivate::init()
     rating = 0;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
-    updateDT.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -179,9 +184,25 @@ void TSampleInfo::setContext(int c, bool clear)
     {
     case AddContext:
         d->id = 0;
+        d->author.clear();
+        d->type = Unverified;
+        d->remark.clear();
+        d->rating = 0;
+        d->creationDT = QDateTime().toUTC();
+        d->modificationDT = QDateTime().toUTC();
+        break;
+    case EditContext:
+        d->author.clear();
+        d->creationDT = QDateTime().toUTC();
+        d->modificationDT = QDateTime().toUTC();
         break;
     case UpdateContext:
-        //
+        d->author.clear();
+        d->type = Unverified;
+        d->remark.clear();
+        d->rating = 0;
+        d->creationDT = QDateTime().toUTC();
+        d->modificationDT = QDateTime().toUTC();
         break;
     case GeneralContext:
     default:
@@ -209,9 +230,9 @@ void TSampleInfo::setTitle(const QString &title)
     d_func()->title = title;
 }
 
-void TSampleInfo::setType(Type t)
+void TSampleInfo::setType(int t)
 {
-    d_func()->type = t;
+    d_func()->type = TSampleInfoPrivate::typeFromInt(t);
 }
 
 void TSampleInfo::setFileName(const QString &fileName)
@@ -252,11 +273,6 @@ void TSampleInfo::setCreationDateTime(const QDateTime &dt)
 void TSampleInfo::setModificationDateTime(const QDateTime &dt)
 {
     d_func()->modificationDT = dt.toUTC();
-}
-
-void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
-{
-    d_func()->updateDT = dt.toUTC();
 }
 
 TSampleInfo::Context TSampleInfo::context() const
@@ -349,19 +365,22 @@ QDateTime TSampleInfo::modificationDateTime(Qt::TimeSpec spec) const
     return d_func()->modificationDT.toTimeSpec(spec);
 }
 
-QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
-{
-    return d_func()->updateDT.toTimeSpec(spec);
-}
-
 bool TSampleInfo::isValid(Context c) const
 {
     const B_D(TSampleInfo);
     switch (c)
     {
+    case AddContext:
+        return !d->title.isEmpty() && !d->fileName.isEmpty();
+    case EditContext:
+    case UpdateContext:
+        return d->id;
     case GeneralContext:
     default:
-        return d->id && d->author.isValid() && !d->title.isEmpty() && !d->fileName.isEmpty()
+        foreach (const TUserInfo &inf, d->extraAuthors)
+            if (!inf.isValid(TUserInfo::ShortInfoContext))
+                return false;
+        return d->id && d->author.isValid(TUserInfo::ShortInfoContext) && !d->title.isEmpty() && !d->fileName.isEmpty()
                 && d->creationDT.isValid() && d->modificationDT.isValid();
     }
 }
@@ -384,7 +403,6 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->rating = dd->rating;
     d->creationDT = dd->creationDT;
     d->modificationDT = dd->modificationDT;
-    d->updateDT = dd->updateDT;
     return *this;
 }
 
@@ -392,10 +410,22 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
 {
     const B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
-    return d->id == dd->id;
-    /* && d->authorId == dd->authorId && d->authorName == dd->authorName && d->title == dd->title
-            && d->type == dd->type && d->tags == dd->tags && d->comment == dd->comment && d->remark == dd->remark
-            && d->rating == dd->rating && d->creationDT == dd->creationDT && d->modificationDT == dd->modificationDT*/
+    if (d->context != dd->context)
+        return false;
+    switch (d->context)
+    {
+    case AddContext:
+        return d->title == dd->title && d->fileName == dd->fileName;
+    case EditContext:
+    case UpdateContext:
+        return d->id == dd->id;
+    case GeneralContext:
+    default:
+        return d->id == dd->id && d->author == dd->author && d->extraAuthors == dd->extraAuthors
+                && d->title == dd->title && d->type == dd->type && d->fileName == dd->fileName && d->tags == dd->tags
+                && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
+                && d->creationDT == dd->creationDT && d->modificationDT == dd->modificationDT;
+    }
 }
 
 TSampleInfo::operator QVariant() const
@@ -408,47 +438,66 @@ TSampleInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    stream << d->id;
-    stream << d->author;
+    stream << (int) d->context;
+    if (TSampleInfo::AddContext != d->context)
+        stream << d->id;
+    if (TSampleInfo::GeneralContext == d->context)
+        stream << d->author;
     stream << d->extraAuthors;
     stream << d->title;
-    stream << (int) d->type;
+    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
+        stream << (int) d->type;
     stream << d->fileName;
     stream << d->tags;
     stream << d->comment;
-    stream << d->remark;
-    stream << d->rating;
-    stream << d->creationDT;
-    stream << d->modificationDT;
-    stream << d->updateDT;
+    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
+    {
+        stream << d->remark;
+        stream << d->rating;
+    }
+    if (TSampleInfo::GeneralContext == d->context)
+    {
+        stream << d->creationDT;
+        stream << d->modificationDT;
+    }
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 {
-    static const QList<int> types = bRangeD(TSampleInfo::Unverified, TSampleInfo::Rejected);
     TSampleInfoPrivate *d = info.d_func();
-    stream >> d->id;
-    stream >> d->author;
+    int context = 0;
+    stream >> context;
+    info.setContext(context);
+    if (TSampleInfo::AddContext != d->context)
+        stream >> d->id;
+    if (TSampleInfo::GeneralContext == d->context)
+        stream >> d->author;
     stream >> d->extraAuthors;
     stream >> d->title;
-    int t = TSampleInfo::Unverified;
-    stream >> t;
-    d->type = types.contains(t) ? static_cast<TSampleInfo::Type>(t) : TSampleInfo::Unverified;
+    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
+    {
+        int type = 0;
+        stream >> type;
+        info.setType(type);
+    }
     stream >> d->fileName;
     stream >> d->tags;
     stream >> d->comment;
-    stream >> d->remark;
-    stream >> d->rating;
-    stream >> d->creationDT;
-    if (d->creationDT.timeSpec() != Qt::UTC)
-        d->creationDT = d->creationDT.toUTC();
-    stream >> d->modificationDT;
-    if (d->modificationDT.timeSpec() != Qt::UTC)
-        d->modificationDT = d->modificationDT.toUTC();
-    stream >> d->updateDT;
-    if (d->updateDT.timeSpec() != Qt::UTC)
-        d->updateDT = d->updateDT.toUTC();
+    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
+    {
+        stream >> d->remark;
+        stream >> d->rating;
+    }
+    if (TSampleInfo::GeneralContext == d->context)
+    {
+        QDateTime creationDT;
+        stream >> creationDT;
+        info.setCreationDateTime(creationDT);
+        QDateTime modificationDT;
+        stream >> modificationDT;
+        info.setModificationDateTime(modificationDT);
+    }
     return stream;
 }
 
@@ -456,7 +505,6 @@ QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
     dbg.nospace() << "TSampleInfo(" << d->id << "," << d->author.login() << "," << d->title << ","
-                  << info.typeString() << "," << d->fileName << "," << info.ratingString() << "," << d->creationDT << ","
-                  << d->modificationDT << "," << d->updateDT << ")";
+                  << info.typeString() << ")";
     return dbg.space();
 }

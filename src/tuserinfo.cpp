@@ -25,6 +25,15 @@ public:
    static TUserInfo::Context contextFromInt(int c);
    static TUserInfo::AccessLevel accessLevelFromInt(int lvl);
 public:
+   static const QList<TUserInfo::Context> IdContexts;
+   static const QList<TUserInfo::Context> LoginContexts;
+   static const QList<TUserInfo::Context> PasswordContexts;
+   static const QList<TUserInfo::Context> AccessLevelContexts;
+   static const QList<TUserInfo::Context> RealNameContexts;
+   static const QList<TUserInfo::Context> AvatarContexts;
+   static const QList<TUserInfo::Context> CreationDTContexts;
+   static const QList<TUserInfo::Context> ModificationDTContexts;
+public:
    explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
 public:
@@ -40,7 +49,6 @@ public:
     QByteArray avatar;
     QDateTime creationDT;
     QDateTime modificationDT;
-    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TUserInfoPrivate)
 };
@@ -62,6 +70,30 @@ TUserInfo::AccessLevel TUserInfoPrivate::accessLevelFromInt(int lvl)
     static const QList<int> levels = bRangeD(TUserInfo::NoLevel, TUserInfo::AdminLevel);
     return levels.contains(lvl) ? static_cast<TUserInfo::AccessLevel>(lvl) : TUserInfo::NoLevel;
 }
+
+/*============================== Static public constants ===================*/
+
+const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
+    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::EditContext
+    << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
+    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext
+    << TUserInfo::RegisterContext << TUserInfo::AuthorizeContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::PasswordContexts =
+    QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext << TUserInfo::EditContext
+    << TUserInfo::UpdateContext << TUserInfo::AuthorizeContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::AccessLevelContexts =
+    QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::EditContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::RealNameContexts =
+    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext << TUserInfo::RegisterContext
+    << TUserInfo::EditContext << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::AvatarContexts =
+    QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext << TUserInfo::EditContext
+    << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::CreationDTContexts =
+    QList<TUserInfo::Context>() << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::ModificationDTContexts =
+    QList<TUserInfo::Context>() << TUserInfo::GeneralContext;
 
 /*============================== Public constructors =======================*/
 
@@ -85,7 +117,6 @@ void TUserInfoPrivate::init()
     accessLevel = TUserInfo::NoLevel;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
-    updateDT.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -160,40 +191,23 @@ void TUserInfo::setContext(int c, bool clear)
     d->context = cc;
     if (!clear)
         return;
-    switch (cc)
-    {
-    case ShortInfoContext:
-        //
-        break;
-    case AddContext:
+    if (!TUserInfoPrivate::IdContexts.contains(d->context))
         d->id = 0;
-        break;
-    case RegisterContext:
-        d->id = 0;
-        break;
-    case UpdateContext:
-        //
-        break;
-    case AuthorizeContext:
-        //
-        break;
-    case GeneralContext:
-    default:
-        break;
-    }
+    if (!TUserInfoPrivate::LoginContexts.contains(d->context))
+        d->login.clear();
+    if (!TUserInfoPrivate::PasswordContexts.contains(d->context))
+        d->password.clear();
+    if (!TUserInfoPrivate::AccessLevelContexts.contains(d->context))
+        d->accessLevel = NoLevel;
+    if (!TUserInfoPrivate::RealNameContexts.contains(d->context))
+        d->realName.clear();
+    if (!TUserInfoPrivate::AvatarContexts.contains(d->context))
+        d->avatar.clear();
+    if (!TUserInfoPrivate::CreationDTContexts.contains(d->context))
+        d->creationDT = QDateTime().toUTC();
+    if (!TUserInfoPrivate::ModificationDTContexts.contains(d->context))
+        d->modificationDT = QDateTime().toUTC();
 }
-
-/*
-    quint64 id;
-    QString login;
-    QByteArray password;
-    TUserInfo::AccessLevel accessLevel;
-    QString realName;
-    QByteArray avatar;
-    QDateTime creationDT;
-    QDateTime modificationDT;
-    QDateTime updateDT;
-*/
 
 void TUserInfo::setId(quint64 id)
 {
@@ -240,9 +254,17 @@ void TUserInfo::setModificationDateTime(const QDateTime &dt)
     d_func()->modificationDT = dt.toUTC();
 }
 
-void TUserInfo::setUpdateDateTime(const QDateTime &dt)
+void TUserInfo::clear()
 {
-    d_func()->updateDT = dt.toUTC();
+    B_D(TUserInfo);
+    d->id = 0;
+    d->login.clear();
+    d->password.clear();
+    d->accessLevel = NoLevel;
+    d->realName.clear();
+    d->avatar.clear();
+    d->creationDT = QDateTime().toUTC();
+    d->modificationDT = QDateTime().toUTC();
 }
 
 TUserInfo::Context TUserInfo::context() const
@@ -304,11 +326,6 @@ QDateTime TUserInfo::modificationDateTime(Qt::TimeSpec spec) const
     return d_func()->modificationDT.toTimeSpec(spec);
 }
 
-QDateTime TUserInfo::updateDateTime(Qt::TimeSpec spec) const
-{
-    return d_func()->updateDT.toTimeSpec(spec);
-}
-
 bool TUserInfo::isValid(Context c) const
 {
     const B_D(TUserInfo);
@@ -319,6 +336,7 @@ bool TUserInfo::isValid(Context c) const
     case AddContext:
     case RegisterContext:
         return !d->login.isEmpty() && !d->password.isEmpty();
+    case EditContext:
     case UpdateContext:
         return d->id;
     case AuthorizeContext:
@@ -333,39 +351,44 @@ bool TUserInfo::isValid(Context c) const
 
 TUserInfo &TUserInfo::operator =(const TUserInfo &other)
 {
-    setContext(other.context());
-    setId(other.id());
-    setLogin(other.login());
-    setPassword(other.password());
-    setAccessLevel(other.accessLevel());
-    setRealName(other.realName());
-    setAvatar(other.avatar());
-    setCreationDateTime(other.creationDateTime());
-    setModificationDateTime(other.modificationDateTime());
-    setUpdateDateTime(other.updateDateTime());
+    B_D(TUserInfo);
+    const TUserInfoPrivate *dd = other.d_func();
+    d->context = dd->context;
+    d->id = dd->id;
+    d->login = dd->login;
+    d->password = dd->password;
+    d->accessLevel = dd->accessLevel;
+    d->realName = dd->realName;
+    d->avatar = dd->avatar;
+    d->creationDT = dd->creationDT;
+    d->modificationDT = dd->modificationDT;
     return *this;
 }
 
 bool TUserInfo::operator ==(const TUserInfo &other) const
 {
+    const B_D(TUserInfo);
+    const TUserInfoPrivate *dd = other.d_func();
     if (context() != other.context())
         return false;
-    switch (context())
-    {
-    case AddContext:
-        return login() == other.login() && password() == other.password() && accessLevel() == other.accessLevel()
-                && realName() == other.realName() && avatar() == other.avatar();
-    case RegisterContext:
-        return login() == other.login() && password() == other.password() && realName() == other.realName()
-                && avatar() == other.avatar();
-    case UpdateContext:
-        return 0;
-    case AuthorizeContext:
-        return 0;
-    case GeneralContext:
-    default:
-        return id() == other.id();
-    }
+    bool b = true;
+    if (TUserInfoPrivate::IdContexts.contains(d->context))
+        b = b && d->id == dd->id;
+    if (TUserInfoPrivate::LoginContexts.contains(d->context))
+        b = b && d->login == dd->login;
+    if (TUserInfoPrivate::PasswordContexts.contains(d->context))
+        b = b && d->password == dd->password;
+    if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
+        b = b && d->accessLevel == dd->accessLevel;
+    if (TUserInfoPrivate::RealNameContexts.contains(d->context))
+        b = b && d->realName == dd->realName;
+    if (TUserInfoPrivate::AvatarContexts.contains(d->context))
+        b = b && d->avatar == dd->avatar;
+    if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
+        b = b && d->creationDT == dd->creationDT;
+    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
+        b = b && d->modificationDT == dd->modificationDT;
+    return b;
 }
 
 TUserInfo::operator QVariant() const
@@ -377,58 +400,67 @@ TUserInfo::operator QVariant() const
 
 QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
 {
-    stream << (int) info.context();
-    //
-    stream << info.id();
-    stream << info.login();
-    stream << info.password();
-    stream << (int) info.accessLevel();
-    stream << info.realName();
-    stream << info.avatar();
-    stream << info.creationDateTime();
-    stream << info.modificationDateTime();
-    stream << info.updateDateTime();
+    const TUserInfoPrivate *d = info.d_func();
+    stream << (int) d->context;
+    if (TUserInfoPrivate::IdContexts.contains(d->context))
+        stream << d->id;
+    if (TUserInfoPrivate::LoginContexts.contains(d->context))
+        stream << d->login;
+    if (TUserInfoPrivate::PasswordContexts.contains(d->context))
+        stream << d->password;
+    if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
+        stream << (int) d->accessLevel;
+    if (TUserInfoPrivate::RealNameContexts.contains(d->context))
+        stream << d->realName;
+    if (TUserInfoPrivate::AvatarContexts.contains(d->context))
+        stream << d->avatar;
+    if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
+        stream << d->creationDT;
+    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
+        stream << d->modificationDT;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
 {
+    TUserInfoPrivate *d = info.d_func();
     int context = 0;
     stream >> context;
     info.setContext(context);
-    //
-    quint64 id = 0;
-    QString login;
-    QByteArray password;
-    int accessLevel = 0;
-    QString realName;
-    QByteArray avatar;
-    QDateTime creationDT;
-    QDateTime modificationDT;
-    QDateTime updateDT;
-    stream >> id;
-    stream >> login;
-    stream >> password;
-    stream >> accessLevel;
-    stream >> realName;
-    stream >> avatar;
-    stream >> creationDT;
-    stream >> modificationDT;
-    stream >> updateDT;
-    info.setId(id);
-    info.setLogin(login);
-    info.setPassword(password);
-    info.setAccessLevel(TUserInfoPrivate::accessLevelFromInt(accessLevel));
-    info.setRealName(realName);
-    info.setAvatar(avatar);
-    info.setCreationDateTime(creationDT);
-    info.setModificationDateTime(modificationDT);
-    info.setUpdateDateTime(updateDT);
+    if (TUserInfoPrivate::IdContexts.contains(d->context))
+        stream >> d->id;
+    if (TUserInfoPrivate::LoginContexts.contains(d->context))
+        stream >> d->login;
+    if (TUserInfoPrivate::PasswordContexts.contains(d->context))
+        stream >> d->password;
+    if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
+    {
+        int lvl = 0;
+        stream >> lvl;
+        info.setAccessLevel(lvl);
+    }
+    if (TUserInfoPrivate::RealNameContexts.contains(d->context))
+        stream >> d->realName;
+    if (TUserInfoPrivate::AvatarContexts.contains(d->context))
+        stream >> d->avatar;
+    if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
+    {
+        QDateTime creationDT;
+        stream >> creationDT;
+        info.setCreationDateTime(creationDT);
+    }
+    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
+    {
+        QDateTime modificationDT;
+        stream >> modificationDT;
+        info.setModificationDateTime(modificationDT);
+    }
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TUserInfo &info)
 {
-    dbg.nospace() << "TUserInfo(" << info.id() << "," << info.login() << "," << info.accessLevelString() << ")";
+    const TUserInfoPrivate *d = info.d_func();
+    dbg.nospace() << "TUserInfo(" << d->id << "," << d->login << "," << info.accessLevelString() << ")";
     return dbg.space();
 }
