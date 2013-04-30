@@ -59,7 +59,7 @@ public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
     void setAuthor(const TUserInfo &author);
-    void setExtraAuthors(const QList<TUserInfo> &list);
+    void setExtraAuthors(const QStringList &list);
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
@@ -74,7 +74,7 @@ public:
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
     TUserInfo author() const;
-    QList<TUserInfo> extraAuthors() const;
+    QStringList extraAuthors() const;
     QString title() const;
     Type type() const;
     QString typeString() const;

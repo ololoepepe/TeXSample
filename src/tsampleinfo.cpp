@@ -36,7 +36,7 @@ public:
     TSampleInfo::Context context;
     quint64 id;
     TUserInfo author;
-    QList<TUserInfo> extraAuthors;
+    QStringList extraAuthors;
     QString title;
     TSampleInfo::Type type;
     QString fileName;
@@ -220,9 +220,10 @@ void TSampleInfo::setAuthor(const TUserInfo &author)
     d_func()->author = author;
 }
 
-void TSampleInfo::setExtraAuthors(const QList<TUserInfo> &list)
+void TSampleInfo::setExtraAuthors(const QStringList &list)
 {
     d_func()->extraAuthors = list;
+    d_func()->extraAuthors.removeDuplicates();
 }
 
 void TSampleInfo::setTitle(const QString &title)
@@ -299,7 +300,7 @@ TUserInfo TSampleInfo::author() const
     return d_func()->author;
 }
 
-QList<TUserInfo> TSampleInfo::extraAuthors() const
+QStringList TSampleInfo::extraAuthors() const
 {
     return d_func()->extraAuthors;
 }
@@ -377,11 +378,9 @@ bool TSampleInfo::isValid(Context c) const
         return d->id;
     case GeneralContext:
     default:
-        foreach (const TUserInfo &inf, d->extraAuthors)
-            if (!inf.isValid(TUserInfo::ShortInfoContext))
-                return false;
-        return d->id && d->author.isValid(TUserInfo::ShortInfoContext) && !d->title.isEmpty() && !d->fileName.isEmpty()
-                && d->creationDT.isValid() && d->modificationDT.isValid();
+        return d->id && d->author.isValid(TUserInfo::ShortInfoContext)
+                && (d->extraAuthors.isEmpty() || !d->extraAuthors.contains("")) && !d->title.isEmpty()
+                && !d->fileName.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
     }
 }
 
