@@ -9,7 +9,6 @@ class QVariant;
 class QDebug;
 class QByteArray;
 class QString;
-class QSettings;
 
 #include "tglobal.h"
 
@@ -37,17 +36,22 @@ public:
     };
     enum Context
     {
+        CurrentContext,
         GeneralContext,
+        ShortInfoContext,
         AddContext,
-        UpdateContext
+        RegisterContext,
+        UpdateContext,
+        AuthorizeContext
     };
 public:
     static QString accessLevelToString(AccessLevel lvl, bool singular = true);
 public:
-    explicit TUserInfo(QSettings *storage = 0, const QString &storageSubkey = QString());
+    explicit TUserInfo(Context c = GeneralContext);
     TUserInfo(const TUserInfo &other);
     ~TUserInfo();
 public:
+    void setContext(int c, bool clear = false);
     void setId(quint64 id);
     void setLogin(const QString &login);
     void setPassword(const QString &s);
@@ -58,8 +62,7 @@ public:
     void setCreationDateTime(const QDateTime &dt);
     void setModificationDateTime(const QDateTime &dt);
     void setUpdateDateTime(const QDateTime &dt);
-    void setStorage(QSettings *s);
-    void setStorageSubkey(const QString &subkey);
+    Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
     QString login() const;
@@ -71,9 +74,7 @@ public:
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QSettings *storage() const;
-    QString storageSubkey() const;
-    bool isValid(Context c = GeneralContext) const;
+    bool isValid(Context c = CurrentContext) const;
 public:
     TUserInfo &operator =(const TUserInfo &other);
     bool operator ==(const TUserInfo &other) const;

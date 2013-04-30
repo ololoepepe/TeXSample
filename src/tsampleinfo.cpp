@@ -1,5 +1,6 @@
 #include "tsampleinfo.h"
 #include "tglobal.h"
+#include "tuserinfo.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -14,6 +15,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QFileInfo>
+#include <QList>
 
 /*============================================================================
 ================================ TSampleInfoPrivate ==========================
@@ -23,16 +25,17 @@ class TSampleInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TSampleInfo)
 public:
-   static QString numberToString(quint64 number, int fixedLength = -1);
+   static TSampleInfo::Context contextFromInt(int c);
 public:
    explicit TSampleInfoPrivate(TSampleInfo *q);
     ~TSampleInfoPrivate();
 public:
     void init();
 public:
+    TSampleInfo::Context context;
     quint64 id;
-    quint64 authorId;
-    QString authorName;
+    TUserInfo author;
+    QList<TUserInfo> extraAuthors;
     QString title;
     TSampleInfo::Type type;
     QString fileName;
@@ -53,13 +56,10 @@ private:
 
 /*============================== Static public methods =====================*/
 
-QString TSampleInfoPrivate::numberToString(quint64 number, int fixedLength)
+TSampleInfo::Context TSampleInfoPrivate::contextFromInt(int c)
 {
-    QString s = QString::number(number);
-    int dlen = fixedLength - s.length();
-    if (dlen > 0)
-        s.prepend( QString().fill('0', dlen) );
-    return s;
+    static const QList<int> contexts = bRangeD(TSampleInfo::GeneralContext, TSampleInfo::UpdateContext);
+    return contexts.contains(c) ? static_cast<TSampleInfo::Context>(c) : TSampleInfo::GeneralContext;
 }
 
 /*============================== Public constructors =======================*/
@@ -79,8 +79,8 @@ TSampleInfoPrivate::~TSampleInfoPrivate()
 
 void TSampleInfoPrivate::init()
 {
+    context = TSampleInfo::GeneralContext;
     id = 0;
-    authorId = 0;
     type = TSampleInfo::Unverified;
     rating = 0;
     creationDT.setTimeSpec(Qt::UTC);
@@ -137,10 +137,11 @@ QStringList TSampleInfo::tagsFromString(const QString &s)
 
 /*============================== Public constructors =======================*/
 
-TSampleInfo::TSampleInfo() :
+TSampleInfo::TSampleInfo(Context c) :
     BBase(*new TSampleInfoPrivate(this))
 {
     d_func()->init();
+    setContext(c);
 }
 
 TSampleInfo::TSampleInfo(const TSampleInfo &other) :
@@ -165,19 +166,42 @@ TSampleInfo::TSampleInfo(TSampleInfoPrivate &d) :
 
 /*============================== Public methods ============================*/
 
+void TSampleInfo::setContext(int c, bool clear)
+{
+    B_D(TSampleInfo);
+    Context cc = TSampleInfoPrivate::contextFromInt(c);
+    if (cc == d->context)
+        return;
+    d->context = cc;
+    if (!clear)
+        return;
+    switch (cc)
+    {
+    case AddContext:
+        d->id = 0;
+        break;
+    case UpdateContext:
+        //
+        break;
+    case GeneralContext:
+    default:
+        break;
+    }
+}
+
 void TSampleInfo::setId(quint64 id)
 {
     d_func()->id = id;
 }
 
-void TSampleInfo::setAuthorId(quint64 id)
+void TSampleInfo::setAuthor(const TUserInfo &author)
 {
-    d_func()->authorId = id;
+    d_func()->author = author;
 }
 
-void TSampleInfo::setAuthorName(const QString &name)
+void TSampleInfo::setExtraAuthors(const QList<TUserInfo> &list)
 {
-    d_func()->authorName = name;
+    d_func()->extraAuthors = list;
 }
 
 void TSampleInfo::setTitle(const QString &title)
@@ -235,6 +259,11 @@ void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
     d_func()->updateDT = dt.toUTC();
 }
 
+TSampleInfo::Context TSampleInfo::context() const
+{
+    return d_func()->context;
+}
+
 quint64 TSampleInfo::id() const
 {
     return d_func()->id;
@@ -242,22 +271,21 @@ quint64 TSampleInfo::id() const
 
 QString TSampleInfo::idString(int fixedLength) const
 {
-    return TSampleInfoPrivate::numberToString(d_func()->id, fixedLength);
+    QString s = QString::number(d_func()->id);
+    int dlen = fixedLength - s.length();
+    if (dlen > 0)
+        s.prepend( QString().fill('0', dlen) );
+    return s;
 }
 
-quint64 TSampleInfo::authorId() const
+TUserInfo TSampleInfo::author() const
 {
-    return d_func()->authorId;
+    return d_func()->author;
 }
 
-QString TSampleInfo::authorIdString(int fixedLength) const
+QList<TUserInfo> TSampleInfo::extraAuthors() const
 {
-    return TSampleInfoPrivate::numberToString(d_func()->authorId, fixedLength);
-}
-
-QString TSampleInfo::authorName() const
-{
-    return d_func()->authorName;
+    return d_func()->extraAuthors;
 }
 
 QString TSampleInfo::title() const
@@ -307,8 +335,8 @@ quint8 TSampleInfo::rating() const
 
 QString TSampleInfo::ratingString(const QString &format) const
 {
-    QString f = (format.count("%r") == 1 && !format.contains("%1")) ? format : "%r";
-    return f.replace("%r", "%1").arg(d_func()->rating);
+    QString f = !format.isEmpty() ? format : QString("%r");
+    return f.replace("%r", QString::number(d_func()->rating));
 }
 
 QDateTime TSampleInfo::creationDateTime(Qt::TimeSpec spec) const
@@ -326,11 +354,16 @@ QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
     return d_func()->updateDT.toTimeSpec(spec);
 }
 
-bool TSampleInfo::isValid() const
+bool TSampleInfo::isValid(Context c) const
 {
     const B_D(TSampleInfo);
-    return d->id && d->authorId && !d->authorName.isEmpty() && !d->title.isEmpty() && !d->fileName.isEmpty()
-            && d->creationDT.isValid() && d->modificationDT.isValid();
+    switch (c)
+    {
+    case GeneralContext:
+    default:
+        return d->id && d->author.isValid() && !d->title.isEmpty() && !d->fileName.isEmpty()
+                && d->creationDT.isValid() && d->modificationDT.isValid();
+    }
 }
 
 /*============================== Public operators ==========================*/
@@ -340,8 +373,8 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
     d->id = dd->id;
-    d->authorId = dd->authorId;
-    d->authorName = dd->authorName;
+    d->author = dd->author;
+    d->extraAuthors = dd->extraAuthors;
     d->title = dd->title;
     d->type = dd->type;
     d->fileName = dd->fileName;
@@ -376,8 +409,8 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
     stream << d->id;
-    stream << d->authorId;
-    stream << d->authorName;
+    stream << d->author;
+    stream << d->extraAuthors;
     stream << d->title;
     stream << (int) d->type;
     stream << d->fileName;
@@ -396,8 +429,8 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     static const QList<int> types = bRangeD(TSampleInfo::Unverified, TSampleInfo::Rejected);
     TSampleInfoPrivate *d = info.d_func();
     stream >> d->id;
-    stream >> d->authorId;
-    stream >> d->authorName;
+    stream >> d->author;
+    stream >> d->extraAuthors;
     stream >> d->title;
     int t = TSampleInfo::Unverified;
     stream >> t;
@@ -422,7 +455,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->authorId << "," << d->authorName << "," << d->title << ","
+    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->author.login() << "," << d->title << ","
                   << info.typeString() << "," << d->fileName << "," << info.ratingString() << "," << d->creationDT << ","
                   << d->modificationDT << "," << d->updateDT << ")";
     return dbg.space();

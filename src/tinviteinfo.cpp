@@ -171,15 +171,10 @@ QDateTime TInviteInfo::expirationDateTime(Qt::TimeSpec spec) const
     return d_func()->expirationDT.toTimeSpec(spec);
 }
 
-bool TInviteInfo::isValid(Context c) const
+bool TInviteInfo::isValid() const
 {
     const B_D(TInviteInfo);
-    switch (c)
-    {
-    case GeneralContext:
-    default:
-        return d->id && !d->uuid.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
-    }
+    return d->id && !d->uuid.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
 }
 
 /*============================== Public operators ==========================*/

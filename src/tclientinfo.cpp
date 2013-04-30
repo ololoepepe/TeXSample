@@ -12,6 +12,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QCoreApplication>
 
 /*============================================================================
 ================================ TClientInfoPrivate ==========================
@@ -65,11 +66,11 @@ void TClientInfoPrivate::init()
 
 /*============================== Static public methods =====================*/
 
-TClientInfo TClientInfo::createDefaultInfo(const QString &editorVersion)
+TClientInfo TClientInfo::createDefaultInfo()
 {
     TClientInfo info;
     info.setOS(BeQt::osVersion());
-    info.setEditorVersion(editorVersion);
+    info.setEditorVersion(QCoreApplication::applicationVersion());
     info.setTexsampleVersion(tVersion());
     info.setBeqtVersion(bVersion());
     info.setQtVersion(qVersion());
