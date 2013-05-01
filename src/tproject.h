@@ -8,6 +8,7 @@ class QDebug;
 class QDataStream;
 class QString;
 class QTextCodec;
+class QStringList;
 
 #include "tglobal.h"
 #include "tprojectfile.h"
@@ -25,10 +26,6 @@ class TSMP_EXPORT TProject : BBase
 {
     B_DECLARE_PRIVATE(TProject)
 public:
-    static QStringList externalFiles(const QString &text, bool *ok = 0);
-    static QStringList externalFiles(const QString &fileName, QTextCodec *codec, bool *ok = 0);
-    static QStringList externalFiles(const QString &fileName, const QString &codecName, bool *ok = 0);
-public:
     explicit TProject();
     explicit TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
     explicit TProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
@@ -42,6 +39,9 @@ public:
     const TProjectFile *rootFile() const;
     QList<TProjectFile> *files();
     const QList<TProjectFile> *files() const;
+    QString rootFileName() const;
+    QStringList externalFiles(bool *ok = 0) const;
+    void replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs = Qt::CaseSensitive);
     bool load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
     bool load(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
     bool load(const QString &rootFileName, QTextCodec *codec = 0);

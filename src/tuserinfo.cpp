@@ -1,5 +1,6 @@
 #include "tuserinfo.h"
 #include "tglobal.h"
+#include "taccesslevel.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -23,7 +24,6 @@ class TUserInfoPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TUserInfo)
 public:
    static TUserInfo::Context contextFromInt(int c);
-   static TUserInfo::AccessLevel accessLevelFromInt(int lvl);
 public:
    static const QList<TUserInfo::Context> IdContexts;
    static const QList<TUserInfo::Context> LoginContexts;
@@ -38,13 +38,12 @@ public:
     ~TUserInfoPrivate();
 public:
     void init();
-    QString storageKey(const QString &subkey) const;
 public:
     TUserInfo::Context context;
     quint64 id;
     QString login;
     QByteArray password;
-    TUserInfo::AccessLevel accessLevel;
+    TAccessLevel accessLevel;
     QString realName;
     QByteArray avatar;
     QDateTime creationDT;
@@ -63,12 +62,6 @@ TUserInfo::Context TUserInfoPrivate::contextFromInt(int c)
 {
     static const QList<int> contexts = bRangeD(TUserInfo::GeneralContext, TUserInfo::AuthorizeContext);
     return contexts.contains(c) ? static_cast<TUserInfo::Context>(c) : TUserInfo::GeneralContext;
-}
-
-TUserInfo::AccessLevel TUserInfoPrivate::accessLevelFromInt(int lvl)
-{
-    static const QList<int> levels = bRangeD(TUserInfo::NoLevel, TUserInfo::AdminLevel);
-    return levels.contains(lvl) ? static_cast<TUserInfo::AccessLevel>(lvl) : TUserInfo::NoLevel;
 }
 
 /*============================== Static public constants ===================*/
@@ -114,7 +107,6 @@ void TUserInfoPrivate::init()
 {
     context = TUserInfo::GeneralContext;
     id = 0;
-    accessLevel = TUserInfo::NoLevel;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
 }
@@ -123,42 +115,6 @@ void TUserInfoPrivate::init()
 ================================ TUserInfo ===================================
 ============================================================================*/
 
-/*============================== Static public methods =====================*/
-
-QString TUserInfo::accessLevelToString(AccessLevel lvl, bool singular)
-{
-    if (singular)
-    {
-        switch (lvl)
-        {
-        case UserLevel:
-            return tr("User", "accessLevel (singular)");
-        case ModeratorLevel:
-            return tr("Moderator", "accessLevel (singular)");
-        case AdminLevel:
-            return tr("Administrator", "accessLevel (singular)");
-        case NoLevel:
-        default:
-            return tr("No", "accessLevel (singular)");
-        }
-    }
-    else
-    {
-        switch (lvl)
-        {
-        case UserLevel:
-            return tr("Users", "accessLevel (plural)");
-        case ModeratorLevel:
-            return tr("Moderators", "accessLevel (plural)");
-        case AdminLevel:
-            return tr("Administrators", "accessLevel (plural)");
-        case NoLevel:
-        default:
-            return tr("No", "accessLevel (singular)");
-        }
-    }
-}
-
 /*============================== Public constructors =======================*/
 
 TUserInfo::TUserInfo(Context c) :
@@ -166,6 +122,14 @@ TUserInfo::TUserInfo(Context c) :
 {
     d_func()->init();
     setContext(c);
+}
+
+TUserInfo::TUserInfo(quint64 id, Context c) :
+    BBase(*new TUserInfoPrivate(this))
+{
+    d_func()->init();
+    setContext(c);
+    setId(id);
 }
 
 TUserInfo::TUserInfo(const TUserInfo &other) :
@@ -198,7 +162,7 @@ void TUserInfo::setContext(int c, bool clear)
     if (!TUserInfoPrivate::PasswordContexts.contains(d->context))
         d->password.clear();
     if (!TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-        d->accessLevel = NoLevel;
+        d->accessLevel = TAccessLevel();
     if (!TUserInfoPrivate::RealNameContexts.contains(d->context))
         d->realName.clear();
     if (!TUserInfoPrivate::AvatarContexts.contains(d->context))
@@ -229,9 +193,9 @@ void TUserInfo::setPassword(const QByteArray &data)
     d_func()->password = data;
 }
 
-void TUserInfo::setAccessLevel(int lvl)
+void TUserInfo::setAccessLevel(const TAccessLevel &lvl)
 {
-    d_func()->accessLevel = TUserInfoPrivate::accessLevelFromInt(lvl);
+    d_func()->accessLevel = lvl;
 }
 
 void TUserInfo::setRealName(const QString &name)
@@ -260,7 +224,7 @@ void TUserInfo::clear()
     d->id = 0;
     d->login.clear();
     d->password.clear();
-    d->accessLevel = NoLevel;
+    d->accessLevel = TAccessLevel();
     d->realName.clear();
     d->avatar.clear();
     d->creationDT = QDateTime().toUTC();
@@ -296,14 +260,14 @@ QByteArray TUserInfo::password() const
     return d_func()->password;
 }
 
-TUserInfo::AccessLevel TUserInfo::accessLevel() const
+TAccessLevel TUserInfo::accessLevel() const
 {
     return d_func()->accessLevel;
 }
 
 QString TUserInfo::accessLevelString() const
 {
-    return accessLevelToString(accessLevel());
+    return d_func()->accessLevel.string();
 }
 
 QString TUserInfo::realName() const
@@ -391,6 +355,11 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
     return b;
 }
 
+bool TUserInfo::operator !=(const TUserInfo &other) const
+{
+    return !(*this == other);
+}
+
 TUserInfo::operator QVariant() const
 {
     return QVariant::fromValue(*this);
@@ -409,7 +378,7 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
         stream << d->password;
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-        stream << (int) d->accessLevel;
+        stream << d->accessLevel;
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
         stream << d->realName;
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
@@ -434,11 +403,7 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
         stream >> d->password;
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-    {
-        int lvl = 0;
-        stream >> lvl;
-        info.setAccessLevel(lvl);
-    }
+        stream >> d->accessLevel;
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
         stream >> d->realName;
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))

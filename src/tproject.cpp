@@ -62,7 +62,7 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
     if (!codec)
         codec = QTextCodec::codecForName("UTF-8");
     bool bok = false;
-    QStringList list = TProject::externalFiles(text, &bok);
+    QStringList list = TProjectFile::externalFiles(text, &bok);
     if (!bok)
         return bRet(ok, false, list);
     foreach (int i, bRangeR(list.size() - 1, 0))
@@ -72,7 +72,7 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
         if (QFileInfo(fn).suffix().compare("tex", Qt::CaseInsensitive))
             continue;
         bok = false;
-        QStringList xlist = TProject::externalFiles(fn, codec, &bok);
+        QStringList xlist = TProjectFile::externalFiles(fn, codec, &bok);
         if (!bok)
             return bRet(ok, false, list);
         list << xlist;
@@ -111,64 +111,6 @@ void TProjectPrivate::init()
 /*============================================================================
 ================================ TProject ====================================
 ============================================================================*/
-
-/*============================== Static public methods =====================*/
-
-QStringList TProject::externalFiles(const QString &text, bool *ok)
-{
-    if (text.isEmpty())
-        return bRet(ok, true, QStringList());
-    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
-    {
-#if defined(Q_OS_WIN)
-        cs = Qt::CaseInsensitive;
-#endif
-    }
-    static const QStringList schemes = QStringList() << "http" << "https" << "ftp";
-    QRegExp what(".+");
-    QRegExp pref("\\s*\\\\includegraphics(\\[.*\\])?\\{");
-    QRegExp post("\\}");
-    QStringList list = TTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
-    pref.setPattern("\\s*\\\\input\\s+");
-    post.setPattern("");
-    list << TTextTools::match(text, what, pref, post); // \input "..."
-    pref.setPattern("\\\\href\\{(run\\:)?");
-    post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
-    list << TTextTools::match(text, what, pref, post); // \href{run:...}{...}
-    foreach (int i, bRangeR(list.size() - 1, 0))
-    {
-        list[i] = BeQt::unwrapped(list.at(i));
-        if (QFileInfo(list.at(i)).isAbsolute())
-            return bRet(ok, false, list);
-        foreach (const QString &s, schemes)
-        {
-            if (list.at(i).left((s + "://").length()) == s + "://")
-            {
-                list.removeAt(i);
-                break;
-            }
-        }
-    }
-    TTextTools::removeDuplicates(&list, cs);
-    TTextTools::removeAll(&list, "texsample.tex", cs);
-    TTextTools::sortComprising(&list, cs);
-    return bRet(ok, true, list);
-}
-
-QStringList TProject::externalFiles(const QString &fileName, QTextCodec *codec, bool *ok)
-{
-    bool bok = false;
-    QString text = BDirTools::readTextFile(fileName, codec, &bok);
-    if (!bok)
-        return bRet(ok, false, QStringList());
-    return externalFiles(text, ok);
-}
-
-QStringList TProject::externalFiles(const QString &fileName, const QString &codecName, bool *ok)
-{
-    return externalFiles(fileName, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
-                                                                                   QByteArray("UTF-8")), ok);
-}
 
 /*============================== Public constructors =======================*/
 
@@ -245,6 +187,42 @@ QList<TProjectFile> *TProject::files()
 const QList<TProjectFile> *TProject::files() const
 {
     return &d_func()->files;
+}
+
+QString TProject::rootFileName() const
+{
+    return d_func()->rootFile.fileName();
+}
+
+QStringList TProject::externalFiles(bool *ok) const
+{
+    bool bok = false;
+    QStringList list = rootFile()->externalFiles(&bok);
+    if (!bok)
+        bRet(ok, false, list);
+    foreach (const TProjectFile &pf, d_func()->files)
+    {
+        list << pf.externalFiles(&bok);
+        if (!bok)
+            bRet(ok, false, list);
+    }
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
+    {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    TTextTools::removeDuplicates(&list, cs);
+    TTextTools::sortComprising(&list, cs);
+    return bRet(ok, true, list);
+}
+
+void TProject::replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs)
+{
+    B_D(TProject);
+    d->rootFile.setText(d->rootFile.text().replace(oldString, newString, cs));
+    foreach (int i, bRangeD(0, d->files.size() - 1))
+        d->files[i].setText(d->files.at(i).text().replace(oldString, newString, cs));
 }
 
 bool TProject::load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec)

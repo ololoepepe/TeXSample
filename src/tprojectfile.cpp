@@ -1,10 +1,12 @@
 #include "tprojectfile.h"
 #include "tglobal.h"
+#include "ttexttools.h"
 
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
+#include <BeQt>
 
 #include <QObject>
 #include <QDataStream>
@@ -14,6 +16,8 @@
 #include <QFileInfo>
 #include <QByteArray>
 #include <QTextCodec>
+#include <QStringList>
+#include <QRegExp>
 
 /*============================================================================
 ================================ TProjectFilePrivate =========================
@@ -40,6 +44,64 @@ private:
 /*============================================================================
 ================================ TProjectFilePrivate =========================
 ============================================================================*/
+
+/*============================== Static public methods =====================*/
+
+QStringList TProjectFile::externalFiles(const QString &text, bool *ok)
+{
+    if (text.isEmpty())
+        return bRet(ok, true, QStringList());
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
+    {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    static const QStringList schemes = QStringList() << "http" << "https" << "ftp";
+    QRegExp what(".+");
+    QRegExp pref("\\s*\\\\includegraphics(\\[.*\\])?\\{");
+    QRegExp post("\\}");
+    QStringList list = TTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
+    pref.setPattern("\\s*\\\\input\\s+");
+    post.setPattern("");
+    list << TTextTools::match(text, what, pref, post); // \input "..."
+    pref.setPattern("\\\\href\\{(run\\:)?");
+    post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
+    list << TTextTools::match(text, what, pref, post); // \href{run:...}{...}
+    foreach (int i, bRangeR(list.size() - 1, 0))
+    {
+        list[i] = BeQt::unwrapped(list.at(i));
+        if (QFileInfo(list.at(i)).isAbsolute())
+            return bRet(ok, false, list);
+        foreach (const QString &s, schemes)
+        {
+            if (list.at(i).left((s + "://").length()) == s + "://")
+            {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    TTextTools::removeDuplicates(&list, cs);
+    TTextTools::removeAll(&list, "texsample.tex", cs);
+    TTextTools::sortComprising(&list, cs);
+    return bRet(ok, true, list);
+}
+
+QStringList TProjectFile::externalFiles(const QString &fileName, QTextCodec *codec, bool *ok)
+{
+    bool bok = false;
+    QString text = BDirTools::readTextFile(fileName, codec, &bok);
+    if (!bok)
+        return bRet(ok, false, QStringList());
+    return externalFiles(text, ok);
+}
+
+QStringList TProjectFile::externalFiles(const QString &fileName, const QString &codecName, bool *ok)
+{
+    return externalFiles(fileName, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
+                                                                                   QByteArray("UTF-8")), ok);
+}
 
 /*============================== Public constructors =======================*/
 
@@ -182,6 +244,11 @@ QByteArray TProjectFile::data() const
 QString TProjectFile::text() const
 {
     return d_func()->text;
+}
+
+QStringList TProjectFile::externalFiles(bool *ok) const
+{
+    return externalFiles(d_func()->text, ok);
 }
 
 bool TProjectFile::loadAsBinary(const QString &fileName, const QString &subdir)

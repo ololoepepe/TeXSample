@@ -427,6 +427,11 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
     }
 }
 
+bool TSampleInfo::operator !=(const TSampleInfo &other) const
+{
+    return !(*this == other);
+}
+
 TSampleInfo::operator QVariant() const
 {
     return QVariant::fromValue(*this);

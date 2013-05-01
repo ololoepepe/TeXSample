@@ -58,6 +58,8 @@ TSMP_EXPORT QStringList sortComprising(const QStringList &list, Qt::CaseSensitiv
 TSMP_EXPORT void sortComprising(QStringList *list, Qt::CaseSensitivity cs = Qt::CaseSensitive);
 TSMP_EXPORT SearchResults match(const QString &text, const QRegExp &what, const QRegExp &prefixedBy = QRegExp(),
                                 const QRegExp &postfixedBy = QRegExp());
+TSMP_EXPORT bool intersects(const QStringList &list1, const QStringList &list2,
+                            Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
 }
 

@@ -91,6 +91,7 @@ public:
 public:
     TSampleInfo &operator =(const TSampleInfo &other);
     bool operator ==(const TSampleInfo &other) const;
+    bool operator !=(const TSampleInfo &other) const;
     operator QVariant() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info);
@@ -99,5 +100,6 @@ public:
 };
 
 Q_DECLARE_METATYPE(TSampleInfo)
+Q_DECLARE_METATYPE(TSampleInfo::SamplesList)
 
 #endif // TSAMPLEINFO_H

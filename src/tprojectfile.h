@@ -8,6 +8,7 @@ class QDebug;
 class QDataStream;
 class QTextCodec;
 class QByteArray;
+class QStringList;
 
 #include "tglobal.h"
 
@@ -31,6 +32,10 @@ public:
         Text
     };
 public:
+    static QStringList externalFiles(const QString &text, bool *ok = 0);
+    static QStringList externalFiles(const QString &fileName, QTextCodec *codec, bool *ok = 0);
+    static QStringList externalFiles(const QString &fileName, const QString &codecName, bool *ok = 0);
+public:
     explicit TProjectFile();
     explicit TProjectFile(const QString &fileName, const QByteArray &data, const QString &subdir = QString());
     explicit TProjectFile(const QString &fileName, const QString &text, const QString &subdir = QString());
@@ -51,6 +56,7 @@ public:
     Type type() const;
     QByteArray data() const;
     QString text() const;
+    QStringList externalFiles(bool *ok = 0) const;
     bool loadAsBinary(const QString &fileName, const QString &subdir);
     bool loadAsText(const QString &fileName, QTextCodec *codec = 0, const QString &subdir = QString());
     bool loadAsText(const QString &fileName, const QString &codecName, const QString &subdir = QString());

@@ -58,5 +58,6 @@ public:
 };
 
 Q_DECLARE_METATYPE(TInviteInfo)
+Q_DECLARE_METATYPE(TInviteInfo::InvitesList)
 
 #endif // TINVITEINFO_H

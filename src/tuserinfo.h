@@ -2,6 +2,7 @@
 #define TUSERINFO_H
 
 class TUserInfoPrivate;
+class TAccessLevel;
 
 class QDataStream;
 class QDateTime;
@@ -27,13 +28,6 @@ class TSMP_EXPORT TUserInfo : public BBase
     B_DECLARE_PRIVATE(TUserInfo)
     Q_DECLARE_TR_FUNCTIONS(TUserInfo)
 public:
-    enum AccessLevel
-    {
-        NoLevel = 0,
-        UserLevel = 10,
-        ModeratorLevel = 100,
-        AdminLevel = 1000
-    };
     enum Context
     {
         CurrentContext,
@@ -46,9 +40,8 @@ public:
         AuthorizeContext
     };
 public:
-    static QString accessLevelToString(AccessLevel lvl, bool singular = true);
-public:
     explicit TUserInfo(Context c = GeneralContext);
+    explicit TUserInfo(quint64 id, Context c = GeneralContext);
     TUserInfo(const TUserInfo &other);
     ~TUserInfo();
 public:
@@ -57,7 +50,7 @@ public:
     void setLogin(const QString &login);
     void setPassword(const QString &s);
     void setPassword(const QByteArray &data);
-    void setAccessLevel(int lvl);
+    void setAccessLevel(const TAccessLevel &lvl);
     void setRealName(const QString &name);
     void setAvatar(const QByteArray &data);
     void setCreationDateTime(const QDateTime &dt);
@@ -68,7 +61,7 @@ public:
     QString idString(int fixedLength = -1) const;
     QString login() const;
     QByteArray password() const;
-    AccessLevel accessLevel() const;
+    TAccessLevel accessLevel() const;
     QString accessLevelString() const;
     QString realName() const;
     QByteArray avatar() const;
@@ -78,6 +71,7 @@ public:
 public:
     TUserInfo &operator =(const TUserInfo &other);
     bool operator ==(const TUserInfo &other) const;
+    bool operator !=(const TUserInfo &other) const;
     operator QVariant() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TUserInfo &info);

@@ -239,4 +239,12 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
     return list;
 }
 
+bool intersects(const QStringList &list1, const QStringList &list2, Qt::CaseSensitivity cs)
+{
+    foreach (const QString &s1, list1)
+        if (list2.contains(s1, cs))
+            return true;
+    return false;
+}
+
 }
