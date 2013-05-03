@@ -25,10 +25,9 @@ class TSampleInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TSampleInfo)
 public:
-   static TSampleInfo::Context contextFromInt(int c);
-    static TSampleInfo::Type typeFromInt(int t);
+    static TSampleInfo::Context contextFromInt(int c);
 public:
-   explicit TSampleInfoPrivate(TSampleInfo *q);
+    explicit TSampleInfoPrivate(TSampleInfo *q);
     ~TSampleInfoPrivate();
 public:
     void init();
@@ -60,12 +59,6 @@ TSampleInfo::Context TSampleInfoPrivate::contextFromInt(int c)
 {
     static const QList<int> contexts = bRangeD(TSampleInfo::GeneralContext, TSampleInfo::UpdateContext);
     return contexts.contains(c) ? static_cast<TSampleInfo::Context>(c) : TSampleInfo::GeneralContext;
-}
-
-TSampleInfo::Type TSampleInfoPrivate::typeFromInt(int t)
-{
-    static const QList<int> types = bRangeD(TSampleInfo::Unverified, TSampleInfo::Rejected);
-    return types.contains(t) ? static_cast<TSampleInfo::Type>(t) : TSampleInfo::Unverified;
 }
 
 /*============================== Public constructors =======================*/
@@ -138,6 +131,12 @@ QStringList TSampleInfo::tagsFromString(const QString &s)
 {
     static QRegExp rx("\\,\\s*");
     return s.split(rx, QString::SkipEmptyParts);
+}
+
+TSampleInfo::Type TSampleInfo::typeFromInt(int t)
+{
+    static const QList<int> types = bRangeD(Unverified, Rejected);
+    return types.contains(t) ? static_cast<Type>(t) : Unverified;
 }
 
 /*============================== Public constructors =======================*/
@@ -233,7 +232,7 @@ void TSampleInfo::setTitle(const QString &title)
 
 void TSampleInfo::setType(int t)
 {
-    d_func()->type = TSampleInfoPrivate::typeFromInt(t);
+    d_func()->type = typeFromInt(t);
 }
 
 void TSampleInfo::setFileName(const QString &fileName)

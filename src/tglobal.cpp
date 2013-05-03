@@ -31,6 +31,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCompilerParameters>();
     qRegisterMetaType<TInviteInfo>();
     qRegisterMetaTypeStreamOperators<TInviteInfo>();
+    qRegisterMetaType<TInviteInfo::InvitesList>();
+    qRegisterMetaTypeStreamOperators<TInviteInfo::InvitesList>();
     qRegisterMetaType<TOperationResult>();
     qRegisterMetaTypeStreamOperators<TOperationResult>();
     qRegisterMetaType<TProject>();
@@ -50,5 +52,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "0.1.0-pa";
+    return "0.1.0-beta1";
 }

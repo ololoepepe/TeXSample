@@ -171,6 +171,11 @@ QDateTime TInviteInfo::expirationDateTime(Qt::TimeSpec spec) const
     return d_func()->expirationDT.toTimeSpec(spec);
 }
 
+bool TInviteInfo::isExpired() const
+{
+    return isValid() && d_func()->expirationDT <= QDateTime::currentDateTimeUtc();
+}
+
 bool TInviteInfo::isValid() const
 {
     const B_D(TInviteInfo);

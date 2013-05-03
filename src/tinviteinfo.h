@@ -46,6 +46,7 @@ public:
     QString creatorIdString(int fixedLength = -1) const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    bool isExpired() const;
     bool isValid() const;
 public:
     TInviteInfo &operator =(const TInviteInfo &other);

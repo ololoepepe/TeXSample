@@ -49,6 +49,7 @@ public:
     static QString typeToString(Type t, bool singular = true);
     static QString tagsToString(const QStringList &tags);
     static QStringList tagsFromString(const QString &s);
+    static Type typeFromInt(int t);
 public:
     explicit TSampleInfo(Context c = GeneralContext);
     TSampleInfo(const TSampleInfo &other);

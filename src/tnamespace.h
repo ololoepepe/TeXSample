@@ -23,7 +23,7 @@ const QString DeleteSampleRequest = "delete_sample";
 const QString GetSamplesListRequest = "get_samples_list";
 const QString GetSampleSourceRequest = "get_sample_source";
 const QString GetSamplePreviewRequest = "get_sample_preview";
-const QString GenerateInviteRequest = "generate_invite";
+const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
 const QString CompileProjectRequest = "compile_project";
 
