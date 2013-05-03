@@ -60,7 +60,7 @@ private:
 
 TUserInfo::Context TUserInfoPrivate::contextFromInt(int c)
 {
-    static const QList<int> contexts = bRangeD(TUserInfo::GeneralContext, TUserInfo::AuthorizeContext);
+    static const QList<int> contexts = bRangeD(TUserInfo::GeneralContext, TUserInfo::UpdateContext);
     return contexts.contains(c) ? static_cast<TUserInfo::Context>(c) : TUserInfo::GeneralContext;
 }
 
@@ -71,10 +71,10 @@ const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
     QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext
-    << TUserInfo::RegisterContext << TUserInfo::AuthorizeContext << TUserInfo::GeneralContext;
+    << TUserInfo::RegisterContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::PasswordContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext << TUserInfo::EditContext
-    << TUserInfo::UpdateContext << TUserInfo::AuthorizeContext << TUserInfo::GeneralContext;
+    << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::AccessLevelContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::EditContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::RealNameContexts =
@@ -296,15 +296,13 @@ bool TUserInfo::isValid(Context c) const
     switch ((CurrentContext == c) ? d->context : c)
     {
     case ShortInfoContext:
-        return (d->id && !d->login.isEmpty()) || !d->realName.isEmpty();
+        return d->id && !d->login.isEmpty();
     case AddContext:
     case RegisterContext:
         return !d->login.isEmpty() && !d->password.isEmpty();
     case EditContext:
     case UpdateContext:
-        return d->id;
-    case AuthorizeContext:
-        return !d->login.isEmpty() && !d->password.isEmpty();
+        return d->id && !d->password.isEmpty();
     case GeneralContext:
     default:
         return d->id && !d->login.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();

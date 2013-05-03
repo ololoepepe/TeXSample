@@ -217,6 +217,24 @@ QStringList TProject::externalFiles(bool *ok) const
     return bRet(ok, true, list);
 }
 
+bool TProject::wrapInputs()
+{
+    if (!isValid())
+        return false;
+    B_D(TProject);
+    if (!d->rootFile.wrapInputs())
+        return false;
+    foreach (int i, bRangeD(0, d->files.size() - 1))
+        if (!d->files[i].wrapInputs())
+            return false;
+    return true;
+}
+
+bool TProject::removeTexsampleInput()
+{
+    return isValid() && d_func()->rootFile.removeTexsampleInput();
+}
+
 void TProject::replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs)
 {
     B_D(TProject);

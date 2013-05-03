@@ -113,7 +113,10 @@ bool TCompiledProject::load(const QString &dir, const QStringList &nameFilters)
     if (dir.isEmpty())
         return false;
     QDir d(dir);
-    return load(!nameFilters.isEmpty() ? d.entryList(nameFilters, QDir::Files) : d.entryList(QDir::Files));
+    QStringList files = !nameFilters.isEmpty() ? d.entryList(nameFilters, QDir::Files) : d.entryList(QDir::Files);
+    foreach (int i, bRangeD(0, files.size() - 1))
+        files[i].prepend(dir + "/");
+    return load(files);
 }
 
 bool TCompiledProject::load(const QStringList &files)

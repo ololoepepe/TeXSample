@@ -11,9 +11,11 @@ namespace Texsample
 
 typedef QList<quint64> IdList;
 
+const QString RegisterRequest = "register";
 const QString AuthorizeRequest = "authorize";
 const QString AddUserRequest = "add_user";
 const QString EditUserRequest = "edit_user";
+const QString UpdateAccountRequest = "update_account";
 const QString GetUserInfoRequest = "get_user_info";
 const QString AddSampleRequest = "add_sample";
 const QString EditSampleRequest = "edit_sample";

@@ -84,6 +84,13 @@ TCompilationResult::TCompilationResult(const TCompilationResult &other) :
     *this = other;
 }
 
+TCompilationResult::TCompilationResult(const TOperationResult &opResult) :
+    TOperationResult(*new TCompilationResultPrivate(this))
+{
+    d_func()->init();
+    *this = opResult;
+}
+
 TCompilationResult::~TCompilationResult()
 {
     //
@@ -117,6 +124,8 @@ TCompilationResult &TCompilationResult::operator =(const TCompilationResult &oth
 {
     B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
+    d->success = dd->success;
+    d->error = dd->error;
     d->exitCode = dd->exitCode;
     d->log = dd->log;
     return *this;
@@ -124,7 +133,9 @@ TCompilationResult &TCompilationResult::operator =(const TCompilationResult &oth
 
 TCompilationResult &TCompilationResult::operator =(const TOperationResult &other)
 {
-    (TOperationResult) *this = other;
+    B_D(TCompilationResult);
+    d->success = other.success();
+    d->error = other.errorString();
     return *this;
 }
 
@@ -132,7 +143,7 @@ bool TCompilationResult::operator ==(const TCompilationResult &other) const
 {
     const B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
-    return (TOperationResult) *this == (TOperationResult) other && d->exitCode == dd->exitCode && d->log == dd->log;
+    return d->success == dd->success && d->error == dd->error && d->exitCode == dd->exitCode && d->log == dd->log;
 }
 
 TCompilationResult::operator QVariant() const
@@ -150,7 +161,8 @@ TCompilationResult::operator bool() const
 QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    stream << (TOperationResult) result;
+    stream << d->success;
+    stream << d->error;
     stream << d->exitCode;
     stream << d->log;
     return stream;
@@ -159,9 +171,8 @@ QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)
 QDataStream &operator >>(QDataStream &stream, TCompilationResult &result)
 {
     TCompilationResultPrivate *d = result.d_func();
-    TOperationResult r;
-    stream >> r;
-    result = r;
+    stream >> d->success;
+    stream >> d->error;
     stream >> d->exitCode;
     stream >> d->log;
     return stream;

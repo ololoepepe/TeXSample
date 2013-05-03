@@ -27,6 +27,7 @@ public:
     explicit TCompilationResult(bool success, const QString &errs = QString());
     explicit TCompilationResult(const QString &errs = QString());
     TCompilationResult(const TCompilationResult &other);
+    TCompilationResult(const TOperationResult &opResult);
     ~TCompilationResult();
 public:
     void setExitCode(int code);

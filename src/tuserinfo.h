@@ -36,8 +36,7 @@ public:
         AddContext,
         RegisterContext,
         EditContext,
-        UpdateContext,
-        AuthorizeContext
+        UpdateContext
     };
 public:
     explicit TUserInfo(Context c = GeneralContext);

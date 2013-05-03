@@ -251,6 +251,45 @@ QStringList TProjectFile::externalFiles(bool *ok) const
     return externalFiles(d_func()->text, ok);
 }
 
+bool TProjectFile::wrapInputs()
+{
+    if (!isValid())
+        return false;
+    B_D(TProjectFile);
+    if (d->text.isEmpty())
+        return false;
+    QString text = d->text;
+    TTextTools::SearchResults list = TTextTools::match(text, QRegExp(".+"), QRegExp("\\s*\\\\input\\s+"));
+    foreach (const TTextTools::SearchResult &r, list)
+    {
+        QString txt = r.text();
+        if (txt.left(1) != "\"")
+        {
+            if (txt.right(1) != "\"")
+                text.replace(r.position(), r.length(), txt.prepend("\"").append("\""));
+            else
+                return false;
+        }
+    }
+    d->text = text;
+    return true;
+}
+
+bool TProjectFile::removeTexsampleInput()
+{
+    if (!isValid())
+        return false;
+    B_D(TProjectFile);
+    if (d->text.isEmpty())
+        return false;
+    QString text = d->text;
+    TTextTools::SearchResults list = TTextTools::match(text, QRegExp("texsample\\.tex.*"), QRegExp("\\s*\\\\input\\s+"));
+    foreach (const TTextTools::SearchResult &r, list)
+        text.remove(r.position(), r.length());
+    d->text = text;
+    return true;
+}
+
 bool TProjectFile::loadAsBinary(const QString &fileName, const QString &subdir)
 {
     bool ok = false;

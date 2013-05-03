@@ -41,6 +41,8 @@ public:
     const QList<TProjectFile> *files() const;
     QString rootFileName() const;
     QStringList externalFiles(bool *ok = 0) const;
+    bool wrapInputs();
+    bool removeTexsampleInput();
     void replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs = Qt::CaseSensitive);
     bool load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
     bool load(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
