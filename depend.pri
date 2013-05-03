@@ -19,11 +19,13 @@ else:exists($${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/..
 else:exists($${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src
 else:exists($${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src
 
-#If CONFIG contains "release" or "debug", set special suffix for libs' path
 win32 {
+    #If CONFIG contains "release" or "debug", set special suffix for libs' path
     releaseDebugSuffix=
     CONFIG(release, debug|release):releaseDebugSuffix=/release
     CONFIG(debug, debug|release):releaseDebugSuffix=/debug
+    #Set suffix for libraries names
+    libNameSuffix=2
 }
 
 #Appending the lib to LIBS variable
@@ -31,11 +33,11 @@ win32 {
     mac:contains(CONFIG, lib_bundle) {
         LIBS *= -F$${tsmpLibsPath}$${releaseDebugSuffix}/ -framework TeXSample
     } else {
-        LIBS *= -L$${tsmpLibsPath}$${releaseDebugSuffix}/ -lTeXSample
+        LIBS *= -L$${tsmpLibsPath}$${releaseDebugSuffix}/ -lTeXSample$${libNameSuffix}
     }
 } else {
     mac:LIBS *= -framework TeXSample
-    else:LIBS *= -lTeXSample
+    else:LIBS *= -lTeXSample$${libNameSuffix}
 }
 export(LIBS)
 
