@@ -37,12 +37,12 @@ win32 {
 
 #Appending the lib to LIBS variable
 !isEmpty(tsmpLibsPath) {
-    tsmpFinalLibPah=$${tsmpLibsPath}$${releaseDebugSuffix}
-    !exists($${tsmpFinalLibPah}):tsmpFinalLibPah=$${tsmpLibsPath}
+    tsmpFinalLibPath=$${tsmpLibsPath}$${releaseDebugSuffix}
+    !exists($${tsmpFinalLibPath}):tsmpFinalLibPath=$${tsmpLibsPath}
     mac:contains(CONFIG, lib_bundle) {
-        LIBS *= -F$${tsmpFinalLibsPat}/ -framework TeXSample
+        LIBS *= -F$${tsmpFinalLibsPath}/ -framework TeXSample
     } else {
-        LIBS *= -L$${tsmpFinalLibsPat}/ -lTeXSample$${libNameSuffix}
+        LIBS *= -L$${tsmpFinalLibsPath}/ -lTeXSample$${libNameSuffix}
     }
 } else {
     mac:LIBS *= -framework TeXSample
