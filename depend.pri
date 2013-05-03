@@ -13,14 +13,8 @@ isEmpty(tsmpHeadersPath):error("TeXSample headers not found")
 #Searching for libraries
 tsmpLibsPath=
 tsmpLibsOneFolder=
-mac:exists($${PWD}/../Frameworks) {
-    tsmpLibsPath=$${PWD}/../Frameworks
-    tsmpLibsOneFolder=true
-}
-else:exists($${PWD}/lib) {
-    tsmpLibsPath=$${PWD}/lib
-    tsmpLibsOneFolder=true
-}
+mac:exists($${PWD}/../Frameworks):tsmpLibsPath=$${PWD}/../Frameworks
+else:exists($${PWD}/lib):tsmpLibsPath=$${PWD}/lib
 else:exists($${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src
 else:exists($${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src
 else:exists($${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src):tsmpLibsPath=$${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src
@@ -40,9 +34,9 @@ win32 {
     tsmpFinalLibPath=$${tsmpLibsPath}$${releaseDebugSuffix}
     !exists($${tsmpFinalLibPath}):tsmpFinalLibPath=$${tsmpLibsPath}
     mac:contains(CONFIG, lib_bundle) {
-        LIBS *= -F$${tsmpFinalLibsPath}/ -framework TeXSample
+        LIBS *= -F$${tsmpFinalLibPath}/ -framework TeXSample
     } else {
-        LIBS *= -L$${tsmpFinalLibsPath}/ -lTeXSample$${libNameSuffix}
+        LIBS *= -L$${tsmpFinalLibPath}/ -lTeXSample$${libNameSuffix}
     }
 } else {
     mac:LIBS *= -framework TeXSample
