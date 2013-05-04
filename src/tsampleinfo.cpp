@@ -122,12 +122,12 @@ QString TSampleInfo::typeToString(Type t, bool singular)
     }
 }
 
-QString TSampleInfo::tagsToString(const QStringList &tags)
+QString TSampleInfo::listToString(const QStringList &list)
 {
-    return tags.join(", ");
+    return list.join(", ");
 }
 
-QStringList TSampleInfo::tagsFromString(const QString &s)
+QStringList TSampleInfo::listFromString(const QString &s)
 {
     static QRegExp rx("\\,\\s*");
     return s.split(rx, QString::SkipEmptyParts);
@@ -225,6 +225,11 @@ void TSampleInfo::setExtraAuthors(const QStringList &list)
     d_func()->extraAuthors.removeDuplicates();
 }
 
+void TSampleInfo::setExtraAuthors(const QString &s)
+{
+    setExtraAuthors(listFromString(s));
+}
+
 void TSampleInfo::setTitle(const QString &title)
 {
     d_func()->title = title;
@@ -247,7 +252,7 @@ void TSampleInfo::setTags(const QStringList &list)
 
 void TSampleInfo::setTags(const QString &s)
 {
-    setTags(tagsFromString(s));
+    setTags(listFromString(s));
 }
 
 void TSampleInfo::setComment(const QString &s)
@@ -304,6 +309,11 @@ QStringList TSampleInfo::extraAuthors() const
     return d_func()->extraAuthors;
 }
 
+QString TSampleInfo::extraAuthorsString() const
+{
+    return listToString(d_func()->extraAuthors);
+}
+
 QString TSampleInfo::title() const
 {
     return d_func()->title;
@@ -331,7 +341,7 @@ QStringList TSampleInfo::tags() const
 
 QString TSampleInfo::tagsString() const
 {
-    return tagsToString(d_func()->tags);
+    return listToString(d_func()->tags);
 }
 
 QString TSampleInfo::comment() const
