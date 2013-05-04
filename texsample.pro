@@ -110,4 +110,14 @@ defineReplace(getActualPrivateHeaders) {
     INSTALLS += tsmpInstallsDepend
 }
 
+##############################################################################
+################################ Translations ################################
+##############################################################################
+
+!contains(TSMP_CONFIG, builtin_resources) {
+    tsmpInstallsTranslations.files=$$files($${PWD}/translations/*.qm)
+    tsmpInstallsTranslations.path=$${TSMP_RESOURCES_INSTALLS_PATH}/translations
+    INSTALLS += tsmpInstallsTranslations
+}
+
 } #end !contains(TSMP_CONFIG, no_install)

@@ -69,8 +69,6 @@ contains(TSMP_CONFIG, builtin_resources) {
 
 include(../prefix.pri)
 
-message($${TSMP_LIBS_INSTALLS_PATH})
-
 target.path = $${TSMP_LIBS_INSTALLS_PATH}
 INSTALLS = target
 
