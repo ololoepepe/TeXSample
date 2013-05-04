@@ -64,6 +64,9 @@ QStringList TProjectFile::externalFiles(const QString &text, bool *ok)
     QStringList list = TTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
     pref.setPattern("\\s*\\\\input\\s+");
     post.setPattern("");
+    list << TTextTools::match(text, QRegExp("\\S+"), pref, post); // \input ...
+    pref.setPattern("\\s*\\\\input\\s+\"");
+    post.setPattern("\"");
     list << TTextTools::match(text, what, pref, post); // \input "..."
     pref.setPattern("\\\\href\\{(run\\:)?");
     post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
@@ -251,14 +254,61 @@ QStringList TProjectFile::externalFiles(bool *ok) const
     return externalFiles(d_func()->text, ok);
 }
 
-bool TProjectFile::wrapInputs()
+QStringList TProjectFile::restrictedCommands() const
+{
+    const B_D(TProjectFile);
+    QStringList list;
+    if (d->text.isEmpty())
+        return list;
+    if (d->text.contains(QRegExp("\\s*\\\\documentclass")))
+        list << "\\documentclass";
+    if (d->text.contains(QRegExp("\\s*\\\\usepackage")))
+        list << "\\usepackage";
+    if (d->text.contains(QRegExp("\\s*\\\\makeindex")))
+        list << "\\makeindex";
+    if (d->text.contains(QRegExp("\\s*\\\\input\\s+texsample\\.tex")))
+        list << "\\input texsample.tex";
+    if (d->text.contains(QRegExp("\\s*\\begin\\{document\\}")))
+        list << "\\begin{document}";
+    if (d->text.contains(QRegExp("\\s*\\end\\{document\\}")))
+        list << "\\end{document}";
+    return list;
+}
+
+void TProjectFile::removeRestrictedCommands()
 {
     if (!isValid())
+        return;
+    B_D(TProjectFile);
+    if (d->text.isEmpty())
+        return;
+    QStringList sl = d->text.split('\n');
+    foreach (int i, bRangeD(0, sl.size() - 1))
+        sl[i].remove(QRegExp("\\s*\\\\(documentclass|usepackage|makeindex|"
+                             "input\\s+texsample\\.tex|(begin|end)\\{document\\}).*"));
+    d->text = sl.join("\n");
+}
+
+bool TProjectFile::prependExternalFileNames(const QString &subdir)
+{
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive)
+    {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    if (subdir.isEmpty() || !isValid())
         return false;
     B_D(TProjectFile);
     if (d->text.isEmpty())
         return false;
+    bool ok = false;
+    QStringList files = externalFiles(&ok);
+    if(!ok)
+        return false;
     QString text = d->text;
+    foreach (const QString fn, files)
+        text.replace(fn, subdir + "/" + fn, cs);
     TTextTools::SearchResults list = TTextTools::match(text, QRegExp(".+"), QRegExp("\\s*\\\\input\\s+"));
     foreach (const TTextTools::SearchResult &r, list)
     {
@@ -271,21 +321,6 @@ bool TProjectFile::wrapInputs()
                 return false;
         }
     }
-    d->text = text;
-    return true;
-}
-
-bool TProjectFile::removeTexsampleInput()
-{
-    if (!isValid())
-        return false;
-    B_D(TProjectFile);
-    if (d->text.isEmpty())
-        return false;
-    QString text = d->text;
-    TTextTools::SearchResults list = TTextTools::match(text, QRegExp("texsample\\.tex.*"), QRegExp("\\s*\\\\input\\s+"));
-    foreach (const TTextTools::SearchResult &r, list)
-        text.remove(r.position(), r.length());
     d->text = text;
     return true;
 }

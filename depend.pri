@@ -26,7 +26,7 @@ win32 {
     CONFIG(release, debug|release):releaseDebugSuffix=/release
     CONFIG(debug, debug|release):releaseDebugSuffix=/debug
     #Set suffix for libraries names
-    libNameSuffix=1
+    libNameSuffix=0
 }
 
 #Appending the lib to LIBS variable

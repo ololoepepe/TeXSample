@@ -57,8 +57,9 @@ public:
     QByteArray data() const;
     QString text() const;
     QStringList externalFiles(bool *ok = 0) const;
-    bool wrapInputs();
-    bool removeTexsampleInput();
+    QStringList restrictedCommands() const;
+    void removeRestrictedCommands();
+    bool prependExternalFileNames(const QString &subdir);
     bool loadAsBinary(const QString &fileName, const QString &subdir);
     bool loadAsText(const QString &fileName, QTextCodec *codec = 0, const QString &subdir = QString());
     bool loadAsText(const QString &fileName, const QString &codecName, const QString &subdir = QString());
