@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/translations"/>
+    <qresource prefix="/translations">
+        <file>texsample_ru.qm</file>
+    </qresource>
 </RCC>

@@ -217,22 +217,30 @@ QStringList TProject::externalFiles(bool *ok) const
     return bRet(ok, true, list);
 }
 
-bool TProject::wrapInputs()
+QStringList TProject::restrictedCommands() const
 {
-    if (!isValid())
-        return false;
-    B_D(TProject);
-    if (!d->rootFile.wrapInputs())
-        return false;
-    foreach (int i, bRangeD(0, d->files.size() - 1))
-        if (!d->files[i].wrapInputs())
-            return false;
-    return true;
+    QStringList list = d_func()->rootFile.restrictedCommands();
+    foreach (const TProjectFile &f, d_func()->files)
+        list << f.restrictedCommands();
+    list.removeDuplicates();
+    return list;
 }
 
-bool TProject::removeTexsampleInput()
+void TProject::removeRestrictedCommands()
 {
-    return isValid() && d_func()->rootFile.removeTexsampleInput();
+    d_func()->rootFile.removeRestrictedCommands();
+    foreach (int i, bRangeD(0, d_func()->files.size() - 1))
+        d_func()->files[i].removeRestrictedCommands();
+}
+
+bool TProject::prependExternalFileNames(const QString &subdir)
+{
+    if (!d_func()->rootFile.prependExternalFileNames(subdir))
+        return false;
+    foreach (int i, bRangeD(0, d_func()->files.size() - 1))
+        if (!d_func()->files[i].prependExternalFileNames(subdir))
+            return false;
+    return true;
 }
 
 void TProject::replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs)

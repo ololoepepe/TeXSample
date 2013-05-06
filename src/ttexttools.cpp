@@ -105,8 +105,9 @@ int removeDuplicates(QStringList *list, Qt::CaseSensitivity cs)
         {
             if (!list->at(i).compare(list->at(j), cs))
             {
-                list->removeAt(j);
+                list->removeAt(i);
                 ++count;
+                continue;
             }
         }
     }
@@ -208,10 +209,6 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                         b = false;
                     }
                 }
-                else
-                {
-                    b = false;
-                }
             }
             if (!postfixedBy.isEmpty() && postfixedBy.isValid())
             {
@@ -224,10 +221,6 @@ SearchResults match(const QString &text, const QRegExp &what, const QRegExp &pre
                         len -= postfixedBy.matchedLength();
                     else
                         b = false;
-                }
-                else
-                {
-                    b = false;
                 }
             }
             if (b && line.mid(pos, len).contains(what))

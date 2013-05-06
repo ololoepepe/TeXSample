@@ -1,9 +1,9 @@
 TEMPLATE = lib
 TARGET = TeXSample
 
-VERSION = 1.0.0
-VER_MAJ = 1
-VER_MIN = 0
+VERSION = 0.1.0
+VER_MAJ = 0
+VER_MIN = 1
 VER_PAT = 0
 
 CONFIG += release
@@ -68,8 +68,6 @@ contains(TSMP_CONFIG, builtin_resources) {
 !contains(TSMP_CONFIG, no_install) {
 
 include(../prefix.pri)
-
-message($${TSMP_LIBS_INSTALLS_PATH})
 
 target.path = $${TSMP_LIBS_INSTALLS_PATH}
 INSTALLS = target

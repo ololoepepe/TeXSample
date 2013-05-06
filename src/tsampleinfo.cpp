@@ -122,12 +122,12 @@ QString TSampleInfo::typeToString(Type t, bool singular)
     }
 }
 
-QString TSampleInfo::tagsToString(const QStringList &tags)
+QString TSampleInfo::listToString(const QStringList &list)
 {
-    return tags.join(", ");
+    return list.join(", ");
 }
 
-QStringList TSampleInfo::tagsFromString(const QString &s)
+QStringList TSampleInfo::listFromString(const QString &s)
 {
     static QRegExp rx("\\,\\s*");
     return s.split(rx, QString::SkipEmptyParts);
@@ -225,6 +225,11 @@ void TSampleInfo::setExtraAuthors(const QStringList &list)
     d_func()->extraAuthors.removeDuplicates();
 }
 
+void TSampleInfo::setExtraAuthors(const QString &s)
+{
+    setExtraAuthors(listFromString(s));
+}
+
 void TSampleInfo::setTitle(const QString &title)
 {
     d_func()->title = title;
@@ -247,7 +252,7 @@ void TSampleInfo::setTags(const QStringList &list)
 
 void TSampleInfo::setTags(const QString &s)
 {
-    setTags(tagsFromString(s));
+    setTags(listFromString(s));
 }
 
 void TSampleInfo::setComment(const QString &s)
@@ -262,7 +267,7 @@ void TSampleInfo::setAdminRemark(const QString &s)
 
 void TSampleInfo::setRating(quint8 r)
 {
-    d_func()->rating = r;
+    d_func()->rating = (r < 100) ? r : 100;
 }
 
 void TSampleInfo::setCreationDateTime(const QDateTime &dt)
@@ -304,6 +309,11 @@ QStringList TSampleInfo::extraAuthors() const
     return d_func()->extraAuthors;
 }
 
+QString TSampleInfo::extraAuthorsString() const
+{
+    return listToString(d_func()->extraAuthors);
+}
+
 QString TSampleInfo::title() const
 {
     return d_func()->title;
@@ -331,7 +341,7 @@ QStringList TSampleInfo::tags() const
 
 QString TSampleInfo::tagsString() const
 {
-    return tagsToString(d_func()->tags);
+    return listToString(d_func()->tags);
 }
 
 QString TSampleInfo::comment() const
@@ -368,13 +378,14 @@ QDateTime TSampleInfo::modificationDateTime(Qt::TimeSpec spec) const
 bool TSampleInfo::isValid(Context c) const
 {
     const B_D(TSampleInfo);
-    switch (c)
+
+    switch ((CurrentContext == c) ? d->context : c)
     {
     case AddContext:
         return !d->title.isEmpty() && !d->fileName.isEmpty();
     case EditContext:
     case UpdateContext:
-        return d->id;
+        return d->id && !d->fileName.isEmpty();
     case GeneralContext:
     default:
         return d->id && d->author.isValid(TUserInfo::ShortInfoContext)
@@ -389,6 +400,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
 {
     B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
+    d->context = dd->context;
     d->id = dd->id;
     d->author = dd->author;
     d->extraAuthors = dd->extraAuthors;

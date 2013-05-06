@@ -47,8 +47,8 @@ public:
     };
 public:
     static QString typeToString(Type t, bool singular = true);
-    static QString tagsToString(const QStringList &tags);
-    static QStringList tagsFromString(const QString &s);
+    static QString listToString(const QStringList &list);
+    static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
 public:
     explicit TSampleInfo(Context c = GeneralContext);
@@ -61,6 +61,7 @@ public:
     void setId(quint64 id);
     void setAuthor(const TUserInfo &author);
     void setExtraAuthors(const QStringList &list);
+    void setExtraAuthors(const QString &s);
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
@@ -76,6 +77,7 @@ public:
     QString idString(int fixedLength = -1) const;
     TUserInfo author() const;
     QStringList extraAuthors() const;
+    QString extraAuthorsString() const;
     QString title() const;
     Type type() const;
     QString typeString() const;
