@@ -1,6 +1,8 @@
 #ifndef TNAMESPACE_H
 #define TNAMESPACE_H
 
+#include <BeQt>
+
 #include <QString>
 #include <QtGlobal>
 #include <QList>
@@ -10,6 +12,8 @@ namespace Texsample
 {
 
 typedef QList<quint64> IdList;
+
+const qint64 MaximumAvatarSize = BeQt::Megabyte;
 
 const QString RegisterRequest = "register";
 const QString AuthorizeRequest = "authorize";

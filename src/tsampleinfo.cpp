@@ -267,7 +267,7 @@ void TSampleInfo::setAdminRemark(const QString &s)
 
 void TSampleInfo::setRating(quint8 r)
 {
-    d_func()->rating = r;
+    d_func()->rating = (r < 100) ? r : 100;
 }
 
 void TSampleInfo::setCreationDateTime(const QDateTime &dt)
@@ -384,7 +384,7 @@ bool TSampleInfo::isValid(Context c) const
         return !d->title.isEmpty() && !d->fileName.isEmpty();
     case EditContext:
     case UpdateContext:
-        return d->id;
+        return d->id && !d->fileName.isEmpty();
     case GeneralContext:
     default:
         return d->id && d->author.isValid(TUserInfo::ShortInfoContext)

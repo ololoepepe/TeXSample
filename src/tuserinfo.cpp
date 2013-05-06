@@ -185,7 +185,7 @@ void TUserInfo::setLogin(const QString &login)
 
 void TUserInfo::setPassword(const QString &s)
 {
-    setPassword(QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1));
+    setPassword(!s.isEmpty() ? QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1) : QByteArray());
 }
 
 void TUserInfo::setPassword(const QByteArray &data)

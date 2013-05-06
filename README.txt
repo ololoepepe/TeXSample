@@ -2,8 +2,6 @@
  TeXSample
 ==============================================================================
 
-Check for your language README in the "readme" directory.
-
 Homepage: https://github.com/TeXSample-Team/TeXSample
 
 Author: TeXSample Team (ololoepepe@gmail.com)
