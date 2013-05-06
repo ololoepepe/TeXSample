@@ -378,7 +378,8 @@ QDateTime TSampleInfo::modificationDateTime(Qt::TimeSpec spec) const
 bool TSampleInfo::isValid(Context c) const
 {
     const B_D(TSampleInfo);
-    switch (c)
+
+    switch ((CurrentContext == c) ? d->context : c)
     {
     case AddContext:
         return !d->title.isEmpty() && !d->fileName.isEmpty();
@@ -399,6 +400,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
 {
     B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
+    d->context = dd->context;
     d->id = dd->id;
     d->author = dd->author;
     d->extraAuthors = dd->extraAuthors;

@@ -52,5 +52,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "0.1.0-beta1";
+    return "0.1.0-beta2";
 }
