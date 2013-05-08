@@ -14,6 +14,7 @@ namespace Texsample
 typedef QList<quint64> IdList;
 
 const qint64 MaximumAvatarSize = BeQt::Megabyte;
+const quint8 MaximumInvitesCount = 3;
 
 const QString RegisterRequest = "register";
 const QString AuthorizeRequest = "authorize";
