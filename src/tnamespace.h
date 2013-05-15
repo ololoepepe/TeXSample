@@ -33,6 +33,10 @@ const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
 const QString CompileProjectRequest = "compile_project";
 
+const QString ExecuteCommandRequest = "execute_command";
+const QString LogRequest = "log";
+const QString WriteRequest = "write";
+
 }
 
 Q_DECLARE_METATYPE(Texsample::IdList)
