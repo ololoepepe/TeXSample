@@ -301,6 +301,7 @@ bool TUserInfo::isValid(Context c) const
     case RegisterContext:
         return !d->login.isEmpty() && !d->password.isEmpty();
     case EditContext:
+        return d->id;
     case UpdateContext:
         return d->id && !d->password.isEmpty();
     case GeneralContext:
