@@ -38,6 +38,16 @@
         <comment>accessLevel (plural)</comment>
         <translation>Администраторы</translation>
     </message>
+    <message>
+        <source>Root</source>
+        <comment>accessLevel (singular)</comment>
+        <translation>Суперпользователь</translation>
+    </message>
+    <message>
+        <source>Roots</source>
+        <comment>accessLevel (plural)</comment>
+        <translation>Суперпользователи</translation>
+    </message>
 </context>
 <context>
     <name>TClientInfo</name>

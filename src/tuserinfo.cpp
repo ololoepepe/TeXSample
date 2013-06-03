@@ -26,6 +26,7 @@ public:
    static TUserInfo::Context contextFromInt(int c);
 public:
    static const QList<TUserInfo::Context> IdContexts;
+   static const QList<TUserInfo::Context> EmailContexts;
    static const QList<TUserInfo::Context> LoginContexts;
    static const QList<TUserInfo::Context> PasswordContexts;
    static const QList<TUserInfo::Context> AccessLevelContexts;
@@ -41,6 +42,7 @@ public:
 public:
     TUserInfo::Context context;
     quint64 id;
+    QString email;
     QString login;
     QByteArray password;
     TAccessLevel accessLevel;
@@ -69,6 +71,8 @@ TUserInfo::Context TUserInfoPrivate::contextFromInt(int c)
 const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
     QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::EditContext
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::EmailContexts =
+    QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
     QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext
     << TUserInfo::RegisterContext << TUserInfo::GeneralContext;
@@ -157,6 +161,8 @@ void TUserInfo::setContext(int c, bool clear)
         return;
     if (!TUserInfoPrivate::IdContexts.contains(d->context))
         d->id = 0;
+    if (!TUserInfoPrivate::EmailContexts.contains(d->context))
+        d->email.clear();
     if (!TUserInfoPrivate::LoginContexts.contains(d->context))
         d->login.clear();
     if (!TUserInfoPrivate::PasswordContexts.contains(d->context))
@@ -176,6 +182,11 @@ void TUserInfo::setContext(int c, bool clear)
 void TUserInfo::setId(quint64 id)
 {
     d_func()->id = id;
+}
+
+void TUserInfo::setEmail(const QString &email)
+{
+    d_func()->email = email;
 }
 
 void TUserInfo::setLogin(const QString &login)
@@ -222,6 +233,7 @@ void TUserInfo::clear()
 {
     B_D(TUserInfo);
     d->id = 0;
+    d->email.clear();
     d->login.clear();
     d->password.clear();
     d->accessLevel = TAccessLevel();
@@ -248,6 +260,11 @@ QString TUserInfo::idString(int fixedLength) const
     if (dlen > 0)
         s.prepend(QString().fill('0', dlen));
     return s;
+}
+
+QString TUserInfo::email() const
+{
+    return d_func()->email;
 }
 
 QString TUserInfo::login() const
@@ -299,7 +316,7 @@ bool TUserInfo::isValid(Context c) const
         return d->id && !d->login.isEmpty();
     case AddContext:
     case RegisterContext:
-        return !d->login.isEmpty() && !d->password.isEmpty();
+        return !d->email.isEmpty() && !d->login.isEmpty() && !d->password.isEmpty();
     case EditContext:
         return d->id;
     case UpdateContext:
@@ -318,6 +335,7 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     const TUserInfoPrivate *dd = other.d_func();
     d->context = dd->context;
     d->id = dd->id;
+    d->email = dd->email;
     d->login = dd->login;
     d->password = dd->password;
     d->accessLevel = dd->accessLevel;
@@ -337,6 +355,8 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
     bool b = true;
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         b = b && d->id == dd->id;
+    if (TUserInfoPrivate::EmailContexts.contains(d->context))
+        b = b && d->email == dd->email;
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
         b = b && d->login == dd->login;
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
@@ -372,6 +392,8 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     stream << (int) d->context;
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         stream << d->id;
+    if (TUserInfoPrivate::EmailContexts.contains(d->context))
+        stream << d->email;
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
         stream << d->login;
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
@@ -397,6 +419,8 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     info.setContext(context);
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         stream >> d->id;
+    if (TUserInfoPrivate::EmailContexts.contains(d->context))
+        stream >> d->email;
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
         stream >> d->login;
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
