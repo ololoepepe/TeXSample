@@ -31,7 +31,8 @@ public:
         NoLevel = 0,
         UserLevel = 10,
         ModeratorLevel = 100,
-        AdminLevel = 1000
+        AdminLevel = 1000,
+        RootLevel = 10000
     };
 public:
     static QString accessLevelToString(AccessLevel lvl, bool singular = true);

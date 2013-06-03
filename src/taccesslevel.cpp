@@ -20,8 +20,6 @@ class TAccessLevelPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TAccessLevel)
 public:
-   static TAccessLevel::AccessLevel accessLevelFromInt(int lvl);
-public:
    explicit TAccessLevelPrivate(TAccessLevel *q);
     ~TAccessLevelPrivate();
 public:
@@ -74,6 +72,8 @@ QString TAccessLevel::accessLevelToString(AccessLevel lvl, bool singular)
             return tr("Moderator", "accessLevel (singular)");
         case AdminLevel:
             return tr("Administrator", "accessLevel (singular)");
+        case RootLevel:
+            return tr("Root", "accessLevel (singular)");
         case NoLevel:
         default:
             return tr("No", "accessLevel (singular)");
@@ -89,6 +89,8 @@ QString TAccessLevel::accessLevelToString(AccessLevel lvl, bool singular)
             return tr("Moderators", "accessLevel (plural)");
         case AdminLevel:
             return tr("Administrators", "accessLevel (plural)");
+        case RootLevel:
+            return tr("Roots", "accessLevel (plural)");
         case NoLevel:
         default:
             return tr("No", "accessLevel (singular)");
@@ -140,7 +142,7 @@ TAccessLevel &TAccessLevel::operator =(const TAccessLevel &other)
 
 TAccessLevel &TAccessLevel::operator =(int lvl)
 {
-    static const QList<int> Levels = QList<int>() << NoLevel << UserLevel << ModeratorLevel << AdminLevel;
+    static const QList<int> Levels = QList<int>() << NoLevel << UserLevel << ModeratorLevel << AdminLevel << RootLevel;
     d_func()->level = Levels.contains(lvl) ? static_cast<AccessLevel>(lvl) : NoLevel;
     return *this;
 }

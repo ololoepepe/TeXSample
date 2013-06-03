@@ -46,6 +46,7 @@ public:
 public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
+    void setEmail(const QString &email);
     void setLogin(const QString &login);
     void setPassword(const QString &s);
     void setPassword(const QByteArray &data);
@@ -58,6 +59,7 @@ public:
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
+    QString email() const;
     QString login() const;
     QByteArray password() const;
     TAccessLevel accessLevel() const;
