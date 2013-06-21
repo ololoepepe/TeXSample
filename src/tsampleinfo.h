@@ -59,9 +59,9 @@ protected:
 public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
-    void setAuthor(const TUserInfo &author);
-    void setExtraAuthors(const QStringList &list);
-    void setExtraAuthors(const QString &s);
+    void setSender(const TUserInfo &s);
+    void setAuthors(const QStringList &list);
+    void setAuthors(const QString &s);
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
@@ -75,9 +75,9 @@ public:
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
-    TUserInfo author() const;
-    QStringList extraAuthors() const;
-    QString extraAuthorsString() const;
+    TUserInfo sender() const;
+    QStringList authors() const;
+    QString authorsString() const;
     QString title() const;
     Type type() const;
     QString typeString() const;

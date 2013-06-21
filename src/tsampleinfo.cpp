@@ -34,8 +34,8 @@ public:
 public:
     TSampleInfo::Context context;
     quint64 id;
-    TUserInfo author;
-    QStringList extraAuthors;
+    TUserInfo sender;
+    QStringList authors;
     QString title;
     TSampleInfo::Type type;
     QString fileName;
@@ -129,8 +129,10 @@ QString TSampleInfo::listToString(const QStringList &list)
 
 QStringList TSampleInfo::listFromString(const QString &s)
 {
-    static QRegExp rx("\\,\\s*");
-    return s.split(rx, QString::SkipEmptyParts);
+    QStringList sl = s.split(QRegExp("(\\,|\n+\\,?)\\s*"), QString::SkipEmptyParts);
+    sl.removeAll("");
+    sl.removeDuplicates();
+    return sl;
 }
 
 TSampleInfo::Type TSampleInfo::typeFromInt(int t)
@@ -183,7 +185,7 @@ void TSampleInfo::setContext(int c, bool clear)
     {
     case AddContext:
         d->id = 0;
-        d->author.clear();
+        d->sender.clear();
         d->type = Unverified;
         d->remark.clear();
         d->rating = 0;
@@ -191,12 +193,12 @@ void TSampleInfo::setContext(int c, bool clear)
         d->modificationDT = QDateTime().toUTC();
         break;
     case EditContext:
-        d->author.clear();
+        d->sender.clear();
         d->creationDT = QDateTime().toUTC();
         d->modificationDT = QDateTime().toUTC();
         break;
     case UpdateContext:
-        d->author.clear();
+        d->sender.clear();
         d->type = Unverified;
         d->remark.clear();
         d->rating = 0;
@@ -214,20 +216,20 @@ void TSampleInfo::setId(quint64 id)
     d_func()->id = id;
 }
 
-void TSampleInfo::setAuthor(const TUserInfo &author)
+void TSampleInfo::setSender(const TUserInfo &s)
 {
-    d_func()->author = author;
+    d_func()->sender = s;
 }
 
-void TSampleInfo::setExtraAuthors(const QStringList &list)
+void TSampleInfo::setAuthors(const QStringList &list)
 {
-    d_func()->extraAuthors = list;
-    d_func()->extraAuthors.removeDuplicates();
+    d_func()->authors = list;
+    d_func()->authors.removeDuplicates();
 }
 
-void TSampleInfo::setExtraAuthors(const QString &s)
+void TSampleInfo::setAuthors(const QString &s)
 {
-    setExtraAuthors(listFromString(s));
+    setAuthors(listFromString(s));
 }
 
 void TSampleInfo::setTitle(const QString &title)
@@ -299,19 +301,19 @@ QString TSampleInfo::idString(int fixedLength) const
     return s;
 }
 
-TUserInfo TSampleInfo::author() const
+TUserInfo TSampleInfo::sender() const
 {
-    return d_func()->author;
+    return d_func()->sender;
 }
 
-QStringList TSampleInfo::extraAuthors() const
+QStringList TSampleInfo::authors() const
 {
-    return d_func()->extraAuthors;
+    return d_func()->authors;
 }
 
-QString TSampleInfo::extraAuthorsString() const
+QString TSampleInfo::authorsString() const
 {
-    return listToString(d_func()->extraAuthors);
+    return listToString(d_func()->authors);
 }
 
 QString TSampleInfo::title() const
@@ -385,11 +387,11 @@ bool TSampleInfo::isValid(Context c) const
         return !d->title.isEmpty() && !d->fileName.isEmpty();
     case EditContext:
     case UpdateContext:
-        return d->id && !d->fileName.isEmpty();
+        return d->id && !d->title.isEmpty() && !d->fileName.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->author.isValid(TUserInfo::ShortInfoContext)
-                && (d->extraAuthors.isEmpty() || !d->extraAuthors.contains("")) && !d->title.isEmpty()
+        return d->id && d->sender.isValid(TUserInfo::ShortInfoContext)
+                && (d->authors.isEmpty() || !d->authors.contains("")) && !d->title.isEmpty()
                 && !d->fileName.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
     }
 }
@@ -402,8 +404,8 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     const TSampleInfoPrivate *dd = other.d_func();
     d->context = dd->context;
     d->id = dd->id;
-    d->author = dd->author;
-    d->extraAuthors = dd->extraAuthors;
+    d->sender = dd->sender;
+    d->authors = dd->authors;
     d->title = dd->title;
     d->type = dd->type;
     d->fileName = dd->fileName;
@@ -431,8 +433,8 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
         return d->id == dd->id;
     case GeneralContext:
     default:
-        return d->id == dd->id && d->author == dd->author && d->extraAuthors == dd->extraAuthors
-                && d->title == dd->title && d->type == dd->type && d->fileName == dd->fileName && d->tags == dd->tags
+        return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
+                && d->type == dd->type && d->fileName == dd->fileName && d->tags == dd->tags
                 && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
                 && d->creationDT == dd->creationDT && d->modificationDT == dd->modificationDT;
     }
@@ -457,8 +459,8 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     if (TSampleInfo::AddContext != d->context)
         stream << d->id;
     if (TSampleInfo::GeneralContext == d->context)
-        stream << d->author;
-    stream << d->extraAuthors;
+        stream << d->sender;
+    stream << d->authors;
     stream << d->title;
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
         stream << (int) d->type;
@@ -487,8 +489,8 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     if (TSampleInfo::AddContext != d->context)
         stream >> d->id;
     if (TSampleInfo::GeneralContext == d->context)
-        stream >> d->author;
-    stream >> d->extraAuthors;
+        stream >> d->sender;
+    stream >> d->authors;
     stream >> d->title;
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
     {
@@ -519,7 +521,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->author.login() << "," << d->title << ","
+    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->sender.login() << "," << d->title << ","
                   << info.typeString() << ")";
     return dbg.space();
 }
