@@ -13,7 +13,7 @@
 ================================ TOperationResultPrivate =====================
 ============================================================================*/
 
-class TOperationResultPrivate : public BBasePrivate
+class TSMP_EXPORT TOperationResultPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TOperationResult)
 public:

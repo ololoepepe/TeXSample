@@ -26,7 +26,7 @@ class TSMP_EXPORT TClientInfo : public BBase
     B_DECLARE_PRIVATE(TClientInfo)
     Q_DECLARE_TR_FUNCTIONS(TClientInfo)
 public:
-        static TClientInfo createDefaultInfo();
+    static TClientInfo createDefaultInfo();
 public:
     explicit TClientInfo();
     TClientInfo(const TClientInfo &other);

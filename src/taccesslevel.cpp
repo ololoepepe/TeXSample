@@ -1,5 +1,4 @@
 #include "taccesslevel.h"
-
 #include "tglobal.h"
 
 #include <BeQtGlobal>
