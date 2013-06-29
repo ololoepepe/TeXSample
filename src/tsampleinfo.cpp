@@ -521,7 +521,6 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->sender.login() << "," << d->title << ","
-                  << info.typeString() << ")";
+    dbg.nospace() << "TSampleInfo(" << d->context << "," << d->id << "," << d->title << ")";
     return dbg.space();
 }

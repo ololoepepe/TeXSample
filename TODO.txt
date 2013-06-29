@@ -1,3 +1,19 @@
-=== Global ===
+=== PATCH ===
 
-* Improve debug info for some classes
+
+
+=== MINOR ===
+
+* Add locale information to TClientInfo
+* Add TProjectFileList typedef
+* Implement static TProject::size(QString mainFileName) method
+* Add project size information to TSampleInfo
+* Add constants for new requests
+
+=== MAJOR ===
+
+* Replace tRegister() method with tInit()
+* Add tCleanup() method
+* Initialize resources inside tInit() method
+* Rename TClient editorVersion() method to clientVersion()
+* Add client application version to TClientInfo

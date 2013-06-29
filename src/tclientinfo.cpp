@@ -28,7 +28,7 @@ public:
     void init();
 public:
     QString os;
-    QString editor;
+    QString client;
     QString texsample;
     QString beqt;
     QString qt;
@@ -106,7 +106,7 @@ void TClientInfo::setOS(const QString &os)
 
 void TClientInfo::setEditorVersion(const QString &v)
 {
-    d_func()->editor = v;
+    d_func()->client = v;
 }
 
 void TClientInfo::setTexsampleVersion(const QString &v)
@@ -131,7 +131,7 @@ QString TClientInfo::os() const
 
 QString TClientInfo::editorVersion() const
 {
-    return d_func()->editor;
+    return d_func()->client;
 }
 
 QString TClientInfo::texsampleVersion() const
@@ -152,9 +152,11 @@ QString TClientInfo::qtVersion() const
 QString TClientInfo::toString(const QString &format) const
 {
     const B_D(TClientInfo);
-    QString f = !format.isEmpty() ? format : QString("%o\n%e\n%t\n%b\n%q");
+    QString f = !format.isEmpty() ? format : QString("%o\n%c\n%t\n%b\n%q");
+    //"%o\n%c %v\n%t\n%b\n%q"
     f.replace("%o", tr("OS:") + " " + d->os);
-    f.replace("%e", "TeX Creator: " + d->editor);
+    //f.replace("%v", "v" + d->client);
+    f.replace("%c", tr("Client:") + " " + d->client);
     f.replace("%t", "TeXSample: " + d->texsample);
     f.replace("%b", "BeQt: " + d->beqt);
     f.replace("%q", "Qt: " + d->qt);
@@ -164,7 +166,7 @@ QString TClientInfo::toString(const QString &format) const
 bool TClientInfo::isValid() const
 {
     const B_D(TClientInfo);
-    return !d->os.isEmpty() && !d->editor.isEmpty() && !d->texsample.isEmpty()
+    return !d->os.isEmpty() && !d->client.isEmpty() && !d->texsample.isEmpty()
             && !d->beqt.isEmpty() && !d->qt.isEmpty();
 }
 
@@ -175,7 +177,7 @@ TClientInfo &TClientInfo::operator =(const TClientInfo &other)
     B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
     d->os = dd->os;
-    d->editor = dd->editor;
+    d->client = dd->client;
     d->texsample = dd->texsample;
     d->beqt = dd->beqt;
     d->qt = dd->qt;
@@ -186,7 +188,7 @@ bool TClientInfo::operator ==(const TClientInfo &other) const
 {
     const B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
-    return d->os == dd->os && d->editor == dd->editor && d->texsample == dd->texsample
+    return d->os == dd->os && d->client == dd->client && d->texsample == dd->texsample
             && d->beqt == dd->beqt && d->qt == dd->qt;
 }
 
@@ -201,7 +203,7 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
 {
     const TClientInfoPrivate *d = info.d_func();
     stream << d->os;
-    stream << d->editor;
+    stream << d->client;
     stream << d->texsample;
     stream << d->beqt;
     stream << d->qt;
@@ -212,7 +214,7 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
 {
     TClientInfoPrivate *d = info.d_func();
     stream >> d->os;
-    stream >> d->editor;
+    stream >> d->client;
     stream >> d->texsample;
     stream >> d->beqt;
     stream >> d->qt;
@@ -222,7 +224,7 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
 QDebug operator <<(QDebug dbg, const TClientInfo &info)
 {
     const TClientInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TClientInfo(" << d->os << "," << d->editor << "," << d->texsample << ","
+    dbg.nospace() << "TClientInfo(" << d->os << "," << d->client << "," << d->texsample << ","
                   << d->beqt << "," << d->qt << ")";
     return dbg.space();
 }

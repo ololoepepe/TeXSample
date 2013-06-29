@@ -55,6 +55,10 @@
         <source>OS:</source>
         <translation>ОС:</translation>
     </message>
+    <message>
+        <source>Client:</source>
+        <translation>Клиент:</translation>
+    </message>
 </context>
 <context>
     <name>TSampleInfo</name>

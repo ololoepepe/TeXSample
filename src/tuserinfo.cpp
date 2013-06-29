@@ -449,6 +449,6 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
 QDebug operator <<(QDebug dbg, const TUserInfo &info)
 {
     const TUserInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TUserInfo(" << d->id << "," << d->login << "," << info.accessLevelString() << ")";
+    dbg.nospace() << "TUserInfo(" << d->context << "," << d->id << "," << d->login << ")";
     return dbg.space();
 }

@@ -181,6 +181,6 @@ QDataStream &operator >>(QDataStream &stream, TCompilationResult &result)
 QDebug operator <<(QDebug dbg, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    dbg.nospace() << "TCompilationResult(" << d->success << "," << d->exitCode << ")";
+    dbg.nospace() << "TCompilationResult(" << d->success << "," << d->error << "," << d->exitCode << ")";
     return dbg.space();
 }
