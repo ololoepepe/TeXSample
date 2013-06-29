@@ -148,6 +148,6 @@ QDataStream &operator >>(QDataStream &stream, TOperationResult &result)
 
 QDebug operator <<(QDebug dbg, const TOperationResult &result)
 {
-    dbg.nospace() << "TOperationResult(" << result.d_func()->success << ")";
+    dbg.nospace() << "TOperationResult(" << result.d_func()->success << "," << result.d_func()->error << ")";
     return dbg.space();
 }

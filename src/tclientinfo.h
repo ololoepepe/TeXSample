@@ -42,7 +42,8 @@ public:
     QString texsampleVersion() const;
     QString beqtVersion() const;
     QString qtVersion() const;
-    QString toString(const QString &format = "") const; //%o - OS, %e - editor, %t - texsample, %b - BeQt, %q - qt
+    QString toString(const QString &format = "") const; //%o - OS, %v - version, %t - texsample, %b - BeQt, %q - qt
+    //%c - client
     bool isValid() const;
 public:
     TClientInfo &operator =(const TClientInfo &other);

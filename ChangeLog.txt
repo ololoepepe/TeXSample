@@ -1,2 +1,6 @@
+=== TeXSample 0.1.1 (29 June 2013) ===
+    * Improve TClientInfo
+    * Improve debug info for some classes
+
 === TeXSample 0.1.0 (22 June 2013) ===
     * First release
