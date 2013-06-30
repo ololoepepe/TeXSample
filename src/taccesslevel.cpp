@@ -4,12 +4,14 @@
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
+#include <BTranslator>
 
 #include <QObject>
 #include <QDataStream>
 #include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QMap>
 
 /*============================================================================
 ================================ TAccessLevelPrivate =========================
@@ -61,40 +63,55 @@ void TAccessLevelPrivate::init()
 
 QString TAccessLevel::accessLevelToString(AccessLevel lvl, bool singular)
 {
-    if (singular)
+    return accessLevelToString(lvl, 0, singular);
+}
+
+QString TAccessLevel::accessLevelToString(AccessLevel lvl, BTranslator *translator, bool singular)
+{
+    struct TrStruct
     {
-        switch (lvl)
-        {
-        case UserLevel:
-            return tr("User", "accessLevel (singular)");
-        case ModeratorLevel:
-            return tr("Moderator", "accessLevel (singular)");
-        case AdminLevel:
-            return tr("Administrator", "accessLevel (singular)");
-        case RootLevel:
-            return tr("Root", "accessLevel (singular)");
-        case NoLevel:
-        default:
-            return tr("No", "accessLevel (singular)");
-        }
-    }
-    else
+        const char *source;
+        const char *comment;
+    };
+    static const TrStruct Singular[] =
     {
-        switch (lvl)
-        {
-        case UserLevel:
-            return tr("Users", "accessLevel (plural)");
-        case ModeratorLevel:
-            return tr("Moderators", "accessLevel (plural)");
-        case AdminLevel:
-            return tr("Administrators", "accessLevel (plural)");
-        case RootLevel:
-            return tr("Roots", "accessLevel (plural)");
-        case NoLevel:
-        default:
-            return tr("No", "accessLevel (singular)");
-        }
+        QT_TRANSLATE_NOOP3("TAccessLevel", "No", "accessLevel (singular)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "User", "accessLevel (singular)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Moderator", "accessLevel (singular)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Administrator", "accessLevel (singular)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Root", "accessLevel (singular)")
+    };
+    static const TrStruct Plural[] =
+    {
+        QT_TRANSLATE_NOOP3("TAccessLevel", "No", "accessLevel (plural)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Users", "accessLevel (plural)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Moderators", "accessLevel (plural)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Administrators", "accessLevel (plural)"),
+        QT_TRANSLATE_NOOP3("TAccessLevel", "Roots", "accessLevel (plural)")
+    };
+    const TrStruct *s = singular ? Singular : Plural;
+    int ind = 0;
+    switch (lvl)
+    {
+    case UserLevel:
+        ind = 1;
+        break;
+    case ModeratorLevel:
+        ind = 2;
+        break;
+    case AdminLevel:
+        ind = 3;
+        break;
+    case RootLevel:
+        ind = 4;
+        break;
+    case NoLevel:
+    default:
+        ind = 0;
+        break;
     }
+    return translator ? translator->translate("TAccessLevel", s[ind].source, s[ind].comment) :
+                        tr(s[ind].source, s[ind].comment);
 }
 
 /*============================== Public constructors =======================*/
@@ -129,6 +146,11 @@ TAccessLevel::~TAccessLevel()
 QString TAccessLevel::string() const
 {
     return accessLevelToString(d_func()->level);
+}
+
+QString TAccessLevel::string(BTranslator *translator) const
+{
+    return accessLevelToString(d_func()->level, translator);
 }
 
 /*============================== Public operators ==========================*/

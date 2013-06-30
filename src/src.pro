@@ -1,9 +1,9 @@
 TEMPLATE = lib
 TARGET = TeXSample
 
-VERSION = 0.1.0
+VERSION = 0.2.0
 VER_MAJ = 0
-VER_MIN = 1
+VER_MIN = 2
 VER_PAT = 0
 
 CONFIG += release
@@ -27,6 +27,7 @@ HEADERS += \
     tglobal.h \
     tsampleinfo.h \
     tprojectfile.h \
+    tprojectfilelist.h \
     tproject.h \
     ttexttools.h \
     tuserinfo.h \

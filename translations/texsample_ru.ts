@@ -48,16 +48,10 @@
         <comment>accessLevel (plural)</comment>
         <translation>Суперпользователи</translation>
     </message>
-</context>
-<context>
-    <name>TClientInfo</name>
     <message>
-        <source>OS:</source>
-        <translation>ОС:</translation>
-    </message>
-    <message>
-        <source>Client:</source>
-        <translation>Клиент:</translation>
+        <source>No</source>
+        <comment>accessLevel (plural)</comment>
+        <translation>Нет</translation>
     </message>
 </context>
 <context>

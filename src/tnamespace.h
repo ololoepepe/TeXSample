@@ -15,6 +15,7 @@ typedef QList<quint64> IdList;
 
 const quint16 MainPort = 9041;
 const quint16 RegistrationPort = 9042;
+const quint16 RecoveryPort = 9043;
 
 const qint64 MaximumAvatarSize = BeQt::Megabyte;
 const quint8 MaximumInvitesCount = 3;
@@ -24,6 +25,8 @@ const QString AuthorizeRequest = "authorize";
 const QString AddUserRequest = "add_user";
 const QString EditUserRequest = "edit_user";
 const QString UpdateAccountRequest = "update_account";
+const QString GetRecoveryCodeRequest = "get_recovery_code";
+const QString RecoverAccountRequest = "recover_account";
 const QString GetUserInfoRequest = "get_user_info";
 const QString AddSampleRequest = "add_sample";
 const QString EditSampleRequest = "edit_sample";
