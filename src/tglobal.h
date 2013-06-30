@@ -12,6 +12,7 @@
 #endif
 
 TSMP_EXPORT void tRegister();
+TSMP_EXPORT void tCleanup();
 TSMP_EXPORT const char *tVersion();
 
 #endif // TGLOBAL_H

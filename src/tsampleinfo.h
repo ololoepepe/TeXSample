@@ -3,6 +3,8 @@
 
 class TSampleInfoPrivate;
 
+class BTranslator;
+
 class QDataStream;
 class QStringList;
 class QDateTime;
@@ -47,6 +49,7 @@ public:
     };
 public:
     static QString typeToString(Type t, bool singular = true);
+    static QString typeToString(Type t, BTranslator *translator, bool singular = true);
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
@@ -65,6 +68,7 @@ public:
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
+    void setProjectSize(int size);
     void setTags(const QStringList &list);
     void setTags(const QString &s);
     void setComment(const QString &s);
@@ -81,7 +85,10 @@ public:
     QString title() const;
     Type type() const;
     QString typeString() const;
+    QString typeString(BTranslator *translator) const;
     QString fileName() const;
+    int projectSize() const;
+    QString projectSizeString() const;
     QStringList tags() const;
     QString tagsString() const;
     QString comment() const;

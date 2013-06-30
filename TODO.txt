@@ -4,16 +4,12 @@
 
 === MINOR ===
 
-* Add locale information to TClientInfo
-* Add TProjectFileList typedef
-* Implement static TProject::size(QString mainFileName) method
-* Add project size information to TSampleInfo
-* Add constants for new requests
+
 
 === MAJOR ===
 
-* Replace tRegister() method with tInit()
-* Add tCleanup() method
-* Initialize resources inside tInit() method
-* Rename TClient editorVersion() method to clientVersion()
-* Add client application version to TClientInfo
+* Rename tRegister() function to tInit()
+* Remove TClient::editorVersion() method
+* Replace overloaded methods with default values
+* Remove TClientInfo::compareVersions() method
+* Remove TClientInfo::isValid() method

@@ -5,6 +5,7 @@
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
+#include <BTranslator>
 
 #include <QObject>
 #include <QDataStream>
@@ -39,6 +40,7 @@ public:
     QString title;
     TSampleInfo::Type type;
     QString fileName;
+    int size;
     QStringList tags;
     QString comment;
     QString remark;
@@ -81,6 +83,7 @@ void TSampleInfoPrivate::init()
     context = TSampleInfo::GeneralContext;
     id = 0;
     type = TSampleInfo::Unverified;
+    size = 0;
     rating = 0;
     creationDT.setTimeSpec(Qt::UTC);
     modificationDT.setTimeSpec(Qt::UTC);
@@ -94,32 +97,45 @@ void TSampleInfoPrivate::init()
 
 QString TSampleInfo::typeToString(Type t, bool singular)
 {
-    if (singular)
+    return typeToString(t, 0, singular);
+}
+
+QString TSampleInfo::typeToString(Type t, BTranslator *translator, bool singular)
+{
+    struct TrStruct
     {
-        switch (t)
-        {
-        case Approved:
-            return tr("Approved", "type (singular)");
-        case Rejected:
-            return tr("Rejected", "type (singular)");
-        case Unverified:
-        default:
-            return tr("Unverified", "type (singular)");
-        }
-    }
-    else
+        const char *source;
+        const char *comment;
+    };
+    static const TrStruct Singular[] =
     {
-        switch (t)
-        {
-        case Approved:
-            return tr("Approved", "type (plural)");
-        case Rejected:
-            return tr("Rejected", "type (plural)");
-        case Unverified:
-        default:
-            return tr("Unverified", "type (plural)");
-        }
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Unverified", "type (singular)"),
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Approved", "type (singular)"),
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Rejected", "type (singular)")
+    };
+    static const TrStruct Plural[] =
+    {
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Unverified", "type (plural)"),
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Approved", "type (plural)"),
+        QT_TRANSLATE_NOOP3("TSampleInfo", "Rejected", "type (plural)")
+    };
+    const TrStruct *s = singular ? Singular : Plural;
+    int ind = 0;
+    switch (t)
+    {
+    case Approved:
+        ind = 1;
+        break;
+    case Rejected:
+        ind = 2;
+        break;
+    case Unverified:
+    default:
+        ind = 0;
+        break;
     }
+    return translator ? translator->translate("TSampleInfo", s[ind].source, s[ind].comment) :
+                        tr(s[ind].source, s[ind].comment);
 }
 
 QString TSampleInfo::listToString(const QStringList &list)
@@ -191,11 +207,13 @@ void TSampleInfo::setContext(int c, bool clear)
         d->rating = 0;
         d->creationDT = QDateTime().toUTC();
         d->modificationDT = QDateTime().toUTC();
+        d->size = 0;
         break;
     case EditContext:
         d->sender.clear();
         d->creationDT = QDateTime().toUTC();
         d->modificationDT = QDateTime().toUTC();
+        d->size = 0;
         break;
     case UpdateContext:
         d->sender.clear();
@@ -204,6 +222,7 @@ void TSampleInfo::setContext(int c, bool clear)
         d->rating = 0;
         d->creationDT = QDateTime().toUTC();
         d->modificationDT = QDateTime().toUTC();
+        d->size = 0;
         break;
     case GeneralContext:
     default:
@@ -245,6 +264,11 @@ void TSampleInfo::setType(int t)
 void TSampleInfo::setFileName(const QString &fileName)
 {
     d_func()->fileName = !fileName.isEmpty() ? QFileInfo(fileName).fileName() : QString();
+}
+
+void TSampleInfo::setProjectSize(int size)
+{
+    d_func()->size = (size > 0) ? size : 0;
 }
 
 void TSampleInfo::setTags(const QStringList &list)
@@ -331,9 +355,24 @@ QString TSampleInfo::typeString() const
     return typeToString(d_func()->type);
 }
 
+QString TSampleInfo::typeString(BTranslator *translator) const
+{
+    return typeToString(d_func()->type, translator);
+}
+
 QString TSampleInfo::fileName() const
 {
     return d_func()->fileName;
+}
+
+int TSampleInfo::projectSize() const
+{
+    return d_func()->size;
+}
+
+QString TSampleInfo::projectSizeString() const
+{
+    return QString::number(d_func()->size);
 }
 
 QStringList TSampleInfo::tags() const
@@ -392,7 +431,7 @@ bool TSampleInfo::isValid(Context c) const
     default:
         return d->id && d->sender.isValid(TUserInfo::ShortInfoContext)
                 && (d->authors.isEmpty() || !d->authors.contains("")) && !d->title.isEmpty()
-                && !d->fileName.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
+                && !d->fileName.isEmpty() && d->size && d->creationDT.isValid() && d->modificationDT.isValid();
     }
 }
 
@@ -409,6 +448,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->title = dd->title;
     d->type = dd->type;
     d->fileName = dd->fileName;
+    d->size = dd->size;
     d->tags = dd->tags;
     d->comment = dd->comment;
     d->remark = dd->remark;
@@ -434,7 +474,7 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
     case GeneralContext:
     default:
         return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
-                && d->type == dd->type && d->fileName == dd->fileName && d->tags == dd->tags
+                && d->type == dd->type && d->fileName == dd->fileName && d->size == dd->size && d->tags == dd->tags
                 && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
                 && d->creationDT == dd->creationDT && d->modificationDT == dd->modificationDT;
     }
@@ -476,6 +516,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     {
         stream << d->creationDT;
         stream << d->modificationDT;
+        stream << d->size;
     }
     return stream;
 }
@@ -514,6 +555,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
         QDateTime modificationDT;
         stream >> modificationDT;
         info.setModificationDateTime(modificationDT);
+        stream >> d->size;
     }
     return stream;
 }

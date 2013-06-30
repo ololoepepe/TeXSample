@@ -11,6 +11,7 @@
 #include "tsampleinfo.h"
 #include "tnamespace.h"
 #include "tuserinfo.h"
+#include "tprojectfilelist.h"
 
 #include <QMetaType>
 
@@ -19,6 +20,10 @@ void tRegister()
     static bool registered = false;
     if (registered)
         return;
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_INIT_RESOURCE(texsample);
+    Q_INIT_RESOURCE(texsample_translations);
+#endif
     qRegisterMetaType<TAccessLevel>();
     qRegisterMetaTypeStreamOperators<TAccessLevel>();
     qRegisterMetaType<TClientInfo>();
@@ -47,10 +52,20 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<Texsample::IdList>();
     qRegisterMetaType<TUserInfo>();
     qRegisterMetaTypeStreamOperators<TUserInfo>();
+    qRegisterMetaType<TProjectFileList>();
+    qRegisterMetaTypeStreamOperators<TProjectFileList>();
     registered = true;
+}
+
+void tCleanup()
+{
+#if defined(TSMP_BUILTIN_RESOURCES)
+     Q_CLEANUP_RESOURCE(texsample);
+     Q_CLEANUP_RESOURCE(texsample_translations);
+#endif
 }
 
 const char *tVersion()
 {
-    return "0.1.1";
+    return "0.2.0";
 }

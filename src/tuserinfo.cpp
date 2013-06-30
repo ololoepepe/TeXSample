@@ -5,6 +5,7 @@
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
+#include <BTranslator>
 
 #include <QObject>
 #include <QDataStream>
@@ -285,6 +286,11 @@ TAccessLevel TUserInfo::accessLevel() const
 QString TUserInfo::accessLevelString() const
 {
     return d_func()->accessLevel.string();
+}
+
+QString TUserInfo::accessLevelString(BTranslator *translator) const
+{
+    return d_func()->accessLevel.string(translator);
 }
 
 QString TUserInfo::realName() const

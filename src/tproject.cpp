@@ -112,6 +112,41 @@ void TProjectPrivate::init()
 ================================ TProject ====================================
 ============================================================================*/
 
+/*============================== Static public methods =====================*/
+
+int TProject::size(const QString &rootFileName, QTextCodec *codec)
+{
+    return size(rootFileName, codec ? QString(codec->name()) : QString("UTF-8"));
+}
+
+int TProject::size(const QString &rootFileName, const QString &codecName)
+{
+    if (rootFileName.isEmpty())
+        return -1;
+    QString cn = !codecName.isEmpty() ? codecName : QString("UTF-8");
+    bool ok = false;
+    QString text = BDirTools::readTextFile(rootFileName, cn, &ok);
+    if (!ok)
+        return -1;
+    ok = false;
+    QFileInfo fi(rootFileName);
+    QString path = fi.path();
+    QString bn = fi.baseName();
+    QStringList list = TProjectPrivate::dependencies(text, path, cn, &ok);
+    if (!ok)
+        return -1;
+    int sz = fi.size() * 2 + QFileInfo(path + "/" + bn + ".pdf").size();
+    foreach (const QString &fn, list)
+    {
+        static const QStringList suffixes = QStringList() << "tex" << "pic";
+        if (suffixes.contains(QFileInfo(fn).suffix().toLower()))
+            sz += 2 * QFileInfo(fn).size();
+        else
+            sz += QFileInfo(fn).size();
+    }
+    return sz;
+}
+
 /*============================== Public constructors =======================*/
 
 TProject::TProject() :

@@ -1,3 +1,17 @@
+=== TeXSample 0.2.0 (01 July 2013) ===
+    * Initialize resources inside tRegister() method
+    * Add tCleanup() method
+    * Add TClient::clientVersion() method to TClientInfo
+    * Add static TClientInfo::compareVersions() method
+    * Add locale information to TClientInfo
+    * Add client name to TClientInfo
+    * Improve TClientInfo::toString() method
+    * Add TProjectFileList typedef
+    * Implement static TProject::size(QString mainFileName) method
+    * Add constants for new requests
+    * Add alternative translation methods
+    * Add project size information to TSampleInfo
+
 === TeXSample 0.1.1 (29 June 2013) ===
     * Improve TClientInfo
     * Improve debug info for some classes
