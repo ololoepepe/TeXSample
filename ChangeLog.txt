@@ -1,4 +1,10 @@
+=== TeXSample 0.2.1 (01 July 2013) ===
+    * Fix TClientInfo data stream operators
+    * Fix TClientInfo::toString() method
+    * Improve TClientInfo::isValid() method
+
 === TeXSample 0.2.0 (01 July 2013) ===
+    * Use BeQt 2.1.0
     * Initialize resources inside tRegister() method
     * Add tCleanup() method
     * Add TClient::clientVersion() method to TClientInfo
