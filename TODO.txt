@@ -9,7 +9,9 @@
 === MAJOR ===
 
 * Rename tRegister() function to tInit()
-* Remove TClient::editorVersion() method
 * Replace overloaded methods with default values
+* Improve serializing (use QVariantMap)
+* Remove set methods from TClientInfo
 * Remove TClientInfo::compareVersions() method
-* Remove TClientInfo::isValid() method
+* Remove TClientInfo::editorVersion() method
+* Rename TClientInfo::createDefaultInfo() method to createInfo()

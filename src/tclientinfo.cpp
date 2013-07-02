@@ -225,10 +225,10 @@ QString TClientInfo::toString(const QString &format) const
     QString f = format;
     if (f.isEmpty())
     {
-        if (compareVersions(d->clientVersion, "2.1.0") >= 0 || (d->client == "TeXSample Client"))
-            f = "%o [%l]\n%c v%v\nTeXSample v%t; BeQt v%b; Qt v%q";
+        if (compareVersions(d->texsampleVersion, "0.2.0") >= 0)
+            f = "%o [%l]\n%c v%v; TeXSample v%t; BeQt v%b; Qt v%q";
         else
-            f = "%o\nv%v\nTeXSample v%t; BeQt v%b; Qt v%q";
+            f = "%o\nClient v%v; TeXSample v%t; BeQt v%b; Qt v%q";
     }
     f.replace("%o", d->os);
     f.replace("%l", d->locale.name());
@@ -242,7 +242,9 @@ QString TClientInfo::toString(const QString &format) const
 
 bool TClientInfo::isValid() const
 {
-    return true;
+    const B_D(TClientInfo);
+    return !d->os.isEmpty() && !d->client.isEmpty() && !d->clientVersion.isEmpty() && !d->texsampleVersion.isEmpty()
+            && !d->beqtVersion.isEmpty() && !d->qtVersion.isEmpty();
 }
 
 /*============================== Public operators ==========================*/
@@ -298,7 +300,7 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
     stream >> d->texsampleVersion;
     stream >> d->beqtVersion;
     stream >> d->qtVersion;
-    if (TClientInfo::compareVersions(d->clientVersion, "2.1.0") >= 0 || (d->client == "TeXSample Client"))
+    if (TClientInfo::compareVersions(d->texsampleVersion, "0.2.0") >= 0)
     {
         stream >> d->locale;
         stream >> d->client;

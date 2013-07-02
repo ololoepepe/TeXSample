@@ -28,7 +28,7 @@ slightly vary depending on the version of Qt used. In case of using Qt 4.8,
 some features may be missing.
 Support of Qt libraries' versions lower than 4.8.0 is not guaranteed.
 
-You will also need BeQt libraries version 2.0.0 or higher.
+You will also need BeQt libraries version 2.1.0 or higher.
 
 See: https://github.com/the-dark-angel/BeQt for details.
 
