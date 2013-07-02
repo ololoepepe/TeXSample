@@ -1,10 +1,10 @@
 TEMPLATE = lib
 TARGET = TeXSample
 
-VERSION = 0.2.1
+VERSION = 0.2.2
 VER_MAJ = 0
 VER_MIN = 2
-VER_PAT = 1
+VER_PAT = 2
 
 CONFIG += release
 

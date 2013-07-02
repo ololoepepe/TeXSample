@@ -1,4 +1,7 @@
-=== TeXSample 0.2.1 (01 July 2013) ===
+=== TeXSample 0.2.2 (02 July 2013) ===
+    * Add a hack for preventing compatibility breaking
+
+=== TeXSample 0.2.1 (02 July 2013) ===
     * Fix TClientInfo data stream operators
     * Fix TClientInfo::toString() method
     * Improve TClientInfo::isValid() method
