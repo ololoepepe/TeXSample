@@ -268,7 +268,8 @@ void TSampleInfo::setFileName(const QString &fileName)
 
 void TSampleInfo::setProjectSize(int size)
 {
-    d_func()->size = (size > 0) ? size : 0;
+    d_func()->size = size; //HACK: Must fix
+    //d_func()->size = (size > 0) ? size : 0;
 }
 
 void TSampleInfo::setTags(const QStringList &list)
@@ -516,7 +517,8 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     {
         stream << d->creationDT;
         stream << d->modificationDT;
-        stream << d->size;
+        if (d->size > 0) //HACK: Must fix
+            stream << d->size;
     }
     return stream;
 }
