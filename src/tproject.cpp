@@ -2,6 +2,7 @@
 #include "tglobal.h"
 #include "tprojectfile.h"
 #include "ttexttools.h"
+#include "tprojectfilelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -20,6 +21,7 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QDir>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TProjectPrivate =============================
@@ -38,7 +40,7 @@ public:
     void init();
 public:
     TProjectFile rootFile;
-    QList<TProjectFile> files;
+    TProjectFileList files;
 private:
     Q_DISABLE_COPY(TProjectPrivate)
 };
@@ -398,16 +400,20 @@ TProject::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TProject &project)
 {
     const TProjectPrivate *d = project.d_func();
-    stream << d->rootFile;
-    stream << d->files;
+    QVariantMap m;
+    m.insert("root_file", d->rootFile);
+    m.insert("files", d->files);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TProject &project)
 {
     TProjectPrivate *d = project.d_func();
-    stream >> d->rootFile;
-    stream >> d->files;
+    QVariantMap m;
+    stream >> m;
+    d->rootFile = m.value("root_file").value<TProjectFile>();
+    d->files = m.value("files").value<TProjectFileList>();
     return stream;
 }
 

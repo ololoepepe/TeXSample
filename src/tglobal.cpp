@@ -4,25 +4,42 @@
 #include "tcompilationresult.h"
 #include "tcompiledproject.h"
 #include "tcompilerparameters.h"
+#include "tidlist.h"
 #include "tinviteinfo.h"
+#include "tinviteinfolist.h"
+#include "tmessage.h"
 #include "toperationresult.h"
 #include "tproject.h"
 #include "tprojectfile.h"
+#include "tprojectfilelist.h"
 #include "tsampleinfo.h"
+#include "tsampleinfolist.h"
 #include "tnamespace.h"
 #include "tuserinfo.h"
 #include "tprojectfilelist.h"
 
+#include <BeQtGlobal>
+
 #include <QMetaType>
 
-void tRegister()
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#include <QUuid>
+Q_DECLARE_METATYPE(QUuid)
+#endif
+
+void tInit()
 {
     static bool registered = false;
     if (registered)
         return;
+    bRegister();
 #if defined(TSMP_BUILTIN_RESOURCES)
     Q_INIT_RESOURCE(texsample);
     Q_INIT_RESOURCE(texsample_translations);
+#endif
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    qRegisterMetaType<QUuid>();
+    qRegisterMetaTypeStreamOperators<QUuid>();
 #endif
     qRegisterMetaType<TAccessLevel>();
     qRegisterMetaTypeStreamOperators<TAccessLevel>();
@@ -34,26 +51,28 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCompiledProject>();
     qRegisterMetaType<TCompilerParameters>();
     qRegisterMetaTypeStreamOperators<TCompilerParameters>();
+    qRegisterMetaType<TIdList>();
+    qRegisterMetaTypeStreamOperators<TIdList>();
     qRegisterMetaType<TInviteInfo>();
     qRegisterMetaTypeStreamOperators<TInviteInfo>();
-    qRegisterMetaType<TInviteInfo::InvitesList>();
-    qRegisterMetaTypeStreamOperators<TInviteInfo::InvitesList>();
+    qRegisterMetaType<TInviteInfoList>();
+    qRegisterMetaTypeStreamOperators<TInviteInfoList>();
+    qRegisterMetaType<TMessage>();
+    qRegisterMetaTypeStreamOperators<TMessage>();
     qRegisterMetaType<TOperationResult>();
     qRegisterMetaTypeStreamOperators<TOperationResult>();
     qRegisterMetaType<TProject>();
     qRegisterMetaTypeStreamOperators<TProject>();
     qRegisterMetaType<TProjectFile>();
     qRegisterMetaTypeStreamOperators<TProjectFile>();
-    qRegisterMetaType<TSampleInfo>();
-    qRegisterMetaTypeStreamOperators<TSampleInfo>();
-    qRegisterMetaType<TSampleInfo::SamplesList>();
-    qRegisterMetaTypeStreamOperators<TSampleInfo::SamplesList>();
-    qRegisterMetaType<Texsample::IdList>();
-    qRegisterMetaTypeStreamOperators<Texsample::IdList>();
-    qRegisterMetaType<TUserInfo>();
-    qRegisterMetaTypeStreamOperators<TUserInfo>();
     qRegisterMetaType<TProjectFileList>();
     qRegisterMetaTypeStreamOperators<TProjectFileList>();
+    qRegisterMetaType<TSampleInfo>();
+    qRegisterMetaTypeStreamOperators<TSampleInfo>();
+    qRegisterMetaType<TSampleInfoList>();
+    qRegisterMetaTypeStreamOperators<TSampleInfoList>();
+    qRegisterMetaType<TUserInfo>();
+    qRegisterMetaTypeStreamOperators<TUserInfo>();
     registered = true;
 }
 

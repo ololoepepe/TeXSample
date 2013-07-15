@@ -11,7 +11,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
-#include <QMap>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TAccessLevelPrivate =========================
@@ -63,55 +63,38 @@ void TAccessLevelPrivate::init()
 
 QString TAccessLevel::accessLevelToString(AccessLevel lvl, bool singular)
 {
-    return accessLevelToString(lvl, 0, singular);
-}
-
-QString TAccessLevel::accessLevelToString(AccessLevel lvl, BTranslator *translator, bool singular)
-{
-    struct TrStruct
-    {
-        const char *source;
-        const char *comment;
-    };
-    static const TrStruct Singular[] =
-    {
-        QT_TRANSLATE_NOOP3("TAccessLevel", "No", "accessLevel (singular)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "User", "accessLevel (singular)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Moderator", "accessLevel (singular)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Administrator", "accessLevel (singular)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Root", "accessLevel (singular)")
-    };
-    static const TrStruct Plural[] =
-    {
-        QT_TRANSLATE_NOOP3("TAccessLevel", "No", "accessLevel (plural)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Users", "accessLevel (plural)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Moderators", "accessLevel (plural)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Administrators", "accessLevel (plural)"),
-        QT_TRANSLATE_NOOP3("TAccessLevel", "Roots", "accessLevel (plural)")
-    };
-    const TrStruct *s = singular ? Singular : Plural;
-    int ind = 0;
     switch (lvl)
     {
     case UserLevel:
-        ind = 1;
-        break;
+        return singular ? tr("User") : tr("Users");
     case ModeratorLevel:
-        ind = 2;
-        break;
+        return singular ? tr("Moderator") : tr("Moderators");
     case AdminLevel:
-        ind = 3;
-        break;
+        return singular ? tr("Administrators") : tr("Administrators");
     case RootLevel:
-        ind = 4;
-        break;
+        return singular ? tr("Root") : tr("Roots");
     case NoLevel:
     default:
-        ind = 0;
-        break;
+        return singular ? tr("No", "accessLevel (singular)") : tr("No", "accessLevel (plural)");
     }
-    return translator ? translator->translate("TAccessLevel", s[ind].source, s[ind].comment) :
-                        tr(s[ind].source, s[ind].comment);
+}
+
+QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
+{
+    switch (lvl)
+    {
+    case UserLevel:
+        return singular ? "User" : "Users";
+    case ModeratorLevel:
+        return singular ? "Moderator" : "Moderators";
+    case AdminLevel:
+        return singular ? "Administrator" : "Administrators";
+    case RootLevel:
+        return singular ? "Root" : "Roots";
+    case NoLevel:
+    default:
+        return "No";
+    }
 }
 
 /*============================== Public constructors =======================*/
@@ -143,14 +126,14 @@ TAccessLevel::~TAccessLevel()
 
 /*============================== Public methods ============================*/
 
-QString TAccessLevel::string() const
+QString TAccessLevel::toString() const
 {
     return accessLevelToString(d_func()->level);
 }
 
-QString TAccessLevel::string(BTranslator *translator) const
+QString TAccessLevel::toStringNoTr() const
 {
-    return accessLevelToString(d_func()->level, translator);
+    return accessLevelToStringNoTr(d_func()->level);
 }
 
 /*============================== Public operators ==========================*/
@@ -192,20 +175,22 @@ TAccessLevel::operator int() const
 
 QDataStream &operator <<(QDataStream &stream, const TAccessLevel &lvl)
 {
-    stream << (int) lvl.d_func()->level;
+    QVariantMap m;
+    m.insert("level", (int) lvl.d_func()->level);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TAccessLevel &lvl)
 {
-    int l = 0;
-    stream >> l;
-    lvl = l;
+    QVariantMap m;
+    stream >> m;
+    lvl = m.value("level").toInt();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TAccessLevel &lvl)
 {
-    dbg.nospace() << "TAccessLevel(" << lvl.string() << ")";
+    dbg.nospace() << "TAccessLevel(" << lvl.toStringNoTr() << ")";
     return dbg.space();
 }

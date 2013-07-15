@@ -24,38 +24,47 @@ include($${BEQT_PREFIX}/depend.pri)
 DEFINES += TSMP_BUILD_LIB
 
 HEADERS += \
-    tglobal.h \
-    tsampleinfo.h \
-    tprojectfile.h \
-    tprojectfilelist.h \
-    tproject.h \
-    ttexttools.h \
-    tuserinfo.h \
-    tinviteinfo.h \
-    tcompilerparameters.h \
+    taccesslevel.h \
+    tclientinfo.h \
     tcompilationresult.h \
     tcompiledproject.h \
+    tcompilerparameters.h \
+    tglobal.h \
+    tidlist.h \
+    tinviteinfo.h \
+    tinviteinfolist.h \
+    tmessage.h \
+    tnamespace.h \
     toperationresult.h \
     toperationresult_p.h \
-    tclientinfo.h \
-    tnamespace.h \
-    taccesslevel.h
+    tproject.h \
+    tprojectfile.h \
+    tprojectfilelist.h \
+    tsampleinfo.h \
+    tsampleinfolist.h \
+    ttexttools.h \
+    tuserinfo.h
 
 SOURCES += \
-    tglobal.cpp \
-    tsampleinfo.cpp \
-    tprojectfile.cpp \
-    tproject.cpp \
-    ttexttools.cpp \
-    tuserinfo.cpp \
-    tinviteinfo.cpp \
-    tcompilerparameters.cpp \
+    taccesslevel.cpp \
+    tclientinfo.cpp \
     tcompilationresult.cpp \
     tcompiledproject.cpp \
-    toperationresult.cpp \
-    tclientinfo.cpp \
+    tcompilerparameters.cpp \
+    tglobal.cpp \
+    tidlist.cpp \
+    tinviteinfo.cpp \
+    tinviteinfolist.cpp \
+    tmessage.cpp \
     tnamespace.cpp \
-    taccesslevel.cpp
+    toperationresult.cpp \
+    tproject.cpp \
+    tprojectfile.cpp \
+    tprojectfilelist.cpp \
+    tsampleinfo.cpp \
+    tsampleinfolist.cpp \
+    ttexttools.cpp \
+    tuserinfo.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 

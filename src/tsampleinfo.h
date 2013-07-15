@@ -31,8 +31,6 @@ class TSMP_EXPORT TSampleInfo : public BBase
     B_DECLARE_PRIVATE(TSampleInfo)
     Q_DECLARE_TR_FUNCTIONS(TSampleInfo)
 public:
-    typedef QList<TSampleInfo> SamplesList;
-public:
     enum Type
     {
         Unverified = 0,
@@ -49,7 +47,7 @@ public:
     };
 public:
     static QString typeToString(Type t, bool singular = true);
-    static QString typeToString(Type t, BTranslator *translator, bool singular = true);
+    static QString typeToStringNoTr(Type t, bool singular = true);
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
@@ -85,7 +83,7 @@ public:
     QString title() const;
     Type type() const;
     QString typeString() const;
-    QString typeString(BTranslator *translator) const;
+    QString typeStringNoTr() const;
     QString fileName() const;
     int projectSize() const;
     QString projectSizeString() const;
@@ -110,6 +108,5 @@ public:
 };
 
 Q_DECLARE_METATYPE(TSampleInfo)
-Q_DECLARE_METATYPE(TSampleInfo::SamplesList)
 
 #endif // TSAMPLEINFO_H

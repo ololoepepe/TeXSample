@@ -66,7 +66,7 @@ public:
     QByteArray password() const;
     TAccessLevel accessLevel() const;
     QString accessLevelString() const;
-    QString accessLevelString(BTranslator *translator) const;
+    QString accessLevelStringNoTr() const;
     QString realName() const;
     QByteArray avatar() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;

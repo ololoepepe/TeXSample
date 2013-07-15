@@ -24,8 +24,8 @@ class TSMP_EXPORT TCompilationResult : public TOperationResult
 {
     B_DECLARE_PRIVATE(TCompilationResult)
 public:
-    explicit TCompilationResult(bool success, const QString &errs = QString());
-    explicit TCompilationResult(const QString &errs = QString());
+    explicit TCompilationResult(bool success, int err = NoError);
+    explicit TCompilationResult(int err = NoError);
     TCompilationResult(const TCompilationResult &other);
     TCompilationResult(const TOperationResult &opResult);
     ~TCompilationResult();

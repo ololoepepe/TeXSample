@@ -17,6 +17,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QList>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TSampleInfoPrivate ==========================
@@ -97,45 +98,30 @@ void TSampleInfoPrivate::init()
 
 QString TSampleInfo::typeToString(Type t, bool singular)
 {
-    return typeToString(t, 0, singular);
-}
-
-QString TSampleInfo::typeToString(Type t, BTranslator *translator, bool singular)
-{
-    struct TrStruct
-    {
-        const char *source;
-        const char *comment;
-    };
-    static const TrStruct Singular[] =
-    {
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Unverified", "type (singular)"),
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Approved", "type (singular)"),
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Rejected", "type (singular)")
-    };
-    static const TrStruct Plural[] =
-    {
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Unverified", "type (plural)"),
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Approved", "type (plural)"),
-        QT_TRANSLATE_NOOP3("TSampleInfo", "Rejected", "type (plural)")
-    };
-    const TrStruct *s = singular ? Singular : Plural;
-    int ind = 0;
     switch (t)
     {
     case Approved:
-        ind = 1;
-        break;
+        return singular ? tr("Unverified", "type (singular)") : tr("Unverified", "type (plural)");
     case Rejected:
-        ind = 2;
-        break;
+        return singular ? tr("Approved", "type (singular)") : tr("Approved", "type (plural)");
+        default:
     case Unverified:
-    default:
-        ind = 0;
-        break;
+        return singular ? tr("Rejected", "type (singular)") : tr("Rejected", "type (plural)");
     }
-    return translator ? translator->translate("TSampleInfo", s[ind].source, s[ind].comment) :
-                        tr(s[ind].source, s[ind].comment);
+}
+
+QString TSampleInfo::typeToStringNoTr(Type t, bool singular)
+{
+    switch (t)
+    {
+    case Approved:
+        return singular ? "User" : "Users";
+    case Rejected:
+        return singular ? "Moderator" : "Moderators";
+        default:
+    case Unverified:
+        return singular ? "Administrator" : "Administrators";
+    }
 }
 
 QString TSampleInfo::listToString(const QStringList &list)
@@ -268,8 +254,7 @@ void TSampleInfo::setFileName(const QString &fileName)
 
 void TSampleInfo::setProjectSize(int size)
 {
-    d_func()->size = size; //HACK: Must fix
-    //d_func()->size = (size > 0) ? size : 0;
+    d_func()->size = (size > 0) ? size : 0;
 }
 
 void TSampleInfo::setTags(const QStringList &list)
@@ -356,9 +341,9 @@ QString TSampleInfo::typeString() const
     return typeToString(d_func()->type);
 }
 
-QString TSampleInfo::typeString(BTranslator *translator) const
+QString TSampleInfo::typeStringNoTr() const
 {
-    return typeToString(d_func()->type, translator);
+    return typeToStringNoTr(d_func()->type);
 }
 
 QString TSampleInfo::fileName() const
@@ -496,68 +481,61 @@ TSampleInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    stream << (int) d->context;
+    QVariantMap m;
+    m.insert("context", (int) d->context);
+    m.insert("authors", d->authors);
+    m.insert("title", d->title);
+    m.insert("file_name", d->fileName);
+    m.insert("tags", d->tags);
+    m.insert("comment", d->comment);
     if (TSampleInfo::AddContext != d->context)
-        stream << d->id;
+        m.insert("id", stream << d->id);
     if (TSampleInfo::GeneralContext == d->context)
-        stream << d->sender;
-    stream << d->authors;
-    stream << d->title;
+        m.insert("sender", d->sender);
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-        stream << (int) d->type;
-    stream << d->fileName;
-    stream << d->tags;
-    stream << d->comment;
+        m.insert("type", (int) d->type);
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
     {
-        stream << d->remark;
-        stream << d->rating;
+        m.insert("remark", d->remark);
+        m.insert("rating", d->rating);
     }
     if (TSampleInfo::GeneralContext == d->context)
     {
-        stream << d->creationDT;
-        stream << d->modificationDT;
-        if (d->size > 0) //HACK: Must fix
-            stream << d->size;
+        m.insert("creation_dt", d->creationDT);
+        m.insert("modification_dt", d->modificationDT);
+        m.insert("size", d->size);
     }
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
 {
     TSampleInfoPrivate *d = info.d_func();
-    int context = 0;
-    stream >> context;
-    info.setContext(context);
+    QVariantMap m;
+    stream >> m;
+    d->context = TSampleInfoPrivate::contextFromInt(m.value("context").toInt());
+    d->authors = m.value("authors").toStringList();
+    d->title = m.value("title").toString();
+    d->fileName = m.value("file_name").toString();
+    d->tags = m.value("tags").toStringList();
+    d->comment = m.value("comment").toString();
     if (TSampleInfo::AddContext != d->context)
-        stream >> d->id;
+        d->id = m.value("id").toULongLong();
     if (TSampleInfo::GeneralContext == d->context)
-        stream >> d->sender;
-    stream >> d->authors;
-    stream >> d->title;
+        d->sender = m.value("sender").value<TUserInfo>();
+    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
+        d->type = TSampleInfo::typeFromInt(m.value("type").toInt());
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
     {
-        int type = 0;
-        stream >> type;
-        info.setType(type);
-    }
-    stream >> d->fileName;
-    stream >> d->tags;
-    stream >> d->comment;
-    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-    {
-        stream >> d->remark;
-        stream >> d->rating;
+        d->remark = m.value("remark").toString();
+        d->rating = m.value("rating").toUInt();
     }
     if (TSampleInfo::GeneralContext == d->context)
     {
-        QDateTime creationDT;
-        stream >> creationDT;
-        info.setCreationDateTime(creationDT);
-        QDateTime modificationDT;
-        stream >> modificationDT;
-        info.setModificationDateTime(modificationDT);
-        stream >> d->size;
+        d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
+        d->modificationDT = m.value("modification_dt").toDateTime().toTimeSpec(Qt::UTC);
+        info.setProjectSize(m.value("size").toInt());
     }
     return stream;
 }

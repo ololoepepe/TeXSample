@@ -49,7 +49,8 @@ public:
 ================================ Functions ===================================
 ============================================================================*/
 
-TSMP_EXPORT QStringList removeDuplicates(const QStringList &list, Qt::CaseSensitivity cs = Qt::CaseSensitive, int *count  = 0);
+TSMP_EXPORT QStringList removeDuplicates(const QStringList &list, Qt::CaseSensitivity cs = Qt::CaseSensitive,
+                                         int *count  = 0);
 TSMP_EXPORT int removeDuplicates(QStringList *list, Qt::CaseSensitivity cs = Qt::CaseSensitive);
 TSMP_EXPORT QStringList removeAll(const QStringList &list, const QString &what,
                                   Qt::CaseSensitivity cs = Qt::CaseSensitive, int *count  = 0);

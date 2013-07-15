@@ -35,7 +35,9 @@ public:
         PdfLaTex
     };
 public:
-    static QString compilerToString(Compiler c, bool command = true);
+    static QString compilerToString(Compiler c);
+    static QString compilerToCommand(Compiler c);
+    static Compiler compilerFromInt(int c);
 public:
     explicit TCompilerParameters();
     TCompilerParameters(const TCompilerParameters &other);
@@ -43,7 +45,7 @@ public:
 public:
     void setCodec(QTextCodec *codec);
     void setCodec(const QString &codecName);
-    void setCompiler(Compiler c);
+    void setCompiler(int c);
     void setMakeindexEnabled(bool enabled);
     void setDvipsEnabled(bool enabled);
     void setOptions(const QStringList &list);
@@ -53,7 +55,8 @@ public:
     QTextCodec *codec() const;
     QString codecName() const;
     Compiler compiler() const;
-    QString compilerString(bool command = true) const;
+    QString compilerString() const;
+    QString compilerCommand() const;
     bool makeindexEnabled() const;
     bool dvipsEnabled() const;
     QStringList options() const;

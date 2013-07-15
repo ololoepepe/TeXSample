@@ -6,6 +6,7 @@ class TOperationResultPrivate;
 class QDataStream;
 class QVariant;
 class QDebug;
+class QString;
 
 #include "tglobal.h"
 
@@ -13,7 +14,6 @@ class QDebug;
 #include <BBase>
 
 #include <QMetaType>
-#include <QString>
 
 /*============================================================================
 ================================ TOperationResult ============================
@@ -23,17 +23,28 @@ class TSMP_EXPORT TOperationResult : public BBase
 {
     B_DECLARE_PRIVATE(TOperationResult)
 public:
-    explicit TOperationResult(bool success, const QString &errs = QString());
-    explicit TOperationResult(const QString &errs = QString());
+    enum Error
+    {
+        NoError = 0
+    };
+public:
+    static Error errorFromInt(int err);
+    static QString errorToString(int err);
+    static QString errorToStringNoTr(int err);
+public:
+    explicit TOperationResult(bool success, int err = NoError);
+    explicit TOperationResult(int err = NoError);
     TOperationResult(const TOperationResult &other);
     ~TOperationResult();
 protected:
     explicit TOperationResult(TOperationResultPrivate &d);
 public:
     void setSuccess(bool b);
-    void setErrorString(const QString &s);
+    void setError(int err);
     bool success() const;
+    Error error() const;
     QString errorString() const;
+    QString errorStringNoTr() const;
 public:
     TOperationResult &operator =(const TOperationResult &other);
     bool operator ==(const TOperationResult &other) const;

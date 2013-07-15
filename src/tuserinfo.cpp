@@ -15,6 +15,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QCryptographicHash>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TUserInfoPrivate ============================
@@ -285,12 +286,12 @@ TAccessLevel TUserInfo::accessLevel() const
 
 QString TUserInfo::accessLevelString() const
 {
-    return d_func()->accessLevel.string();
+    return d_func()->accessLevel.toString();
 }
 
-QString TUserInfo::accessLevelString(BTranslator *translator) const
+QString TUserInfo::accessLevelStringNoTr() const
 {
-    return d_func()->accessLevel.string(translator);
+    return d_func()->accessLevel.toStringNoTr();
 }
 
 QString TUserInfo::realName() const
@@ -395,60 +396,54 @@ TUserInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
 {
     const TUserInfoPrivate *d = info.d_func();
-    stream << (int) d->context;
+    QVariantMap m;
+    m.insert("context", (int) d->context);
     if (TUserInfoPrivate::IdContexts.contains(d->context))
-        stream << d->id;
+        m.insert("id", d->id);
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
-        stream << d->email;
+        m.insert("email", d->email);
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
-        stream << d->login;
+        m.insert("login", d->login);
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
-        stream << d->password;
+        m.insert("password", d->password);
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-        stream << d->accessLevel;
+        m.insert("access_level", d->accessLevel);
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
-        stream << d->realName;
+        m.insert("real_name", d->realName);
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
-        stream << d->avatar;
+        m.insert("avatar", d->avatar);
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
-        stream << d->creationDT;
+        m.insert("creation_dt", d->creationDT);
     if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-        stream << d->modificationDT;
+        m.insert("modification_dt", d->modificationDT);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
 {
     TUserInfoPrivate *d = info.d_func();
-    int context = 0;
-    stream >> context;
-    info.setContext(context);
+    QVariantMap m;
+    stream >> m;
+    d->context = TUserInfoPrivate::contextFromInt(m.value("context").toInt());
     if (TUserInfoPrivate::IdContexts.contains(d->context))
-        stream >> d->id;
+        d->id = m.value("id").toULongLong();
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
-        stream >> d->email;
+        d->email = m.value("email").toString();
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
-        stream >> d->login;
+        d->login = m.value("login").toString();
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
-        stream >> d->password;
+        d->password = m.value("password").toByteArray();
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-        stream >> d->accessLevel;
+        d->accessLevel = m.value("access_level").value<TAccessLevel>();
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
-        stream >> d->realName;
+        d->realName = m.value("real_name").toString();
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
-        stream >> d->avatar;
+        d->avatar = m.value("avatar").toByteArray();
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
-    {
-        QDateTime creationDT;
-        stream >> creationDT;
-        info.setCreationDateTime(creationDT);
-    }
+        d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
     if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-    {
-        QDateTime modificationDT;
-        stream >> modificationDT;
-        info.setModificationDateTime(modificationDT);
-    }
+        d->creationDT = m.value("modification_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 

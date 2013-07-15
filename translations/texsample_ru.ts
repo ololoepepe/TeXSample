@@ -6,17 +6,17 @@
     <message>
         <source>User</source>
         <comment>accessLevel (singular)</comment>
-        <translation>Пользователь</translation>
+        <translation type="obsolete">Пользователь</translation>
     </message>
     <message>
         <source>Moderator</source>
         <comment>accessLevel (singular)</comment>
-        <translation>Модератор</translation>
+        <translation type="obsolete">Модератор</translation>
     </message>
     <message>
         <source>Administrator</source>
         <comment>accessLevel (singular)</comment>
-        <translation>Администратор</translation>
+        <translation type="obsolete">Администратор</translation>
     </message>
     <message>
         <source>No</source>
@@ -26,32 +26,60 @@
     <message>
         <source>Users</source>
         <comment>accessLevel (plural)</comment>
-        <translation>Пользователи</translation>
+        <translation type="obsolete">Пользователи</translation>
     </message>
     <message>
         <source>Moderators</source>
         <comment>accessLevel (plural)</comment>
-        <translation>Модераторы</translation>
+        <translation type="obsolete">Модераторы</translation>
     </message>
     <message>
         <source>Administrators</source>
         <comment>accessLevel (plural)</comment>
-        <translation>Администраторы</translation>
+        <translation type="obsolete">Администраторы</translation>
     </message>
     <message>
         <source>Root</source>
         <comment>accessLevel (singular)</comment>
-        <translation>Суперпользователь</translation>
+        <translation type="obsolete">Суперпользователь</translation>
     </message>
     <message>
         <source>Roots</source>
         <comment>accessLevel (plural)</comment>
-        <translation>Суперпользователи</translation>
+        <translation type="obsolete">Суперпользователи</translation>
     </message>
     <message>
         <source>No</source>
         <comment>accessLevel (plural)</comment>
         <translation>Нет</translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation type="unfinished">Пользователь</translation>
+    </message>
+    <message>
+        <source>Users</source>
+        <translation type="unfinished">Пользователи</translation>
+    </message>
+    <message>
+        <source>Moderator</source>
+        <translation type="unfinished">Модератор</translation>
+    </message>
+    <message>
+        <source>Moderators</source>
+        <translation type="unfinished">Модераторы</translation>
+    </message>
+    <message>
+        <source>Administrators</source>
+        <translation type="unfinished">Администраторы</translation>
+    </message>
+    <message>
+        <source>Root</source>
+        <translation type="unfinished">Суперпользователь</translation>
+    </message>
+    <message>
+        <source>Roots</source>
+        <translation type="unfinished">Суперпользователи</translation>
     </message>
 </context>
 <context>

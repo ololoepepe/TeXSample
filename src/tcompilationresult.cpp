@@ -12,6 +12,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TCompilationResultPrivate ===================
@@ -62,19 +63,19 @@ void TCompilationResultPrivate::init()
 
 /*============================== Public constructors =======================*/
 
-TCompilationResult::TCompilationResult(bool success, const QString &errs) :
+TCompilationResult::TCompilationResult(bool success, int err) :
     TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
     setSuccess(success);
-    setErrorString(errs);
+    setError(err);
 }
 
-TCompilationResult::TCompilationResult(const QString &errs) :
+TCompilationResult::TCompilationResult(int err) :
     TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
-    setErrorString(errs);
+    setError(err);
 }
 
 TCompilationResult::TCompilationResult(const TCompilationResult &other) :
@@ -135,7 +136,7 @@ TCompilationResult &TCompilationResult::operator =(const TOperationResult &other
 {
     B_D(TCompilationResult);
     d->success = other.success();
-    d->error = other.errorString();
+    d->error = other.error();
     return *this;
 }
 
@@ -161,20 +162,24 @@ TCompilationResult::operator bool() const
 QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    stream << d->success;
-    stream << d->error;
-    stream << d->exitCode;
-    stream << d->log;
+    QVariantMap m;
+    m.insert("success", d->success);
+    m.insert("error", (int) d->error);
+    m.insert("exitCode", d->exitCode);
+    m.insert("log", d->log);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TCompilationResult &result)
 {
     TCompilationResultPrivate *d = result.d_func();
-    stream >> d->success;
-    stream >> d->error;
-    stream >> d->exitCode;
-    stream >> d->log;
+    QVariantMap m;
+    stream >> m;
+    d->success = m.value("success").toBool();
+    d->error = TOperationResult::errorFromInt(m.value("error").toInt());
+    d->exitCode = m.value("exitCode").toInt();
+    d->log = m.value("log").toString();
     return stream;
 }
 

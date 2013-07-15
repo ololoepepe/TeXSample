@@ -11,6 +11,8 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QVariantMap>
+#include <QList>
 
 /*============================================================================
 ================================ TOperationResultPrivate =====================
@@ -34,27 +36,56 @@ TOperationResultPrivate::~TOperationResultPrivate()
 void TOperationResultPrivate::init()
 {
     success = false;
+    error = TOperationResult::NoError;
 }
 
 /*============================================================================
 ================================ TOperationResult ============================
 ============================================================================*/
 
+/*============================== Static public methods =====================*/
+
+TOperationResult::Error TOperationResult::errorFromInt(int err)
+{
+    static const QList<int> errors = bRangeD(NoError, NoError);
+    return errors.contains(err) ? static_cast<Error>(err) : NoError;
+}
+
+QString TOperationResult::errorToString(int err)
+{
+    switch (err)
+    {
+    case NoError:
+    default:
+        return "";
+    }
+}
+
+QString TOperationResult::errorToStringNoTr(int err)
+{
+    switch (err)
+    {
+    case NoError:
+    default:
+        return "";
+    }
+}
+
 /*============================== Public constructors =======================*/
 
-TOperationResult::TOperationResult(bool success, const QString &errs) :
+TOperationResult::TOperationResult(bool success, int err) :
     BBase(*new TOperationResultPrivate(this))
 {
     d_func()->init();
     setSuccess(success);
-    setErrorString(errs);
+    setError(err);
 }
 
-TOperationResult::TOperationResult(const QString &errs) :
+TOperationResult::TOperationResult(int err) :
     BBase(*new TOperationResultPrivate(this))
 {
     d_func()->init();
-    setErrorString(errs);
+    setError(err);
 }
 
 TOperationResult::TOperationResult(const TOperationResult &other) :
@@ -85,9 +116,9 @@ void TOperationResult::setSuccess(bool b)
     d_func()->success = b;
 }
 
-void TOperationResult::setErrorString(const QString &s)
+void TOperationResult::setError(int err)
 {
-    d_func()->error = s;
+    d_func()->error = errorFromInt(err);
 }
 
 bool TOperationResult::success() const
@@ -95,9 +126,19 @@ bool TOperationResult::success() const
     return d_func()->success;
 }
 
-QString TOperationResult::errorString() const
+TOperationResult::Error TOperationResult::error() const
 {
     return d_func()->error;
+}
+
+QString TOperationResult::errorString() const
+{
+    return errorToString(d_func()->error);
+}
+
+QString TOperationResult::errorStringNoTr() const
+{
+    return errorToStringNoTr(d_func()->error);
 }
 
 /*============================== Public operators ==========================*/
@@ -133,21 +174,25 @@ TOperationResult::operator bool() const
 QDataStream &operator <<(QDataStream &stream, const TOperationResult &result)
 {
     const TOperationResultPrivate *d = result.d_func();
-    stream << d->success;
-    stream << d->error;
+    QVariantMap m;
+    m.insert("success", d->success);
+    m.insert("error", (int) d->error);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TOperationResult &result)
 {
     TOperationResultPrivate *d = result.d_func();
-    stream >> d->success;
-    stream >> d->error;
+    QVariantMap m;
+    stream >> m;
+    d->success = m.value("success").toBool();
+    d->error = TOperationResult::errorFromInt(m.value("error").toInt());
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TOperationResult &result)
 {
-    dbg.nospace() << "TOperationResult(" << result.d_func()->success << "," << result.d_func()->error << ")";
+    dbg.nospace() << "TOperationResult(" << result.d_func()->success << "," << result.errorStringNoTr() << ")";
     return dbg.space();
 }

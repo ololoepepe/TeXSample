@@ -13,6 +13,12 @@
 #include <QDebug>
 #include <QString>
 #include <QUuid>
+#include <QVariantMap>
+#include <QMetaType>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+Q_DECLARE_METATYPE(QUuid)
+#endif
 
 /*============================================================================
 ================================ TInviteInfoPrivate ==========================
@@ -30,7 +36,7 @@ public:
     void init();
 public:
     quint64 id;
-    QUuid uuid;
+    QUuid code;
     quint64 creatorId;
     QDateTime creationDT;
     QDateTime expirationDT;
@@ -106,14 +112,14 @@ void TInviteInfo::setId(quint64 id)
     d_func()->id = id;
 }
 
-void TInviteInfo::setUuid(const QUuid &uuid)
+void TInviteInfo::setCode(const QUuid &code)
 {
-    d_func()->uuid = uuid;
+    d_func()->code = code;
 }
 
-void TInviteInfo::setUuid(const QString &s)
+void TInviteInfo::setCode(const QString &code)
 {
-    d_func()->uuid = BeQt::uuidFromText(s);
+    d_func()->code = BeQt::uuidFromText(code);
 }
 
 void TInviteInfo::setCreatorId(quint64 id)
@@ -141,14 +147,14 @@ QString TInviteInfo::idString(int fixedLength) const
     return TInviteInfoPrivate::numberToString(d_func()->id, fixedLength);
 }
 
-QUuid TInviteInfo::uuid() const
+QUuid TInviteInfo::code() const
 {
-    return d_func()->uuid;
+    return d_func()->code;
 }
 
-QString TInviteInfo::uuidString(bool pure) const
+QString TInviteInfo::codeString() const
 {
-    return pure ? BeQt::pureUuidText(d_func()->uuid) : d_func()->uuid.toString();
+    return BeQt::pureUuidText(d_func()->code);
 }
 
 quint64 TInviteInfo::creatorId() const
@@ -179,7 +185,7 @@ bool TInviteInfo::isExpired() const
 bool TInviteInfo::isValid() const
 {
     const B_D(TInviteInfo);
-    return d->id && !d->uuid.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
+    return d->id && !d->code.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
 }
 
 /*============================== Public operators ==========================*/
@@ -189,7 +195,7 @@ TInviteInfo &TInviteInfo::operator =(const TInviteInfo &other)
     B_D(TInviteInfo);
     const TInviteInfoPrivate *dd = other.d_func();
     d->id = dd->id;
-    d->uuid = dd->uuid;
+    d->code = dd->code;
     d->creatorId = dd->creatorId;
     d->creationDT = dd->creationDT;
     d->expirationDT = dd->expirationDT;
@@ -213,33 +219,33 @@ TInviteInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info)
 {
     const TInviteInfoPrivate *d = info.d_func();
-    stream << d->id;
-    stream << d->uuid;
-    stream << d->creatorId;
-    stream << d->creationDT;
-    stream << d->expirationDT;
+    QVariantMap m;
+    m.insert("id", d->id);
+    m.insert("code", QVariant::fromValue(d->code));
+    m.insert("creator_id", d->creatorId);
+    m.insert("creation_dt", d->creationDT);
+    m.insert("expiration_dt", d->expirationDT);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TInviteInfo &info)
 {
     TInviteInfoPrivate *d = info.d_func();
-    stream >> d->id;
-    stream >> d->uuid;
-    stream >>d->creatorId;
-    stream >> d->creationDT;
-    if (d->creationDT.timeSpec() != Qt::UTC)
-        d->creationDT = d->creationDT.toUTC();
-    stream >> d->expirationDT;
-    if (d->expirationDT.timeSpec() != Qt::UTC)
-        d->expirationDT = d->expirationDT.toUTC();
+    QVariantMap m;
+    stream >> m;
+    d->id = m.value("id").toULongLong();
+    d->code = m.value("code").value<QUuid>();
+    d->creatorId = m.value("creator_id").toULongLong();
+    d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->expirationDT = m.value("expiration_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TInviteInfo &info)
 {
     const TInviteInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TInviteInfo(" << d->id << "," << info.uuidString() << "," << d->creatorId << ","
+    dbg.nospace() << "TInviteInfo(" << d->id << "," << info.codeString() << "," << d->creatorId << ","
                   << d->creationDT << "," << d->expirationDT << ")";
     return dbg.space();
 }

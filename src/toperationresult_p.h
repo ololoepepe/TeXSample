@@ -7,8 +7,6 @@
 #include <BeQtGlobal>
 #include <BeQtCore/private/bbase_p.h>
 
-#include <QString>
-
 /*============================================================================
 ================================ TOperationResultPrivate =====================
 ============================================================================*/
@@ -23,7 +21,7 @@ public:
     void init();
 public:
     bool success;
-    QString error;
+    TOperationResult::Error error;
 private:
     Q_DISABLE_COPY(TOperationResultPrivate)
 };

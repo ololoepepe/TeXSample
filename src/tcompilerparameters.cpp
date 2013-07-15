@@ -13,6 +13,7 @@
 #include <QString>
 #include <QTextCodec>
 #include <QStringList>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TCompilerParametersPrivate ==================
@@ -70,27 +71,33 @@ void TCompilerParametersPrivate::init()
 
 /*============================== Static public methods =====================*/
 
-QString TCompilerParameters::compilerToString(Compiler c, bool command)
+QString TCompilerParameters::compilerToString(Compiler c)
 {
-    QString s;
+    c = compilerFromInt(c);
     switch (c)
     {
     case Tex:
-        s = "Tex";
-        break;
+        return "Tex";
     case LaTex:
-        s = "LaTex";
-        break;
+        return "LaTex";
     case PdfTex:
-        s = "PdfTex";
-        break;
+        return "PdfTex";
     case PdfLaTex:
-        s = "PdfLaTex";
-        break;
+        return "PdfLaTex";
     default:
-        break;
+        return "";
     }
-    return command ? s.toLower() : s;
+}
+
+QString TCompilerParameters::compilerToCommand(Compiler c)
+{
+    return compilerToString(c).toLower();
+}
+
+TCompilerParameters::Compiler TCompilerParameters::compilerFromInt(int c)
+{
+    static const QList<int> compilers = bRangeD(TCompilerParameters::Tex, TCompilerParameters::PdfLaTex);
+    return compilers.contains(c) ? static_cast<TCompilerParameters::Compiler>(c) : TCompilerParameters::PdfLaTex;
 }
 
 /*============================== Public constructors =======================*/
@@ -125,9 +132,9 @@ void TCompilerParameters::setCodec(const QString &codecName)
     d_func()->codecName = !codecName.isEmpty() ? codecName : QString("UTF-8");
 }
 
-void TCompilerParameters::setCompiler(Compiler c)
+void TCompilerParameters::setCompiler(int c)
 {
-    d_func()->compiler = c;
+    d_func()->compiler = compilerFromInt(c);
 }
 
 void TCompilerParameters::setMakeindexEnabled(bool enabled)
@@ -175,9 +182,14 @@ TCompilerParameters::Compiler TCompilerParameters::compiler() const
     return d_func()->compiler;
 }
 
-QString TCompilerParameters::compilerString(bool command) const
+QString TCompilerParameters::compilerString() const
 {
-    return compilerToString(d_func()->compiler, command);
+    return compilerToString(d_func()->compiler);
+}
+
+QString TCompilerParameters::compilerCommand() const
+{
+    return compilerToCommand(d_func()->compiler);
 }
 
 bool TCompilerParameters::makeindexEnabled() const
@@ -244,35 +256,35 @@ TCompilerParameters::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TCompilerParameters &param)
 {
     const TCompilerParametersPrivate *d = param.d_func();
-    stream << d->codecName;
-    stream << (int) d->compiler;
-    stream << d->makeindex;
-    stream << d->dvips;
-    stream << d->options;
-    stream << d->commands;
+    QVariantMap m;
+    m.insert("codec_name", d->codecName);
+    m.insert("compiler", (int) d->compiler);
+    m.insert("makeindex", d->makeindex);
+    m.insert("dvips", d->dvips);
+    m.insert("options", d->options);
+    m.insert("commands", d->commands);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TCompilerParameters &param)
 {
-    static const QList<int> compilers = bRangeD(TCompilerParameters::Tex, TCompilerParameters::PdfLaTex);
     TCompilerParametersPrivate *d = param.d_func();
-    stream >> d->codecName;
-    int c = TCompilerParameters::PdfLaTex;
-    stream >> c;
-    d->compiler = compilers.contains(c) ? static_cast<TCompilerParameters::Compiler>(c) :
-                                          TCompilerParameters::PdfLaTex;
-    stream >> d->makeindex;
-    stream >> d->dvips;
-    stream >> d->options;
-    stream >> d->commands;
+    QVariantMap m;
+    stream >> m;
+    d->codecName = m.value("codec_name").toString();
+    d->compiler = TCompilerParameters::compilerFromInt(m.value("compiler").toInt());
+    d->makeindex = m.value("makeindex").toBool();
+    d->dvips = m.value("dvips").toBool();
+    d->options = m.value("options").toStringList();
+    d->commands = m.value("commands").toStringList();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TCompilerParameters &param)
 {
     const TCompilerParametersPrivate *d = param.d_func();
-    dbg.nospace() << "TCompilerParameters(" << d->codecName << "," << param.compilerString(false) << ","
+    dbg.nospace() << "TCompilerParameters(" << d->codecName << "," << param.compilerString() << ","
                   << d->makeindex << "," << d->dvips << ")";
     return dbg.space();
 }
