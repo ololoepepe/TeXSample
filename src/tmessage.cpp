@@ -142,9 +142,13 @@ QString TMessage::messageStringNoTr() const
 
 TMessage &TMessage::operator =(const TMessage &other)
 {
-    B_D(TMessage);
-    const TMessagePrivate *dd = other.d_func();
-    d->message = dd->message;
+    d_func()->message = other.d_func()->message;
+    return *this;
+}
+
+TMessage &TMessage::operator =(int msg)
+{
+    d_func()->message = messageFromInt(msg);
     return *this;
 }
 
@@ -158,6 +162,11 @@ bool TMessage::operator ==(const TMessage &other) const
 TMessage::operator QVariant() const
 {
     return QVariant::fromValue(*this);
+}
+
+TMessage::operator int() const
+{
+    return d_func()->message;
 }
 
 /*============================== Public friend operators ===================*/

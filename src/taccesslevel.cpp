@@ -99,12 +99,6 @@ QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
 
 /*============================== Public constructors =======================*/
 
-TAccessLevel::TAccessLevel() :
-    BBase(*new TAccessLevelPrivate(this))
-{
-    d_func()->init();
-}
-
 TAccessLevel::TAccessLevel(int lvl) :
     BBase(*new TAccessLevelPrivate(this))
 {

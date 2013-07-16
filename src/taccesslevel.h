@@ -37,8 +37,7 @@ public:
     static QString accessLevelToString(AccessLevel lvl, bool singular = true);
     static QString accessLevelToStringNoTr(AccessLevel lvl, bool singular = true);
 public:
-    explicit TAccessLevel();
-    TAccessLevel(int lvl);
+    TAccessLevel(int lvl = NoLevel);
     TAccessLevel(const TAccessLevel &other);
     ~TAccessLevel();
 public:

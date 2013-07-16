@@ -86,5 +86,5 @@ void tCleanup()
 
 const char *tVersion()
 {
-    return "0.2.2";
+    return "1.0.0-pa1";
 }

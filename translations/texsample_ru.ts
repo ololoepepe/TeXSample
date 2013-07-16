@@ -4,49 +4,9 @@
 <context>
     <name>TAccessLevel</name>
     <message>
-        <source>User</source>
-        <comment>accessLevel (singular)</comment>
-        <translation type="obsolete">Пользователь</translation>
-    </message>
-    <message>
-        <source>Moderator</source>
-        <comment>accessLevel (singular)</comment>
-        <translation type="obsolete">Модератор</translation>
-    </message>
-    <message>
-        <source>Administrator</source>
-        <comment>accessLevel (singular)</comment>
-        <translation type="obsolete">Администратор</translation>
-    </message>
-    <message>
         <source>No</source>
         <comment>accessLevel (singular)</comment>
         <translation>Нет</translation>
-    </message>
-    <message>
-        <source>Users</source>
-        <comment>accessLevel (plural)</comment>
-        <translation type="obsolete">Пользователи</translation>
-    </message>
-    <message>
-        <source>Moderators</source>
-        <comment>accessLevel (plural)</comment>
-        <translation type="obsolete">Модераторы</translation>
-    </message>
-    <message>
-        <source>Administrators</source>
-        <comment>accessLevel (plural)</comment>
-        <translation type="obsolete">Администраторы</translation>
-    </message>
-    <message>
-        <source>Root</source>
-        <comment>accessLevel (singular)</comment>
-        <translation type="obsolete">Суперпользователь</translation>
-    </message>
-    <message>
-        <source>Roots</source>
-        <comment>accessLevel (plural)</comment>
-        <translation type="obsolete">Суперпользователи</translation>
     </message>
     <message>
         <source>No</source>
@@ -55,31 +15,31 @@
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <source>Users</source>
-        <translation type="unfinished">Пользователи</translation>
+        <translation>Пользователи</translation>
     </message>
     <message>
         <source>Moderator</source>
-        <translation type="unfinished">Модератор</translation>
+        <translation>Модератор</translation>
     </message>
     <message>
         <source>Moderators</source>
-        <translation type="unfinished">Модераторы</translation>
+        <translation>Модераторы</translation>
     </message>
     <message>
         <source>Administrators</source>
-        <translation type="unfinished">Администраторы</translation>
+        <translation>Администраторы</translation>
     </message>
     <message>
         <source>Root</source>
-        <translation type="unfinished">Суперпользователь</translation>
+        <translation>Суперпользователь</translation>
     </message>
     <message>
         <source>Roots</source>
-        <translation type="unfinished">Суперпользователи</translation>
+        <translation>Суперпользователи</translation>
     </message>
 </context>
 <context>

@@ -9,6 +9,7 @@ class QDebug;
 class QString;
 
 #include "tglobal.h"
+#include "tmessage.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -23,28 +24,19 @@ class TSMP_EXPORT TOperationResult : public BBase
 {
     B_DECLARE_PRIVATE(TOperationResult)
 public:
-    enum Error
-    {
-        NoError = 0
-    };
-public:
-    static Error errorFromInt(int err);
-    static QString errorToString(int err);
-    static QString errorToStringNoTr(int err);
-public:
-    explicit TOperationResult(bool success, int err = NoError);
-    explicit TOperationResult(int err = NoError);
+    explicit TOperationResult(bool success, int msg = TMessage::NoMessage);
+    explicit TOperationResult(int msg = TMessage::NoMessage);
     TOperationResult(const TOperationResult &other);
     ~TOperationResult();
 protected:
     explicit TOperationResult(TOperationResultPrivate &d);
 public:
     void setSuccess(bool b);
-    void setError(int err);
+    void setMessage(int msg);
     bool success() const;
-    Error error() const;
-    QString errorString() const;
-    QString errorStringNoTr() const;
+    TMessage message() const;
+    QString messageString() const;
+    QString messageStringNoTr() const;
 public:
     TOperationResult &operator =(const TOperationResult &other);
     bool operator ==(const TOperationResult &other) const;

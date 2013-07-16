@@ -32,7 +32,7 @@ public:
     static QString messageToString(int msg);
     static QString messageToStringNoTr(int msg);
 public:
-    explicit TMessage(int msg = NoMessage);
+    TMessage(int msg = NoMessage);
     TMessage(const TMessage &other);
     ~TMessage();
 protected:
@@ -44,8 +44,10 @@ public:
     QString messageStringNoTr() const;
 public:
     TMessage &operator =(const TMessage &other);
+    TMessage &operator =(int msg);
     bool operator ==(const TMessage &other) const;
     operator QVariant() const;
+    operator int() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TMessage &msg);
     friend QDataStream &operator >>(QDataStream &stream, TMessage &msg);

@@ -3,6 +3,7 @@
 
 #include "toperationresult.h"
 #include "tglobal.h"
+#include "tmessage.h"
 
 #include <BeQtGlobal>
 #include <BeQtCore/private/bbase_p.h>
@@ -21,7 +22,7 @@ public:
     void init();
 public:
     bool success;
-    TOperationResult::Error error;
+    TMessage message;
 private:
     Q_DISABLE_COPY(TOperationResultPrivate)
 };
