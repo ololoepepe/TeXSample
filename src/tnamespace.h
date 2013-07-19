@@ -34,8 +34,11 @@ const QString GetSamplePreviewRequest = "get_sample_preview";
 const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
 const QString CompileProjectRequest = "compile_project";
-const QString ExecuteCommandRequest = "execute_command";
 const QString SubscribeRequest = "subscribe";
+const QString ChangeLocaleRequest = "change_locale";
+
+const QString LogRequest = "log";
+const QString MessageRequest = "message";
 
 }
 

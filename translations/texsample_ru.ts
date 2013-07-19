@@ -43,6 +43,14 @@
     </message>
 </context>
 <context>
+    <name>TMessage</name>
+    <message>
+        <source>Unknown error occured</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TSampleInfo</name>
     <message>
         <source>Approved</source>

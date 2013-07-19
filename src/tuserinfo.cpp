@@ -35,7 +35,7 @@ public:
    static const QList<TUserInfo::Context> RealNameContexts;
    static const QList<TUserInfo::Context> AvatarContexts;
    static const QList<TUserInfo::Context> CreationDTContexts;
-   static const QList<TUserInfo::Context> ModificationDTContexts;
+   static const QList<TUserInfo::Context> UpdateDTContexts;
 public:
    explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
@@ -51,7 +51,7 @@ public:
     QString realName;
     QByteArray avatar;
     QDateTime creationDT;
-    QDateTime modificationDT;
+    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TUserInfoPrivate)
 };
@@ -91,7 +91,7 @@ const QList<TUserInfo::Context> TUserInfoPrivate::AvatarContexts =
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::CreationDTContexts =
     QList<TUserInfo::Context>() << TUserInfo::GeneralContext;
-const QList<TUserInfo::Context> TUserInfoPrivate::ModificationDTContexts =
+const QList<TUserInfo::Context> TUserInfoPrivate::UpdateDTContexts =
     QList<TUserInfo::Context>() << TUserInfo::GeneralContext;
 
 /*============================== Public constructors =======================*/
@@ -114,7 +114,7 @@ void TUserInfoPrivate::init()
     context = TUserInfo::GeneralContext;
     id = 0;
     creationDT.setTimeSpec(Qt::UTC);
-    modificationDT.setTimeSpec(Qt::UTC);
+    updateDT.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -177,8 +177,8 @@ void TUserInfo::setContext(int c, bool clear)
         d->avatar.clear();
     if (!TUserInfoPrivate::CreationDTContexts.contains(d->context))
         d->creationDT = QDateTime().toUTC();
-    if (!TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-        d->modificationDT = QDateTime().toUTC();
+    if (!TUserInfoPrivate::UpdateDTContexts.contains(d->context))
+        d->updateDT = QDateTime().toUTC();
 }
 
 void TUserInfo::setId(quint64 id)
@@ -226,9 +226,9 @@ void TUserInfo::setCreationDateTime(const QDateTime &dt)
     d_func()->creationDT = dt.toUTC();
 }
 
-void TUserInfo::setModificationDateTime(const QDateTime &dt)
+void TUserInfo::setUpdateDateTime(const QDateTime &dt)
 {
-    d_func()->modificationDT = dt.toUTC();
+    d_func()->updateDT = dt.toUTC();
 }
 
 void TUserInfo::clear()
@@ -242,7 +242,7 @@ void TUserInfo::clear()
     d->realName.clear();
     d->avatar.clear();
     d->creationDT = QDateTime().toUTC();
-    d->modificationDT = QDateTime().toUTC();
+    d->updateDT = QDateTime().toUTC();
 }
 
 TUserInfo::Context TUserInfo::context() const
@@ -309,9 +309,9 @@ QDateTime TUserInfo::creationDateTime(Qt::TimeSpec spec) const
     return d_func()->creationDT.toTimeSpec(spec);
 }
 
-QDateTime TUserInfo::modificationDateTime(Qt::TimeSpec spec) const
+QDateTime TUserInfo::updateDateTime(Qt::TimeSpec spec) const
 {
-    return d_func()->modificationDT.toTimeSpec(spec);
+    return d_func()->updateDT.toTimeSpec(spec);
 }
 
 bool TUserInfo::isValid(Context c) const
@@ -330,7 +330,7 @@ bool TUserInfo::isValid(Context c) const
         return d->id && !d->password.isEmpty();
     case GeneralContext:
     default:
-        return d->id && !d->login.isEmpty() && d->creationDT.isValid() && d->modificationDT.isValid();
+        return d->id && !d->login.isEmpty() && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
 
@@ -349,7 +349,7 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     d->realName = dd->realName;
     d->avatar = dd->avatar;
     d->creationDT = dd->creationDT;
-    d->modificationDT = dd->modificationDT;
+    d->updateDT = dd->updateDT;
     return *this;
 }
 
@@ -376,8 +376,8 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
         b = b && d->avatar == dd->avatar;
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
         b = b && d->creationDT == dd->creationDT;
-    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-        b = b && d->modificationDT == dd->modificationDT;
+    if (TUserInfoPrivate::UpdateDTContexts.contains(d->context))
+        b = b && d->updateDT == dd->updateDT;
     return b;
 }
 
@@ -414,8 +414,8 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
         m.insert("avatar", d->avatar);
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
         m.insert("creation_dt", d->creationDT);
-    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-        m.insert("modification_dt", d->modificationDT);
+    if (TUserInfoPrivate::UpdateDTContexts.contains(d->context))
+        m.insert("update_dt", d->updateDT);
     stream << m;
     return stream;
 }
@@ -442,8 +442,8 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
         d->avatar = m.value("avatar").toByteArray();
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
         d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
-    if (TUserInfoPrivate::ModificationDTContexts.contains(d->context))
-        d->creationDT = m.value("modification_dt").toDateTime().toTimeSpec(Qt::UTC);
+    if (TUserInfoPrivate::UpdateDTContexts.contains(d->context))
+        d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 

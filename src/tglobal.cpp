@@ -32,7 +32,6 @@ void tInit()
     static bool registered = false;
     if (registered)
         return;
-    bRegister();
 #if defined(TSMP_BUILTIN_RESOURCES)
     Q_INIT_RESOURCE(texsample);
     Q_INIT_RESOURCE(texsample_translations);
@@ -41,6 +40,7 @@ void tInit()
     qRegisterMetaType<QUuid>();
     qRegisterMetaTypeStreamOperators<QUuid>();
 #endif
+    bRegister();
     qRegisterMetaType<TAccessLevel>();
     qRegisterMetaTypeStreamOperators<TAccessLevel>();
     qRegisterMetaType<TClientInfo>();

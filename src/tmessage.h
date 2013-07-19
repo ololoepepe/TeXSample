@@ -14,6 +14,7 @@ class QString;
 #include <BBase>
 
 #include <QMetaType>
+#include <QCoreApplication>
 
 /*============================================================================
 ================================ TMessage ====================================
@@ -22,10 +23,33 @@ class QString;
 class TSMP_EXPORT TMessage : public BBase
 {
     B_DECLARE_PRIVATE(TMessage)
+    Q_DECLARE_TR_FUNCTIONS(TMessage)
 public:
+    int dummy; //TODO: remove (needed for correct indent of the enum)
     enum Message
     {
-        NoMessage = 0
+        NoMessage = 0,
+        //Connection messages
+        AlreadyAuthorizedMessage,
+        //Internal errors
+        InternalParametersError,
+        InternalFileSystemError,
+        InternalNetworkError,
+        //Other errors
+        InvalidProjectError,
+        //Connection errors
+        InvalidCodeError,
+        InvalidUserInfoError,
+        InvalidLoginError,
+        InvalidPasswordError,
+        NoSuchUserError,
+        NotAuthorizedError,
+        NotEnoughRightsError,
+        CantDowngradeSelfError,
+        NotOwnAccountError,
+        NotOwnSampleError,
+        NotModifiableSampleError,
+        UnknownError
     };
 public:
     static Message messageFromInt(int msg);
@@ -46,6 +70,7 @@ public:
     TMessage &operator =(const TMessage &other);
     TMessage &operator =(int msg);
     bool operator ==(const TMessage &other) const;
+    bool operator ==(int other) const;
     operator QVariant() const;
     operator int() const;
 public:

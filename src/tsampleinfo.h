@@ -73,7 +73,7 @@ public:
     void setAdminRemark(const QString &s);
     void setRating(quint8 r);
     void setCreationDateTime(const QDateTime &dt);
-    void setModificationDateTime(const QDateTime &dt);
+    void setUpdateDateTime(const QDateTime &dt);
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
@@ -94,7 +94,7 @@ public:
     quint8 rating() const;
     QString ratingString(const QString &format = "") const; //%r - rating
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TSampleInfo &operator =(const TSampleInfo &other);

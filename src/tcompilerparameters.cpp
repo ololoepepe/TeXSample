@@ -96,8 +96,8 @@ QString TCompilerParameters::compilerToCommand(Compiler c)
 
 TCompilerParameters::Compiler TCompilerParameters::compilerFromInt(int c)
 {
-    static const QList<int> compilers = bRangeD(TCompilerParameters::Tex, TCompilerParameters::PdfLaTex);
-    return compilers.contains(c) ? static_cast<TCompilerParameters::Compiler>(c) : TCompilerParameters::PdfLaTex;
+    static const QList<int> compilers = bRangeD(Tex, PdfLaTex);
+    return compilers.contains(c) ? static_cast<Compiler>(c) : PdfLaTex;
 }
 
 /*============================== Public constructors =======================*/

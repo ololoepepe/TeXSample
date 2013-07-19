@@ -140,7 +140,8 @@ TAccessLevel &TAccessLevel::operator =(const TAccessLevel &other)
 
 TAccessLevel &TAccessLevel::operator =(int lvl)
 {
-    static const QList<int> Levels = QList<int>() << NoLevel << UserLevel << ModeratorLevel << AdminLevel << RootLevel;
+
+    static const QList<int> Levels = bRangeM(UserLevel, RootLevel);
     d_func()->level = Levels.contains(lvl) ? static_cast<AccessLevel>(lvl) : NoLevel;
     return *this;
 }

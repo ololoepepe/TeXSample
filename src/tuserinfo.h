@@ -56,7 +56,7 @@ public:
     void setRealName(const QString &name);
     void setAvatar(const QByteArray &data);
     void setCreationDateTime(const QDateTime &dt);
-    void setModificationDateTime(const QDateTime &dt);
+    void setUpdateDateTime(const QDateTime &dt);
     void clear();
     Context context() const;
     quint64 id() const;
@@ -70,7 +70,7 @@ public:
     QString realName() const;
     QByteArray avatar() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TUserInfo &operator =(const TUserInfo &other);

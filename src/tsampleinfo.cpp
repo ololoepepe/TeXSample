@@ -47,7 +47,7 @@ public:
     QString remark;
     quint8 rating;
     QDateTime creationDT;
-    QDateTime modificationDT;
+    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TSampleInfoPrivate)
 };
@@ -87,7 +87,7 @@ void TSampleInfoPrivate::init()
     size = 0;
     rating = 0;
     creationDT.setTimeSpec(Qt::UTC);
-    modificationDT.setTimeSpec(Qt::UTC);
+    updateDT.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -101,26 +101,26 @@ QString TSampleInfo::typeToString(Type t, bool singular)
     switch (t)
     {
     case Approved:
-        return singular ? tr("Unverified", "type (singular)") : tr("Unverified", "type (plural)");
-    case Rejected:
         return singular ? tr("Approved", "type (singular)") : tr("Approved", "type (plural)");
-        default:
-    case Unverified:
+    case Rejected:
         return singular ? tr("Rejected", "type (singular)") : tr("Rejected", "type (plural)");
+    default:
+    case Unverified:
+        return singular ? tr("Unverified", "type (singular)") : tr("Unverified", "type (plural)");
     }
 }
 
-QString TSampleInfo::typeToStringNoTr(Type t, bool singular)
+QString TSampleInfo::typeToStringNoTr(Type t, bool)
 {
     switch (t)
     {
     case Approved:
-        return singular ? "User" : "Users";
+        return "Approved";
     case Rejected:
-        return singular ? "Moderator" : "Moderators";
-        default:
+        return "Rejected";
+    default:
     case Unverified:
-        return singular ? "Administrator" : "Administrators";
+        return "Unverified";
     }
 }
 
@@ -139,7 +139,7 @@ QStringList TSampleInfo::listFromString(const QString &s)
 
 TSampleInfo::Type TSampleInfo::typeFromInt(int t)
 {
-    static const QList<int> types = bRangeD(Unverified, Rejected);
+    static const QList<int> types = bRangeM(Approved, Rejected);
     return types.contains(t) ? static_cast<Type>(t) : Unverified;
 }
 
@@ -192,13 +192,13 @@ void TSampleInfo::setContext(int c, bool clear)
         d->remark.clear();
         d->rating = 0;
         d->creationDT = QDateTime().toUTC();
-        d->modificationDT = QDateTime().toUTC();
+        d->updateDT = QDateTime().toUTC();
         d->size = 0;
         break;
     case EditContext:
         d->sender.clear();
         d->creationDT = QDateTime().toUTC();
-        d->modificationDT = QDateTime().toUTC();
+        d->updateDT = QDateTime().toUTC();
         d->size = 0;
         break;
     case UpdateContext:
@@ -207,7 +207,7 @@ void TSampleInfo::setContext(int c, bool clear)
         d->remark.clear();
         d->rating = 0;
         d->creationDT = QDateTime().toUTC();
-        d->modificationDT = QDateTime().toUTC();
+        d->updateDT = QDateTime().toUTC();
         d->size = 0;
         break;
     case GeneralContext:
@@ -287,9 +287,9 @@ void TSampleInfo::setCreationDateTime(const QDateTime &dt)
     d_func()->creationDT = dt.toUTC();
 }
 
-void TSampleInfo::setModificationDateTime(const QDateTime &dt)
+void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
 {
-    d_func()->modificationDT = dt.toUTC();
+    d_func()->updateDT = dt.toUTC();
 }
 
 TSampleInfo::Context TSampleInfo::context() const
@@ -397,9 +397,9 @@ QDateTime TSampleInfo::creationDateTime(Qt::TimeSpec spec) const
     return d_func()->creationDT.toTimeSpec(spec);
 }
 
-QDateTime TSampleInfo::modificationDateTime(Qt::TimeSpec spec) const
+QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
 {
-    return d_func()->modificationDT.toTimeSpec(spec);
+    return d_func()->updateDT.toTimeSpec(spec);
 }
 
 bool TSampleInfo::isValid(Context c) const
@@ -417,7 +417,7 @@ bool TSampleInfo::isValid(Context c) const
     default:
         return d->id && d->sender.isValid(TUserInfo::ShortInfoContext)
                 && (d->authors.isEmpty() || !d->authors.contains("")) && !d->title.isEmpty()
-                && !d->fileName.isEmpty() && d->size && d->creationDT.isValid() && d->modificationDT.isValid();
+                && !d->fileName.isEmpty() && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
 
@@ -440,7 +440,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->remark = dd->remark;
     d->rating = dd->rating;
     d->creationDT = dd->creationDT;
-    d->modificationDT = dd->modificationDT;
+    d->updateDT = dd->updateDT;
     return *this;
 }
 
@@ -462,7 +462,7 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
         return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
                 && d->type == dd->type && d->fileName == dd->fileName && d->size == dd->size && d->tags == dd->tags
                 && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
-                && d->creationDT == dd->creationDT && d->modificationDT == dd->modificationDT;
+                && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT;
     }
 }
 
@@ -489,7 +489,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     m.insert("tags", d->tags);
     m.insert("comment", d->comment);
     if (TSampleInfo::AddContext != d->context)
-        m.insert("id", stream << d->id);
+        m.insert("id", d->id);
     if (TSampleInfo::GeneralContext == d->context)
         m.insert("sender", d->sender);
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
@@ -502,7 +502,7 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     if (TSampleInfo::GeneralContext == d->context)
     {
         m.insert("creation_dt", d->creationDT);
-        m.insert("modification_dt", d->modificationDT);
+        m.insert("update_dt", d->updateDT);
         m.insert("size", d->size);
     }
     stream << m;
@@ -534,7 +534,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     if (TSampleInfo::GeneralContext == d->context)
     {
         d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
-        d->modificationDT = m.value("modification_dt").toDateTime().toTimeSpec(Qt::UTC);
+        d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
         info.setProjectSize(m.value("size").toInt());
     }
     return stream;

@@ -62,7 +62,7 @@ void TMessagePrivate::init()
 
 TMessage::Message TMessage::messageFromInt(int msg)
 {
-    static const QList<int> messages = bRangeD(NoMessage, NoMessage);
+    static const QList<int> messages = bRangeD(NoMessage, UnknownError);
     return messages.contains(msg) ? static_cast<Message>(msg) : NoMessage;
 }
 
@@ -70,6 +70,8 @@ QString TMessage::messageToString(int msg)
 {
     switch (msg)
     {
+    case UnknownError:
+        return tr("Unknown error occured", "error");
     case NoMessage:
     default:
         return "";
@@ -80,6 +82,8 @@ QString TMessage::messageToStringNoTr(int msg)
 {
     switch (msg)
     {
+    case UnknownError:
+        return "Unknown error occured";
     case NoMessage:
     default:
         return "";
@@ -154,9 +158,12 @@ TMessage &TMessage::operator =(int msg)
 
 bool TMessage::operator ==(const TMessage &other) const
 {
-    const B_D(TMessage);
-    const TMessagePrivate *dd = other.d_func();
-    return d->message == dd->message;
+    return d_func()->message == other.d_func()->message;
+}
+
+bool TMessage::operator ==(int other) const
+{
+    return d_func()->message == other;
 }
 
 TMessage::operator QVariant() const

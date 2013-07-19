@@ -435,6 +435,7 @@ QDataStream &operator <<(QDataStream &stream, const TProjectFile &file)
         m.insert("data", d->data);
     else
         m.insert("text", d->text);
+    stream << m;
     return stream;
 }
 
