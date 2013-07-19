@@ -25,7 +25,6 @@ class TSMP_EXPORT TMessage : public BBase
     B_DECLARE_PRIVATE(TMessage)
     Q_DECLARE_TR_FUNCTIONS(TMessage)
 public:
-    int dummy; //TODO: remove (needed for correct indent of the enum)
     enum Message
     {
         NoMessage = 0,
@@ -35,8 +34,19 @@ public:
         InternalParametersError,
         InternalFileSystemError,
         InternalNetworkError,
-        //Other errors
-        InvalidProjectError,
+        InternalStorageError,
+        InternalQueryError,
+        InternalDatabaseError,
+        //Storage errors
+        ReadOnlyError,
+        InvalidDataError,
+        InvalidUserIdError,
+        InvalidSampleIdError,
+        InvalidEmailError,
+        NoSuchSampleError,
+        NoSuchCodeError,
+        LoginOrEmailOccupiedError,
+        SampleAlreadyDeletedError,
         //Connection errors
         InvalidCodeError,
         InvalidUserInfoError,
@@ -49,6 +59,7 @@ public:
         NotOwnAccountError,
         NotOwnSampleError,
         NotModifiableSampleError,
+        //Other errors
         UnknownError
     };
 public:

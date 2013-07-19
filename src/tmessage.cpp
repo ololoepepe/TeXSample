@@ -66,6 +66,43 @@ TMessage::Message TMessage::messageFromInt(int msg)
     return messages.contains(msg) ? static_cast<Message>(msg) : NoMessage;
 }
 
+/*
+        NoMessage = 0,
+        //Connection messages
+        AlreadyAuthorizedMessage,
+        //Internal errors
+        InternalParametersError,
+        InternalFileSystemError,
+        InternalNetworkError,
+        InternalStorageError,
+        InternalQueryError,
+        InternalDatabaseError,
+        //Storage errors
+        ReadOnlyError,
+        InvalidDataError,
+        InvalidUserIdError,
+        InvalidSampleIdError,
+        InvalidEmailError,
+        NoSuchSampleError,
+        NoSuchCodeError,
+        LoginOrEmailOccupiedError,
+        SampleAlreadyDeletedError,
+        //Connection errors
+        InvalidCodeError,
+        InvalidUserInfoError,
+        InvalidLoginError,
+        InvalidPasswordError,
+        NoSuchUserError,
+        NotAuthorizedError,
+        NotEnoughRightsError,
+        CantDowngradeSelfError,
+        NotOwnAccountError,
+        NotOwnSampleError,
+        NotModifiableSampleError,
+        //Other errors
+        UnknownError
+  */
+
 QString TMessage::messageToString(int msg)
 {
     switch (msg)
