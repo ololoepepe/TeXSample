@@ -6,6 +6,7 @@
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BTranslator>
+#include <BeQt>
 
 #include <QObject>
 #include <QDataStream>
@@ -143,6 +144,78 @@ TSampleInfo::Type TSampleInfo::typeFromInt(int t)
     return types.contains(t) ? static_cast<Type>(t) : Unverified;
 }
 
+QString TSampleInfo::projectSizeToString(int sz, ProjectSizeFormat format)
+{
+    if (sz < 0)
+        sz = 0;
+    int d = 1;
+    QString s;
+    switch (format)
+    {
+    case MegabytesFormat:
+        d = BeQt::Megabyte;
+        s = tr("MB");
+        break;
+    case KilobytesFormat:
+        d = BeQt::Kilobyte;
+        s = tr("KB");
+        break;
+    case BytesFormat:
+    default:
+        s = tr("B");
+        break;
+    }
+    QString ss = QString::number(sz / d);
+    int dec = (sz % d) / (d / 10);
+    if (sz / d == 0 && sz != 0)
+    {
+        if (dec == 0)
+            dec = 1;
+        ss += "." + QString::number(dec);
+    }
+    else if (dec != 0)
+    {
+        ss += "." + QString::number(dec);
+    }
+    return ss + " " + s;
+}
+
+QString TSampleInfo::projectSizeToStringNoTr(int sz, ProjectSizeFormat format)
+{
+    if (sz < 0)
+        sz = 0;
+    int d = 1;
+    QString s;
+    switch (format)
+    {
+    case MegabytesFormat:
+        d = BeQt::Megabyte;
+        s = "MB";
+        break;
+    case KilobytesFormat:
+        d = BeQt::Kilobyte;
+        s = "KB";
+        break;
+    case BytesFormat:
+    default:
+        s = "B";
+        break;
+    }
+    QString ss = QString::number(sz / d);
+    int dec = (sz % d) / (d / 10);
+    if (sz / d == 0 && sz != 0)
+    {
+        if (dec == 0)
+            dec = 1;
+        ss += "." + QString::number(dec);
+    }
+    else if (dec != 0)
+    {
+        ss += "." + QString::number(dec);
+    }
+    return ss + " " + s;
+}
+
 /*============================== Public constructors =======================*/
 
 TSampleInfo::TSampleInfo(Context c) :
@@ -232,11 +305,6 @@ void TSampleInfo::setAuthors(const QStringList &list)
     d_func()->authors.removeDuplicates();
 }
 
-void TSampleInfo::setAuthors(const QString &s)
-{
-    setAuthors(listFromString(s));
-}
-
 void TSampleInfo::setTitle(const QString &title)
 {
     d_func()->title = title;
@@ -321,11 +389,6 @@ QStringList TSampleInfo::authors() const
     return d_func()->authors;
 }
 
-QString TSampleInfo::authorsString() const
-{
-    return listToString(d_func()->authors);
-}
-
 QString TSampleInfo::title() const
 {
     return d_func()->title;
@@ -356,9 +419,14 @@ int TSampleInfo::projectSize() const
     return d_func()->size;
 }
 
-QString TSampleInfo::projectSizeString() const
+QString TSampleInfo::projectSizeString(ProjectSizeFormat format) const
 {
-    return QString::number(d_func()->size);
+    return projectSizeToString(d_func()->size, format);
+}
+
+QString TSampleInfo::projectSizeStringNoTr(ProjectSizeFormat format) const
+{
+    return projectSizeToStringNoTr(d_func()->size, format);
 }
 
 QStringList TSampleInfo::tags() const
@@ -415,7 +483,7 @@ bool TSampleInfo::isValid(Context c) const
         return d->id && !d->title.isEmpty() && !d->fileName.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->sender.isValid(TUserInfo::ShortInfoContext)
+        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext)
                 && (d->authors.isEmpty() || !d->authors.contains("")) && !d->title.isEmpty()
                 && !d->fileName.isEmpty() && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }

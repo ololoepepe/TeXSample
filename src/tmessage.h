@@ -55,7 +55,7 @@ public:
         NoSuchUserError,
         NotAuthorizedError,
         NotEnoughRightsError,
-        CantDowngradeSelfError,
+        CantEditSelfError,
         NotOwnAccountError,
         NotOwnSampleError,
         NotModifiableSampleError,

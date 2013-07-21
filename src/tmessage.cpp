@@ -66,61 +66,76 @@ TMessage::Message TMessage::messageFromInt(int msg)
     return messages.contains(msg) ? static_cast<Message>(msg) : NoMessage;
 }
 
-/*
-        NoMessage = 0,
-        //Connection messages
-        AlreadyAuthorizedMessage,
-        //Internal errors
-        InternalParametersError,
-        InternalFileSystemError,
-        InternalNetworkError,
-        InternalStorageError,
-        InternalQueryError,
-        InternalDatabaseError,
-        //Storage errors
-        ReadOnlyError,
-        InvalidDataError,
-        InvalidUserIdError,
-        InvalidSampleIdError,
-        InvalidEmailError,
-        NoSuchSampleError,
-        NoSuchCodeError,
-        LoginOrEmailOccupiedError,
-        SampleAlreadyDeletedError,
-        //Connection errors
-        InvalidCodeError,
-        InvalidUserInfoError,
-        InvalidLoginError,
-        InvalidPasswordError,
-        NoSuchUserError,
-        NotAuthorizedError,
-        NotEnoughRightsError,
-        CantDowngradeSelfError,
-        NotOwnAccountError,
-        NotOwnSampleError,
-        NotModifiableSampleError,
-        //Other errors
-        UnknownError
-  */
-
 QString TMessage::messageToString(int msg)
 {
-    switch (msg)
-    {
-    case UnknownError:
-        return tr("Unknown error occured", "error");
-    case NoMessage:
-    default:
-        return "";
-    }
+    return tr(messageToStringNoTr(msg).toUtf8().constData());
 }
 
 QString TMessage::messageToStringNoTr(int msg)
 {
     switch (msg)
     {
+    //Connection messages
+    case AlreadyAuthorizedMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    //Internal errors
+    case InternalParametersError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InternalFileSystemError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InternalNetworkError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InternalStorageError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InternalQueryError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InternalDatabaseError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    //Storage errors
+    case ReadOnlyError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidDataError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidUserIdError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidSampleIdError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidEmailError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NoSuchSampleError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NoSuchCodeError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case LoginOrEmailOccupiedError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case SampleAlreadyDeletedError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    //Connection errors
+    case InvalidCodeError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidUserInfoError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidLoginError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case InvalidPasswordError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NoSuchUserError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NotAuthorizedError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NotEnoughRightsError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case CantEditSelfError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NotOwnAccountError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NotOwnSampleError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    case NotModifiableSampleError:
+        return QT_TRANSLATE_NOOP("TMessage", "");
+    //Other errors
     case UnknownError:
-        return "Unknown error occured";
+        return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");
     case NoMessage:
     default:
         return "";

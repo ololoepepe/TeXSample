@@ -45,12 +45,20 @@ public:
         EditContext,
         UpdateContext
     };
+    enum ProjectSizeFormat
+    {
+        BytesFormat,
+        KilobytesFormat,
+        MegabytesFormat
+    };
 public:
     static QString typeToString(Type t, bool singular = true);
     static QString typeToStringNoTr(Type t, bool singular = true);
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
+    static QString projectSizeToString(int sz, ProjectSizeFormat format);
+    static QString projectSizeToStringNoTr(int sz, ProjectSizeFormat format);
 public:
     explicit TSampleInfo(Context c = GeneralContext);
     TSampleInfo(const TSampleInfo &other);
@@ -62,7 +70,6 @@ public:
     void setId(quint64 id);
     void setSender(const TUserInfo &s);
     void setAuthors(const QStringList &list);
-    void setAuthors(const QString &s);
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
@@ -79,14 +86,14 @@ public:
     QString idString(int fixedLength = -1) const;
     TUserInfo sender() const;
     QStringList authors() const;
-    QString authorsString() const;
     QString title() const;
     Type type() const;
     QString typeString() const;
     QString typeStringNoTr() const;
     QString fileName() const;
     int projectSize() const;
-    QString projectSizeString() const;
+    QString projectSizeString(ProjectSizeFormat format) const;
+    QString projectSizeStringNoTr(ProjectSizeFormat format) const;
     QStringList tags() const;
     QString tagsString() const;
     QString comment() const;

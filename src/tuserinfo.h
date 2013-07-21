@@ -3,8 +3,7 @@
 
 class TUserInfoPrivate;
 class TAccessLevel;
-
-class BTranslator;
+class TService;
 
 class QDataStream;
 class QDateTime;
@@ -14,12 +13,14 @@ class QByteArray;
 class QString;
 
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TUserInfo ===================================
@@ -34,7 +35,7 @@ public:
     {
         CurrentContext,
         GeneralContext,
-        ShortInfoContext,
+        BriefInfoContext,
         AddContext,
         RegisterContext,
         EditContext,
@@ -53,6 +54,8 @@ public:
     void setPassword(const QString &s);
     void setPassword(const QByteArray &data);
     void setAccessLevel(const TAccessLevel &lvl);
+    void setServices(const TServiceList &list);
+    void setServices(const QList<int> &list);
     void setRealName(const QString &name);
     void setAvatar(const QByteArray &data);
     void setCreationDateTime(const QDateTime &dt);
@@ -67,6 +70,7 @@ public:
     TAccessLevel accessLevel() const;
     QString accessLevelString() const;
     QString accessLevelStringNoTr() const;
+    TServiceList services() const;
     QString realName() const;
     QByteArray avatar() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;

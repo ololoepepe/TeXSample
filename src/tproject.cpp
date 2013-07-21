@@ -116,28 +116,28 @@ void TProjectPrivate::init()
 
 /*============================== Static public methods =====================*/
 
-int TProject::size(const QString &rootFileName, QTextCodec *codec)
+int TProject::size(const QString &rootFilePath, QTextCodec *codec, bool sourceOnly)
 {
-    return size(rootFileName, codec ? QString(codec->name()) : QString("UTF-8"));
+    return size(rootFilePath, codec ? QString(codec->name()) : QString("UTF-8"), sourceOnly);
 }
 
-int TProject::size(const QString &rootFileName, const QString &codecName)
+int TProject::size(const QString &rootFilePath, const QString &codecName, bool sourceOnly)
 {
-    if (rootFileName.isEmpty())
+    if (rootFilePath.isEmpty())
         return -1;
     QString cn = !codecName.isEmpty() ? codecName : QString("UTF-8");
     bool ok = false;
-    QString text = BDirTools::readTextFile(rootFileName, cn, &ok);
+    QString text = BDirTools::readTextFile(rootFilePath, cn, &ok);
     if (!ok)
         return -1;
     ok = false;
-    QFileInfo fi(rootFileName);
+    QFileInfo fi(rootFilePath);
     QString path = fi.path();
     QString bn = fi.baseName();
     QStringList list = TProjectPrivate::dependencies(text, path, cn, &ok);
     if (!ok)
         return -1;
-    int sz = fi.size() * 2 + QFileInfo(path + "/" + bn + ".pdf").size();
+    int sz = fi.size() * 2;
     foreach (const QString &fn, list)
     {
         static const QStringList suffixes = QStringList() << "tex" << "pic";
@@ -145,6 +145,12 @@ int TProject::size(const QString &rootFileName, const QString &codecName)
             sz += 2 * QFileInfo(fn).size();
         else
             sz += QFileInfo(fn).size();
+    }
+    if (!sourceOnly)
+    {
+        QFileInfo fi(path + "/" + bn + ".pdf");
+        if (fi.isFile())
+            sz += fi.size();
     }
     return sz;
 }

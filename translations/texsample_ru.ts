@@ -4,16 +4,6 @@
 <context>
     <name>TAccessLevel</name>
     <message>
-        <source>No</source>
-        <comment>accessLevel (singular)</comment>
-        <translation>Нет</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <comment>accessLevel (plural)</comment>
-        <translation>Нет</translation>
-    </message>
-    <message>
         <source>User</source>
         <translation>Пользователь</translation>
     </message>
@@ -41,12 +31,19 @@
         <source>Roots</source>
         <translation>Суперпользователи</translation>
     </message>
+    <message>
+        <source>Administrator</source>
+        <translation>Администратор</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Нет</translation>
+    </message>
 </context>
 <context>
     <name>TMessage</name>
     <message>
         <source>Unknown error occured</source>
-        <comment>error</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -81,6 +78,29 @@
         <source>Unverified</source>
         <comment>type (plural)</comment>
         <translation>Непроверенные</translation>
+    </message>
+    <message>
+        <source>MB</source>
+        <translation>МБ</translation>
+    </message>
+    <message>
+        <source>KB</source>
+        <translation>КБ</translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation>Б</translation>
+    </message>
+</context>
+<context>
+    <name>TService</name>
+    <message>
+        <source>TeXSample</source>
+        <translation>TeXSample</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Нет</translation>
     </message>
 </context>
 </TS>

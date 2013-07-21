@@ -14,6 +14,8 @@
 #include "tprojectfilelist.h"
 #include "tsampleinfo.h"
 #include "tsampleinfolist.h"
+#include "tservice.h"
+#include "tservicelist.h"
 #include "tnamespace.h"
 #include "tuserinfo.h"
 #include "tprojectfilelist.h"
@@ -71,6 +73,10 @@ void tInit()
     qRegisterMetaTypeStreamOperators<TSampleInfo>();
     qRegisterMetaType<TSampleInfoList>();
     qRegisterMetaTypeStreamOperators<TSampleInfoList>();
+    qRegisterMetaType<TService>();
+    qRegisterMetaTypeStreamOperators<TService>();
+    qRegisterMetaType<TServiceList>();
+    qRegisterMetaTypeStreamOperators<TServiceList>();
     qRegisterMetaType<TUserInfo>();
     qRegisterMetaTypeStreamOperators<TUserInfo>();
     registered = true;

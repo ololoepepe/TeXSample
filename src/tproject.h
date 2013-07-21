@@ -26,8 +26,8 @@ class TSMP_EXPORT TProject : BBase
 {
     B_DECLARE_PRIVATE(TProject)
 public:
-    static int size(const QString &rootFilePath, QTextCodec *codec = 0);
-    static int size(const QString &rootFilePath, const QString &codecName);
+    static int size(const QString &rootFilePath, QTextCodec *codec = 0, bool sourceOnly = false);
+    static int size(const QString &rootFilePath, const QString &codecName, bool sourceOnly = false);
 public:
     explicit TProject();
     explicit TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);

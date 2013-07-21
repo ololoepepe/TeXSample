@@ -42,6 +42,8 @@ HEADERS += \
     tprojectfilelist.h \
     tsampleinfo.h \
     tsampleinfolist.h \
+    tservice.h \
+    tservicelist.h \
     ttexttools.h \
     tuserinfo.h
 
@@ -63,6 +65,8 @@ SOURCES += \
     tprojectfilelist.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
+    tservice.cpp \
+    tservicelist.cpp \
     ttexttools.cpp \
     tuserinfo.cpp
 

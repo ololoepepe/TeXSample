@@ -1,6 +1,8 @@
 #include "tuserinfo.h"
 #include "tglobal.h"
 #include "taccesslevel.h"
+#include "tservice.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -16,6 +18,7 @@
 #include <QString>
 #include <QCryptographicHash>
 #include <QVariantMap>
+#include <QList>
 
 /*============================================================================
 ================================ TUserInfoPrivate ============================
@@ -32,6 +35,7 @@ public:
    static const QList<TUserInfo::Context> LoginContexts;
    static const QList<TUserInfo::Context> PasswordContexts;
    static const QList<TUserInfo::Context> AccessLevelContexts;
+   static const QList<TUserInfo::Context> ServicesContexts;
    static const QList<TUserInfo::Context> RealNameContexts;
    static const QList<TUserInfo::Context> AvatarContexts;
    static const QList<TUserInfo::Context> CreationDTContexts;
@@ -48,6 +52,7 @@ public:
     QString login;
     QByteArray password;
     TAccessLevel accessLevel;
+    TServiceList services;
     QString realName;
     QByteArray avatar;
     QDateTime creationDT;
@@ -71,20 +76,22 @@ TUserInfo::Context TUserInfoPrivate::contextFromInt(int c)
 /*============================== Static public constants ===================*/
 
 const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
-    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::EditContext
+    QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::EditContext
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::EmailContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
-    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext
+    QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::AddContext
     << TUserInfo::RegisterContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::PasswordContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext << TUserInfo::EditContext
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::AccessLevelContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::EditContext << TUserInfo::GeneralContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::ServicesContexts =
+    QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::EditContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::RealNameContexts =
-    QList<TUserInfo::Context>() << TUserInfo::ShortInfoContext << TUserInfo::AddContext << TUserInfo::RegisterContext
+    QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::AddContext << TUserInfo::RegisterContext
     << TUserInfo::EditContext << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::AvatarContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext << TUserInfo::EditContext
@@ -171,6 +178,8 @@ void TUserInfo::setContext(int c, bool clear)
         d->password.clear();
     if (!TUserInfoPrivate::AccessLevelContexts.contains(d->context))
         d->accessLevel = TAccessLevel();
+    if (!TUserInfoPrivate::ServicesContexts.contains(d->context))
+        d->services.clear();
     if (!TUserInfoPrivate::RealNameContexts.contains(d->context))
         d->realName.clear();
     if (!TUserInfoPrivate::AvatarContexts.contains(d->context))
@@ -209,6 +218,17 @@ void TUserInfo::setPassword(const QByteArray &data)
 void TUserInfo::setAccessLevel(const TAccessLevel &lvl)
 {
     d_func()->accessLevel = lvl;
+}
+
+void TUserInfo::setServices(const TServiceList &list)
+{
+    d_func()->services = list;
+    bRemoveDuplicates(d_func()->services);
+}
+
+void TUserInfo::setServices(const QList<int> &list)
+{
+    d_func()->services = TServiceList::serviceListFromIntList(list);
 }
 
 void TUserInfo::setRealName(const QString &name)
@@ -294,6 +314,11 @@ QString TUserInfo::accessLevelStringNoTr() const
     return d_func()->accessLevel.toStringNoTr();
 }
 
+TServiceList TUserInfo::services() const
+{
+    return d_func()->services;
+}
+
 QString TUserInfo::realName() const
 {
     return d_func()->realName;
@@ -319,7 +344,7 @@ bool TUserInfo::isValid(Context c) const
     const B_D(TUserInfo);
     switch ((CurrentContext == c) ? d->context : c)
     {
-    case ShortInfoContext:
+    case BriefInfoContext:
         return d->id && !d->login.isEmpty();
     case AddContext:
     case RegisterContext:
@@ -346,6 +371,7 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     d->login = dd->login;
     d->password = dd->password;
     d->accessLevel = dd->accessLevel;
+    d->services = dd->services;
     d->realName = dd->realName;
     d->avatar = dd->avatar;
     d->creationDT = dd->creationDT;
@@ -370,6 +396,8 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
         b = b && d->password == dd->password;
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
         b = b && d->accessLevel == dd->accessLevel;
+    if (TUserInfoPrivate::ServicesContexts.contains(d->context))
+        b = b && d->services == dd->services;
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
         b = b && d->realName == dd->realName;
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
@@ -408,6 +436,8 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
         m.insert("password", d->password);
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
         m.insert("access_level", d->accessLevel);
+    if (TUserInfoPrivate::ServicesContexts.contains(d->context))
+        m.insert("services", d->services);
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
         m.insert("real_name", d->realName);
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
@@ -436,6 +466,11 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
         d->password = m.value("password").toByteArray();
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
         d->accessLevel = m.value("access_level").value<TAccessLevel>();
+    if (TUserInfoPrivate::ServicesContexts.contains(d->context))
+    {
+        d->services = m.value("services").value<TServiceList>();
+        bRemoveDuplicates(d->services);
+    }
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
         d->realName = m.value("real_name").toString();
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
