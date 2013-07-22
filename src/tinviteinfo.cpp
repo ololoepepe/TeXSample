@@ -1,5 +1,6 @@
 #include "tinviteinfo.h"
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -38,6 +39,7 @@ public:
     quint64 id;
     QUuid code;
     quint64 creatorId;
+    TServiceList services;
     QDateTime creationDT;
     QDateTime expirationDT;
 private:
@@ -127,6 +129,11 @@ void TInviteInfo::setCreatorId(quint64 id)
     d_func()->creatorId = id;
 }
 
+void TInviteInfo::setServices(const TServiceList &list)
+{
+    d_func()->services = list;
+}
+
 void TInviteInfo::setCreationDateTime(const QDateTime &dt)
 {
     d_func()->creationDT = dt.toUTC();
@@ -167,6 +174,11 @@ QString TInviteInfo::creatorIdString(int fixedLength) const
     return TInviteInfoPrivate::numberToString(d_func()->creatorId, fixedLength);
 }
 
+TServiceList TInviteInfo::services() const
+{
+    return d_func()->services;
+}
+
 QDateTime TInviteInfo::creationDateTime(Qt::TimeSpec spec) const
 {
     return d_func()->creationDT.toTimeSpec(spec);
@@ -197,6 +209,7 @@ TInviteInfo &TInviteInfo::operator =(const TInviteInfo &other)
     d->id = dd->id;
     d->code = dd->code;
     d->creatorId = dd->creatorId;
+    d->services = dd->services;
     d->creationDT = dd->creationDT;
     d->expirationDT = dd->expirationDT;
     return *this;
@@ -223,6 +236,7 @@ QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info)
     m.insert("id", d->id);
     m.insert("code", QVariant::fromValue(d->code));
     m.insert("creator_id", d->creatorId);
+    m.insert("services", d->services);
     m.insert("creation_dt", d->creationDT);
     m.insert("expiration_dt", d->expirationDT);
     stream << m;
@@ -237,6 +251,8 @@ QDataStream &operator >>(QDataStream &stream, TInviteInfo &info)
     d->id = m.value("id").toULongLong();
     d->code = m.value("code").value<QUuid>();
     d->creatorId = m.value("creator_id").toULongLong();
+    d->services = m.value("services").value<TServiceList>();
+    bRemoveDuplicates(d->services);
     d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
     d->expirationDT = m.value("expiration_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;

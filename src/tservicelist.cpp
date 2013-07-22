@@ -20,9 +20,11 @@ TServiceList TServiceList::serviceListFromIntList(const QList<int> &list)
     return nlist;
 }
 
-TServiceList TServiceList::allServices()
+TServiceList TServiceList::allServices(bool includeNoService)
 {
     TServiceList list;
+    if (includeNoService)
+        list << TService::NoService;
     list << TService::TexsampleService;
     return list;
 }

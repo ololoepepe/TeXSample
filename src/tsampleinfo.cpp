@@ -125,6 +125,11 @@ QString TSampleInfo::typeToStringNoTr(Type t, bool)
     }
 }
 
+QList<TSampleInfo::Type> TSampleInfo::allTypes()
+{
+    return QList<Type>() << Unverified << Approved << Rejected;
+}
+
 QString TSampleInfo::listToString(const QStringList &list)
 {
     return list.join(", ");
@@ -142,78 +147,6 @@ TSampleInfo::Type TSampleInfo::typeFromInt(int t)
 {
     static const QList<int> types = bRangeM(Approved, Rejected);
     return types.contains(t) ? static_cast<Type>(t) : Unverified;
-}
-
-QString TSampleInfo::projectSizeToString(int sz, ProjectSizeFormat format)
-{
-    if (sz < 0)
-        sz = 0;
-    int d = 1;
-    QString s;
-    switch (format)
-    {
-    case MegabytesFormat:
-        d = BeQt::Megabyte;
-        s = tr("MB");
-        break;
-    case KilobytesFormat:
-        d = BeQt::Kilobyte;
-        s = tr("KB");
-        break;
-    case BytesFormat:
-    default:
-        s = tr("B");
-        break;
-    }
-    QString ss = QString::number(sz / d);
-    int dec = (sz % d) / (d / 10);
-    if (sz / d == 0 && sz != 0)
-    {
-        if (dec == 0)
-            dec = 1;
-        ss += "." + QString::number(dec);
-    }
-    else if (dec != 0)
-    {
-        ss += "." + QString::number(dec);
-    }
-    return ss + " " + s;
-}
-
-QString TSampleInfo::projectSizeToStringNoTr(int sz, ProjectSizeFormat format)
-{
-    if (sz < 0)
-        sz = 0;
-    int d = 1;
-    QString s;
-    switch (format)
-    {
-    case MegabytesFormat:
-        d = BeQt::Megabyte;
-        s = "MB";
-        break;
-    case KilobytesFormat:
-        d = BeQt::Kilobyte;
-        s = "KB";
-        break;
-    case BytesFormat:
-    default:
-        s = "B";
-        break;
-    }
-    QString ss = QString::number(sz / d);
-    int dec = (sz % d) / (d / 10);
-    if (sz / d == 0 && sz != 0)
-    {
-        if (dec == 0)
-            dec = 1;
-        ss += "." + QString::number(dec);
-    }
-    else if (dec != 0)
-    {
-        ss += "." + QString::number(dec);
-    }
-    return ss + " " + s;
 }
 
 /*============================== Public constructors =======================*/
@@ -419,14 +352,14 @@ int TSampleInfo::projectSize() const
     return d_func()->size;
 }
 
-QString TSampleInfo::projectSizeString(ProjectSizeFormat format) const
+QString TSampleInfo::projectSizeString(BeQt::FileSizeFormat format, quint8 precision) const
 {
-    return projectSizeToString(d_func()->size, format);
+    return BeQt::fileSizeToString(d_func()->size, format, precision);
 }
 
-QString TSampleInfo::projectSizeStringNoTr(ProjectSizeFormat format) const
+QString TSampleInfo::projectSizeStringNoTr(BeQt::FileSizeFormat format, quint8 precision) const
 {
-    return projectSizeToStringNoTr(d_func()->size, format);
+    return BeQt::fileSizeToStringNoTr(d_func()->size, format, precision);
 }
 
 QStringList TSampleInfo::tags() const

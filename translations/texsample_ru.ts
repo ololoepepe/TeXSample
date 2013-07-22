@@ -79,18 +79,6 @@
         <comment>type (plural)</comment>
         <translation>Непроверенные</translation>
     </message>
-    <message>
-        <source>MB</source>
-        <translation>МБ</translation>
-    </message>
-    <message>
-        <source>KB</source>
-        <translation>КБ</translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation>Б</translation>
-    </message>
 </context>
 <context>
     <name>TService</name>

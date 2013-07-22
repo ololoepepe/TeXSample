@@ -11,6 +11,7 @@ class QUuid;
 class QString;
 
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -34,6 +35,7 @@ public:
     void setCode(const QUuid &code);
     void setCode(const QString &code);
     void setCreatorId(quint64 id);
+    void setServices(const TServiceList &list);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);
     quint64 id() const;
@@ -42,6 +44,7 @@ public:
     QString codeString() const;
     quint64 creatorId() const;
     QString creatorIdString(int fixedLength = -1) const;
+    TServiceList services() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isExpired() const;

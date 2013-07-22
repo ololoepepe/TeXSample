@@ -48,7 +48,6 @@ public:
         LoginOrEmailOccupiedError,
         SampleAlreadyDeletedError,
         //Connection errors
-        InvalidCodeError,
         InvalidUserInfoError,
         InvalidLoginError,
         InvalidPasswordError,

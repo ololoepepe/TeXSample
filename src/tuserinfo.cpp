@@ -8,6 +8,7 @@
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BTranslator>
+#include <BeQt>
 
 #include <QObject>
 #include <QDataStream>
@@ -19,6 +20,11 @@
 #include <QCryptographicHash>
 #include <QVariantMap>
 #include <QList>
+#include <QUuid>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+Q_DECLARE_METATYPE(QUuid)
+#endif
 
 /*============================================================================
 ================================ TUserInfoPrivate ============================
@@ -31,6 +37,7 @@ public:
    static TUserInfo::Context contextFromInt(int c);
 public:
    static const QList<TUserInfo::Context> IdContexts;
+   static const QList<TUserInfo::Context> InviteCodeContexts;
    static const QList<TUserInfo::Context> EmailContexts;
    static const QList<TUserInfo::Context> LoginContexts;
    static const QList<TUserInfo::Context> PasswordContexts;
@@ -48,6 +55,7 @@ public:
 public:
     TUserInfo::Context context;
     quint64 id;
+    QUuid inviteCode;
     QString email;
     QString login;
     QByteArray password;
@@ -79,6 +87,8 @@ const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
     QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::EditContext
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::EmailContexts =
+    QList<TUserInfo::Context>() << TUserInfo::RegisterContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::InviteCodeContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
     QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::AddContext
@@ -170,6 +180,8 @@ void TUserInfo::setContext(int c, bool clear)
         return;
     if (!TUserInfoPrivate::IdContexts.contains(d->context))
         d->id = 0;
+    if (!TUserInfoPrivate::InviteCodeContexts.contains(d->context))
+        d->inviteCode = QUuid();
     if (!TUserInfoPrivate::EmailContexts.contains(d->context))
         d->email.clear();
     if (!TUserInfoPrivate::LoginContexts.contains(d->context))
@@ -193,6 +205,11 @@ void TUserInfo::setContext(int c, bool clear)
 void TUserInfo::setId(quint64 id)
 {
     d_func()->id = id;
+}
+
+void TUserInfo::setInviteCode(const QString &code)
+{
+    d_func()->inviteCode = BeQt::uuidFromText(code);
 }
 
 void TUserInfo::setEmail(const QString &email)
@@ -255,10 +272,12 @@ void TUserInfo::clear()
 {
     B_D(TUserInfo);
     d->id = 0;
+    d->inviteCode = QUuid();
     d->email.clear();
     d->login.clear();
     d->password.clear();
     d->accessLevel = TAccessLevel();
+    d->services.clear();
     d->realName.clear();
     d->avatar.clear();
     d->creationDT = QDateTime().toUTC();
@@ -282,6 +301,11 @@ QString TUserInfo::idString(int fixedLength) const
     if (dlen > 0)
         s.prepend(QString().fill('0', dlen));
     return s;
+}
+
+QString TUserInfo::inviteCode() const
+{
+    return BeQt::pureUuidText(d_func()->inviteCode);
 }
 
 QString TUserInfo::email() const
@@ -347,8 +371,9 @@ bool TUserInfo::isValid(Context c) const
     case BriefInfoContext:
         return d->id && !d->login.isEmpty();
     case AddContext:
-    case RegisterContext:
         return !d->email.isEmpty() && !d->login.isEmpty() && !d->password.isEmpty();
+    case RegisterContext:
+        return !d->inviteCode.isNull() && !d->email.isEmpty() && !d->login.isEmpty() && !d->password.isEmpty();
     case EditContext:
         return d->id;
     case UpdateContext:
@@ -367,6 +392,7 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     const TUserInfoPrivate *dd = other.d_func();
     d->context = dd->context;
     d->id = dd->id;
+    d->inviteCode = dd->inviteCode;
     d->email = dd->email;
     d->login = dd->login;
     d->password = dd->password;
@@ -388,6 +414,8 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
     bool b = true;
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         b = b && d->id == dd->id;
+    if (TUserInfoPrivate::InviteCodeContexts.contains(d->context))
+        b = b && d->inviteCode == dd->inviteCode;
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
         b = b && d->email == dd->email;
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
@@ -428,6 +456,8 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     m.insert("context", (int) d->context);
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         m.insert("id", d->id);
+    if (TUserInfoPrivate::InviteCodeContexts.contains(d->context))
+        m.insert("invite_code", QVariant::fromValue(d->inviteCode));
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
         m.insert("email", d->email);
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
@@ -458,6 +488,8 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     d->context = TUserInfoPrivate::contextFromInt(m.value("context").toInt());
     if (TUserInfoPrivate::IdContexts.contains(d->context))
         d->id = m.value("id").toULongLong();
+    if (TUserInfoPrivate::InviteCodeContexts.contains(d->context))
+        d->inviteCode = m.value("invite_code").value<QUuid>();
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
         d->email = m.value("email").toString();
     if (TUserInfoPrivate::LoginContexts.contains(d->context))

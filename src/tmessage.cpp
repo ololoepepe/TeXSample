@@ -111,8 +111,6 @@ QString TMessage::messageToStringNoTr(int msg)
     case SampleAlreadyDeletedError:
         return QT_TRANSLATE_NOOP("TMessage", "");
     //Connection errors
-    case InvalidCodeError:
-        return QT_TRANSLATE_NOOP("TMessage", "");
     case InvalidUserInfoError:
         return QT_TRANSLATE_NOOP("TMessage", "");
     case InvalidLoginError:

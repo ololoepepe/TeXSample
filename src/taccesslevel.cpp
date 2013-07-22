@@ -86,6 +86,14 @@ QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
     }
 }
 
+QList<TAccessLevel> TAccessLevel::allAccessLevels(bool includeNoLevel)
+{
+    QList<TAccessLevel> list = QList<TAccessLevel>() << UserLevel << ModeratorLevel << AdminLevel << RootLevel;
+    if (includeNoLevel)
+        list.prepend(NoLevel);
+    return list;
+}
+
 /*============================== Public constructors =======================*/
 
 TAccessLevel::TAccessLevel(int lvl) :

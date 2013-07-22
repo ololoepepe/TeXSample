@@ -15,7 +15,7 @@ class TSMP_EXPORT TServiceList : public QList<TService>
 {
 public:
     static TServiceList serviceListFromIntList(const QList<int> &list);
-    static TServiceList allServices();
+    static TServiceList allServices(bool includeNoService = false);
 public:
     operator QVariant() const;
 };

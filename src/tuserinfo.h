@@ -49,6 +49,7 @@ public:
 public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
+    void setInviteCode(const QString &code);
     void setEmail(const QString &email);
     void setLogin(const QString &login);
     void setPassword(const QString &s);
@@ -64,6 +65,7 @@ public:
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
+    QString inviteCode() const;
     QString email() const;
     QString login() const;
     QByteArray password() const;

@@ -15,6 +15,7 @@ class QString;
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TAccessLevel ================================
@@ -36,6 +37,7 @@ public:
 public:
     static QString accessLevelToString(AccessLevel lvl, bool singular = true);
     static QString accessLevelToStringNoTr(AccessLevel lvl, bool singular = true);
+    static QList<TAccessLevel> allAccessLevels(bool includeNoLevel = false);
 public:
     TAccessLevel(int lvl = NoLevel);
     TAccessLevel(const TAccessLevel &other);

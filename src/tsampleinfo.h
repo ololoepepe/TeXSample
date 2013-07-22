@@ -16,6 +16,7 @@ class QDebug;
 
 #include <BeQtGlobal>
 #include <BBase>
+#include <BeQt>
 
 #include <QMetaType>
 #include <QString>
@@ -45,20 +46,13 @@ public:
         EditContext,
         UpdateContext
     };
-    enum ProjectSizeFormat
-    {
-        BytesFormat,
-        KilobytesFormat,
-        MegabytesFormat
-    };
 public:
     static QString typeToString(Type t, bool singular = true);
     static QString typeToStringNoTr(Type t, bool singular = true);
+    static QList<Type> allTypes();
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
-    static QString projectSizeToString(int sz, ProjectSizeFormat format);
-    static QString projectSizeToStringNoTr(int sz, ProjectSizeFormat format);
 public:
     explicit TSampleInfo(Context c = GeneralContext);
     TSampleInfo(const TSampleInfo &other);
@@ -92,8 +86,8 @@ public:
     QString typeStringNoTr() const;
     QString fileName() const;
     int projectSize() const;
-    QString projectSizeString(ProjectSizeFormat format) const;
-    QString projectSizeStringNoTr(ProjectSizeFormat format) const;
+    QString projectSizeString(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
+    QString projectSizeStringNoTr(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
     QStringList tags() const;
     QString tagsString() const;
     QString comment() const;
