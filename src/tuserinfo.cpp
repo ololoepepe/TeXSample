@@ -3,6 +3,7 @@
 #include "taccesslevel.h"
 #include "tservice.h"
 #include "tservicelist.h"
+#include "tnamespace.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -21,6 +22,7 @@
 #include <QVariantMap>
 #include <QList>
 #include <QUuid>
+#include <QRegExp>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_DECLARE_METATYPE(QUuid)
@@ -214,12 +216,12 @@ void TUserInfo::setInviteCode(const QString &code)
 
 void TUserInfo::setEmail(const QString &email)
 {
-    d_func()->email = email;
+    d_func()->email = QRegExp(BeQt::standardRegExpPattern(BeQt::EmailPattern)).exactMatch(email) ? email : QString();
 }
 
 void TUserInfo::setLogin(const QString &login)
 {
-    d_func()->login = login;
+    d_func()->login = (login.length() <= 20) ? login : QString();
 }
 
 void TUserInfo::setPassword(const QString &s)
@@ -250,12 +252,12 @@ void TUserInfo::setServices(const QList<int> &list)
 
 void TUserInfo::setRealName(const QString &name)
 {
-    d_func()->realName = name;
+    d_func()->realName = (name.length() <= 50) ? name : QString();
 }
 
 void TUserInfo::setAvatar(const QByteArray &data)
 {
-    d_func()->avatar = data;
+    d_func()->avatar = (data.size() <= Texsample::MaximumAvatarSize) ? data : QByteArray();
 }
 
 void TUserInfo::setCreationDateTime(const QDateTime &dt)

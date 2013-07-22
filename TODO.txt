@@ -19,4 +19,4 @@
 [done] Add TMessage class
 [done] Update request constant list
 [done] Add separate headers for lists of data classes
-* Implement email validation, etc.
+[done] Implement email validation, etc.
