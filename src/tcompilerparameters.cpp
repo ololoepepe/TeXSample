@@ -5,6 +5,7 @@
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BeQt>
+#include <BTerminalIOHandler>
 
 #include <QObject>
 #include <QDataStream>
@@ -14,6 +15,8 @@
 #include <QTextCodec>
 #include <QStringList>
 #include <QVariantMap>
+#include <QList>
+#include <QRegExp>
 
 /*============================================================================
 ================================ TCompilerParametersPrivate ==================
@@ -77,13 +80,13 @@ QString TCompilerParameters::compilerToString(Compiler c)
     switch (c)
     {
     case Tex:
-        return "Tex";
+        return "TeX";
     case LaTex:
-        return "LaTex";
+        return "LaTeX";
     case PdfTex:
-        return "PdfTex";
+        return "PdfTeX";
     case PdfLaTex:
-        return "PdfLaTex";
+        return "PdfLaTeX";
     default:
         return "";
     }
@@ -98,6 +101,11 @@ TCompilerParameters::Compiler TCompilerParameters::compilerFromInt(int c)
 {
     static const QList<int> compilers = bRangeD(Tex, PdfLaTex);
     return compilers.contains(c) ? static_cast<Compiler>(c) : PdfLaTex;
+}
+
+QList<TCompilerParameters::Compiler> TCompilerParameters::allCompilers()
+{
+    return QList<Compiler>() << Tex << LaTex << PdfTex << PdfLaTex;
 }
 
 /*============================== Public constructors =======================*/
@@ -152,6 +160,14 @@ void TCompilerParameters::setOptions(const QStringList &list)
     d_func()->options = list;
 }
 
+void TCompilerParameters::setOptions(const QString &s, bool command)
+{
+    if (command)
+        setOptions(BTerminalIOHandler::splitCommand(s).mid(1));
+    else
+        setOptions(s.split(QRegExp("\\,\\s*"), QString::SkipEmptyParts));
+}
+
 void TCompilerParameters::setOption(const QString &opt)
 {
     setOptions(QStringList() << opt);
@@ -160,6 +176,14 @@ void TCompilerParameters::setOption(const QString &opt)
 void TCompilerParameters::setCommands(const QStringList &list)
 {
     d_func()->commands = list;
+}
+
+void TCompilerParameters::setCommands(const QString &s, bool command)
+{
+    if (command)
+        setCommands(BTerminalIOHandler::splitCommand(s).mid(1));
+    else
+        setCommands(s.split(QRegExp("\\,\\s*"), QString::SkipEmptyParts));
 }
 
 void TCompilerParameters::setCommand(const QString &cmd)

@@ -17,6 +17,7 @@ class QStringList;
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TCompilerParameters =========================
@@ -38,6 +39,7 @@ public:
     static QString compilerToString(Compiler c);
     static QString compilerToCommand(Compiler c);
     static Compiler compilerFromInt(int c);
+    static QList<Compiler> allCompilers();
 public:
     explicit TCompilerParameters();
     TCompilerParameters(const TCompilerParameters &other);
@@ -49,8 +51,10 @@ public:
     void setMakeindexEnabled(bool enabled);
     void setDvipsEnabled(bool enabled);
     void setOptions(const QStringList &list);
+    void setOptions(const QString &s, bool command = true);
     void setOption(const QString &opt);
     void setCommands(const QStringList &list);
+    void setCommands(const QString &s, bool command = true);
     void setCommand(const QString &cmd);
     QTextCodec *codec() const;
     QString codecName() const;
