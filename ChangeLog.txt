@@ -1,3 +1,19 @@
+=== TeXSample 1.0.0 (xx July 2013) ===
+    * Rename tRegister() function to tInit()
+    * Replace overloaded methods with default values
+    * Improve serializing (use QVariantMap)
+    * Remove TTextTools namespace
+    * Remove set methods from TClientInfo
+    * Remove TClientInfo::compareVersions() method
+    * Remove TClientInfo::editorVersion() method
+    * Rename TClientInfo::createDefaultInfo() method to createInfo()
+    * Remove compatibility hack
+    * Add TMessage class
+    * Add TService class
+    * Update request constant list
+    * Add separate headers for lists of data classes
+    * Implement email validation, etc. to TUserInfo
+
 === TeXSample 0.2.2 (02 July 2013) ===
     * Add a hack for preventing compatibility breaking
 

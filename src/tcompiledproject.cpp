@@ -1,12 +1,12 @@
 #include "tcompiledproject.h"
 #include "tglobal.h"
 #include "tprojectfile.h"
-#include "ttexttools.h"
 #include "tprojectfilelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
+#include <BTextTools>
 
 #include <QObject>
 #include <QDataStream>

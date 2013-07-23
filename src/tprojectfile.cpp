@@ -1,12 +1,14 @@
 #include "tprojectfile.h"
 #include "tglobal.h"
-#include "ttexttools.h"
 
 #include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
 #include <BeQt>
+#include <BTextTools>
+#include <BTextMatchList>
+#include <BTextMatch>
 
 #include <QObject>
 #include <QDataStream>
@@ -97,19 +99,19 @@ QStringList TProjectFile::externalFiles(const QString &text, bool *ok)
     QRegExp what(".+");
     QRegExp pref("\\s*\\\\includegraphics(\\[.*\\])?\\{");
     QRegExp post("\\}");
-    QStringList list = TTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
+    QStringList list = BTextTools::match(text, what, pref, post); // \includegraphics[...]{...}
     pref.setPattern("\\s*\\\\input\\s+");
     post.setPattern("");
-    list << TTextTools::match(text, QRegExp("\\S+"), pref, post); // \input ...
+    list << BTextTools::match(text, QRegExp("\\S+"), pref, post); // \input ...
     pref.setPattern("\\s*\\\\input\\s+\"");
     post.setPattern("\"");
-    list << TTextTools::match(text, what, pref, post); // \input "..."
+    list << BTextTools::match(text, what, pref, post); // \input "..."
     pref.setPattern("\\\\href\\{(run\\:)?");
     post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
-    list << TTextTools::match(text, what, pref, post); // \href{run:...}{...}
+    list << BTextTools::match(text, what, pref, post); // \href{run:...}{...}
     foreach (int i, bRangeR(list.size() - 1, 0))
     {
-        list[i] = BeQt::unwrapped(list.at(i));
+        list[i] = BTextTools::unwrapped(list.at(i));
         if (QFileInfo(list.at(i)).isAbsolute())
             return bRet(ok, false, list);
         foreach (const QString &s, schemes)
@@ -121,9 +123,9 @@ QStringList TProjectFile::externalFiles(const QString &text, bool *ok)
             }
         }
     }
-    TTextTools::removeDuplicates(&list, cs);
-    TTextTools::removeAll(&list, "texsample.tex", cs);
-    TTextTools::sortComprising(&list, cs);
+    BTextTools::removeDuplicates(&list, cs);
+    BTextTools::removeAll(&list, "texsample.tex", cs);
+    BTextTools::sortComprising(&list, cs);
     return bRet(ok, true, list);
 }
 
@@ -321,8 +323,8 @@ bool TProjectFile::prependExternalFileNames(const QString &subdir)
     QString text = d->text;
     foreach (const QString fn, files)
         text.replace(fn, subdir + "/" + fn, cs);
-    TTextTools::SearchResults list = TTextTools::match(text, QRegExp(".+"), QRegExp("\\s*\\\\input\\s+"));
-    foreach (const TTextTools::SearchResult &r, list)
+    BTextMatchList list = BTextTools::match(text, QRegExp(".+"), QRegExp("\\s*\\\\input\\s+"));
+    foreach (const BTextMatch &r, list)
     {
         QString txt = r.text();
         if (txt.left(1) != "\"")

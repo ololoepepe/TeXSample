@@ -1,7 +1,6 @@
 #include "tproject.h"
 #include "tglobal.h"
 #include "tprojectfile.h"
-#include "ttexttools.h"
 #include "tprojectfilelist.h"
 
 #include <BeQtGlobal>
@@ -9,6 +8,7 @@
 #include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
 #include <BeQt>
+#include <BTextTools>
 
 #include <QObject>
 #include <QDataStream>
@@ -79,8 +79,8 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
             return bRet(ok, false, list);
         list << xlist;
     }
-    TTextTools::removeDuplicates(&list, cs);
-    TTextTools::sortComprising(&list, cs);
+    BTextTools::removeDuplicates(&list, cs);
+    BTextTools::sortComprising(&list, cs);
     return bRet(ok, true, list);
 }
 
@@ -255,8 +255,8 @@ QStringList TProject::externalFiles(bool *ok) const
         cs = Qt::CaseInsensitive;
 #endif
     }
-    TTextTools::removeDuplicates(&list, cs);
-    TTextTools::sortComprising(&list, cs);
+    BTextTools::removeDuplicates(&list, cs);
+    BTextTools::sortComprising(&list, cs);
     return bRet(ok, true, list);
 }
 
