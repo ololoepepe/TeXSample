@@ -92,5 +92,5 @@ void tCleanup()
 
 const char *tVersion()
 {
-    return "1.0.0-a1";
+    return "1.0.0-a2";
 }
