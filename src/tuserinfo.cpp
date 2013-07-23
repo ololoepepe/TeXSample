@@ -10,6 +10,7 @@
 #include <BeQtCore/private/bbase_p.h>
 #include <BTranslator>
 #include <BeQt>
+#include <BTextTools>
 
 #include <QObject>
 #include <QDataStream>
@@ -216,7 +217,8 @@ void TUserInfo::setInviteCode(const QString &code)
 
 void TUserInfo::setEmail(const QString &email)
 {
-    d_func()->email = QRegExp(BeQt::standardRegExpPattern(BeQt::EmailPattern)).exactMatch(email) ? email : QString();
+    d_func()->email = QRegExp(BTextTools::standardRegExpPattern(BTextTools::EmailPattern)).exactMatch(email) ?
+                email : QString();
 }
 
 void TUserInfo::setLogin(const QString &login)
