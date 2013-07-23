@@ -8,11 +8,15 @@
 
 === MAJOR ===
 
-* Rename tRegister() function to tInit()
-* Replace overloaded methods with default values
-* Improve serializing (use QVariantMap)
-* Remove set methods from TClientInfo
-* Remove TClientInfo::compareVersions() method
-* Remove TClientInfo::editorVersion() method
-* Rename TClientInfo::createDefaultInfo() method to createInfo()
-* Remove compatibility hack
+[done] Rename tRegister() function to tInit()
+[done] Replace overloaded methods with default values
+[done] Improve serializing (use QVariantMap)
+[done] Remove set methods from TClientInfo
+[done] Remove TClientInfo::compareVersions() method
+[done] Remove TClientInfo::editorVersion() method
+[done] Rename TClientInfo::createDefaultInfo() method to createInfo()
+[done] Remove compatibility hack
+[done] Add TMessage class
+[done] Update request constant list
+[done] Add separate headers for lists of data classes
+[done] Implement email validation, etc.

@@ -1,10 +1,10 @@
 TEMPLATE = lib
 TARGET = TeXSample
 
-VERSION = 0.2.2
-VER_MAJ = 0
-VER_MIN = 2
-VER_PAT = 2
+VERSION = 1.0.0
+VER_MAJ = 1
+VER_MIN = 0
+VER_PAT = 0
 
 CONFIG += release
 
@@ -24,38 +24,51 @@ include($${BEQT_PREFIX}/depend.pri)
 DEFINES += TSMP_BUILD_LIB
 
 HEADERS += \
-    tglobal.h \
-    tsampleinfo.h \
-    tprojectfile.h \
-    tprojectfilelist.h \
-    tproject.h \
-    ttexttools.h \
-    tuserinfo.h \
-    tinviteinfo.h \
-    tcompilerparameters.h \
+    taccesslevel.h \
+    tclientinfo.h \
     tcompilationresult.h \
     tcompiledproject.h \
+    tcompilerparameters.h \
+    tglobal.h \
+    tidlist.h \
+    tinviteinfo.h \
+    tinviteinfolist.h \
+    tmessage.h \
+    tnamespace.h \
     toperationresult.h \
     toperationresult_p.h \
-    tclientinfo.h \
-    tnamespace.h \
-    taccesslevel.h
+    tproject.h \
+    tprojectfile.h \
+    tprojectfilelist.h \
+    tsampleinfo.h \
+    tsampleinfolist.h \
+    tservice.h \
+    tservicelist.h \
+    ttexttools.h \
+    tuserinfo.h
 
 SOURCES += \
-    tglobal.cpp \
-    tsampleinfo.cpp \
-    tprojectfile.cpp \
-    tproject.cpp \
-    ttexttools.cpp \
-    tuserinfo.cpp \
-    tinviteinfo.cpp \
-    tcompilerparameters.cpp \
+    taccesslevel.cpp \
+    tclientinfo.cpp \
     tcompilationresult.cpp \
     tcompiledproject.cpp \
-    toperationresult.cpp \
-    tclientinfo.cpp \
+    tcompilerparameters.cpp \
+    tglobal.cpp \
+    tidlist.cpp \
+    tinviteinfo.cpp \
+    tinviteinfolist.cpp \
+    tmessage.cpp \
     tnamespace.cpp \
-    taccesslevel.cpp
+    toperationresult.cpp \
+    tproject.cpp \
+    tprojectfile.cpp \
+    tprojectfilelist.cpp \
+    tsampleinfo.cpp \
+    tsampleinfolist.cpp \
+    tservice.cpp \
+    tservicelist.cpp \
+    ttexttools.cpp \
+    tuserinfo.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts
 

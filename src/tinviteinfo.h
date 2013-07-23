@@ -11,6 +11,7 @@ class QUuid;
 class QString;
 
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -26,24 +27,24 @@ class TSMP_EXPORT TInviteInfo : public BBase
 {
     B_DECLARE_PRIVATE(TInviteInfo)
 public:
-    typedef QList<TInviteInfo> InvitesList;
-public:
     explicit TInviteInfo();
     TInviteInfo(const TInviteInfo &other);
     ~TInviteInfo();
 public:
     void setId(quint64 id);
-    void setUuid(const QUuid &uuid);
-    void setUuid(const QString &s);
+    void setCode(const QUuid &code);
+    void setCode(const QString &code);
     void setCreatorId(quint64 id);
+    void setServices(const TServiceList &list);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
-    QUuid uuid() const;
-    QString uuidString(bool pure = true) const;
+    QUuid code() const;
+    QString codeString() const;
     quint64 creatorId() const;
     QString creatorIdString(int fixedLength = -1) const;
+    TServiceList services() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isExpired() const;
@@ -59,6 +60,5 @@ public:
 };
 
 Q_DECLARE_METATYPE(TInviteInfo)
-Q_DECLARE_METATYPE(TInviteInfo::InvitesList)
 
 #endif // TINVITEINFO_H

@@ -1,5 +1,6 @@
 #include "tinviteinfo.h"
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -13,6 +14,12 @@
 #include <QDebug>
 #include <QString>
 #include <QUuid>
+#include <QVariantMap>
+#include <QMetaType>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+Q_DECLARE_METATYPE(QUuid)
+#endif
 
 /*============================================================================
 ================================ TInviteInfoPrivate ==========================
@@ -30,8 +37,9 @@ public:
     void init();
 public:
     quint64 id;
-    QUuid uuid;
+    QUuid code;
     quint64 creatorId;
+    TServiceList services;
     QDateTime creationDT;
     QDateTime expirationDT;
 private:
@@ -106,19 +114,24 @@ void TInviteInfo::setId(quint64 id)
     d_func()->id = id;
 }
 
-void TInviteInfo::setUuid(const QUuid &uuid)
+void TInviteInfo::setCode(const QUuid &code)
 {
-    d_func()->uuid = uuid;
+    d_func()->code = code;
 }
 
-void TInviteInfo::setUuid(const QString &s)
+void TInviteInfo::setCode(const QString &code)
 {
-    d_func()->uuid = BeQt::uuidFromText(s);
+    d_func()->code = BeQt::uuidFromText(code);
 }
 
 void TInviteInfo::setCreatorId(quint64 id)
 {
     d_func()->creatorId = id;
+}
+
+void TInviteInfo::setServices(const TServiceList &list)
+{
+    d_func()->services = list;
 }
 
 void TInviteInfo::setCreationDateTime(const QDateTime &dt)
@@ -141,14 +154,14 @@ QString TInviteInfo::idString(int fixedLength) const
     return TInviteInfoPrivate::numberToString(d_func()->id, fixedLength);
 }
 
-QUuid TInviteInfo::uuid() const
+QUuid TInviteInfo::code() const
 {
-    return d_func()->uuid;
+    return d_func()->code;
 }
 
-QString TInviteInfo::uuidString(bool pure) const
+QString TInviteInfo::codeString() const
 {
-    return pure ? BeQt::pureUuidText(d_func()->uuid) : d_func()->uuid.toString();
+    return BeQt::pureUuidText(d_func()->code);
 }
 
 quint64 TInviteInfo::creatorId() const
@@ -159,6 +172,11 @@ quint64 TInviteInfo::creatorId() const
 QString TInviteInfo::creatorIdString(int fixedLength) const
 {
     return TInviteInfoPrivate::numberToString(d_func()->creatorId, fixedLength);
+}
+
+TServiceList TInviteInfo::services() const
+{
+    return d_func()->services;
 }
 
 QDateTime TInviteInfo::creationDateTime(Qt::TimeSpec spec) const
@@ -179,7 +197,7 @@ bool TInviteInfo::isExpired() const
 bool TInviteInfo::isValid() const
 {
     const B_D(TInviteInfo);
-    return d->id && !d->uuid.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
+    return d->id && !d->code.isNull() && d->creatorId && d->creationDT.isValid() && d->expirationDT.isValid();
 }
 
 /*============================== Public operators ==========================*/
@@ -189,8 +207,9 @@ TInviteInfo &TInviteInfo::operator =(const TInviteInfo &other)
     B_D(TInviteInfo);
     const TInviteInfoPrivate *dd = other.d_func();
     d->id = dd->id;
-    d->uuid = dd->uuid;
+    d->code = dd->code;
     d->creatorId = dd->creatorId;
+    d->services = dd->services;
     d->creationDT = dd->creationDT;
     d->expirationDT = dd->expirationDT;
     return *this;
@@ -213,33 +232,36 @@ TInviteInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info)
 {
     const TInviteInfoPrivate *d = info.d_func();
-    stream << d->id;
-    stream << d->uuid;
-    stream << d->creatorId;
-    stream << d->creationDT;
-    stream << d->expirationDT;
+    QVariantMap m;
+    m.insert("id", d->id);
+    m.insert("code", QVariant::fromValue(d->code));
+    m.insert("creator_id", d->creatorId);
+    m.insert("services", d->services);
+    m.insert("creation_dt", d->creationDT);
+    m.insert("expiration_dt", d->expirationDT);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TInviteInfo &info)
 {
     TInviteInfoPrivate *d = info.d_func();
-    stream >> d->id;
-    stream >> d->uuid;
-    stream >>d->creatorId;
-    stream >> d->creationDT;
-    if (d->creationDT.timeSpec() != Qt::UTC)
-        d->creationDT = d->creationDT.toUTC();
-    stream >> d->expirationDT;
-    if (d->expirationDT.timeSpec() != Qt::UTC)
-        d->expirationDT = d->expirationDT.toUTC();
+    QVariantMap m;
+    stream >> m;
+    d->id = m.value("id").toULongLong();
+    d->code = m.value("code").value<QUuid>();
+    d->creatorId = m.value("creator_id").toULongLong();
+    d->services = m.value("services").value<TServiceList>();
+    bRemoveDuplicates(d->services);
+    d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->expirationDT = m.value("expiration_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TInviteInfo &info)
 {
     const TInviteInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TInviteInfo(" << d->id << "," << info.uuidString() << "," << d->creatorId << ","
+    dbg.nospace() << "TInviteInfo(" << d->id << "," << info.codeString() << "," << d->creatorId << ","
                   << d->creationDT << "," << d->expirationDT << ")";
     return dbg.space();
 }

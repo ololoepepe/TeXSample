@@ -26,7 +26,7 @@ class TSMP_EXPORT TCompiledProject : BBase
 {
     B_DECLARE_PRIVATE(TCompiledProject)
 public:
-        explicit TCompiledProject(const QString &dir = QString(), const QStringList &nameFilters = QStringList());
+    explicit TCompiledProject(const QString &dir = QString(), const QStringList &nameFilters = QStringList());
     explicit TCompiledProject(const QStringList &files);
     TCompiledProject(const TCompiledProject &other);
     ~TCompiledProject();

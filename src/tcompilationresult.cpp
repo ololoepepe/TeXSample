@@ -2,6 +2,7 @@
 #include "tglobal.h"
 #include "toperationresult.h"
 #include "toperationresult_p.h"
+#include "tmessage.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -12,6 +13,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TCompilationResultPrivate ===================
@@ -62,19 +64,19 @@ void TCompilationResultPrivate::init()
 
 /*============================== Public constructors =======================*/
 
-TCompilationResult::TCompilationResult(bool success, const QString &errs) :
+TCompilationResult::TCompilationResult(bool success, int msg) :
     TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
     setSuccess(success);
-    setErrorString(errs);
+    setMessage(msg);
 }
 
-TCompilationResult::TCompilationResult(const QString &errs) :
+TCompilationResult::TCompilationResult(int msg) :
     TOperationResult(*new TCompilationResultPrivate(this))
 {
     d_func()->init();
-    setErrorString(errs);
+    setMessage(msg);
 }
 
 TCompilationResult::TCompilationResult(const TCompilationResult &other) :
@@ -125,7 +127,7 @@ TCompilationResult &TCompilationResult::operator =(const TCompilationResult &oth
     B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
     d->success = dd->success;
-    d->error = dd->error;
+    d->message = dd->message;
     d->exitCode = dd->exitCode;
     d->log = dd->log;
     return *this;
@@ -135,7 +137,7 @@ TCompilationResult &TCompilationResult::operator =(const TOperationResult &other
 {
     B_D(TCompilationResult);
     d->success = other.success();
-    d->error = other.errorString();
+    d->message = other.message();
     return *this;
 }
 
@@ -143,7 +145,7 @@ bool TCompilationResult::operator ==(const TCompilationResult &other) const
 {
     const B_D(TCompilationResult);
     const TCompilationResultPrivate *dd = other.d_func();
-    return d->success == dd->success && d->error == dd->error && d->exitCode == dd->exitCode && d->log == dd->log;
+    return d->success == dd->success && d->message == dd->message && d->exitCode == dd->exitCode && d->log == dd->log;
 }
 
 TCompilationResult::operator QVariant() const
@@ -161,26 +163,31 @@ TCompilationResult::operator bool() const
 QDataStream &operator <<(QDataStream &stream, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    stream << d->success;
-    stream << d->error;
-    stream << d->exitCode;
-    stream << d->log;
+    QVariantMap m;
+    m.insert("success", d->success);
+    m.insert("message", d->message);
+    m.insert("exitCode", d->exitCode);
+    m.insert("log", d->log);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TCompilationResult &result)
 {
     TCompilationResultPrivate *d = result.d_func();
-    stream >> d->success;
-    stream >> d->error;
-    stream >> d->exitCode;
-    stream >> d->log;
+    QVariantMap m;
+    stream >> m;
+    d->success = m.value("success").toBool();
+    d->message = m.value("message").value<TMessage>();
+    d->exitCode = m.value("exitCode").toInt();
+    d->log = m.value("log").toString();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TCompilationResult &result)
 {
     const TCompilationResultPrivate *d = result.d_func();
-    dbg.nospace() << "TCompilationResult(" << d->success << "," << d->error << "," << d->exitCode << ")";
+    dbg.nospace() << "TCompilationResult(" << d->success << "," << d->message.messageStringNoTr()
+                  << "," << d->exitCode << ")";
     return dbg.space();
 }

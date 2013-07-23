@@ -5,21 +5,17 @@
 
 #include <QString>
 #include <QtGlobal>
-#include <QList>
 #include <QMetaType>
 
 namespace Texsample
 {
 
-typedef QList<quint64> IdList;
-
-const quint16 MainPort = 9041;
-const quint16 RegistrationPort = 9042;
-const quint16 RecoveryPort = 9043;
+const quint16 MainPort = 9044;
 
 const qint64 MaximumAvatarSize = BeQt::Megabyte;
 const quint8 MaximumInvitesCount = 3;
 
+//Requests
 const QString RegisterRequest = "register";
 const QString AuthorizeRequest = "authorize";
 const QString AddUserRequest = "add_user";
@@ -38,14 +34,12 @@ const QString GetSamplePreviewRequest = "get_sample_preview";
 const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
 const QString CompileProjectRequest = "compile_project";
-
 const QString SubscribeRequest = "subscribe";
-const QString ExecuteCommandRequest = "execute_command";
+const QString ChangeLocaleRequest = "change_locale";
+
 const QString LogRequest = "log";
-const QString WriteRequest = "write";
+const QString MessageRequest = "message";
 
 }
-
-Q_DECLARE_METATYPE(Texsample::IdList)
 
 #endif // TNAMESPACE_H

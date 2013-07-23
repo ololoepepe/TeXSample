@@ -18,6 +18,8 @@
 #include <QTextCodec>
 #include <QStringList>
 #include <QRegExp>
+#include <QVariantMap>
+#include <QList>
 
 /*============================================================================
 ================================ TProjectFilePrivate =========================
@@ -26,6 +28,8 @@
 class TProjectFilePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TProjectFile)
+public:
+   static TProjectFile::Type typeFromInt(int t);
 public:
    explicit TProjectFilePrivate(TProjectFile *q);
     ~TProjectFilePrivate();
@@ -43,6 +47,38 @@ private:
 
 /*============================================================================
 ================================ TProjectFilePrivate =========================
+============================================================================*/
+
+/*============================== Static public methods =====================*/
+
+TProjectFile::Type TProjectFilePrivate::typeFromInt(int t)
+{
+    static const QList<int> types = bRangeD(TProjectFile::Binary, TProjectFile::Text);
+    return types.contains(t) ? static_cast<TProjectFile::Type>(t) : TProjectFile::Binary;
+}
+
+/*============================== Public constructors =======================*/
+
+TProjectFilePrivate::TProjectFilePrivate(TProjectFile *q) :
+    BBasePrivate(q)
+{
+    //
+}
+
+TProjectFilePrivate::~TProjectFilePrivate()
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+void TProjectFilePrivate::init()
+{
+    type = TProjectFile::Binary;
+}
+
+/*============================================================================
+================================ TProjectFile ================================
 ============================================================================*/
 
 /*============================== Static public methods =====================*/
@@ -105,30 +141,6 @@ QStringList TProjectFile::externalFiles(const QString &fileName, const QString &
     return externalFiles(fileName, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
                                                                                    QByteArray("UTF-8")), ok);
 }
-
-/*============================== Public constructors =======================*/
-
-TProjectFilePrivate::TProjectFilePrivate(TProjectFile *q) :
-    BBasePrivate(q)
-{
-    //
-}
-
-TProjectFilePrivate::~TProjectFilePrivate()
-{
-    //
-}
-
-/*============================== Public methods ============================*/
-
-void TProjectFilePrivate::init()
-{
-    type = TProjectFile::Binary;
-}
-
-/*============================================================================
-================================ TProjectFile ================================
-============================================================================*/
 
 /*============================== Public constructors =======================*/
 
@@ -415,25 +427,30 @@ TProjectFile::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TProjectFile &file)
 {
     const TProjectFilePrivate *d = file.d_func();
-    stream << d->fileName;
-    stream << d->subdir;
-    stream << (int) d->type;
-    stream << d->data;
-    stream << d->text;
+    QVariantMap m;
+    m.insert("file_name", d->fileName);
+    m.insert("subdir", d->subdir);
+    m.insert("type", (int) d->type);
+    if (TProjectFile::Binary == d->type)
+        m.insert("data", d->data);
+    else
+        m.insert("text", d->text);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TProjectFile &file)
 {
     TProjectFilePrivate *d = file.d_func();
-    stream >> d->fileName;
-    stream >> d->subdir;
-    int t = TProjectFile::Binary;
-    stream >> t;
-    d->type = bRangeD(TProjectFile::Binary, TProjectFile::Text).contains(t) ? static_cast<TProjectFile::Type>(t) :
-                                                                              TProjectFile::Binary;
-    stream >> d->data;
-    stream >> d->text;
+    QVariantMap m;
+    stream >> m;
+    d->fileName = m.value("file_name").toString();
+    d->subdir = m.value("subdir").toString();
+    d->type = TProjectFilePrivate::typeFromInt(m.value("type").toInt());
+    if (TProjectFile::Binary == d->type)
+        d->data = m.value("data").toByteArray();
+    else
+        d->text = m.value("text").toString();
     return stream;
 }
 

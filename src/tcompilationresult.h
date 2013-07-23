@@ -9,6 +9,7 @@ class QDebug;
 
 #include "tglobal.h"
 #include "toperationresult.h"
+#include "tmessage.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -24,8 +25,8 @@ class TSMP_EXPORT TCompilationResult : public TOperationResult
 {
     B_DECLARE_PRIVATE(TCompilationResult)
 public:
-    explicit TCompilationResult(bool success, const QString &errs = QString());
-    explicit TCompilationResult(const QString &errs = QString());
+    explicit TCompilationResult(bool success, int msg = TMessage::NoMessage);
+    explicit TCompilationResult(int msg = TMessage::NoMessage);
     TCompilationResult(const TCompilationResult &other);
     TCompilationResult(const TOperationResult &opResult);
     ~TCompilationResult();

@@ -16,6 +16,7 @@ class QDebug;
 
 #include <BeQtGlobal>
 #include <BBase>
+#include <BeQt>
 
 #include <QMetaType>
 #include <QString>
@@ -30,8 +31,6 @@ class TSMP_EXPORT TSampleInfo : public BBase
 {
     B_DECLARE_PRIVATE(TSampleInfo)
     Q_DECLARE_TR_FUNCTIONS(TSampleInfo)
-public:
-    typedef QList<TSampleInfo> SamplesList;
 public:
     enum Type
     {
@@ -49,7 +48,8 @@ public:
     };
 public:
     static QString typeToString(Type t, bool singular = true);
-    static QString typeToString(Type t, BTranslator *translator, bool singular = true);
+    static QString typeToStringNoTr(Type t, bool singular = true);
+    static QList<Type> allTypes();
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
@@ -64,7 +64,6 @@ public:
     void setId(quint64 id);
     void setSender(const TUserInfo &s);
     void setAuthors(const QStringList &list);
-    void setAuthors(const QString &s);
     void setTitle(const QString &title);
     void setType(int t);
     void setFileName(const QString &fileName);
@@ -75,20 +74,20 @@ public:
     void setAdminRemark(const QString &s);
     void setRating(quint8 r);
     void setCreationDateTime(const QDateTime &dt);
-    void setModificationDateTime(const QDateTime &dt);
+    void setUpdateDateTime(const QDateTime &dt);
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
     TUserInfo sender() const;
     QStringList authors() const;
-    QString authorsString() const;
     QString title() const;
     Type type() const;
     QString typeString() const;
-    QString typeString(BTranslator *translator) const;
+    QString typeStringNoTr() const;
     QString fileName() const;
     int projectSize() const;
-    QString projectSizeString() const;
+    QString projectSizeString(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
+    QString projectSizeStringNoTr(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
     QStringList tags() const;
     QString tagsString() const;
     QString comment() const;
@@ -96,7 +95,7 @@ public:
     quint8 rating() const;
     QString ratingString(const QString &format = "") const; //%r - rating
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TSampleInfo &operator =(const TSampleInfo &other);
@@ -110,6 +109,5 @@ public:
 };
 
 Q_DECLARE_METATYPE(TSampleInfo)
-Q_DECLARE_METATYPE(TSampleInfo::SamplesList)
 
 #endif // TSAMPLEINFO_H

@@ -3,8 +3,7 @@
 
 class TUserInfoPrivate;
 class TAccessLevel;
-
-class BTranslator;
+class TService;
 
 class QDataStream;
 class QDateTime;
@@ -14,12 +13,14 @@ class QByteArray;
 class QString;
 
 #include "tglobal.h"
+#include "tservicelist.h"
 
 #include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TUserInfo ===================================
@@ -34,7 +35,7 @@ public:
     {
         CurrentContext,
         GeneralContext,
-        ShortInfoContext,
+        BriefInfoContext,
         AddContext,
         RegisterContext,
         EditContext,
@@ -48,29 +49,34 @@ public:
 public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
+    void setInviteCode(const QString &code);
     void setEmail(const QString &email);
     void setLogin(const QString &login);
     void setPassword(const QString &s);
     void setPassword(const QByteArray &data);
     void setAccessLevel(const TAccessLevel &lvl);
+    void setServices(const TServiceList &list);
+    void setServices(const QList<int> &list);
     void setRealName(const QString &name);
     void setAvatar(const QByteArray &data);
     void setCreationDateTime(const QDateTime &dt);
-    void setModificationDateTime(const QDateTime &dt);
+    void setUpdateDateTime(const QDateTime &dt);
     void clear();
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
+    QString inviteCode() const;
     QString email() const;
     QString login() const;
     QByteArray password() const;
     TAccessLevel accessLevel() const;
     QString accessLevelString() const;
-    QString accessLevelString(BTranslator *translator) const;
+    QString accessLevelStringNoTr() const;
+    TServiceList services() const;
     QString realName() const;
     QByteArray avatar() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime modificationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TUserInfo &operator =(const TUserInfo &other);

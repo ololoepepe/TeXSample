@@ -3,10 +3,7 @@
 
 class TAccessLevelPrivate;
 
-class BTranslator;
-
 class QDataStream;
-class QDateTime;
 class QVariant;
 class QDebug;
 class QString;
@@ -18,6 +15,7 @@ class QString;
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TAccessLevel ================================
@@ -38,15 +36,15 @@ public:
     };
 public:
     static QString accessLevelToString(AccessLevel lvl, bool singular = true);
-    static QString accessLevelToString(AccessLevel lvl, BTranslator *translator,  bool singular = true);
+    static QString accessLevelToStringNoTr(AccessLevel lvl, bool singular = true);
+    static QList<TAccessLevel> allAccessLevels(bool includeNoLevel = false);
 public:
-    explicit TAccessLevel();
-    TAccessLevel(int lvl);
+    TAccessLevel(int lvl = NoLevel);
     TAccessLevel(const TAccessLevel &other);
     ~TAccessLevel();
 public:
-    QString string() const;
-    QString string(BTranslator *translator) const;
+    QString toString() const;
+    QString toStringNoTr() const;
 public:
     TAccessLevel &operator =(const TAccessLevel &other);
     TAccessLevel &operator =(int lvl);

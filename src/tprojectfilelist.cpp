@@ -1,22 +1,15 @@
-#ifndef TPROJECTFILELIST_H
-#define TPROJECTFILELIST_H
-
-#include "tprojectfile.h"
+#include "tprojectfilelist.h"
 
 #include <QList>
-#include <QMetaType>
 #include <QVariant>
 
 /*============================================================================
 ================================ TProjectFileList ============================
 ============================================================================*/
 
-class TSMP_EXPORT TProjectFileList : public QList<TProjectFile>
+/*============================== Public operators ==========================*/
+
+TProjectFileList::operator QVariant() const
 {
-public:
-    operator QVariant() const;
-};
-
-Q_DECLARE_METATYPE(TProjectFileList)
-
-#endif // TPROJECTFILELIST_H
+    return QVariant::fromValue(*this);
+}

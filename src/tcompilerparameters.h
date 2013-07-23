@@ -17,6 +17,7 @@ class QStringList;
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QList>
 
 /*============================================================================
 ================================ TCompilerParameters =========================
@@ -35,7 +36,10 @@ public:
         PdfLaTex
     };
 public:
-    static QString compilerToString(Compiler c, bool command = true);
+    static QString compilerToString(Compiler c);
+    static QString compilerToCommand(Compiler c);
+    static Compiler compilerFromInt(int c);
+    static QList<Compiler> allCompilers();
 public:
     explicit TCompilerParameters();
     TCompilerParameters(const TCompilerParameters &other);
@@ -43,17 +47,20 @@ public:
 public:
     void setCodec(QTextCodec *codec);
     void setCodec(const QString &codecName);
-    void setCompiler(Compiler c);
+    void setCompiler(int c);
     void setMakeindexEnabled(bool enabled);
     void setDvipsEnabled(bool enabled);
     void setOptions(const QStringList &list);
+    void setOptions(const QString &s, bool command = true);
     void setOption(const QString &opt);
     void setCommands(const QStringList &list);
+    void setCommands(const QString &s, bool command = true);
     void setCommand(const QString &cmd);
     QTextCodec *codec() const;
     QString codecName() const;
     Compiler compiler() const;
-    QString compilerString(bool command = true) const;
+    QString compilerString() const;
+    QString compilerCommand() const;
     bool makeindexEnabled() const;
     bool dvipsEnabled() const;
     QStringList options() const;

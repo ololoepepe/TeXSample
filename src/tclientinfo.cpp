@@ -6,16 +6,16 @@
 #include <BeQtCore/private/bbase_p.h>
 #include <BeQt>
 #include <BCoreApplication>
+#include <BVersion>
 
 #include <QObject>
 #include <QDataStream>
-#include <QDateTime>
 #include <QVariant>
 #include <QDebug>
 #include <QString>
 #include <QCoreApplication>
 #include <QLocale>
-#include <QStringList>
+#include <QVariantMap>
 
 /*============================================================================
 ================================ TClientInfoPrivate ==========================
@@ -33,10 +33,10 @@ public:
     QString os;
     QLocale locale;
     QString client;
-    QString clientVersion;
-    QString texsampleVersion;
-    QString beqtVersion;
-    QString qtVersion;
+    BVersion clientVersion;
+    BVersion texsampleVersion;
+    BVersion beqtVersion;
+    BVersion qtVersion;
 private:
     Q_DISABLE_COPY(TClientInfoPrivate)
 };
@@ -71,48 +71,18 @@ void TClientInfoPrivate::init()
 
 /*============================== Static public methods =====================*/
 
-TClientInfo TClientInfo::createDefaultInfo()
+TClientInfo TClientInfo::createInfo()
 {
     TClientInfo info;
-    info.setOS(BeQt::osVersion());
-    info.setLocale(BCoreApplication::locale());
-    info.setClient(QCoreApplication::applicationName());
-    info.setClientVersion(QCoreApplication::applicationVersion());
-    info.setTexsampleVersion(tVersion());
-    info.setBeqtVersion(bVersion());
-    info.setQtVersion(qVersion());
+    TClientInfoPrivate *d = info.d_func();
+    d->os = BeQt::osVersion();
+    d->locale = BCoreApplication::locale();
+    d->client = QCoreApplication::applicationName();
+    d->clientVersion = BVersion(QCoreApplication::applicationVersion());
+    d->texsampleVersion = BVersion(tVersion());
+    d->beqtVersion = BVersion(bVersion());
+    d->qtVersion = BVersion(qVersion());
     return info;
-}
-
-int TClientInfo::compareVersions(const QString &v1, const QString &v2, bool ignoreSuffix)
-{
-    Q_UNUSED(ignoreSuffix)
-    if (v1.isEmpty() && v2.isEmpty())
-        return 0;
-    if (v1.isEmpty() && !v2.isEmpty())
-        return -1;
-    if (!v1.isEmpty() && v2.isEmpty())
-        return 1;
-    QStringList sl1 = v1.split('-');
-    QStringList sl2 = v2.split('-');
-    QList<int> vv1;
-    foreach (const QString &s, sl1.first().split('.'))
-        vv1 << s.toUInt();
-    QList<int> vv2;
-    foreach (const QString &s, sl2.first().split('.'))
-        vv2 << s.toUInt();
-    foreach (int i, bRangeD(0, qMin(vv1.size(), vv2.size()) - 1))
-    {
-        if (vv1.at(i) < vv2.at(i))
-            return -1;
-        if (vv1.at(i) > vv2.at(i))
-            return 1;
-    }
-    if (vv1.size() < vv2.size())
-        return -1;
-    if (vv1.size() > vv2.size())
-        return 1;
-    return 0;
 }
 
 /*============================== Public constructors =======================*/
@@ -137,46 +107,6 @@ TClientInfo::~TClientInfo()
 
 /*============================== Public methods ============================*/
 
-void TClientInfo::setOS(const QString &os)
-{
-    d_func()->os = os;
-}
-
-void TClientInfo::setLocale(const QLocale &l)
-{
-    d_func()->locale = l;
-}
-
-void TClientInfo::setClient(const QString &name)
-{
-    d_func()->client = name;
-}
-
-void TClientInfo::setClientVersion(const QString &v)
-{
-    d_func()->clientVersion = v;
-}
-
-void TClientInfo::setEditorVersion(const QString &v)
-{
-    setClientVersion(v);
-}
-
-void TClientInfo::setTexsampleVersion(const QString &v)
-{
-    d_func()->texsampleVersion = v;
-}
-
-void TClientInfo::setBeqtVersion(const QString &v)
-{
-    d_func()->beqtVersion = v;
-}
-
-void TClientInfo::setQtVersion(const QString &v)
-{
-    d_func()->qtVersion = v;
-}
-
 QString TClientInfo::os() const
 {
     return d_func()->os;
@@ -192,27 +122,22 @@ QString TClientInfo::client() const
     return d_func()->client;
 }
 
-QString TClientInfo::clientVersion() const
+BVersion TClientInfo::clientVersion() const
 {
     return d_func()->clientVersion;
 }
 
-QString TClientInfo::editorVersion() const
-{
-    return clientVersion();
-}
-
-QString TClientInfo::texsampleVersion() const
+BVersion TClientInfo::texsampleVersion() const
 {
     return d_func()->texsampleVersion;
 }
 
-QString TClientInfo::beqtVersion() const
+BVersion TClientInfo::beqtVersion() const
 {
     return d_func()->beqtVersion;
 }
 
-QString TClientInfo::qtVersion() const
+BVersion TClientInfo::qtVersion() const
 {
     return d_func()->qtVersion;
 }
@@ -224,12 +149,7 @@ QString TClientInfo::toString(const QString &format) const
     const B_D(TClientInfo);
     QString f = format;
     if (f.isEmpty())
-    {
-        if (compareVersions(d->texsampleVersion, "0.2.0") >= 0)
-            f = "%o [%l]\n%c v%v; TeXSample v%t; BeQt v%b; Qt v%q";
-        else
-            f = "%o\nClient v%v; TeXSample v%t; BeQt v%b; Qt v%q";
-    }
+        f = "%o [%l]\n%c v%v; TeXSample v%t; BeQt v%b; Qt v%q";
     f.replace("%o", d->os);
     f.replace("%l", d->locale.name());
     f.replace("%c", d->client);
@@ -243,8 +163,8 @@ QString TClientInfo::toString(const QString &format) const
 bool TClientInfo::isValid() const
 {
     const B_D(TClientInfo);
-    return !d->os.isEmpty() && !d->client.isEmpty() && !d->clientVersion.isEmpty() && !d->texsampleVersion.isEmpty()
-            && !d->beqtVersion.isEmpty() && !d->qtVersion.isEmpty();
+    return !d->os.isEmpty() && !d->client.isEmpty() && d->clientVersion.isValid() && d->texsampleVersion.isValid()
+            && d->beqtVersion.isValid() && d->qtVersion.isValid();
 }
 
 /*============================== Public operators ==========================*/
@@ -282,37 +202,35 @@ TClientInfo::operator QVariant() const
 QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
 {
     const TClientInfoPrivate *d = info.d_func();
-    stream << d->os;
-    stream << d->clientVersion;
-    stream << d->texsampleVersion;
-    stream << d->beqtVersion;
-    stream << d->qtVersion;
-    stream << d->locale;
-    stream << d->client;
+    QVariantMap m;
+    m.insert("os", d->os);
+    m.insert("locale", d->locale);
+    m.insert("client", d->client);
+    m.insert("client_v", d->clientVersion);
+    m.insert("texsample_v", d->texsampleVersion);
+    m.insert("beqt_v", d->beqtVersion);
+    m.insert("qt_v", d->qtVersion);
+    stream << m;
     return stream;
 }
 
 QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
 {
     TClientInfoPrivate *d = info.d_func();
-    stream >> d->os;
-    stream >> d->clientVersion;
-    stream >> d->texsampleVersion;
-    stream >> d->beqtVersion;
-    stream >> d->qtVersion;
-    if (TClientInfo::compareVersions(d->texsampleVersion, "0.2.0") >= 0)
-    {
-        stream >> d->locale;
-        stream >> d->client;
-    }
+    QVariantMap m;
+    stream >> m;
+    d->os = m.value("os").toString();
+    d->locale = m.value("locale").toLocale();
+    d->client = m.value("client").toString();
+    d->clientVersion = m.value("client_v").value<BVersion>();
+    d->texsampleVersion = m.value("texsample_v").value<BVersion>();
+    d->beqtVersion = m.value("beqt_v").value<BVersion>();
+    d->qtVersion = m.value("qt_v").value<BVersion>();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TClientInfo &info)
 {
-    const TClientInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TClientInfo(" << d->os << "," << d->locale.name() << "," << d->client << ","
-                  << d->clientVersion << "," << d->texsampleVersion << "," << d->beqtVersion << ","
-                  << d->qtVersion << ")";
+    dbg.nospace() << "TClientInfo(" << info.toString("%o,%l,%c,%v,%t,%b,%q") << ")";
     return dbg.space();
 }
