@@ -121,7 +121,7 @@ TService &TService::operator =(const TService &other)
 
 TService &TService::operator =(int srv)
 {
-    static const QList<int> Services = bRangeM(TexsampleService, TexsampleService);
+    static const QList<int> Services = bRangeD(TexsampleService, TexsampleService);
     d_func()->service = Services.contains(srv) ? static_cast<Service>(srv) : NoService;
     return *this;
 }
@@ -151,7 +151,7 @@ TService::operator int() const
 QDataStream &operator <<(QDataStream &stream, const TService &srv)
 {
     QVariantMap m;
-    m.insert("srvice", (int) srv.d_func()->service);
+    m.insert("service", (int) srv.d_func()->service);
     stream << m;
     return stream;
 }

@@ -73,6 +73,7 @@ public:
     QString accessLevelString() const;
     QString accessLevelStringNoTr() const;
     TServiceList services() const;
+    bool hasAccessToService(TService s) const;
     QString realName() const;
     QByteArray avatar() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;

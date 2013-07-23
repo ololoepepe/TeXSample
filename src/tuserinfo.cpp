@@ -345,6 +345,11 @@ TServiceList TUserInfo::services() const
     return d_func()->services;
 }
 
+bool TUserInfo::hasAccessToService(TService s) const
+{
+    return d_func()->services.contains(s);
+}
+
 QString TUserInfo::realName() const
 {
     return d_func()->realName;
