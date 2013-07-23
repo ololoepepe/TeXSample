@@ -240,7 +240,7 @@ void TSampleInfo::setAuthors(const QStringList &list)
 
 void TSampleInfo::setTitle(const QString &title)
 {
-    d_func()->title = title;
+    d_func()->title = (title.length() <= 120) ? title : QString();
 }
 
 void TSampleInfo::setType(int t)
