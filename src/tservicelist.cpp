@@ -4,6 +4,8 @@
 
 #include <QList>
 #include <QVariant>
+#include <QString>
+#include <QStringList>
 
 /*============================================================================
 ================================ TServiceList ================================
@@ -27,6 +29,32 @@ TServiceList TServiceList::allServices(bool includeNoService)
         list << TService::NoService;
     list << TService::TexsampleService;
     return list;
+}
+
+QStringList TServiceList::serviceListToStringList(const TServiceList &list)
+{
+    QStringList sl;
+    foreach (const TService &s, list)
+        sl << s.toString();
+    return sl;
+}
+
+QStringList TServiceList::serviceListToStringListNoTr(const TServiceList &list)
+{
+    QStringList sl;
+    foreach (const TService &s, list)
+        sl << s.toStringNoTr();
+    return sl;
+}
+
+QString TServiceList::serviceListToString(const TServiceList &list, const QString &separator)
+{
+    return serviceListToStringList(list).join(separator);
+}
+
+QString TServiceList::serviceListToStringNoTr(const TServiceList &list, const QString &separator)
+{
+    return serviceListToStringListNoTr(list).join(separator);
 }
 
 /*============================== Public operators ==========================*/
