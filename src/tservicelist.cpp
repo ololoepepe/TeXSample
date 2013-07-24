@@ -32,30 +32,32 @@ TServiceList TServiceList::allServices(bool includeNoService)
     return list;
 }
 
-QStringList TServiceList::serviceListToStringList(const TServiceList &list)
+/*============================== Public methods ============================*/
+
+QStringList TServiceList::toStringList() const
 {
     QStringList sl;
-    foreach (const TService &s, list)
+    foreach (const TService &s, *this)
         sl << s.toString();
     return sl;
 }
 
-QStringList TServiceList::serviceListToStringListNoTr(const TServiceList &list)
+QStringList TServiceList::toStringListNoTr() const
 {
     QStringList sl;
-    foreach (const TService &s, list)
+    foreach (const TService &s, *this)
         sl << s.toStringNoTr();
     return sl;
 }
 
-QString TServiceList::serviceListToString(const TServiceList &list, const QString &separator)
+QString TServiceList::toString(const QString &separator) const
 {
-    return serviceListToStringList(list).join(separator);
+    return toStringList().join(separator);
 }
 
-QString TServiceList::serviceListToStringNoTr(const TServiceList &list, const QString &separator)
+QString TServiceList::toStringNoTr(const QString &separator) const
 {
-    return serviceListToStringListNoTr(list).join(separator);
+    return toStringListNoTr().join(separator);
 }
 
 /*============================== Public operators ==========================*/

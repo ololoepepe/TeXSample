@@ -19,10 +19,11 @@ class TSMP_EXPORT TServiceList : public QList<TService>
 public:
     static TServiceList serviceListFromIntList(const QList<int> &list);
     static TServiceList allServices(bool includeNoService = false);
-    static QStringList serviceListToStringList(const TServiceList &list);
-    static QStringList serviceListToStringListNoTr(const TServiceList &list);
-    static QString serviceListToString(const TServiceList &list, const QString &separator = ", ");
-    static QString serviceListToStringNoTr(const TServiceList &list, const QString &separator = ", ");
+public:
+    QStringList toStringList() const;
+    QStringList toStringListNoTr() const;
+    QString toString(const QString &separator = ", ") const;
+    QString toStringNoTr(const QString &separator = ", ") const;
 public:
     operator QVariant() const;
 };

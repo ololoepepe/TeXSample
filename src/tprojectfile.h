@@ -53,14 +53,16 @@ public:
     void clear();
     QString fileName() const;
     QString subdir() const;
+    QString relativeFileName() const;
     Type type() const;
     QByteArray data() const;
     QString text() const;
+    bool isExecutable() const;
     QStringList externalFiles(bool *ok = 0) const;
     QStringList restrictedCommands() const;
     void removeRestrictedCommands();
     bool prependExternalFileNames(const QString &subdir);
-    bool loadAsBinary(const QString &fileName, const QString &subdir);
+    bool loadAsBinary(const QString &fileName, const QString &subdir = QString());
     bool loadAsText(const QString &fileName, QTextCodec *codec = 0, const QString &subdir = QString());
     bool loadAsText(const QString &fileName, const QString &codecName, const QString &subdir = QString());
     bool save(const QString &dir, QTextCodec *codec = 0) const;

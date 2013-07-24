@@ -22,6 +22,7 @@
 #include <QRegExp>
 #include <QVariantMap>
 #include <QList>
+#include <QFile>
 
 /*============================================================================
 ================================ TProjectFilePrivate =========================
@@ -248,6 +249,13 @@ QString TProjectFile::subdir() const
     return d_func()->subdir;
 }
 
+QString TProjectFile::relativeFileName() const
+{
+    if (!isValid())
+        return "";
+    return d_func()->subdir + (!d_func()->subdir.isEmpty() ? "/" : "") + d_func()->fileName;
+}
+
 TProjectFile::Type TProjectFile::type() const
 {
     return d_func()->type;
@@ -261,6 +269,11 @@ QByteArray TProjectFile::data() const
 QString TProjectFile::text() const
 {
     return d_func()->text;
+}
+
+bool TProjectFile::isExecutable() const
+{
+    return (Binary == d_func()->type) && BDirTools::mayBeExecutable(d_func()->data);
 }
 
 QStringList TProjectFile::externalFiles(bool *ok) const
@@ -373,7 +386,22 @@ bool TProjectFile::save(const QString &dir, QTextCodec *codec) const
     if (!isValid() || dir.isEmpty())
         return false;
     QString fn = dir + (!d->subdir.isEmpty() ? ("/" + d->subdir) : QString()) + "/" + d->fileName;
-    return (Binary == d->type) ? BDirTools::writeFile(fn, d->data) : BDirTools::writeTextFile(fn, d->text, codec);
+    if (Binary == d->type)
+    {
+        if (!BDirTools::writeFile(fn, d->data))
+            return false;
+        if (!BDirTools::mayBeExecutable(d->data, d->fileName))
+            return true;
+        QFile f(fn);
+        bool b = f.setPermissions(f.permissions() | QFile::ExeUser);
+        if (!b)
+            f.remove();
+        return b;
+    }
+    else
+    {
+        return BDirTools::writeTextFile(fn, d->text, codec);
+    }
 }
 
 bool TProjectFile::save(const QString &dir, const QString &codecName) const
