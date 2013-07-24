@@ -28,6 +28,7 @@ TServiceList TServiceList::allServices(bool includeNoService)
     if (includeNoService)
         list << TService::NoService;
     list << TService::TexsampleService;
+    list << TService::ClabService;
     return list;
 }
 

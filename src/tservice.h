@@ -28,7 +28,8 @@ public:
     enum Service
     {
         NoService = 0,
-        TexsampleService
+        TexsampleService,
+        ClabService
     };
 public:
     static QString serviceToString(Service srv);

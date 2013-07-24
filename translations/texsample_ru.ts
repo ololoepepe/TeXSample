@@ -24,20 +24,20 @@
         <translation>Администраторы</translation>
     </message>
     <message>
-        <source>Root</source>
-        <translation>Суперпользователь</translation>
-    </message>
-    <message>
-        <source>Roots</source>
-        <translation>Суперпользователи</translation>
-    </message>
-    <message>
         <source>Administrator</source>
         <translation>Администратор</translation>
     </message>
     <message>
         <source>No</source>
         <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Superuser</source>
+        <translation>Суперпользователь</translation>
+    </message>
+    <message>
+        <source>Superusers</source>
+        <translation>Суперпользователи</translation>
     </message>
 </context>
 <context>
@@ -193,6 +193,10 @@
     <message>
         <source>No</source>
         <translation>Нет</translation>
+    </message>
+    <message>
+        <source>CLab</source>
+        <translation>CLab</translation>
     </message>
 </context>
 </TS>

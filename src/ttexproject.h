@@ -1,7 +1,7 @@
-#ifndef TPROJECT_H
-#define TPROJECT_H
+#ifndef TTEXPROJECT_H
+#define TTEXPROJECT_H
 
-class TProjectPrivate;
+class TTexProjectPrivate;
 
 class QVariant;
 class QDebug;
@@ -19,23 +19,23 @@ class QStringList;
 #include <QMetaType>
 
 /*============================================================================
-================================ TProject ====================================
+================================ TTexProject =================================
 ============================================================================*/
 
-class TSMP_EXPORT TProject : BBase
+class TSMP_EXPORT TTexProject : BBase
 {
-    B_DECLARE_PRIVATE(TProject)
+    B_DECLARE_PRIVATE(TTexProject)
 public:
     static int size(const QString &rootFilePath, QTextCodec *codec = 0, bool sourceOnly = false);
     static int size(const QString &rootFilePath, const QString &codecName, bool sourceOnly = false);
 public:
-    explicit TProject();
-    explicit TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
-    explicit TProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
-    explicit TProject(const QString &rootFileName, QTextCodec *codec = 0);
-    explicit TProject(const QString &rootFileName, const QString &codecName);
-    TProject(const TProject &other);
-    ~TProject();
+    explicit TTexProject();
+    explicit TTexProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
+    explicit TTexProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
+    explicit TTexProject(const QString &rootFileName, QTextCodec *codec = 0);
+    explicit TTexProject(const QString &rootFileName, const QString &codecName);
+    TTexProject(const TTexProject &other);
+    ~TTexProject();
 public:
     void clear();
     TProjectFile *rootFile();
@@ -57,15 +57,15 @@ public:
     bool isValid() const;
     int size() const;
 public:
-    TProject &operator =(const TProject &other);
-    bool operator ==(const TProject &other) const;
+    TTexProject &operator =(const TTexProject &other);
+    bool operator ==(const TTexProject &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TProject &project);
-    friend QDataStream &operator >>(QDataStream &stream, TProject &project);
-    friend QDebug operator <<(QDebug dbg, const TProject &project);
+    friend QDataStream &operator <<(QDataStream &stream, const TTexProject &project);
+    friend QDataStream &operator >>(QDataStream &stream, TTexProject &project);
+    friend QDebug operator <<(QDebug dbg, const TTexProject &project);
 };
 
-Q_DECLARE_METATYPE(TProject)
+Q_DECLARE_METATYPE(TTexProject)
 
-#endif // TPROJECT_H
+#endif // TTEXPROJECT_H

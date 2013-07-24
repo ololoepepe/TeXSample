@@ -9,16 +9,15 @@
 #include "tinviteinfolist.h"
 #include "tmessage.h"
 #include "toperationresult.h"
-#include "tproject.h"
 #include "tprojectfile.h"
 #include "tprojectfilelist.h"
 #include "tsampleinfo.h"
 #include "tsampleinfolist.h"
 #include "tservice.h"
 #include "tservicelist.h"
-#include "tnamespace.h"
+#include "ttexproject.h"
 #include "tuserinfo.h"
-#include "tprojectfilelist.h"
+#include "tnamespace.h"
 
 #include <BeQtGlobal>
 
@@ -63,8 +62,6 @@ void tInit()
     qRegisterMetaTypeStreamOperators<TMessage>();
     qRegisterMetaType<TOperationResult>();
     qRegisterMetaTypeStreamOperators<TOperationResult>();
-    qRegisterMetaType<TProject>();
-    qRegisterMetaTypeStreamOperators<TProject>();
     qRegisterMetaType<TProjectFile>();
     qRegisterMetaTypeStreamOperators<TProjectFile>();
     qRegisterMetaType<TProjectFileList>();
@@ -77,6 +74,8 @@ void tInit()
     qRegisterMetaTypeStreamOperators<TService>();
     qRegisterMetaType<TServiceList>();
     qRegisterMetaTypeStreamOperators<TServiceList>();
+    qRegisterMetaType<TTexProject>();
+    qRegisterMetaTypeStreamOperators<TTexProject>();
     qRegisterMetaType<TUserInfo>();
     qRegisterMetaTypeStreamOperators<TUserInfo>();
     registered = true;

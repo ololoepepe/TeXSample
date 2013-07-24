@@ -1,4 +1,4 @@
-#include "tproject.h"
+#include "ttexproject.h"
 #include "tglobal.h"
 #include "tprojectfile.h"
 #include "tprojectfilelist.h"
@@ -24,34 +24,34 @@
 #include <QVariantMap>
 
 /*============================================================================
-================================ TProjectPrivate =============================
+================================ TTexProjectPrivate ==========================
 ============================================================================*/
 
-class TProjectPrivate : public BBasePrivate
+class TTexProjectPrivate : public BBasePrivate
 {
-    B_DECLARE_PUBLIC(TProject)
+    B_DECLARE_PUBLIC(TTexProject)
 public:
     static QStringList dependencies(const QString &text, const QString &path, QTextCodec *codec = 0, bool *ok = 0);
     static QStringList dependencies(const QString &text, const QString &path, const QString &codecName, bool *ok = 0);
 public:
-    explicit TProjectPrivate(TProject *q);
-    ~TProjectPrivate();
+    explicit TTexProjectPrivate(TTexProject *q);
+    ~TTexProjectPrivate();
 public:
     void init();
 public:
     TProjectFile rootFile;
     TProjectFileList files;
 private:
-    Q_DISABLE_COPY(TProjectPrivate)
+    Q_DISABLE_COPY(TTexProjectPrivate)
 };
 
 /*============================================================================
-================================ TProjectPrivate =============================
+================================ TTexProjectPrivate ==========================
 ============================================================================*/
 
 /*============================== Static public methods =====================*/
 
-QStringList TProjectPrivate::dependencies(const QString &text, const QString &path, QTextCodec *codec, bool *ok)
+QStringList TTexProjectPrivate::dependencies(const QString &text, const QString &path, QTextCodec *codec, bool *ok)
 {
     if (text.isEmpty() || path.isEmpty() || !QDir(path).exists())
         return bRet(ok, false, QStringList());
@@ -84,7 +84,8 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
     return bRet(ok, true, list);
 }
 
-QStringList TProjectPrivate::dependencies(const QString &text, const QString &path, const QString &codecName, bool *ok)
+QStringList TTexProjectPrivate::dependencies(const QString &text, const QString &path, const QString &codecName,
+                                             bool *ok)
 {
     return dependencies(text, path, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() :
                                                                                     QByteArray("UTF-8")), ok);
@@ -92,36 +93,36 @@ QStringList TProjectPrivate::dependencies(const QString &text, const QString &pa
 
 /*============================== Public constructors =======================*/
 
-TProjectPrivate::TProjectPrivate(TProject *q) :
+TTexProjectPrivate::TTexProjectPrivate(TTexProject *q) :
     BBasePrivate(q)
 {
     //
 }
 
-TProjectPrivate::~TProjectPrivate()
+TTexProjectPrivate::~TTexProjectPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TProjectPrivate::init()
+void TTexProjectPrivate::init()
 {
     //
 }
 
 /*============================================================================
-================================ TProject ====================================
+================================ TTexProject =================================
 ============================================================================*/
 
 /*============================== Static public methods =====================*/
 
-int TProject::size(const QString &rootFilePath, QTextCodec *codec, bool sourceOnly)
+int TTexProject::size(const QString &rootFilePath, QTextCodec *codec, bool sourceOnly)
 {
     return size(rootFilePath, codec ? QString(codec->name()) : QString("UTF-8"), sourceOnly);
 }
 
-int TProject::size(const QString &rootFilePath, const QString &codecName, bool sourceOnly)
+int TTexProject::size(const QString &rootFilePath, const QString &codecName, bool sourceOnly)
 {
     if (rootFilePath.isEmpty())
         return -1;
@@ -134,7 +135,7 @@ int TProject::size(const QString &rootFilePath, const QString &codecName, bool s
     QFileInfo fi(rootFilePath);
     QString path = fi.path();
     QString bn = fi.baseName();
-    QStringList list = TProjectPrivate::dependencies(text, path, cn, &ok);
+    QStringList list = TTexProjectPrivate::dependencies(text, path, cn, &ok);
     if (!ok)
         return -1;
     int sz = fi.size() * 2;
@@ -157,87 +158,87 @@ int TProject::size(const QString &rootFilePath, const QString &codecName, bool s
 
 /*============================== Public constructors =======================*/
 
-TProject::TProject() :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject() :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
 }
 
-TProject::TProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec) :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec) :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
     load(rootFileName, rootFileText, codec);
 }
 
-TProject::TProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName) :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName) :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
     load(rootFileName, rootFileText, codecName);
 }
 
-TProject::TProject(const QString &rootFileName, QTextCodec *codec) :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject(const QString &rootFileName, QTextCodec *codec) :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
     load(rootFileName, codec);
 }
 
-TProject::TProject(const QString &rootFileName, const QString &codecName) :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject(const QString &rootFileName, const QString &codecName) :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
     load(rootFileName, codecName);
 }
 
-TProject::TProject(const TProject &other) :
-    BBase(*new TProjectPrivate(this))
+TTexProject::TTexProject(const TTexProject &other) :
+    BBase(*new TTexProjectPrivate(this))
 {
     d_func()->init();
     *this = other;
 }
 
-TProject::~TProject()
+TTexProject::~TTexProject()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TProject::clear()
+void TTexProject::clear()
 {
-    B_D(TProject);
+    B_D(TTexProject);
     d->rootFile.clear();
     d->files.clear();
 }
 
-TProjectFile *TProject::rootFile()
+TProjectFile *TTexProject::rootFile()
 {
     return &d_func()->rootFile;
 }
 
-const TProjectFile *TProject::rootFile() const
+const TProjectFile *TTexProject::rootFile() const
 {
     return &d_func()->rootFile;
 }
 
-QList<TProjectFile> *TProject::files()
+QList<TProjectFile> *TTexProject::files()
 {
     return &d_func()->files;
 }
 
-const QList<TProjectFile> *TProject::files() const
+const QList<TProjectFile> *TTexProject::files() const
 {
     return &d_func()->files;
 }
 
-QString TProject::rootFileName() const
+QString TTexProject::rootFileName() const
 {
     return d_func()->rootFile.fileName();
 }
 
-QStringList TProject::externalFiles(bool *ok) const
+QStringList TTexProject::externalFiles(bool *ok) const
 {
     bool bok = false;
     QStringList list = rootFile()->externalFiles(&bok);
@@ -260,7 +261,7 @@ QStringList TProject::externalFiles(bool *ok) const
     return bRet(ok, true, list);
 }
 
-QStringList TProject::restrictedCommands() const
+QStringList TTexProject::restrictedCommands() const
 {
     QStringList list = d_func()->rootFile.restrictedCommands();
     foreach (const TProjectFile &f, d_func()->files)
@@ -269,14 +270,14 @@ QStringList TProject::restrictedCommands() const
     return list;
 }
 
-void TProject::removeRestrictedCommands()
+void TTexProject::removeRestrictedCommands()
 {
     d_func()->rootFile.removeRestrictedCommands();
     foreach (int i, bRangeD(0, d_func()->files.size() - 1))
         d_func()->files[i].removeRestrictedCommands();
 }
 
-bool TProject::prependExternalFileNames(const QString &subdir)
+bool TTexProject::prependExternalFileNames(const QString &subdir)
 {
     if (!d_func()->rootFile.prependExternalFileNames(subdir))
         return false;
@@ -286,31 +287,31 @@ bool TProject::prependExternalFileNames(const QString &subdir)
     return true;
 }
 
-void TProject::replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs)
+void TTexProject::replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs)
 {
-    B_D(TProject);
+    B_D(TTexProject);
     d->rootFile.setText(d->rootFile.text().replace(oldString, newString, cs));
     foreach (int i, bRangeD(0, d->files.size() - 1))
         d->files[i].setText(d->files.at(i).text().replace(oldString, newString, cs));
 }
 
-bool TProject::load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec)
+bool TTexProject::load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec)
 {
     return load(rootFileName, rootFileText, codec ? QString(codec->name()) : QString("UTF-8"));
 }
 
-bool TProject::load(const QString &rootFileName, const QString &rootFileText, const QString &codecName)
+bool TTexProject::load(const QString &rootFileName, const QString &rootFileText, const QString &codecName)
 {
     clear();
     if (rootFileName.isEmpty() || rootFileText.isEmpty())
         return false;
-    B_D(TProject);
+    B_D(TTexProject);
     QString cn = !codecName.isEmpty() ? codecName : QString("UTF-8");
     QString path = QFileInfo(rootFileName).path();
     d->rootFile.setFileName(rootFileName);
     d->rootFile.setText(rootFileText);
     bool ok = false;
-    QStringList list = TProjectPrivate::dependencies(rootFileText, QFileInfo(rootFileName).path(), cn, &ok);
+    QStringList list = TTexProjectPrivate::dependencies(rootFileText, QFileInfo(rootFileName).path(), cn, &ok);
     if (!ok)
     {
         clear();
@@ -332,12 +333,12 @@ bool TProject::load(const QString &rootFileName, const QString &rootFileText, co
     return true;
 }
 
-bool TProject::load(const QString &rootFileName, QTextCodec *codec)
+bool TTexProject::load(const QString &rootFileName, QTextCodec *codec)
 {
     return load(rootFileName, codec ? QString(codec->name()) : QString("UTF-8"));
 }
 
-bool TProject::load(const QString &rootFileName, const QString &codecName)
+bool TTexProject::load(const QString &rootFileName, const QString &codecName)
 {
     clear();
     bool ok = false;
@@ -345,7 +346,7 @@ bool TProject::load(const QString &rootFileName, const QString &codecName)
     return ok && load(rootFileName, text, codecName);
 }
 
-bool TProject::save(const QString &dir, QTextCodec *codec) const
+bool TTexProject::save(const QString &dir, QTextCodec *codec) const
 {
     if (!isValid() || dir.isEmpty() || !rootFile()->save(dir, codec))
         return false;
@@ -355,12 +356,12 @@ bool TProject::save(const QString &dir, QTextCodec *codec) const
     return true;
 }
 
-bool TProject::save(const QString &dir, const QString &codecName) const
+bool TTexProject::save(const QString &dir, const QString &codecName) const
 {
     return save(dir, QTextCodec::codecForName(!codecName.isEmpty() ? codecName.toLatin1() : QByteArray("UTF-8")));
 }
 
-bool TProject::isValid() const
+bool TTexProject::isValid() const
 {
     if (!d_func()->rootFile.isValid())
         return false;
@@ -370,7 +371,7 @@ bool TProject::isValid() const
     return true;
 }
 
-int TProject::size() const
+int TTexProject::size() const
 {
     int sz = d_func()->rootFile.size();
     foreach (const TProjectFile &f, d_func()->files)
@@ -380,32 +381,32 @@ int TProject::size() const
 
 /*============================== Public operators ==========================*/
 
-TProject &TProject::operator =(const TProject &other)
+TTexProject &TTexProject::operator =(const TTexProject &other)
 {
-    B_D(TProject);
-    const TProjectPrivate *dd = other.d_func();
+    B_D(TTexProject);
+    const TTexProjectPrivate *dd = other.d_func();
     d->rootFile = dd->rootFile;
     d->files = dd->files;
     return *this;
 }
 
-bool TProject::operator ==(const TProject &other) const
+bool TTexProject::operator ==(const TTexProject &other) const
 {
-    const B_D(TProject);
-    const TProjectPrivate *dd = other.d_func();
+    const B_D(TTexProject);
+    const TTexProjectPrivate *dd = other.d_func();
     return d->rootFile == dd->rootFile && d->files == dd->files;
 }
 
-TProject::operator QVariant() const
+TTexProject::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TProject &project)
+QDataStream &operator <<(QDataStream &stream, const TTexProject &project)
 {
-    const TProjectPrivate *d = project.d_func();
+    const TTexProjectPrivate *d = project.d_func();
     QVariantMap m;
     m.insert("root_file", d->rootFile);
     m.insert("files", d->files);
@@ -413,9 +414,9 @@ QDataStream &operator <<(QDataStream &stream, const TProject &project)
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TProject &project)
+QDataStream &operator >>(QDataStream &stream, TTexProject &project)
 {
-    TProjectPrivate *d = project.d_func();
+    TTexProjectPrivate *d = project.d_func();
     QVariantMap m;
     stream >> m;
     d->rootFile = m.value("root_file").value<TProjectFile>();
@@ -423,8 +424,8 @@ QDataStream &operator >>(QDataStream &stream, TProject &project)
     return stream;
 }
 
-QDebug operator <<(QDebug dbg, const TProject &project)
+QDebug operator <<(QDebug dbg, const TTexProject &project)
 {
-    dbg.nospace() << "TProject(" << project.size() << ")";
+    dbg.nospace() << "TTexProject(" << project.size() << ")";
     return dbg.space();
 }

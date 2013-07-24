@@ -37,13 +37,13 @@ HEADERS += \
     tnamespace.h \
     toperationresult.h \
     toperationresult_p.h \
-    tproject.h \
     tprojectfile.h \
     tprojectfilelist.h \
     tsampleinfo.h \
     tsampleinfolist.h \
     tservice.h \
     tservicelist.h \
+    ttexproject.h \
     tuserinfo.h
 
 SOURCES += \
@@ -59,13 +59,13 @@ SOURCES += \
     tmessage.cpp \
     tnamespace.cpp \
     toperationresult.cpp \
-    tproject.cpp \
     tprojectfile.cpp \
     tprojectfilelist.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
     tservice.cpp \
     tservicelist.cpp \
+    ttexproject.cpp \
     tuserinfo.cpp
 
 TRANSLATIONS += ../translations/texsample_ru.ts

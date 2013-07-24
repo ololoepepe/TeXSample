@@ -72,6 +72,8 @@ QString TService::serviceToStringNoTr(Service srv)
     {
     case TexsampleService:
         return QT_TRANSLATE_NOOP("TService", "TeXSample");
+    case ClabService:
+        return QT_TRANSLATE_NOOP("TService", "CLab");
     case NoService:
     default:
         return QT_TRANSLATE_NOOP("TService", "No");
@@ -121,7 +123,7 @@ TService &TService::operator =(const TService &other)
 
 TService &TService::operator =(int srv)
 {
-    static const QList<int> Services = bRangeD(TexsampleService, TexsampleService);
+    static const QList<int> Services = bRangeD(TexsampleService, ClabService);
     d_func()->service = Services.contains(srv) ? static_cast<Service>(srv) : NoService;
     return *this;
 }

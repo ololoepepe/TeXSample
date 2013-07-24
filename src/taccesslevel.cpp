@@ -78,8 +78,9 @@ QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
     case AdminLevel:
         return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Administrator") :
                           QT_TRANSLATE_NOOP("TAccessLevel", "Administrators");
-    case RootLevel:
-        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Root") : QT_TRANSLATE_NOOP("TAccessLevel", "Roots");
+    case SuperuserLevel:
+        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Superuser") :
+                          QT_TRANSLATE_NOOP("TAccessLevel", "Superusers");
     case NoLevel:
     default:
         return QT_TRANSLATE_NOOP("TAccessLevel", "No");
@@ -88,7 +89,7 @@ QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
 
 QList<TAccessLevel> TAccessLevel::allAccessLevels(bool includeNoLevel)
 {
-    QList<TAccessLevel> list = QList<TAccessLevel>() << UserLevel << ModeratorLevel << AdminLevel << RootLevel;
+    QList<TAccessLevel> list = QList<TAccessLevel>() << UserLevel << ModeratorLevel << AdminLevel << SuperuserLevel;
     if (includeNoLevel)
         list.prepend(NoLevel);
     return list;
@@ -138,7 +139,7 @@ TAccessLevel &TAccessLevel::operator =(const TAccessLevel &other)
 TAccessLevel &TAccessLevel::operator =(int lvl)
 {
 
-    static const QList<int> Levels = bRangeM(UserLevel, RootLevel);
+    static const QList<int> Levels = bRangeM(UserLevel, SuperuserLevel);
     d_func()->level = Levels.contains(lvl) ? static_cast<AccessLevel>(lvl) : NoLevel;
     return *this;
 }
