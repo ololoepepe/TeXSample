@@ -12,7 +12,8 @@ namespace Texsample
 
 const quint16 MainPort = 9044;
 
-const qint64 MaximumAvatarSize = BeQt::Megabyte;
+const int MaximumAvatarSize = BeQt::Megabyte;
+const int MaximumAvatarExtent = 2048;
 const quint8 MaximumInvitesCount = 3;
 
 //Requests

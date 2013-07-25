@@ -4,6 +4,7 @@
 #include "tservice.h"
 #include "tservicelist.h"
 #include "tnamespace.h"
+#include "cimg/CImg.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -11,6 +12,7 @@
 #include <BTranslator>
 #include <BeQt>
 #include <BTextTools>
+#include <BDirTools>
 
 #include <QObject>
 #include <QDataStream>
@@ -24,6 +26,8 @@
 #include <QList>
 #include <QUuid>
 #include <QRegExp>
+#include <QFileInfo>
+#include <QTemporaryFile>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_DECLARE_METATYPE(QUuid)
@@ -37,21 +41,21 @@ class TUserInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TUserInfo)
 public:
-   static TUserInfo::Context contextFromInt(int c);
+    static TUserInfo::Context contextFromInt(int c);
 public:
-   static const QList<TUserInfo::Context> IdContexts;
-   static const QList<TUserInfo::Context> InviteCodeContexts;
-   static const QList<TUserInfo::Context> EmailContexts;
-   static const QList<TUserInfo::Context> LoginContexts;
-   static const QList<TUserInfo::Context> PasswordContexts;
-   static const QList<TUserInfo::Context> AccessLevelContexts;
-   static const QList<TUserInfo::Context> ServicesContexts;
-   static const QList<TUserInfo::Context> RealNameContexts;
-   static const QList<TUserInfo::Context> AvatarContexts;
-   static const QList<TUserInfo::Context> CreationDTContexts;
-   static const QList<TUserInfo::Context> UpdateDTContexts;
+    static const QList<TUserInfo::Context> IdContexts;
+    static const QList<TUserInfo::Context> InviteCodeContexts;
+    static const QList<TUserInfo::Context> EmailContexts;
+    static const QList<TUserInfo::Context> LoginContexts;
+    static const QList<TUserInfo::Context> PasswordContexts;
+    static const QList<TUserInfo::Context> AccessLevelContexts;
+    static const QList<TUserInfo::Context> ServicesContexts;
+    static const QList<TUserInfo::Context> RealNameContexts;
+    static const QList<TUserInfo::Context> AvatarContexts;
+    static const QList<TUserInfo::Context> CreationDTContexts;
+    static const QList<TUserInfo::Context> UpdateDTContexts;
 public:
-   explicit TUserInfoPrivate(TUserInfo *q);
+    explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
 public:
     void init();
@@ -140,6 +144,29 @@ void TUserInfoPrivate::init()
 /*============================================================================
 ================================ TUserInfo ===================================
 ============================================================================*/
+
+/*============================== Static public methods =====================*/
+
+bool TUserInfo::testAvatar(const QByteArray &data)
+{
+    if (data.isEmpty() || data.size() > (int) Texsample::MaximumAvatarSize)
+        return false;
+    QTemporaryFile f(QDir::tempPath() + "/texsample/userinfo/" + BeQt::pureUuidText(QUuid::createUuid()) + "/XXXXXX");
+    if (f.open() || f.write(data) < data.size() || !testAvatar(f.fileName()))
+        return false;
+    return true;
+}
+
+bool TUserInfo::testAvatar(const QString &fileName)
+{
+    if (fileName.isEmpty())
+        return false;
+    QFileInfo fi(fileName);
+    if (!fi.isFile() || (int) fi.size() > Texsample::MaximumAvatarSize)
+        return false;
+    cimg_library::CImg<unsigned char> cimg(fileName.toLocal8Bit().constData());
+    return (cimg.height() <= Texsample::MaximumAvatarExtent && cimg.width() <= Texsample::MaximumAvatarExtent);
+}
 
 /*============================== Public constructors =======================*/
 
@@ -259,7 +286,16 @@ void TUserInfo::setRealName(const QString &name)
 
 void TUserInfo::setAvatar(const QByteArray &data)
 {
-    d_func()->avatar = (data.size() <= Texsample::MaximumAvatarSize) ? data : QByteArray();
+    if (!testAvatar(data))
+        return d_func()->avatar.clear();
+    d_func()->avatar = data;
+}
+
+void TUserInfo::setAvatar(const QString &fileName)
+{
+    if (!testAvatar(fileName))
+        return d_func()->avatar.clear();
+    d_func()->avatar = BDirTools::readFile(fileName);
 }
 
 void TUserInfo::setCreationDateTime(const QDateTime &dt)

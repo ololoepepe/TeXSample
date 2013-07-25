@@ -42,6 +42,9 @@ public:
         UpdateContext
     };
 public:
+    static bool testAvatar(const QByteArray &data);
+    static bool testAvatar(const QString &fileName);
+public:
     explicit TUserInfo(Context c = GeneralContext);
     explicit TUserInfo(quint64 id, Context c = GeneralContext);
     TUserInfo(const TUserInfo &other);
@@ -59,6 +62,7 @@ public:
     void setServices(const QList<int> &list);
     void setRealName(const QString &name);
     void setAvatar(const QByteArray &data);
+    void setAvatar(const QString &fileName);
     void setCreationDateTime(const QDateTime &dt);
     void setUpdateDateTime(const QDateTime &dt);
     void clear();

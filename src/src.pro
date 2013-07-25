@@ -23,7 +23,13 @@ include($${BEQT_PREFIX}/depend.pri)
 
 DEFINES += TSMP_BUILD_LIB
 
+#CImg defines
+DEFINES += "cimg_file_separator=\\\'/\\\'"
+DEFINES += "cimg_verbosity=0"
+DEFINES += "cimg_display=0"
+
 HEADERS += \
+    cimg/CImg.h \
     taccesslevel.h \
     tclientinfo.h \
     tcompilationresult.h \
