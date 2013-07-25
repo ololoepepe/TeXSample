@@ -33,6 +33,8 @@ HEADERS += \
     tidlist.h \
     tinviteinfo.h \
     tinviteinfolist.h \
+    tlabinfo.h \
+    tlabinfolist.h \
     tlabproject.h \
     tmessage.h \
     tnamespace.h \
@@ -57,6 +59,8 @@ SOURCES += \
     tidlist.cpp \
     tinviteinfo.cpp \
     tinviteinfolist.cpp \
+    tlabinfo.cpp \
+    tlabinfolist.cpp \
     tlabproject.cpp \
     tmessage.cpp \
     tnamespace.cpp \

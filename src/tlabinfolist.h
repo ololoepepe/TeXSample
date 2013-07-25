@@ -1,7 +1,7 @@
-#ifndef TSAMPLEINFOLIST_H
-#define TSAMPLEINFOLIST_H
+#ifndef TLABINFOLIST_H
+#define TLABINFOLIST_H
 
-#include "tsampleinfo.h"
+#include "tlabinfo.h"
 #include "tglobal.h"
 
 #include <QList>
@@ -9,15 +9,16 @@
 #include <QVariant>
 
 /*============================================================================
-================================ TSampleInfoList =============================
+================================ TLabInfoList ================================
 ============================================================================*/
 
-class TSMP_EXPORT TSampleInfoList : public QList<TSampleInfo>
+class TSMP_EXPORT TLabInfoList : public QList<TLabInfo>
 {
 public:
     operator QVariant() const;
 };
 
-Q_DECLARE_METATYPE(TSampleInfoList)
+Q_DECLARE_METATYPE(TLabInfoList)
 
-#endif // TSAMPLEINFOLIST_H
+
+#endif // TLABINFOLIST_H

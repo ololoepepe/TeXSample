@@ -393,6 +393,16 @@ bool TUserInfo::isValid(Context c) const
     }
 }
 
+TUserInfo TUserInfo::toContext(int c) const
+{
+    Context cc = TUserInfoPrivate::contextFromInt(c);
+    if (cc == d_func()->context)
+        return *this;
+    TUserInfo i = *this;
+    i.setContext(c);
+    return i;
+}
+
 /*============================== Public operators ==========================*/
 
 TUserInfo &TUserInfo::operator =(const TUserInfo &other)

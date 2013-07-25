@@ -23,6 +23,8 @@ class TSMP_EXPORT TLabProject : BBase
 {
     B_DECLARE_PRIVATE(TLabProject)
 public:
+    static int size(const QString &dir);
+public:
     explicit TLabProject();
     explicit TLabProject(const QString &dir, const QString &mainFileName);
     TLabProject(const TLabProject &other);

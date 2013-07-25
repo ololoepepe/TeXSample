@@ -8,4 +8,4 @@
 
 === MAJOR ===
 
-* Replace root with superuser
+[done] Replace root with superuser

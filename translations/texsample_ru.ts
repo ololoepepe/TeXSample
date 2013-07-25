@@ -41,6 +41,37 @@
     </message>
 </context>
 <context>
+    <name>TLabInfo</name>
+    <message>
+        <source>Desktop application</source>
+        <translation>Настольное приложение</translation>
+    </message>
+    <message>
+        <source>Web application</source>
+        <translation>Веб-приложение</translation>
+    </message>
+    <message>
+        <source>External URL</source>
+        <translation>Внешняя ссылка</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Desktop applications</source>
+        <translation>Настольные приложения</translation>
+    </message>
+    <message>
+        <source>Web applications</source>
+        <translation>Веб-приложения</translation>
+    </message>
+    <message>
+        <source>External URLs</source>
+        <translation>Внешние ссылки</translation>
+    </message>
+</context>
+<context>
     <name>TMessage</name>
     <message>
         <source>Unknown error occured</source>

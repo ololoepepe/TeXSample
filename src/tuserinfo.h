@@ -79,6 +79,7 @@ public:
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     bool isValid(Context c = CurrentContext) const;
+    TUserInfo toContext(int c) const;
 public:
     TUserInfo &operator =(const TUserInfo &other);
     bool operator ==(const TUserInfo &other) const;

@@ -7,6 +7,9 @@
 #include "tidlist.h"
 #include "tinviteinfo.h"
 #include "tinviteinfolist.h"
+#include "tlabinfo.h"
+#include "tlabinfolist.h"
+#include "tlabproject.h"
 #include "tmessage.h"
 #include "toperationresult.h"
 #include "tprojectfile.h"
@@ -58,6 +61,12 @@ void tInit()
     qRegisterMetaTypeStreamOperators<TInviteInfo>();
     qRegisterMetaType<TInviteInfoList>();
     qRegisterMetaTypeStreamOperators<TInviteInfoList>();
+    qRegisterMetaType<TLabInfo>();
+    qRegisterMetaTypeStreamOperators<TLabInfo>();
+    qRegisterMetaType<TLabInfoList>();
+    qRegisterMetaTypeStreamOperators<TLabInfoList>();
+    qRegisterMetaType<TLabProject>();
+    qRegisterMetaTypeStreamOperators<TLabProject>();
     qRegisterMetaType<TMessage>();
     qRegisterMetaTypeStreamOperators<TMessage>();
     qRegisterMetaType<TOperationResult>();

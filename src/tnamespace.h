@@ -31,6 +31,7 @@ const QString ChangeLocaleRequest = "change_locale";
 
 const QString LogRequest = "log";
 const QString MessageRequest = "message";
+
 //TeXSample requests
 const QString AddSampleRequest = "add_sample";
 const QString EditSampleRequest = "edit_sample";
@@ -40,9 +41,15 @@ const QString GetSamplesListRequest = "get_samples_list";
 const QString GetSampleSourceRequest = "get_sample_source";
 const QString GetSamplePreviewRequest = "get_sample_preview";
 const QString CompileProjectRequest = "compile_project";
+
 //CLab requests
 const QString EditClabGroupsRequest = "edit_clab_groups";
 const QString GetClabGroupsListRequest = "get_clab_groups_list";
+const QString AddLabRequest = "add_lab";
+const QString EditLabRequest = "edit_lab";
+const QString DeleteLabRequest = "delete_lab";
+const QString GetLabRequest = "get_lab";
+const QString GetLabsListRequest = "get_labs_list";
 
 }
 

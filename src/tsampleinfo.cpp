@@ -229,13 +229,13 @@ void TSampleInfo::setId(quint64 id)
 
 void TSampleInfo::setSender(const TUserInfo &s)
 {
-    d_func()->sender = s;
+    d_func()->sender = s.toContext(TUserInfo::BriefInfoContext);
 }
 
 void TSampleInfo::setAuthors(const QStringList &list)
 {
-    d_func()->authors = list;
-    d_func()->authors.removeDuplicates();
+    d_func()->authors = bWithoutDuplicates(list);
+    d_func()->authors.removeAll("");
 }
 
 void TSampleInfo::setTitle(const QString &title)
@@ -260,7 +260,8 @@ void TSampleInfo::setProjectSize(int size)
 
 void TSampleInfo::setTags(const QStringList &list)
 {
-    d_func()->tags = list;
+    d_func()->tags = bWithoutDuplicates(list);
+    d_func()->tags.removeAll("");
 }
 
 void TSampleInfo::setTags(const QString &s)
@@ -416,9 +417,8 @@ bool TSampleInfo::isValid(Context c) const
         return d->id && !d->title.isEmpty() && !d->fileName.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext)
-                && (d->authors.isEmpty() || !d->authors.contains("")) && !d->title.isEmpty()
-                && !d->fileName.isEmpty() && d->size && d->creationDT.isValid() && d->updateDT.isValid();
+        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && !d->fileName.isEmpty()
+                && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
 
@@ -516,28 +516,19 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     QVariantMap m;
     stream >> m;
     d->context = TSampleInfoPrivate::contextFromInt(m.value("context").toInt());
-    d->authors = m.value("authors").toStringList();
+    info.setAuthors(m.value("authors").toStringList());
     d->title = m.value("title").toString();
     d->fileName = m.value("file_name").toString();
-    d->tags = m.value("tags").toStringList();
+    info.setProjectSize(m.value("size").toInt());
+    info.setTags(m.value("tags").toStringList());
     d->comment = m.value("comment").toString();
-    if (TSampleInfo::AddContext != d->context)
-        d->id = m.value("id").toULongLong();
-    if (TSampleInfo::GeneralContext == d->context)
-        d->sender = m.value("sender").value<TUserInfo>();
-    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-        d->type = TSampleInfo::typeFromInt(m.value("type").toInt());
-    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-    {
-        d->remark = m.value("remark").toString();
-        d->rating = m.value("rating").toUInt();
-    }
-    if (TSampleInfo::GeneralContext == d->context)
-    {
-        d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
-        d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
-        info.setProjectSize(m.value("size").toInt());
-    }
+    d->id = m.value("id").toULongLong();
+    info.setSender(m.value("sender").value<TUserInfo>());
+    d->type = TSampleInfo::typeFromInt(m.value("type").toInt());
+    d->remark = m.value("remark").toString();
+    d->rating = m.value("rating").toUInt();
+    d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 

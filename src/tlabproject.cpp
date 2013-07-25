@@ -90,6 +90,25 @@ bool TLabProjectPrivate::loadRec(const QString &rootDir, const QString &subdir)
 ================================ CProject ====================================
 ============================================================================*/
 
+/*============================== Static public methods =====================*/
+
+int TLabProject::size(const QString &dir)
+{
+    if (dir.isEmpty())
+        return -1;
+    int sz = 0;
+    foreach (const QString &fn, BDirTools::entryList(dir, QDir::Files))
+        sz += QFileInfo(fn).size();
+    foreach (const QString &dn, BDirTools::entryList(dir, QDir::Dirs | QDir::NoDotAndDotDot))
+    {
+        int szt = size(dn);
+        if (szt < 0)
+            return -1;
+        sz += szt;
+    }
+    return sz;
+}
+
 /*============================== Public constructors =======================*/
 
 TLabProject::TLabProject() :
