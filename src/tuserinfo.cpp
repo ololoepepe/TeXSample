@@ -149,12 +149,16 @@ void TUserInfoPrivate::init()
 
 bool TUserInfo::testAvatar(const QByteArray &data)
 {
-    if (data.isEmpty() || data.size() > (int) Texsample::MaximumAvatarSize)
+    if (data.isEmpty() || (int) data.size() > Texsample::MaximumAvatarSize)
         return false;
-    QTemporaryFile f(QDir::tempPath() + "/texsample/userinfo/" + BeQt::pureUuidText(QUuid::createUuid()) + "/XXXXXX");
-    if (f.open() || f.write(data) < data.size() || !testAvatar(f.fileName()))
+    QString path = QDir::tempPath() + "/texsample/userinfo/" + BeQt::pureUuidText(QUuid::createUuid());
+    if (!BDirTools::mkpath(path))
         return false;
-    return true;
+    QTemporaryFile f(path + "/XXXXXX");
+    bool b = f.open() && f.write(data) == data.size() && testAvatar(f.fileName());
+    BDirTools::rmdir(path);
+    f.remove();
+    return b;
 }
 
 bool TUserInfo::testAvatar(const QString &fileName)
