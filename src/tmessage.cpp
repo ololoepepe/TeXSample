@@ -143,6 +143,13 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "This is not your lab");
     case NotModifiableSampleError:
         return QT_TRANSLATE_NOOP("TMessage", "The sample is not modifiable");
+    //Client errors
+    case ClientOperationCanceledError:
+        return QT_TRANSLATE_NOOP("TMessage", "The operation was canceled");
+    case ClientConnectionTimeoutError:
+        return QT_TRANSLATE_NOOP("TMessage", "The connection timed out");
+    case ClientOperationError:
+        return QT_TRANSLATE_NOOP("TMessage", "There was an operation error");
     //Other errors
     case UnknownError:
         return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");

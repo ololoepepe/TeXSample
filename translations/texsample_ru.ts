@@ -201,6 +201,18 @@
         <source>The lab is already deleted</source>
         <translation>Эта лаб. работа уже удалена</translation>
     </message>
+    <message>
+        <source>The operation was canceled</source>
+        <translation>Операция была отменена</translation>
+    </message>
+    <message>
+        <source>The connection timed out</source>
+        <translation>Истекло время ожидания соединения</translation>
+    </message>
+    <message>
+        <source>There was an operation error</source>
+        <translation>Произошла ошибка операции</translation>
+    </message>
 </context>
 <context>
     <name>TSampleInfo</name>

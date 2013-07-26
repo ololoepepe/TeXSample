@@ -251,6 +251,8 @@ void TSampleInfo::setType(int t)
 void TSampleInfo::setFileName(const QString &fileName)
 {
     d_func()->fileName = !fileName.isEmpty() ? QFileInfo(fileName).fileName() : QString();
+    if (d_func()->fileName.indexOf(QRegExp("^[a-zA-Z0-9\\-]+\\.tex$")))
+        d_func()->fileName.clear();
 }
 
 void TSampleInfo::setProjectSize(int size)
@@ -518,7 +520,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     d->context = TSampleInfoPrivate::contextFromInt(m.value("context").toInt());
     info.setAuthors(m.value("authors").toStringList());
     d->title = m.value("title").toString();
-    d->fileName = m.value("file_name").toString();
+    info.setFileName(m.value("file_name").toString());
     info.setProjectSize(m.value("size").toInt());
     info.setTags(m.value("tags").toStringList());
     d->comment = m.value("comment").toString();

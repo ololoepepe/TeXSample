@@ -63,6 +63,10 @@ public:
         NotOwnSampleError,
         NotOwnLabError,
         NotModifiableSampleError,
+        //Client errors
+        ClientOperationCanceledError,
+        ClientConnectionTimeoutError,
+        ClientOperationError,
         //Other errors
         UnknownError
     };
