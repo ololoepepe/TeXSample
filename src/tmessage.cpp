@@ -26,6 +26,7 @@ public:
     void init();
 public:
     TMessage::Message message;
+    QString explanation;
 private:
     Q_DISABLE_COPY(TMessagePrivate)
 };
@@ -153,11 +154,12 @@ QString TMessage::messageToStringNoTr(int msg)
 
 /*============================== Public constructors =======================*/
 
-TMessage::TMessage(int msg) :
+TMessage::TMessage(int msg, const QString &explanation) :
     BBase(*new TMessagePrivate(this))
 {
     d_func()->init();
     setMessage(msg);
+    setExplanation(explanation);
 }
 
 TMessage::TMessage(const TMessage &other) :
@@ -188,6 +190,11 @@ void TMessage::setMessage(int msg)
     d_func()->message = messageFromInt(msg);
 }
 
+void TMessage::setExplanation(const QString &s)
+{
+    d_func()->explanation = s;
+}
+
 TMessage::Message TMessage::message() const
 {
     return d_func()->message;
@@ -203,28 +210,35 @@ QString TMessage::messageStringNoTr() const
     return messageToStringNoTr(d_func()->message);
 }
 
+QString TMessage::explanation() const
+{
+    return d_func()->explanation;
+}
+
 /*============================== Public operators ==========================*/
 
 TMessage &TMessage::operator =(const TMessage &other)
 {
     d_func()->message = other.d_func()->message;
+    d_func()->explanation = other.d_func()->explanation;
     return *this;
 }
 
 TMessage &TMessage::operator =(int msg)
 {
     d_func()->message = messageFromInt(msg);
+    d_func()->explanation.clear();
     return *this;
 }
 
 bool TMessage::operator ==(const TMessage &other) const
 {
-    return d_func()->message == other.d_func()->message;
+    return d_func()->message == other.d_func()->message && d_func()->explanation == other.d_func()->explanation;
 }
 
 bool TMessage::operator ==(int other) const
 {
-    return d_func()->message == other;
+    return d_func()->message == other && d_func()->explanation.isEmpty();
 }
 
 TMessage::operator QVariant() const
@@ -243,6 +257,7 @@ QDataStream &operator <<(QDataStream &stream, const TMessage &msg)
 {
     QVariantMap m;
     m.insert("message", (int) msg.d_func()->message);
+    m.insert("explanation", msg.d_func()->explanation);
     stream << m;
     return stream;
 }
@@ -252,11 +267,12 @@ QDataStream &operator >>(QDataStream &stream, TMessage &msg)
     QVariantMap m;
     stream >> m;
     msg.d_func()->message = TMessage::messageFromInt(m.value("message").toInt());
+    msg.d_func()->explanation = m.value("explanation").toString();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TMessage &msg)
 {
-    dbg.nospace() << "TMessage(" << msg.messageStringNoTr() << ")";
+    dbg.nospace() << "TMessage(" << msg.messageStringNoTr() << "," << msg.explanation() << ")";
     return dbg.space();
 }

@@ -6,7 +6,6 @@ class TMessagePrivate;
 class QDataStream;
 class QVariant;
 class QDebug;
-class QString;
 
 #include "tglobal.h"
 
@@ -15,6 +14,7 @@ class QString;
 
 #include <QMetaType>
 #include <QCoreApplication>
+#include <QString>
 
 /*============================================================================
 ================================ TMessage ====================================
@@ -71,16 +71,18 @@ public:
     static QString messageToString(int msg);
     static QString messageToStringNoTr(int msg);
 public:
-    TMessage(int msg = NoMessage);
+    TMessage(int msg = NoMessage, const QString &explanation = QString());
     TMessage(const TMessage &other);
     ~TMessage();
 protected:
     explicit TMessage(TMessagePrivate &d);
 public:
     void setMessage(int msg);
+    void setExplanation(const QString &s);
     Message message() const;
     QString messageString() const;
     QString messageStringNoTr() const;
+    QString explanation() const;
 public:
     TMessage &operator =(const TMessage &other);
     TMessage &operator =(int msg);

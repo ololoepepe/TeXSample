@@ -94,9 +94,9 @@ const QList<TUserInfo::Context> TUserInfoPrivate::IdContexts =
     QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::EditContext
     << TUserInfo::UpdateContext << TUserInfo::GeneralContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::EmailContexts =
-    QList<TUserInfo::Context>() << TUserInfo::RegisterContext;
-const QList<TUserInfo::Context> TUserInfoPrivate::InviteCodeContexts =
     QList<TUserInfo::Context>() << TUserInfo::AddContext << TUserInfo::RegisterContext;
+const QList<TUserInfo::Context> TUserInfoPrivate::InviteCodeContexts =
+    QList<TUserInfo::Context>() << TUserInfo::RegisterContext;
 const QList<TUserInfo::Context> TUserInfoPrivate::LoginContexts =
     QList<TUserInfo::Context>() << TUserInfo::BriefInfoContext << TUserInfo::AddContext
     << TUserInfo::RegisterContext << TUserInfo::GeneralContext;
@@ -540,28 +540,17 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     QVariantMap m;
     stream >> m;
     d->context = TUserInfoPrivate::contextFromInt(m.value("context").toInt());
-    if (TUserInfoPrivate::IdContexts.contains(d->context))
-        d->id = m.value("id").toULongLong();
-    if (TUserInfoPrivate::InviteCodeContexts.contains(d->context))
-        d->inviteCode = m.value("invite_code").value<QUuid>();
-    if (TUserInfoPrivate::EmailContexts.contains(d->context))
-        info.setEmail(m.value("email").toString());
-    if (TUserInfoPrivate::LoginContexts.contains(d->context))
-        info.setLogin(m.value("login").toString());
-    if (TUserInfoPrivate::PasswordContexts.contains(d->context))
-        d->password = m.value("password").toByteArray();
-    if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
-        d->accessLevel = m.value("access_level").value<TAccessLevel>();
-    if (TUserInfoPrivate::ServicesContexts.contains(d->context))
-        info.setServices(m.value("services").value<TServiceList>());
-    if (TUserInfoPrivate::RealNameContexts.contains(d->context))
-        info.setRealName(m.value("real_name").toString());
-    if (TUserInfoPrivate::AvatarContexts.contains(d->context))
-        info.setAvatar(m.value("avatar").toByteArray());
-    if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
-        d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
-    if (TUserInfoPrivate::UpdateDTContexts.contains(d->context))
-        d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->id = m.value("id").toULongLong();
+    d->inviteCode = m.value("invite_code").value<QUuid>();
+    info.setEmail(m.value("email").toString());
+    info.setLogin(m.value("login").toString());
+    d->password = m.value("password").toByteArray();
+    d->accessLevel = m.value("access_level").value<TAccessLevel>();
+    info.setServices(m.value("services").value<TServiceList>());
+    info.setRealName(m.value("real_name").toString());
+    info.setAvatar(m.value("avatar").toByteArray());
+    d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
     return stream;
 }
 
