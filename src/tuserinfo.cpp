@@ -244,8 +244,7 @@ void TUserInfo::setInviteCode(const QString &code)
 
 void TUserInfo::setEmail(const QString &email)
 {
-    d_func()->email = QRegExp(BTextTools::standardRegExpPattern(BTextTools::EmailPattern)).exactMatch(email) ?
-                email : QString();
+    d_func()->email = BTextTools::standardRegExp(BTextTools::EmailPattern).exactMatch(email) ? email : QString();
 }
 
 void TUserInfo::setLogin(const QString &login)
@@ -420,7 +419,7 @@ bool TUserInfo::isValid(Context c) const
     case RegisterContext:
         return !d->inviteCode.isNull() && !d->email.isEmpty() && !d->login.isEmpty() && !d->password.isEmpty();
     case EditContext:
-        return d->id;
+        return d->id || !d->login.isEmpty();
     case UpdateContext:
         return d->id && !d->password.isEmpty();
     case GeneralContext:
@@ -546,22 +545,19 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     if (TUserInfoPrivate::InviteCodeContexts.contains(d->context))
         d->inviteCode = m.value("invite_code").value<QUuid>();
     if (TUserInfoPrivate::EmailContexts.contains(d->context))
-        d->email = m.value("email").toString();
+        info.setEmail(m.value("email").toString());
     if (TUserInfoPrivate::LoginContexts.contains(d->context))
-        d->login = m.value("login").toString();
+        info.setLogin(m.value("login").toString());
     if (TUserInfoPrivate::PasswordContexts.contains(d->context))
         d->password = m.value("password").toByteArray();
     if (TUserInfoPrivate::AccessLevelContexts.contains(d->context))
         d->accessLevel = m.value("access_level").value<TAccessLevel>();
     if (TUserInfoPrivate::ServicesContexts.contains(d->context))
-    {
-        d->services = m.value("services").value<TServiceList>();
-        bRemoveDuplicates(d->services);
-    }
+        info.setServices(m.value("services").value<TServiceList>());
     if (TUserInfoPrivate::RealNameContexts.contains(d->context))
-        d->realName = m.value("real_name").toString();
+        info.setRealName(m.value("real_name").toString());
     if (TUserInfoPrivate::AvatarContexts.contains(d->context))
-        d->avatar = m.value("avatar").toByteArray();
+        info.setAvatar(m.value("avatar").toByteArray());
     if (TUserInfoPrivate::CreationDTContexts.contains(d->context))
         d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
     if (TUserInfoPrivate::UpdateDTContexts.contains(d->context))

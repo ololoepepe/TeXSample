@@ -101,16 +101,24 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "The user ID is invalid");
     case InvalidSampleIdError:
         return QT_TRANSLATE_NOOP("TMessage", "The sample ID is invalid");
+    case InvalidLabIdError:
+        return QT_TRANSLATE_NOOP("TMessage", "The lab ID is invalid");
     case InvalidEmailError:
         return QT_TRANSLATE_NOOP("TMessage", "The e-mail is invalid");
+    case InvalidOSTypeError:
+        return QT_TRANSLATE_NOOP("TMessage", "The OS type is invalid");
     case NoSuchSampleError:
         return QT_TRANSLATE_NOOP("TMessage", "There is no such sample");
     case NoSuchCodeError:
         return QT_TRANSLATE_NOOP("TMessage", "There is no such code");
+    case NoLabForPlatformError:
+        return QT_TRANSLATE_NOOP("TMessage", "There is no lab for the given platform");
     case LoginOrEmailOccupiedError:
         return QT_TRANSLATE_NOOP("TMessage", "These login or e-mail are already occupied");
     case SampleAlreadyDeletedError:
         return QT_TRANSLATE_NOOP("TMessage", "The sample is already deleted");
+    case LabAlreadyDeletedError:
+        return QT_TRANSLATE_NOOP("TMessage", "The lab is already deleted");
     //Connection errors
     case InvalidUserInfoError:
         return QT_TRANSLATE_NOOP("TMessage", "The user info is invalid");
@@ -130,6 +138,8 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "This is not your account");
     case NotOwnSampleError:
         return QT_TRANSLATE_NOOP("TMessage", "This is not your sample");
+    case NotOwnLabError:
+        return QT_TRANSLATE_NOOP("TMessage", "This is not your lab");
     case NotModifiableSampleError:
         return QT_TRANSLATE_NOOP("TMessage", "The sample is not modifiable");
     //Other errors

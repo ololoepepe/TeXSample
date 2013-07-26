@@ -42,11 +42,15 @@ public:
         InvalidDataError,
         InvalidUserIdError,
         InvalidSampleIdError,
+        InvalidLabIdError,
         InvalidEmailError,
+        InvalidOSTypeError,
         NoSuchSampleError,
         NoSuchCodeError,
+        NoLabForPlatformError,
         LoginOrEmailOccupiedError,
         SampleAlreadyDeletedError,
+        LabAlreadyDeletedError,
         //Connection errors
         InvalidUserInfoError,
         InvalidLoginError,
@@ -57,6 +61,7 @@ public:
         CantEditSelfError,
         NotOwnAccountError,
         NotOwnSampleError,
+        NotOwnLabError,
         NotModifiableSampleError,
         //Other errors
         UnknownError

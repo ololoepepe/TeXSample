@@ -14,6 +14,7 @@ class QString;
 
 #include <BeQtGlobal>
 #include <BBase>
+#include <BeQt>
 
 #include <QMetaType>
 #include <QCoreApplication>
@@ -35,6 +36,7 @@ public:
     ~TClientInfo();
 public:
     QString os() const;
+    BeQt::OSType osType() const;
     QLocale locale() const;
     QString client() const;
     BVersion clientVersion() const;

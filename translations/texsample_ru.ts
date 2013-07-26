@@ -181,6 +181,26 @@
         <source>These login or e-mail are already occupied</source>
         <translation>Эти логин или эл. почта уже заняты</translation>
     </message>
+    <message>
+        <source>This is not your lab</source>
+        <translation>Это не ваша лаб. работа</translation>
+    </message>
+    <message>
+        <source>The lab ID is invalid</source>
+        <translation>Недействительный код лаб. работы</translation>
+    </message>
+    <message>
+        <source>The OS type is invalid</source>
+        <translation>Недействительный тип ОС</translation>
+    </message>
+    <message>
+        <source>There is no lab for the given platform</source>
+        <translation>Отсутствует лаб. работа для данной платформы</translation>
+    </message>
+    <message>
+        <source>The lab is already deleted</source>
+        <translation>Эта лаб. работа уже удалена</translation>
+    </message>
 </context>
 <context>
     <name>TSampleInfo</name>

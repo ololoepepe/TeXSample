@@ -16,6 +16,7 @@
 #include <QCoreApplication>
 #include <QLocale>
 #include <QVariantMap>
+#include <QList>
 
 /*============================================================================
 ================================ TClientInfoPrivate ==========================
@@ -31,6 +32,7 @@ public:
     void init();
 public:
     QString os;
+    BeQt::OSType osType;
     QLocale locale;
     QString client;
     BVersion clientVersion;
@@ -76,6 +78,7 @@ TClientInfo TClientInfo::createInfo()
     TClientInfo info;
     TClientInfoPrivate *d = info.d_func();
     d->os = BeQt::osVersion();
+    d->osType = BeQt::osType();
     d->locale = BCoreApplication::locale();
     d->client = QCoreApplication::applicationName();
     d->clientVersion = BVersion(QCoreApplication::applicationVersion());
@@ -110,6 +113,11 @@ TClientInfo::~TClientInfo()
 QString TClientInfo::os() const
 {
     return d_func()->os;
+}
+
+BeQt::OSType TClientInfo::osType() const
+{
+    return d_func()->osType;
 }
 
 QLocale TClientInfo::locale() const
@@ -174,6 +182,7 @@ TClientInfo &TClientInfo::operator =(const TClientInfo &other)
     B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
     d->os = dd->os;
+    d->osType = dd->osType;
     d->locale = dd->locale;
     d->client = dd->client;
     d->clientVersion = dd->clientVersion;
@@ -187,7 +196,7 @@ bool TClientInfo::operator ==(const TClientInfo &other) const
 {
     const B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
-    return d->os == dd->os && d->locale == dd->locale && d->client == dd->client
+    return d->os == dd->os && d->osType == dd->osType && d->locale == dd->locale && d->client == dd->client
             && d->clientVersion == dd->clientVersion && d->texsampleVersion == dd->texsampleVersion
             && d->beqtVersion == dd->beqtVersion && d->qtVersion == dd->qtVersion;
 }
@@ -204,6 +213,7 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
     const TClientInfoPrivate *d = info.d_func();
     QVariantMap m;
     m.insert("os", d->os);
+    m.insert("os_type", (int) d->osType);
     m.insert("locale", d->locale);
     m.insert("client", d->client);
     m.insert("client_v", d->clientVersion);
@@ -216,10 +226,13 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
 
 QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
 {
+    static const QList<int> Types = bRangeD(BeQt::LinuxOS, BeQt::WindowsOS);
     TClientInfoPrivate *d = info.d_func();
     QVariantMap m;
     stream >> m;
     d->os = m.value("os").toString();
+    int type = m.value("os_type").toInt();
+    d->osType = Types.contains(type) ? static_cast<BeQt::OSType>(type) : BeQt::UnknownOS;
     d->locale = m.value("locale").toLocale();
     d->client = m.value("client").toString();
     d->clientVersion = m.value("client_v").value<BVersion>();

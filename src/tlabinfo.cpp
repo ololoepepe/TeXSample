@@ -382,8 +382,8 @@ bool TLabInfo::isValid(Context c) const
         return d->id && !d->title.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && d->size
-                && d->creationDT.isValid() && d->updateDT.isValid();
+        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && NoType != d->type
+                && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
 
