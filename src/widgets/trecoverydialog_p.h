@@ -22,7 +22,6 @@ class T_WIDGETS_EXPORT TRecoveryDialogPrivate : public BDialogPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TRecoveryDialog)
-    int a;
 public:
     typedef TRecoveryDialog::GetRecoveryCodeFunction GetRecoveryCodeFunction;
     typedef TRecoveryDialog::RecoverAccountFunction RecoverAccountFunction;

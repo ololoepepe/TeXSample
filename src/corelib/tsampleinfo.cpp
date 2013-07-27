@@ -132,7 +132,10 @@ QList<TSampleInfo::Type> TSampleInfo::allTypes()
 
 QString TSampleInfo::listToString(const QStringList &list)
 {
-    return list.join(", ");
+    QStringList nlist = list;
+    nlist.removeAll("");
+    nlist.removeDuplicates();
+    return nlist.join(", ");
 }
 
 QStringList TSampleInfo::listFromString(const QString &s)

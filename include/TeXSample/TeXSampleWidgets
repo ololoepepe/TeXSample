@@ -2,6 +2,7 @@
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
 #include "trecoverydialog.h"
+#include "ttagswidget.h"
 #include "tuserwidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

@@ -133,7 +133,7 @@ defineReplace(getActualPrivateHeaders) {
     }
     #Depend
     tsmpInstallsDepend.files=depend.pri
-    tsmpInstallsDepend.path=$${TSMP_HEADERS_INSTALLS_PATH}
+    tsmpInstallsDepend.path=$${TSMP_RESOURCES_INSTALLS_PATH}
     INSTALLS += tsmpInstallsDepend
 }
 

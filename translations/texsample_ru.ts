@@ -371,6 +371,14 @@
     </message>
 </context>
 <context>
+    <name>TTagsWidgetPrivate</name>
+    <message>
+        <source>Add tag...</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Добавить тэг...</translation>
+    </message>
+</context>
+<context>
     <name>TUserWidgetPrivate</name>
     <message>
         <source>Invite:</source>

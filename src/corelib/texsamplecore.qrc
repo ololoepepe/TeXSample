@@ -8,5 +8,7 @@
         <file>icons/editdelete.svgz</file>
         <file>icons/user.png</file>
         <file>icons/user.svgz</file>
+        <file>icons/flag.png</file>
+        <file>icons/flag.svgz</file>
     </qresource>
 </RCC>

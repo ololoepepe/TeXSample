@@ -101,7 +101,7 @@ contains(TSMP, core) {
     BEQT *= core
 }
 contains(TSMP, widgets) {
-    QT *= core gui widgets concurrent
+    QT *= core concurrent gui widgets 
     BEQT *= core widgets
     TSMP *= core
 }

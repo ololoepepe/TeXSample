@@ -14,11 +14,14 @@ DEFINES += TSMP_BUILD_WIDGETS_LIB
 HEADERS += \
     trecoverydialog.h \
     trecoverydialog_p.h \
+    ttagswidget.h \
+    ttagswidget_p.h \
     tuserwidget.h \
     tuserwidget_p.h
 
 SOURCES += \
     trecoverydialog.cpp \
+    ttagswidget.cpp \
     tuserwidget.cpp
 
 !contains(TSMP_CONFIG, no_install) {
