@@ -503,5 +503,10 @@
         <comment>tbtn toolTip</comment>
         <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
     </message>
+    <message>
+        <source>CLab groups</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

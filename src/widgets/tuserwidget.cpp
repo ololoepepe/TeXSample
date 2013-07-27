@@ -1,5 +1,6 @@
 #include "tuserwidget.h"
 #include "tuserwidget_p.h"
+#include "tlistwidget.h"
 
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleCore/TOperationResult>
@@ -50,6 +51,8 @@
 #include <QMap>
 #include <QMetaObject>
 #include <QUuid>
+#include <QStringList>
+#include <QGroupBox>
 
 #include <QDebug>
 
@@ -81,85 +84,95 @@ void TUserWidgetPrivate::init()
     bool editMode = TUserWidget::EditMode == Mode;
     bool showMode = TUserWidget::ShowMode == Mode;
     bool updateMode =TUserWidget::UpdateMode == Mode;
-    QHBoxLayout *hlt = new QHBoxLayout(q_func());
-      QFormLayout *flt = new QFormLayout;
-        ledtInvite = new QLineEdit;
-          ledtInvite->setFont(BApplication::createMonospaceFont());
-          ledtInvite->setInputMask("HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH;_");
-          connect(ledtInvite, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          inputInvite = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
-          inputInvite->addWidget(ledtInvite);
-        flt->addRow(tr("Invite:", "lbl text"), inputInvite);
-        ledtEmail = new QLineEdit;
-          ledtEmail->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
-          connect(ledtEmail, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          inputEmail = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
-          inputEmail->addWidget(ledtEmail);
-        flt->addRow(tr("E-mail:", "lbl text"), inputEmail);
-        ledtLogin = new QLineEdit;
-          ledtLogin->setMaxLength(20);
-          ledtLogin->setReadOnly(!addMode && !registerMode);
-          connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          inputLogin = new BInputField((showMode || updateMode) ? BInputField::ShowNever : BInputField::ShowAlways);
-          inputLogin->addWidget(ledtLogin);
-        flt->addRow(tr("Login:", "lbl text"), inputLogin);
-        pwdwgt1 = new BPasswordWidget;
-          pwdwgt1->setMode(BPassword::AlwaysEncryptedMode);
-          pwdwgt1->setSavePasswordVisible(false);
-          pwdwgt1->setShowPasswordVisible(false);
-          pwdwgt1->setGeneratePasswordVisible(true);
-          connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
-          inputPwd1 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
-          inputPwd1->addWidget(pwdwgt1);
-        flt->addRow(tr("Password:", "lbl text"), inputPwd1);
-        pwdwgt2 = new BPasswordWidget;
-          pwdwgt2->setMode(BPassword::AlwaysEncryptedMode);
-          pwdwgt2->setSavePasswordVisible(false);
-          connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
-          connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
-          connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
-          inputPwd2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
-          inputPwd2->addWidget(pwdwgt2);
-        flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
-        cmboxAccessLevel = new QComboBox;
-          cmboxAccessLevel->setEnabled(addMode || editMode);
-          foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels())
-              cmboxAccessLevel->addItem(lvl.toString(), (int) lvl);
-          cmboxAccessLevel->setCurrentIndex(0);
-        flt->addRow(tr("Access level:", "lbl text"), cmboxAccessLevel);
-        ledtRealName = new QLineEdit;
-          ledtRealName->setReadOnly(showMode);
-          ledtRealName->setMaxLength(50);
-        flt->addRow(tr("Real name:", "lbl text"), ledtRealName);
-      hlt->addLayout(flt);
-      QVBoxLayout *vlt = new QVBoxLayout;
-        tbtnAvatar = new QToolButton;
-          tbtnAvatar->setIconSize(QSize(128, 128));
-          if (!showMode)
-          {
-              tbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
-              QVBoxLayout *vlt = new QVBoxLayout(tbtnAvatar);
-                vlt->addStretch();
-                tbtnClearAvatar = new QToolButton;
-                  tbtnClearAvatar->setIconSize(QSize(16, 16));
-                  tbtnClearAvatar->setIcon(BApplication::icon("editdelete"));
-                  tbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
-                  connect(tbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
-                vlt->addWidget(tbtnClearAvatar);
-          }
-          connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
-          resetAvatar();
-        vlt->addWidget(tbtnAvatar);
-        flt = new QFormLayout;
-          foreach (const TService &s, TServiceList::allServices())
-          {
-              QCheckBox *cbox = new QCheckBox;
-                cbox->setEnabled(false);
-              flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
-              cboxMap.insert(s, cbox);
-          }
-        vlt->addLayout(flt);
-      hlt->addLayout(vlt);
+    QVBoxLayout *vlt = new QVBoxLayout(q_func());
+      QHBoxLayout *hlt = new QHBoxLayout;
+        QFormLayout *flt = new QFormLayout;
+          ledtInvite = new QLineEdit;
+            ledtInvite->setFont(BApplication::createMonospaceFont());
+            ledtInvite->setInputMask("HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH;_");
+            connect(ledtInvite, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+            inputInvite = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputInvite->addWidget(ledtInvite);
+          flt->addRow(tr("Invite:", "lbl text"), inputInvite);
+          ledtEmail = new QLineEdit;
+            ledtEmail->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
+            connect(ledtEmail, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+            inputEmail = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputEmail->addWidget(ledtEmail);
+          flt->addRow(tr("E-mail:", "lbl text"), inputEmail);
+          ledtLogin = new QLineEdit;
+            ledtLogin->setMaxLength(20);
+            ledtLogin->setReadOnly(!addMode && !registerMode);
+            connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+            inputLogin = new BInputField((showMode || updateMode) ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputLogin->addWidget(ledtLogin);
+          flt->addRow(tr("Login:", "lbl text"), inputLogin);
+          pwdwgt1 = new BPasswordWidget;
+            pwdwgt1->setMode(BPassword::AlwaysEncryptedMode);
+            pwdwgt1->setSavePasswordVisible(false);
+            pwdwgt1->setShowPasswordVisible(false);
+            pwdwgt1->setGeneratePasswordVisible(true);
+            connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
+            inputPwd1 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputPwd1->addWidget(pwdwgt1);
+          flt->addRow(tr("Password:", "lbl text"), inputPwd1);
+          pwdwgt2 = new BPasswordWidget;
+            pwdwgt2->setMode(BPassword::AlwaysEncryptedMode);
+            pwdwgt2->setSavePasswordVisible(false);
+            connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
+            connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
+            connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
+            inputPwd2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputPwd2->addWidget(pwdwgt2);
+          flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
+          cmboxAccessLevel = new QComboBox;
+            cmboxAccessLevel->setEnabled(addMode || editMode);
+            foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels())
+                cmboxAccessLevel->addItem(lvl.toString(), (int) lvl);
+            cmboxAccessLevel->setCurrentIndex(0);
+          flt->addRow(tr("Access level:", "lbl text"), cmboxAccessLevel);
+          ledtRealName = new QLineEdit;
+            ledtRealName->setReadOnly(showMode);
+            ledtRealName->setMaxLength(50);
+          flt->addRow(tr("Real name:", "lbl text"), ledtRealName);
+        hlt->addLayout(flt);
+        QVBoxLayout *vltw = new QVBoxLayout;
+          tbtnAvatar = new QToolButton;
+            tbtnAvatar->setIconSize(QSize(128, 128));
+            if (!showMode)
+            {
+                tbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
+                QVBoxLayout *vltww = new QVBoxLayout(tbtnAvatar);
+                  vltww->addStretch();
+                  tbtnClearAvatar = new QToolButton;
+                    tbtnClearAvatar->setIconSize(QSize(16, 16));
+                    tbtnClearAvatar->setIcon(BApplication::icon("editdelete"));
+                    tbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
+                    connect(tbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
+                  vltww->addWidget(tbtnClearAvatar);
+            }
+            connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
+            resetAvatar();
+          vltw->addWidget(tbtnAvatar);
+          flt = new QFormLayout;
+            foreach (const TService &s, TServiceList::allServices())
+            {
+                QCheckBox *cbox = new QCheckBox;
+                  cbox->setEnabled(false);
+                flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
+                cboxMap.insert(s, cbox);
+            }
+          vltw->addLayout(flt);
+        hlt->addLayout(vltw);
+      vlt->addLayout(hlt);
+      gboxClab = new QGroupBox(tr("CLab groups", "gbox title"));
+        gboxClab->setVisible(false);
+        hlt = new QHBoxLayout(gboxClab);
+          lstwgtClab = new TListWidget;
+            lstwgtClab->setReadOnly(true);
+            lstwgtClab->setButtonsVisible(addMode || editMode);
+          hlt->addWidget(lstwgtClab);
+      vlt->addWidget(gboxClab);
     //
     BApplication::setRowVisible(inputInvite, registerMode);
     BApplication::setRowVisible(inputEmail, addMode || registerMode);
@@ -326,6 +339,21 @@ void TUserWidget::setPassword(const BPassword &pwd)
     d_func()->pwdwgt2->setPassword(pwd);
 }
 
+void TUserWidget::setClabGroupsVisible(bool b)
+{
+    d_func()->gboxClab->setVisible(b);
+}
+
+void TUserWidget::setAvailableClabGroups(const QStringList &list)
+{
+    d_func()->lstwgtClab->setAvailableItems(list);
+}
+
+void TUserWidget::setClabGroups(const QStringList &list)
+{
+    d_func()->lstwgtClab->setItems(list);
+}
+
 void TUserWidget::restorePasswordWidgetState(const QByteArray &state)
 {
     d_func()->pwdwgt1->restoreWidgetState(state);
@@ -397,6 +425,21 @@ TUserInfo TUserWidget::info() const
 BPassword TUserWidget::password() const
 {
     return d_func()->pwdwgt1->password();
+}
+
+bool TUserWidget::clabGroupsVisible() const
+{
+    return d_func()->gboxClab->isVisible();
+}
+
+QStringList TUserWidget::availableClabGroups() const
+{
+    return d_func()->lstwgtClab->availableItems();
+}
+
+QStringList TUserWidget::clabGroups() const
+{
+    return d_func()->lstwgtClab->items();
 }
 
 QByteArray TUserWidget::savePasswordWidgetState() const

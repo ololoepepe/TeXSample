@@ -36,6 +36,7 @@ public Q_SLOTS:
     void lstwgtCurrentItemChanged(QListWidgetItem *current);
 public:
     bool readOnly;
+    int maxCount;
     QSignalMapper *mpr;
     QListWidget *lstwgt;
     QToolButton *tbtnAdd;

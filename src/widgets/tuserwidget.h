@@ -8,6 +8,7 @@ class TServiceList;
 class BPassword;
 
 class QByteArray;
+class QStringList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 #include <TeXSampleCore/TService>
@@ -41,12 +42,18 @@ public:
     void setAvailableServices(const TServiceList &list);
     void setInfo(const TUserInfo &info);
     void setPassword(const BPassword &pwd);
+    void setClabGroupsVisible(bool b);
+    void setAvailableClabGroups(const QStringList &list);
+    void setClabGroups(const QStringList &list);
     void restorePasswordWidgetState(const QByteArray &state);
     void restoreState(const QByteArray &state);
     Mode mode() const;
     TServiceList availableServices() const;
     TUserInfo info() const;
     BPassword password() const;
+    bool clabGroupsVisible() const;
+    QStringList availableClabGroups() const;
+    QStringList clabGroups() const;
     QByteArray savePasswordWidgetState() const;
     QByteArray saveState() const;
     bool isValid() const;

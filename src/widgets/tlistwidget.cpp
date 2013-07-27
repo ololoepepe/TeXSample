@@ -17,6 +17,8 @@
 #include <QAction>
 #include <QSignalMapper>
 
+#include <QDebug>
+
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
 ============================================================================*/
@@ -39,6 +41,7 @@ TListWidgetPrivate::~TListWidgetPrivate()
 void TListWidgetPrivate::init()
 {
     readOnly = false;
+    maxCount = 0;
     mpr = new QSignalMapper(this);
     connect(mpr, SIGNAL(mapped(QString)), this, SLOT(addItem(QString)));
     //
@@ -108,20 +111,19 @@ void TListWidgetPrivate::addItem(const QString &text)
     if (!text.isEmpty() && ind && lstwgt->item(ind - 1)->text().isEmpty())
         --ind;
     lstwgt->insertItem(ind, lwi);
-    if (!q_func()->isReadOnly() && text.isEmpty())
+    if (!q_func()->isReadOnly() || !text.isEmpty())
         lstwgt->setCurrentItem(lwi);
 }
 
 void TListWidgetPrivate::removeSelectedItem()
 {
     delete lstwgt->takeItem(lstwgt->currentRow());
+    lstwgtCurrentItemChanged(lstwgt->currentItem());
 }
 
 void TListWidgetPrivate::clearList()
 {
-    lstwgt->clear();
-    if (!q_func()->isReadOnly())
-        addItem();
+    q_func()->clear();
 }
 
 void TListWidgetPrivate::moveItemUp()
@@ -150,11 +152,12 @@ void TListWidgetPrivate::moveItemDown()
 
 void TListWidgetPrivate::lstwgtCurrentItemChanged(QListWidgetItem *current)
 {
-    tbtnRemove->setEnabled(current && current != lstwgt->item(lstwgt->count() - 1));
-    tbtnClear->setEnabled(lstwgt->count() > 1);
-    tbtnUp->setEnabled(current && current != lstwgt->item(lstwgt->count() - 1) && current != lstwgt->item(0));
-    tbtnDown->setEnabled(current && current != lstwgt->item(lstwgt->count() - 1)
-            && current != lstwgt->item(lstwgt->count() - 2));
+    QListWidgetItem *last = lstwgt->item(lstwgt->count() - 1);
+    bool lastEmpty = last && last->text().isEmpty();
+    tbtnRemove->setEnabled(current && (current != last || !lastEmpty));
+    tbtnClear->setEnabled(lstwgt->count() > 1 || (lstwgt->count() == 1 && !lastEmpty));
+    tbtnUp->setEnabled(current && current != lstwgt->item(0) && (current != last || !lastEmpty));
+    tbtnDown->setEnabled(current && current != last && (!lastEmpty || current != lstwgt->item(lstwgt->count() - 2)));
 }
 
 /*============================================================================
@@ -207,23 +210,34 @@ void TListWidget::setAvailableItems(const QStringList &items)
     QStringList list = items;
     list.removeAll("");
     list.removeDuplicates();
-    while (list.size() > 20)
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
         list.removeFirst();
     foreach (const QString &s, list)
     {
         QAction *act = d_func()->tbtnAdd->menu()->addAction(s);
         bSetMapping(d_func()->mpr, act, SIGNAL(triggered()), s);
     }
-    d_func()->tbtnAdd->setEnabled(!isReadOnly() && !d_func()->tbtnAdd->menu()->isEmpty());
+    d_func()->tbtnAdd->setEnabled(!d_func()->tbtnAdd->menu()->isEmpty());
 }
 
 void TListWidget::setItems(const QStringList &list)
 {
     d_func()->lstwgt->clear();
+    d_func()->lstwgtCurrentItemChanged(d_func()->lstwgt->currentItem());
     foreach (const QString &s, list)
         d_func()->addItem(s);
     if (!isReadOnly())
         d_func()->addItem();
+}
+
+void TListWidget::setMaxAvailableItems(int count)
+{
+    if (count < 0)
+        count = 0;
+    if (count == d_func()->maxCount)
+        return;
+    d_func()->maxCount = count;
+    setAvailableItems(availableItems());
 }
 
 void TListWidget::clear()
@@ -248,7 +262,7 @@ QStringList TListWidget::availableItems() const
         list << act->text();
     list.removeAll("");
     list.removeDuplicates();
-    while (list.size() > 20)
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
         list.removeFirst();
     return list;
 }
@@ -261,4 +275,9 @@ QStringList TListWidget::items() const
     list.removeAll("");
     list.removeDuplicates();
     return list;
+}
+
+int TListWidget::maxAvailableItems() const
+{
+    return d_func()->maxCount;
 }

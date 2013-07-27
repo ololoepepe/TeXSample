@@ -1,6 +1,8 @@
 #ifndef TUSERWIDGET_P_H
 #define TUSERWIDGET_P_H
 
+class TListWidget;
+
 class BPasswordWidget;
 class BInputField;
 
@@ -8,7 +10,7 @@ class QLineEdit;
 class QComboBox;
 class QToolButton;
 class QCheckBox;
-
+class QGroupBox;
 
 #include "tuserwidget.h"
 
@@ -65,6 +67,8 @@ public:
     QToolButton *tbtnAvatar;
     QToolButton *tbtnClearAvatar;
     QMap<TService, QCheckBox *> cboxMap;
+    QGroupBox *gboxClab;
+    TListWidget *lstwgtClab;
 private:
     Q_DISABLE_COPY(TUserWidgetPrivate)
 };
