@@ -17,12 +17,15 @@ HEADERS += \
     ttagswidget.h \
     ttagswidget_p.h \
     tuserwidget.h \
-    tuserwidget_p.h
+    tuserwidget_p.h \
+    tlistwidget_p.h \
+    tlistwidget.h
 
 SOURCES += \
     trecoverydialog.cpp \
     ttagswidget.cpp \
-    tuserwidget.cpp
+    tuserwidget.cpp \
+    tlistwidget.cpp
 
 !contains(TSMP_CONFIG, no_install) {
 
