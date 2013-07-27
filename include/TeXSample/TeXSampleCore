@@ -1,0 +1,28 @@
+#ifndef TSMP_TEXSAMPLECORE_MODULE_H
+#define TSMP_TEXSAMPLECORE_MODULE_H
+
+#include "taccesslevel.h"
+#include "tclientinfo.h"
+#include "tcompilationresult.h"
+#include "tcompiledproject.h"
+#include "tcompilerparameters.h"
+#include "tglobal.h"
+#include "tidlist.h"
+#include "tinviteinfo.h"
+#include "tinviteinfolist.h"
+#include "tlabinfo.h"
+#include "tlabinfolist.h"
+#include "tlabproject.h"
+#include "tmessage.h"
+#include "tnamespace.h"
+#include "toperationresult.h"
+#include "tprojectfile.h"
+#include "tprojectfilelist.h"
+#include "tsampleinfo.h"
+#include "tsampleinfolist.h"
+#include "tservice.h"
+#include "tservicelist.h"
+#include "ttexproject.h"
+#include "tuserinfo.h"
+
+#endif //TSMP_TEXSAMPLECORE_MODULE_H

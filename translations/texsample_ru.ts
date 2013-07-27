@@ -215,6 +215,114 @@
     </message>
 </context>
 <context>
+    <name>TRecoveryDialogPrivate</name>
+    <message>
+        <source>Recovering account</source>
+        <comment>windowTitle</comment>
+        <translation>Восстановление аккаунта</translation>
+    </message>
+    <message>
+        <source>Getting recovery code</source>
+        <comment>gbox title</comment>
+        <translation>Получение кода восстановления</translation>
+    </message>
+    <message>
+        <source>E-mail:</source>
+        <comment>lbl text</comment>
+        <translation>Эл. почта:</translation>
+    </message>
+    <message>
+        <source>Get recovery code</source>
+        <comment>btn text</comment>
+        <translation>Получить код восстановления</translation>
+    </message>
+    <message>
+        <source>Recovering account</source>
+        <comment>gbox title</comment>
+        <translation>Восстановление аккаунта</translation>
+    </message>
+    <message>
+        <source>Code:</source>
+        <comment>lbl text</comment>
+        <translation>Код:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <comment>lbl text</comment>
+        <translation>Пароль:</translation>
+    </message>
+    <message>
+        <source>Recover account</source>
+        <comment>btn text</comment>
+        <translation>Восстановить аккаунт</translation>
+    </message>
+    <message>
+        <source>Getting recovery code</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Получение кода восстановления</translation>
+    </message>
+    <message>
+        <source>You are going to get a recovery code. Do you want to continue?</source>
+        <comment>msgbox text</comment>
+        <translation>Вы собираетесь получить код восстановления.Хотите продолжить?</translation>
+    </message>
+    <message>
+        <source>Recovery code generated</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Код восстановления сгенерирован</translation>
+    </message>
+    <message>
+        <source>Account recovery code was generated and sent to your e-mail</source>
+        <comment>msgbox text</comment>
+        <translation>Код восстановления аккаунта был сгенерирован и отправлен на вашу электронную почту</translation>
+    </message>
+    <message>
+        <source>Getting recovery code error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Ошибка получения кода восстановления</translation>
+    </message>
+    <message>
+        <source>Failed to get recovery code due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось получить код восстановления из-за следующей ошибки:</translation>
+    </message>
+    <message>
+        <source>Recovering account</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Восстановление аккаунта</translation>
+    </message>
+    <message>
+        <source>You are going to recover your accont. Do you want to continue?</source>
+        <comment>msgbox text</comment>
+        <translation>Вы собираетесь восстановить свой аккаунт. Хотите продолжить?</translation>
+    </message>
+    <message>
+        <source>Account recovery completed. Please, check your e-mail</source>
+        <comment>msgbox text</comment>
+        <translation>Восстановление аккаунта успешно выполнено. Пожалуйста, проверьте свою электронную почту</translation>
+    </message>
+    <message>
+        <source>Account recovering error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Ошибка восстановления аккаунта</translation>
+    </message>
+    <message>
+        <source>Failed to recover account due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалосб восстановить аккаунт из-за следующей ошибки:</translation>
+    </message>
+    <message>
+        <source>Password confirmation:</source>
+        <comment>lbl text</comment>
+        <translation>Подтверждение пароля:</translation>
+    </message>
+    <message>
+        <source>Account recovered</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Аккаунт восстановлен</translation>
+    </message>
+</context>
+<context>
     <name>TSampleInfo</name>
     <message>
         <source>Approved</source>

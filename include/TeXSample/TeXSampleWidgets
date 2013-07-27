@@ -1,6 +1,7 @@
 #ifndef TSMP_TEXSAMPLEWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
+#include "trecoverydialog.h"
 #include "tuserwidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

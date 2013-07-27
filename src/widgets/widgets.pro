@@ -12,10 +12,13 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
+    trecoverydialog.h \
+    trecoverydialog_p.h \
     tuserwidget.h \
     tuserwidget_p.h
 
 SOURCES += \
+    trecoverydialog.cpp \
     tuserwidget.cpp
 
 !contains(TSMP_CONFIG, no_install) {

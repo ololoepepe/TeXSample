@@ -60,7 +60,7 @@ Makefile
 ############################
 TeXSampleCore
 TeXSampleWidgets
-!include/TeXSample/TeXSampleore
+!include/TeXSample/TeXSampleCore
 !include/TeXSample/TeXSampleWidgets
 !include/TeXSampleCore
 !include/TeXSampleWidgets
