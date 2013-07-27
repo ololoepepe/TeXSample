@@ -262,4 +262,102 @@
         <translation>CLab</translation>
     </message>
 </context>
+<context>
+    <name>TUserWidgetPrivate</name>
+    <message>
+        <source>Invite:</source>
+        <comment>lbl text</comment>
+        <translation>Инвайт:</translation>
+    </message>
+    <message>
+        <source>E-mail:</source>
+        <comment>lbl text</comment>
+        <translation>Эл. почта:</translation>
+    </message>
+    <message>
+        <source>Login:</source>
+        <comment>lbl text</comment>
+        <translation>Логин:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <comment>lbl text</comment>
+        <translation>Пароль:</translation>
+    </message>
+    <message>
+        <source>Access level:</source>
+        <comment>lbl text</comment>
+        <translation>Уровень доступа:</translation>
+    </message>
+    <message>
+        <source>Real name:</source>
+        <comment>lbl text</comment>
+        <translation>Настоящее имя:</translation>
+    </message>
+    <message>
+        <source>Click to select a new picture</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Щелкните чтобы выбрать новую картинку</translation>
+    </message>
+    <message>
+        <source>Clear avatar</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Сбросить аватар</translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation>Доступ к</translation>
+    </message>
+    <message>
+        <source>Avatar:</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Аватар:</translation>
+    </message>
+    <message>
+        <source>Select file</source>
+        <comment>fdlg caption</comment>
+        <translation>Выберите файл</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <comment>fdlg filter</comment>
+        <translation>Картинки</translation>
+    </message>
+    <message>
+        <source>Failed to change avatar</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Не удалось сменить аватар</translation>
+    </message>
+    <message>
+        <source>Failed to change account avatar. The file is too big</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось сменить аватар аккаунта. Файл слишком большой</translation>
+    </message>
+    <message>
+        <source>Maximum size:</source>
+        <comment>msgbox informativeText</comment>
+        <translation>Максимальный размер:</translation>
+    </message>
+    <message>
+        <source>Failed to change account avatar</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось сменить аватар аккаунта</translation>
+    </message>
+    <message>
+        <source>Some filesystem error occured</source>
+        <comment>msgbox informativeText</comment>
+        <translation>Произошла ошибка файловой системы</translation>
+    </message>
+    <message>
+        <source>Password confirmation:</source>
+        <comment>lbl text</comment>
+        <translation>Подтверждение пароля:</translation>
+    </message>
+    <message>
+        <source>Click to see the picture in full size</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
+    </message>
+</context>
 </TS>

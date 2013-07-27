@@ -12,10 +12,11 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
-    #
+    tuserwidget.h \
+    tuserwidget_p.h
 
 SOURCES += \
-    #
+    tuserwidget.cpp
 
 !contains(TSMP_CONFIG, no_install) {
 

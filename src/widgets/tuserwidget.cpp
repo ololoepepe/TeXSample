@@ -1,21 +1,23 @@
-#include "userwidget.h"
-#include "client.h"
-#include "application.h"
-#include "global.h"
+#include "tuserwidget.h"
+#include "tuserwidget_p.h"
 
-#include <TUserInfo>
-#include <TOperationResult>
-#include <TAccessLevel>
-#include <TeXSample>
-#include <TService>
-#include <TServiceList>
+#include <TeXSampleCore/TUserInfo>
+#include <TeXSampleCore/TOperationResult>
+#include <TeXSampleCore/TAccessLevel>
+#include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TService>
+#include <TeXSampleCore/TServiceList>
 
+#include <BBase>
+#include <BeQtGlobal>
+#include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
 #include <BPasswordWidget>
 #include <BeQt>
 #include <BDialog>
 #include <BTextTools>
 #include <BInputField>
+#include <BApplication>
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -46,171 +48,311 @@
 #include <QSettings>
 #include <QCheckBox>
 #include <QMap>
+#include <QMetaObject>
+#include <QUuid>
 
 #include <QDebug>
 
 /*============================================================================
-================================ UserWidget ==================================
+================================ TUserWidgetPrivate ==========================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-UserWidget::UserWidget(Mode m, QWidget *parent) :
-    QWidget(parent), mmode(m)
+TUserWidgetPrivate::TUserWidgetPrivate(TUserWidget *q, TUserWidget::Mode m) :
+    BBasePrivate(q), Mode(m)
 {
-    mvalid = false;
-    mid = 0;
-    QHBoxLayout *hlt = new QHBoxLayout(this);
+    //
+}
+
+TUserWidgetPrivate::~TUserWidgetPrivate()
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+void TUserWidgetPrivate::init()
+{
+    valid = false;
+    id = 0;
+    bool addMode = TUserWidget::AddMode == Mode;
+    bool registerMode = TUserWidget::RegisterMode == Mode;
+    bool editMode = TUserWidget::EditMode == Mode;
+    bool showMode = TUserWidget::ShowMode == Mode;
+    bool updateMode =TUserWidget::UpdateMode == Mode;
+    QHBoxLayout *hlt = new QHBoxLayout(q_func());
       QFormLayout *flt = new QFormLayout;
-        mledtInvite = new QLineEdit;
-          mledtInvite->setFont(Application::createMonospaceFont());
-          mledtInvite->setInputMask("HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH;_");
-          connect(mledtInvite, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          minputInvite = new BInputField((ShowMode == mmode) ? BInputField::ShowNever : BInputField::ShowAlways);
-          minputInvite->addWidget(mledtInvite);
-        flt->addRow(tr("Invite:", "lbl text"), minputInvite);
-        mledtEmail = new QLineEdit;
-          mledtEmail->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
-          connect(mledtEmail, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          minputEmail = new BInputField((ShowMode == mmode) ? BInputField::ShowNever : BInputField::ShowAlways);
-          minputEmail->addWidget(mledtEmail);
-        flt->addRow(tr("E-mail:", "lbl text"), minputEmail);
-        mledtLogin = new QLineEdit;
-          mledtLogin->setMaxLength(20);
-          mledtLogin->setReadOnly(AddMode != mmode && RegisterMode != mmode);
-          connect(mledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-          minputLogin = new BInputField((ShowMode == mmode || UpdateMode == mmode) ? BInputField::ShowNever :
-                                                                                     BInputField::ShowAlways);
-          minputLogin->addWidget(mledtLogin);
-        flt->addRow(tr("Login:", "lbl text"), minputLogin);
-        mpwdwgt1 = new BPasswordWidget;
-          mpwdwgt1->restoreWidgetState(Global::passwordWidgetState());
-          mpwdwgt1->setMode(BPassword::AlwaysEncryptedMode);
-          mpwdwgt1->setSavePasswordVisible(false);
-          mpwdwgt1->setShowPasswordVisible(false);
-          mpwdwgt1->setGeneratePasswordVisible(true);
-          connect(mpwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
-          minputPwd1 = new BInputField((ShowMode == mmode) ? BInputField::ShowNever : BInputField::ShowAlways);
-          minputPwd1->addWidget(mpwdwgt1);
-        flt->addRow(tr("Password:", "lbl text"), minputPwd1);
-        mpwdwgt2 = new BPasswordWidget;
-          mpwdwgt2->restoreWidgetState(Global::passwordWidgetState());
-          mpwdwgt2->setMode(BPassword::AlwaysEncryptedMode);
-          mpwdwgt2->setSavePasswordVisible(false);
-          connect(mpwdwgt1, SIGNAL(showPasswordChanged(bool)), mpwdwgt2, SLOT(setShowPassword(bool)));
-          connect(mpwdwgt2, SIGNAL(showPasswordChanged(bool)), mpwdwgt1, SLOT(setShowPassword(bool)));
-          connect(mpwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
-          minputPwd2 = new BInputField((ShowMode == mmode) ? BInputField::ShowNever : BInputField::ShowAlways);
-          minputPwd2->addWidget(mpwdwgt2);
-        flt->addRow(tr("Confirm password:", "lbl text"), minputPwd2);
-        mcmboxAccessLevel = new QComboBox;
-          mcmboxAccessLevel->setEnabled(AddMode == mmode || EditMode == mmode);
+        ledtInvite = new QLineEdit;
+          ledtInvite->setFont(BApplication::createMonospaceFont());
+          ledtInvite->setInputMask("HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH;_");
+          connect(ledtInvite, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+          inputInvite = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+          inputInvite->addWidget(ledtInvite);
+        flt->addRow(tr("Invite:", "lbl text"), inputInvite);
+        ledtEmail = new QLineEdit;
+          ledtEmail->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
+          connect(ledtEmail, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+          inputEmail = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+          inputEmail->addWidget(ledtEmail);
+        flt->addRow(tr("E-mail:", "lbl text"), inputEmail);
+        ledtLogin = new QLineEdit;
+          ledtLogin->setMaxLength(20);
+          ledtLogin->setReadOnly(!addMode && !registerMode);
+          connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+          inputLogin = new BInputField((showMode || updateMode) ? BInputField::ShowNever : BInputField::ShowAlways);
+          inputLogin->addWidget(ledtLogin);
+        flt->addRow(tr("Login:", "lbl text"), inputLogin);
+        pwdwgt1 = new BPasswordWidget;
+          pwdwgt1->setMode(BPassword::AlwaysEncryptedMode);
+          pwdwgt1->setSavePasswordVisible(false);
+          pwdwgt1->setShowPasswordVisible(false);
+          pwdwgt1->setGeneratePasswordVisible(true);
+          connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
+          inputPwd1 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+          inputPwd1->addWidget(pwdwgt1);
+        flt->addRow(tr("Password:", "lbl text"), inputPwd1);
+        pwdwgt2 = new BPasswordWidget;
+          pwdwgt2->setMode(BPassword::AlwaysEncryptedMode);
+          pwdwgt2->setSavePasswordVisible(false);
+          connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
+          connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
+          connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
+          inputPwd2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+          inputPwd2->addWidget(pwdwgt2);
+        flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
+        cmboxAccessLevel = new QComboBox;
+          cmboxAccessLevel->setEnabled(addMode || editMode);
           foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels())
-              mcmboxAccessLevel->addItem(lvl.toString(), (int) lvl);
-          mcmboxAccessLevel->setCurrentIndex(0);
-        flt->addRow(tr("Access level:", "lbl text"), mcmboxAccessLevel);
-        mledtRealName = new QLineEdit;
-          mledtRealName->setReadOnly(ShowMode == mmode);
-          mledtRealName->setMaxLength(50);
-        flt->addRow(tr("Real name:", "lbl text"), mledtRealName);
+              cmboxAccessLevel->addItem(lvl.toString(), (int) lvl);
+          cmboxAccessLevel->setCurrentIndex(0);
+        flt->addRow(tr("Access level:", "lbl text"), cmboxAccessLevel);
+        ledtRealName = new QLineEdit;
+          ledtRealName->setReadOnly(showMode);
+          ledtRealName->setMaxLength(50);
+        flt->addRow(tr("Real name:", "lbl text"), ledtRealName);
       hlt->addLayout(flt);
       QVBoxLayout *vlt = new QVBoxLayout;
-        mtbtnAvatar = new QToolButton;
-          mtbtnAvatar->setIconSize(QSize(128, 128));
-          if (ShowMode != m)
+        tbtnAvatar = new QToolButton;
+          tbtnAvatar->setIconSize(QSize(128, 128));
+          if (!showMode)
           {
-              mtbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
-              QVBoxLayout *vlt = new QVBoxLayout(mtbtnAvatar);
+              tbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
+              QVBoxLayout *vlt = new QVBoxLayout(tbtnAvatar);
                 vlt->addStretch();
-                mtbtnClearAvatar = new QToolButton;
-                  mtbtnClearAvatar->setIconSize(QSize(16, 16));
-                  mtbtnClearAvatar->setIcon(Application::icon("editdelete"));
-                  mtbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
-                  connect(mtbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
-                vlt->addWidget(mtbtnClearAvatar);
+                tbtnClearAvatar = new QToolButton;
+                  tbtnClearAvatar->setIconSize(QSize(16, 16));
+                  tbtnClearAvatar->setIcon(BApplication::icon("editdelete"));
+                  tbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
+                  connect(tbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
+                vlt->addWidget(tbtnClearAvatar);
           }
-          connect(mtbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
+          connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
           resetAvatar();
-        vlt->addWidget(mtbtnAvatar);
+        vlt->addWidget(tbtnAvatar);
         flt = new QFormLayout;
           foreach (const TService &s, TServiceList::allServices())
           {
               QCheckBox *cbox = new QCheckBox;
                 cbox->setEnabled(false);
               flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
-              mcboxMap.insert(s, cbox);
+              cboxMap.insert(s, cbox);
           }
         vlt->addLayout(flt);
       hlt->addLayout(vlt);
     //
-    Application::setRowVisible(minputInvite, RegisterMode == mmode);
-    Application::setRowVisible(minputEmail, AddMode == mmode || RegisterMode == mmode);
-    Application::setRowVisible(minputPwd1, EditMode != mmode && ShowMode != mmode);
-    Application::setRowVisible(minputPwd2, EditMode != mmode && ShowMode != mmode);
-    Application::setRowVisible(mcmboxAccessLevel, RegisterMode != mmode);
-    foreach (QCheckBox *cbox, mcboxMap)
-        Application::setRowVisible(cbox, RegisterMode != mmode);
+    BApplication::setRowVisible(inputInvite, registerMode);
+    BApplication::setRowVisible(inputEmail, addMode || registerMode);
+    BApplication::setRowVisible(inputPwd1, !editMode && !showMode);
+    BApplication::setRowVisible(inputPwd2, !editMode && !showMode);
+    BApplication::setRowVisible(cmboxAccessLevel, !registerMode);
+    foreach (QCheckBox *cbox, cboxMap)
+        BApplication::setRowVisible(cbox, !registerMode);
     checkInputs();
 }
 
-UserWidget::~UserWidget()
+/*============================== Private slots =============================*/
+
+void TUserWidgetPrivate::resetAvatar(const QByteArray &data)
 {
-    Global::setPasswordWidgetSate(mpwdwgt1->saveWidgetState());
+    avatar = data;
+    if (!avatar.isEmpty())
+    {
+        QPixmap pm;
+        pm.loadFromData(data);
+        tbtnAvatar->setIcon(QIcon(pm));
+        if (TUserWidget::ShowMode != Mode)
+            tbtnClearAvatar->setEnabled(true);
+    }
+    else
+    {
+        tbtnAvatar->setIcon(BApplication::icon("user"));
+        if (TUserWidget::ShowMode != Mode)
+            tbtnClearAvatar->setEnabled(false);
+    }
+    if (TUserWidget::ShowMode == Mode)
+    {
+        tbtnAvatar->setToolTip(!avatar.isEmpty() ? tr("Click to see the picture in full size", "tbtn toolTip") :
+                                                      QString());
+        tbtnAvatar->setEnabled(!avatar.isEmpty());
+    }
+}
+
+void TUserWidgetPrivate::checkInputs()
+{
+    inputInvite->setValid(!ledtInvite->text().isEmpty() && ledtInvite->hasAcceptableInput());
+    inputEmail->setValid(!ledtEmail->text().isEmpty() && ledtEmail->hasAcceptableInput());
+    inputLogin->setValid(!ledtLogin->text().isEmpty() && ledtLogin->hasAcceptableInput());
+    inputPwd1->setValid(!pwdwgt1->encryptedPassword().isEmpty());
+    bool pwdm = pwdwgt1->encryptedPassword() == pwdwgt2->encryptedPassword();
+    inputPwd2->setValid(inputPwd1->isValid() && pwdm);
+    bool v = q_func()->info().isValid() && (TUserWidget::ShowMode == Mode || pwdm);
+    if (TUserWidget::RegisterMode == Mode)
+        v = v && !BeQt::uuidFromText(ledtInvite->text()).isNull();
+    if (v == valid)
+        return;
+    valid = v;
+    QMetaObject::invokeMethod(q_func(), "validityChanged", Q_ARG(bool, v));
+}
+
+void TUserWidgetPrivate::tbtnAvatarClicked()
+{
+    if (TUserWidget::ShowMode == Mode)
+    {
+        BDialog dlg(q_func());
+          dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
+          dlg.addButton(QDialogButtonBox::Close, SLOT(close()));
+          QScrollArea *sa = new QScrollArea;
+            QLabel *lbl = new QLabel;
+              QPixmap pm;
+              pm.loadFromData(avatar);
+              lbl->setPixmap(pm);
+              lbl->setToolTip(QString::number(pm.width()) + "x" + QString::number(pm.height()));
+            sa->setWidget(lbl);
+          dlg.setWidget(sa);
+          dlg.setMinimumSize(600, 600);
+          dlg.resize(600, 600);
+        dlg.exec();
+    }
+    else
+    {
+        QString caption = tr("Select file", "fdlg caption");
+        QString filter = tr("Images", "fdlg filter") + " (*.jpg *.jpeg *.png *.bmp)";
+        QString dir = !avatarFileName.isEmpty() ? avatarFileName : QDir::homePath();
+        QString fn = QFileDialog::getOpenFileName(q_func(), caption, dir, filter);
+        if (fn.isEmpty())
+            return;
+        if (!TUserInfo::testAvatar(fn))
+        {
+            QMessageBox msg(q_func());
+            msg.setWindowTitle(tr("Failed to change avatar", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(tr("Failed to change account avatar. The file is too big", "msgbox text"));
+            QString size = BeQt::fileSizeToString(Texsample::MaximumAvatarSize, BeQt::MegabytesFormat);
+            QString extent = QString::number(Texsample::MaximumAvatarExtent);
+            extent.append("x" + extent + ")").prepend('(');
+            msg.setInformativeText(tr("Maximum size:", "msgbox informativeText") + " " + size + " " + extent);
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.exec();
+            return;
+        }
+        bool ok = false;
+        QByteArray data = BDirTools::readFile(fn, -1, &ok);
+        if (!ok || data.isEmpty())
+        {
+            QMessageBox msg(q_func());
+            msg.setWindowTitle(tr("Failed to change avatar", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(tr("Failed to change account avatar", "msgbox text"));
+            msg.setInformativeText(tr("Some filesystem error occured", "msgbox informativeText"));
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.exec();
+            return;
+        }
+        avatarFileName = fn;
+        resetAvatar(data);
+    }
+}
+
+/*============================================================================
+================================ TUserWidget =================================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TUserWidget::TUserWidget(Mode m, QWidget *parent) :
+    QWidget(parent), BBase(*new TUserWidgetPrivate(this, m))
+{
+    d_func()->init();
+}
+
+TUserWidget::~TUserWidget()
+{
+    //
 }
 
 /*============================== Public methods ============================*/
 
-void UserWidget::setAvailableServices(const TServiceList &list)
+void TUserWidget::setAvailableServices(const TServiceList &list)
 {
-    if (list == mservices)
+    B_D(TUserWidget);
+    if (list == d->services)
         return;
-    mservices = list;
-    foreach (const TService &s, mcboxMap.keys())
-        mcboxMap.value(s)->setEnabled((AddMode == mmode || EditMode == mmode) && mservices.contains(s));
+    d->services = list;
+    foreach (const TService &s, d->cboxMap.keys())
+        d->cboxMap.value(s)->setEnabled((AddMode == d->Mode || EditMode == d->Mode) && d->services.contains(s));
 }
 
-void UserWidget::setInfo(const TUserInfo &info)
+void TUserWidget::setInfo(const TUserInfo &info)
 {
-    mid = info.id();
-    mledtInvite->setText(info.inviteCode());
-    mledtEmail->setText(info.email());
-    mledtLogin->setText(info.login());
-    mpwdwgt1->setPassword(QCryptographicHash::Sha1, info.password());
-    mpwdwgt2->setPassword(QCryptographicHash::Sha1, info.password());
-    mcmboxAccessLevel->setCurrentIndex(mcmboxAccessLevel->findData((int) info.accessLevel()));
-    foreach (const TService &s, mcboxMap.keys())
-        mcboxMap.value(s)->setChecked(info.hasAccessToService(s));
-    mledtRealName->setText(info.realName());
-    resetAvatar(info.avatar());
-    checkInputs();
+    B_D(TUserWidget);
+    d->id = info.id();
+    d->ledtInvite->setText(info.inviteCode());
+    d->ledtEmail->setText(info.email());
+    d->ledtLogin->setText(info.login());
+    d->pwdwgt1->setPassword(QCryptographicHash::Sha1, info.password());
+    d->pwdwgt2->setPassword(QCryptographicHash::Sha1, info.password());
+    d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData((int) info.accessLevel()));
+    foreach (const TService &s, d->cboxMap.keys())
+        d->cboxMap.value(s)->setChecked(info.hasAccessToService(s));
+    d->ledtRealName->setText(info.realName());
+    d->resetAvatar(info.avatar());
+    d->checkInputs();
 }
 
-void UserWidget::setPassword(const BPassword &pwd)
+void TUserWidget::setPassword(const BPassword &pwd)
 {
-    mpwdwgt1->setPassword(pwd);
-    mpwdwgt2->setPassword(pwd);
+    d_func()->pwdwgt1->setPassword(pwd);
+    d_func()->pwdwgt2->setPassword(pwd);
 }
 
-void UserWidget::restoreState(const QByteArray &state)
+void TUserWidget::restorePasswordWidgetState(const QByteArray &state)
+{
+    d_func()->pwdwgt1->restoreWidgetState(state);
+    d_func()->pwdwgt2->restoreWidgetState(state);
+}
+
+void TUserWidget::restoreState(const QByteArray &state)
 {
     QVariantMap m = BeQt::deserialize(state).toMap();
-    mavatarFileName = m.value("avatar_file_name").toString();
+    d_func()->avatarFileName = m.value("avatar_file_name").toString();
 }
 
-UserWidget::Mode UserWidget::mode() const
+TUserWidget::Mode TUserWidget::mode() const
 {
-    return mmode;
+    return d_func()->Mode;
 }
 
-TServiceList UserWidget::availableServices() const
+TServiceList TUserWidget::availableServices() const
 {
-    return mservices;
+    return d_func()->services;
 }
 
-TUserInfo UserWidget::info() const
+TUserInfo TUserWidget::info() const
 {
+    const B_D(TUserWidget);
     TUserInfo info;
-    switch (mmode)
+    switch (d->Mode)
     {
     case AddMode:
         info.setContext(TUserInfo::AddContext);
@@ -230,144 +372,46 @@ TUserInfo UserWidget::info() const
     default:
         break;
     }
-    info.setId(mid);
-    if (mledtInvite->hasAcceptableInput())
-        info.setInviteCode(mledtInvite->text());
-    if (mledtEmail->hasAcceptableInput())
-        info.setEmail(mledtEmail->text());
-    info.setLogin(mledtLogin->text());
-    if (mpwdwgt1->encryptedPassword() == mpwdwgt2->encryptedPassword())
-        info.setPassword(mpwdwgt1->encryptedPassword());
-    info.setAccessLevel(mcmboxAccessLevel->itemData(mcmboxAccessLevel->currentIndex()).toInt());
+    info.setId(d->id);
+    if (d->ledtInvite->hasAcceptableInput())
+        info.setInviteCode(d->ledtInvite->text());
+    if (d->ledtEmail->hasAcceptableInput())
+        info.setEmail(d->ledtEmail->text());
+    info.setLogin(d->ledtLogin->text());
+    if (d->pwdwgt1->encryptedPassword() == d->pwdwgt2->encryptedPassword())
+        info.setPassword(d->pwdwgt1->encryptedPassword());
+    info.setAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
     TServiceList list;
-    foreach (const TService &s, mcboxMap.keys())
-        if (mcboxMap.value(s)->isChecked())
+    foreach (const TService &s, d->cboxMap.keys())
+        if (d->cboxMap.value(s)->isChecked())
             list << s;
     info.setServices(list);
-    info.setRealName(mledtRealName->text());
-    if (!mavatarFileName.isEmpty())
-        info.setAvatar(mavatarFileName);
+    info.setRealName(d->ledtRealName->text());
+    if (!d->avatarFileName.isEmpty())
+        info.setAvatar(d->avatarFileName);
     else
-        info.setAvatar(mavatar);
+        info.setAvatar(d->avatar);
     return info;
 }
 
-BPassword UserWidget::password() const
+BPassword TUserWidget::password() const
 {
-    return mpwdwgt1->password();
+    return d_func()->pwdwgt1->password();
 }
 
-QByteArray UserWidget::saveState() const
+QByteArray TUserWidget::savePasswordWidgetState() const
+{
+    return d_func()->pwdwgt1->saveWidgetState();
+}
+
+QByteArray TUserWidget::saveState() const
 {
     QVariantMap m;
-    m.insert("avatar_file_name", mavatarFileName);
+    m.insert("avatar_file_name", d_func()->avatarFileName);
     return BeQt::serialize(m);
 }
 
-bool UserWidget::isValid() const
+bool TUserWidget::isValid() const
 {
-    return mvalid;
-}
-
-/*============================== Private slots =============================*/
-
-void UserWidget::resetAvatar(const QByteArray &data)
-{
-    mavatar = data;
-    if (!mavatar.isEmpty())
-    {
-        QPixmap pm;
-        pm.loadFromData(data);
-        mtbtnAvatar->setIcon(QIcon(pm));
-        if (ShowMode != mmode)
-            mtbtnClearAvatar->setEnabled(true);
-    }
-    else
-    {
-        mtbtnAvatar->setIcon(Application::icon("user"));
-        if (ShowMode != mmode)
-            mtbtnClearAvatar->setEnabled(false);
-    }
-    if (ShowMode == mmode)
-    {
-        mtbtnAvatar->setToolTip(!mavatar.isEmpty() ? tr("Click to show the picture in full size", "tbtn toolTip") :
-                                                     QString());
-        mtbtnAvatar->setEnabled(!mavatar.isEmpty());
-    }
-}
-
-void UserWidget::checkInputs()
-{
-    minputInvite->setValid(!mledtInvite->text().isEmpty() && mledtInvite->hasAcceptableInput());
-    minputEmail->setValid(!mledtEmail->text().isEmpty() && mledtEmail->hasAcceptableInput());
-    minputLogin->setValid(!mledtLogin->text().isEmpty() && mledtLogin->hasAcceptableInput());
-    minputPwd1->setValid(!mpwdwgt1->encryptedPassword().isEmpty());
-    bool pwdm = mpwdwgt1->encryptedPassword() == mpwdwgt2->encryptedPassword();
-    minputPwd2->setValid(minputPwd1->isValid() && pwdm);
-    bool v = info().isValid() && (ShowMode == mmode || pwdm);
-    if (RegisterMode == mmode)
-        v = v && !BeQt::uuidFromText(mledtInvite->text()).isNull();
-    if (v == mvalid)
-        return;
-    mvalid = v;
-    emit validityChanged(v);
-}
-
-void UserWidget::tbtnAvatarClicked()
-{
-    if (ShowMode == mmode)
-    {
-        BDialog dlg(this);
-          dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + mledtLogin->text());
-          dlg.addButton(QDialogButtonBox::Close, SLOT(close()));
-          QScrollArea *sa = new QScrollArea;
-            QLabel *lbl = new QLabel;
-              QPixmap pm;
-              pm.loadFromData(mavatar);
-              lbl->setPixmap(pm);
-              lbl->setToolTip(QString::number(pm.width()) + "x" + QString::number(pm.height()));
-            sa->setWidget(lbl);
-          dlg.setWidget(sa);
-          dlg.setMinimumSize(600, 600);
-          dlg.resize(600, 600);
-        dlg.exec();
-    }
-    else
-    {
-        QString caption = tr("Select file", "fdlg caption");
-        QString filter = tr("Images", "fdlg filter") + " (*.jpg *.jpeg *.png *.bmp)";
-        QString dir = !mavatarFileName.isEmpty() ? mavatarFileName : QDir::homePath();
-        QString fn = QFileDialog::getOpenFileName(this, caption, dir, filter);
-        if (fn.isEmpty())
-            return;
-        if (!TUserInfo::testAvatar(fn))
-        {
-            QMessageBox msg(this);
-            msg.setWindowTitle(tr("Failed to change avatar", "msgbox windowTitle"));
-            msg.setIcon(QMessageBox::Critical);
-            msg.setText(tr("Failed to change account avatar. The file is too big", "msgbox text"));
-            QString size = BeQt::fileSizeToString(Texsample::MaximumAvatarSize, BeQt::MegabytesFormat);
-            QString extent = QString::number(Texsample::MaximumAvatarExtent);
-            extent.append("x" + extent + ")").prepend('(');
-            msg.setInformativeText(tr("Maximum size:", "msgbox informativeText") + " " + size + " " + extent);
-            msg.setStandardButtons(QMessageBox::Ok);
-            msg.exec();
-            return;
-        }
-        bool ok = false;
-        QByteArray data = BDirTools::readFile(fn, -1, &ok);
-        if (!ok || data.isEmpty())
-        {
-            QMessageBox msg(this);
-            msg.setWindowTitle(tr("Failed to change avatar", "msgbox windowTitle"));
-            msg.setIcon(QMessageBox::Critical);
-            msg.setText(tr("Failed to change account avatar", "msgbox text"));
-            msg.setInformativeText(tr("Some filesystem error occured", "msgbox informativeText"));
-            msg.setStandardButtons(QMessageBox::Ok);
-            msg.exec();
-            return;
-        }
-        mavatarFileName = fn;
-        resetAvatar(data);
-    }
+    return d_func()->valid;
 }

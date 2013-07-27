@@ -1,33 +1,30 @@
-#ifndef USERWIDGET_H
-#define USERWIDGET_H
+#ifndef TUSERWIDGET_H
+#define TUSERWIDGET_H
 
+class TUserWidgetPrivate;
 class TUserInfo;
+class TServiceList;
 
-class BPasswordWidget;
-class BInputField;
+class BPassword;
 
-class QLineEdit;
-class QComboBox;
-class QToolButton;
-class QCheckBox;
+class QByteArray;
 
-#include <TService>
-#include <TServiceList>
+#include <TeXSampleCore/TeXSampleGlobal>
+#include <TeXSampleCore/TService>
 
-#include <BPassword>
+#include <BBase>
+#include <BeQtGlobal>
 
 #include <QWidget>
-#include <QByteArray>
-#include <QString>
-#include <QMap>
 
 /*============================================================================
-================================ UserWidget ==================================
+================================ TUserWidget =================================
 ============================================================================*/
 
-class UserWidget : public QWidget
+class T_WIDGETS_EXPORT TUserWidget : public QWidget, public BBase
 {
     Q_OBJECT
+    B_DECLARE_PRIVATE(TUserWidget)
 public:
     enum Mode
     {
@@ -38,48 +35,25 @@ public:
         ShowMode
     };
 public:
-    explicit UserWidget(Mode m, QWidget *parent = 0);
-    ~UserWidget();
+    explicit TUserWidget(Mode m, QWidget *parent = 0);
+    ~TUserWidget();
 public:
     void setAvailableServices(const TServiceList &list);
     void setInfo(const TUserInfo &info);
     void setPassword(const BPassword &pwd);
+    void restorePasswordWidgetState(const QByteArray &state);
     void restoreState(const QByteArray &state);
     Mode mode() const;
     TServiceList availableServices() const;
     TUserInfo info() const;
     BPassword password() const;
+    QByteArray savePasswordWidgetState() const;
     QByteArray saveState() const;
     bool isValid() const;
-private slots:
-    void resetAvatar(const QByteArray &data = QByteArray());
-    void checkInputs();
-    void tbtnAvatarClicked();
-signals:
+Q_SIGNALS:
     void validityChanged(bool valid);
 private:
-    const Mode mmode;
-private:
-    bool mvalid;
-    TServiceList mservices;
-    quint64 mid;
-    QString mavatarFileName;
-    QByteArray mavatar;
-    QLineEdit *mledtInvite;
-    BInputField *minputInvite;
-    QLineEdit *mledtEmail;
-    BInputField *minputEmail;
-    QLineEdit *mledtLogin;
-    BInputField *minputLogin;
-    BPasswordWidget *mpwdwgt1;
-    BInputField *minputPwd1;
-    BPasswordWidget *mpwdwgt2;
-    BInputField *minputPwd2;
-    QComboBox *mcmboxAccessLevel;
-    QLineEdit *mledtRealName;
-    QToolButton *mtbtnAvatar;
-    QToolButton *mtbtnClearAvatar;
-    QMap<TService, QCheckBox *> mcboxMap;
+    Q_DISABLE_COPY(TUserWidget)
 };
 
-#endif // USERWIDGET_H
+#endif // TUSERWIDGET_H
