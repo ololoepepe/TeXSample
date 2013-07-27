@@ -1,5 +1,7 @@
-#Include this file in your project if you are using TeXSample as an external library set
-#No source files will be added to your project
+VERSION = 1.0.0
+VER_MAJ = 1
+VER_MIN = 0
+VER_PAT = 0
 
 #Gets module short name, for example "core", "widgets", etc.
 #Returns corresponding full module name, for example "TeXSampleCore", "TeXSampleWidgets", etc.
@@ -21,33 +23,8 @@ defineReplace(texsampleModuleSubdir) {
     return($${moduleSubdir})
 }
 
-#Defining TeXSample subdir name
-isEmpty(TSMP_SUBDIR_NAME):TSMP_SUBDIR_NAME=texsample
-
-#Searching for headers
-texsampleHeadersPath=
-mac:exists($${PWD}/../Headers):texsampleHeadersPath=$${PWD}/../Headers
-else:unix:!mac:exists($${PWD}/../../include/texsample):texsampleHeadersPath=$${PWD}/../../include/texsample
-else:exists($${PWD}/include):texsampleHeadersPath=$${PWD}/include
-isEmpty(texsampleHeadersPath):error("TeXSample headers not found")
-#Searching for libraries
-texsampleLibsPath=
-texsampleLibsOneFolder=
-mac:exists($${PWD}/../Frameworks) {
-    texsampleLibsPath=$${PWD}/../Frameworks
-    texsampleLibsOneFolder=true
-}
-else:exists($${PWD}/lib) {
-    texsampleLibsPath=$${PWD}/lib
-    texsampleLibsOneFolder=true
-}
-else:exists($${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src) {
-    texsampleLibsPath=$${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src
-}
-else:texsampleLibsOneFolder=true
+texsampleHeadersPath=$${PWD}/../include
+texsampleLibsPath=$${OUT_PWD}/..
 
 win32 {
     #If CONFIG contains "release" or "debug", set special suffix for libs' path
@@ -55,7 +32,7 @@ win32 {
     CONFIG(release, debug|release):releaseDebugSuffix=/release
     CONFIG(debug, debug|release):releaseDebugSuffix=/debug
     #Set suffix for libraries names
-    libNameSuffix=1
+    libNameSuffix=$${VER_MAJ}
 }
 
 #Gets short module name, for example "core", "widgets", etc.
@@ -65,19 +42,11 @@ defineTest(addTexsampleModule) {
     fullName=$$fullTexsampleModuleName($${shortName})
     INCLUDEPATH *= $${texsampleHeadersPath}/$${fullName}
     DEPENDPATH *= $${texsampleHeadersPath}/$${fullName}
-    !isEmpty(texsampleLibsPath) {
-        texsampleModuleSubdir=
-        isEmpty(texsampleLibsOneFolder):texsampleModuleSubdir=/$$texsampleModuleSubdir($${shortName})
-        texsampleFinalLibPath=$${texsampleLibsPath}$${texsampleModuleSubdir}$${releaseDebugSuffix}
-        !exists($${texsampleFinalLibPath}):texsampleFinalLibPath=$${texsampleLibsPath}$${texsampleModuleSubdir}
-        mac:contains(CONFIG, lib_bundle) {
-            LIBS *= -F$${texsampleFinalLibPath}/ -framework $${fullName}
-        } else {
-            LIBS *= -L$${texsampleFinalLibPath}/ -l$${fullName}$${libNameSuffix}
-        }
+    libFinalPath=$${texsampleLibsPath}/$$texsampleModuleSubdir($${shortName})$${releaseDebugSuffix}/
+    mac:contains(CONFIG, lib_bundle) {
+        LIBS *= -F$${libFinalPath} -framework $${fullName}
     } else {
-        mac:LIBS *= -framework $${fullName}
-        else:LIBS *= -l$${fullName}$${libNameSuffix}
+        LIBS *= -L$${libFinalPath} -l$${fullName}$${libNameSuffix}
     }
     export(INCLUDEPATH)
     export(DEPENDPATH)
@@ -96,7 +65,7 @@ contains(TSMP, all) {
 }
 
 #Adds required Qt, BeQt and TeXSample modules (on which other included modules depend)
-contains(TSMP, core) {
+contains(TSMP,core) {
     QT *= core concurrent
     BEQT *= core
 }
@@ -114,3 +83,13 @@ contains(TSMP, core):TSMP_ORDERED += core
 for(shortName, TSMP_ORDERED) {
     addTexsampleModule($${shortName})
 }
+
+isEmpty(BEQT_PREFIX) {
+    #TODO: Add MacOS support
+    mac|unix {
+        BEQT_PREFIX=/usr/share/beqt
+    } else:win32 {
+        BEQT_PREFIX=$$(systemdrive)/PROGRA~1/BeQt
+    }
+}
+include($${BEQT_PREFIX}/depend.pri)

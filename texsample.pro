@@ -38,7 +38,7 @@ include(prefix.pri)
 defineReplace(getActualHeaderInternal) {
     headerContents=$${1}
     actualHeader=$$replace(headerContents, "$${LITERAL_HASH}include", "")
-    actualHeader=$$replace(actualHeader, "\\.\\./", "")
+    actualHeader=$$replace(actualHeader, "\\.\\./\\.\\./", "")
     actualHeader=$$replace(actualHeader, "\"", "")
     return($${PWD}/$${actualHeader})
 }
@@ -50,7 +50,15 @@ defineReplace(getActualHeader) {
     headerContents=$$cat($${headerPath})
     isEmpty(headerContents) {
         headerPath=
+    } else:!equals(headerContents, $$replace(headerContents, "\\.\\./\\.\\./", "")) {
+        headerPath=$$getActualHeaderInternal($${headerContents})
     } else:!equals(headerContents, $$replace(headerContents, "\\.\\./", "")) {
+        #Getting corresponding header in another include subdirectory
+        headerPath=$$replace(headerContents, "$${LITERAL_HASH}include", "")
+        headerPath=$$replace(headerPath, "\\.\\./", "")
+        headerPath=$$replace(headerPath, "\"", "")
+        #Getting the actual header
+        headerContents=$$cat($${PWD}/include/$${headerPath})
         headerPath=$$getActualHeaderInternal($${headerContents})
     }
     return($${headerPath})
@@ -63,18 +71,20 @@ defineReplace(getActualPrivateHeader) {
     headerContents=$$cat($${headerPath})
     isEmpty(headerContents) {
         headerPath=
-    } else:!equals(headerContents, $$replace(headerContents, "\\.\\./\\.\\./", "")) {
+    } else:!equals(headerContents, $$replace(headerContents, "\\.\\./\\.\\./\\.\\./", "")) {
         headerPath=$$replace(headerContents, "$${LITERAL_HASH}include", "")
-        headerPath=$$replace(headerPath, "\\.\\./\\.\\./", "")
+        headerPath=$$replace(headerPath, "\\.\\./\\.\\./\\.\\./", "")
         headerPath=$$replace(headerPath, "\"", "")
         headerPath=$${PWD}/$${headerPath}
     }
     return($${headerPath})
 }
 
-#Returns a list of actual headers' paths to which headers point
+#Gets include subdirectory name
+#Returns a list of actual headers' paths to which headers in the given subdir point
 defineReplace(getActualHeaders) {
-    headerPaths=$$files($${PWD}/include/*)
+    subdirName=$${1}
+    headerPaths=$$files($${PWD}/include/$${subdirName}/*)
     actualHeaderPaths=
     for(headerPath, headerPaths) {
         actualHeaderPath=$$getActualHeader($${headerPath})
@@ -83,9 +93,11 @@ defineReplace(getActualHeaders) {
     return($${actualHeaderPaths})
 }
 
-#Returns a list of actual private headers' paths to which headers point
+#Gets include subdirectory name
+#Returns a list of actual private headers' paths to which headers in the given subdir point
 defineReplace(getActualPrivateHeaders) {
-    headerPaths=$$files($${PWD}/include/private/*)
+    subdirName=$${1}
+    headerPaths=$$files($${PWD}/include/$${subdirName}/private/*)
     actualHeaderPaths=
     for(headerPath, headerPaths) {
         actualHeaderPath=$$getActualPrivateHeader($${headerPath})
@@ -96,17 +108,32 @@ defineReplace(getActualPrivateHeaders) {
 
 !contains(TSMP_CONFIG, no_headers) {
     #Global
-    tsmpInstallsHeaders.files=$$getActualHeaders()
-    tsmpInstallsHeaders.path=$${TSMP_HEADERS_INSTALLS_PATH}
-    INSTALLS += tsmpInstallsHeaders
+    tsmpInstallsHeadersGlobal.files=$$getActualHeaders(TeXSample)
+    tsmpInstallsHeadersGlobal.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSample
+    INSTALLS += tsmpInstallsHeadersGlobal
+    #Core
+    tsmpInstallsHeadersCore.files=$$getActualHeaders(TeXSampleCore)
+    tsmpInstallsHeadersCore.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleCore
+    INSTALLS += tsmpInstallsHeadersCore
     contains(TSMP_CONFIG, private_headers) {
-        tsmpInstallsPrivateHeaders.files=$$getActualPrivateHeaders()
-        tsmpInstallsPrivateHeaders.path=$${TSMP_HEADERS_INSTALLS_PATH}/private
-        INSTALLS += tsmpInstallsPrivateHeaders
+        tsmpInstallsPrivateHeadersCore.files=$$getActualPrivateHeaders(TeXSampleCore)
+        tsmpInstallsPrivateHeadersCore.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleCore/private
+        INSTALLS += tsmpInstallsPrivateHeadersCore
+    }
+    #Widgets
+    !contains(TSMP_CONFIG, no_widgets) {
+        tsmpInstallsHeadersWidgets.files=$$getActualHeaders(TeXSampleWidgets)
+        tsmpInstallsHeadersWidgets.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleWidgets
+        INSTALLS += tsmpInstallsHeadersWidgets
+        contains(TSMP_CONFIG, private_headers) {
+            tsmpInstallsPrivateHeadersWidgets.files=$$getActualPrivateHeaders(TeXSample)
+            tsmpInstallsPrivateHeadersWidgets.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleWidgets/private
+            INSTALLS += tsmpInstallsPrivateHeadersWidgets
+        }
     }
     #Depend
     tsmpInstallsDepend.files=depend.pri
-    tsmpInstallsDepend.path=$${TSMP_RESOURCES_INSTALLS_PATH}
+    tsmpInstallsDepend.path=$${TSMP_HEADERS_INSTALLS_PATH}
     INSTALLS += tsmpInstallsDepend
 }
 

@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/edit_add.png</file>
+        <file>icons/edit_add.svgz</file>
+        <file>icons/editcopy.png</file>
+        <file>icons/editcopy.svgz</file>
+        <file>icons/editdelete.png</file>
+        <file>icons/editdelete.svgz</file>
+        <file>icons/user.png</file>
+        <file>icons/user.svgz</file>
+    </qresource>
+</RCC>
