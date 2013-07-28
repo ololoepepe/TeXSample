@@ -150,6 +150,16 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "The connection timed out");
     case ClientOperationError:
         return QT_TRANSLATE_NOOP("TMessage", "There was an operation error");
+    case ClientFileSystemError:
+        return QT_TRANSLATE_NOOP("TMessage", "File system error");
+    case ClientInvalidInvitesCountError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid invites count");
+    case ClientInvalidSampleInfoError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid sample info");
+    case ClientInvalidPathError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid path");
+    case ClientInvalidFileNameError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid file name");
     //Other errors
     case UnknownError:
         return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");

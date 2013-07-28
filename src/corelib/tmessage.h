@@ -24,6 +24,7 @@ class T_CORE_EXPORT TMessage : public BBase
 {
     B_DECLARE_PRIVATE(TMessage)
     Q_DECLARE_TR_FUNCTIONS(TMessage)
+    int a;
 public:
     enum Message
     {
@@ -67,6 +68,11 @@ public:
         ClientOperationCanceledError,
         ClientConnectionTimeoutError,
         ClientOperationError,
+        ClientFileSystemError,
+        ClientInvalidInvitesCountError,
+        ClientInvalidSampleInfoError,
+        ClientInvalidPathError,
+        ClientInvalidFileNameError,
         //Other errors
         UnknownError
     };

@@ -319,6 +319,26 @@
         <source>There was an operation error</source>
         <translation>Произошла ошибка операции</translation>
     </message>
+    <message>
+        <source>File system error</source>
+        <translation>Ошибка, связанная с файловой системой</translation>
+    </message>
+    <message>
+        <source>Invalid invites count</source>
+        <translation>Недействительное количество инвайтов</translation>
+    </message>
+    <message>
+        <source>Invalid sample info</source>
+        <translation>Недействительная информация о сэмпле</translation>
+    </message>
+    <message>
+        <source>Invalid path</source>
+        <translation>Недействительный путь</translation>
+    </message>
+    <message>
+        <source>Invalid file name</source>
+        <translation>Недействительное имя файла</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryDialogPrivate</name>
