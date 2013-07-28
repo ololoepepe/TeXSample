@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/edit_add.png</file>
+        <file>icons/edit_add.svgz</file>
+        <file>icons/editcopy.png</file>
+        <file>icons/editcopy.svgz</file>
+        <file>icons/editdelete.png</file>
+        <file>icons/editdelete.svgz</file>
+        <file>icons/user.png</file>
+        <file>icons/user.svgz</file>
+        <file>icons/flag.png</file>
+        <file>icons/flag.svgz</file>
+        <file>icons/1downarrow.png</file>
+        <file>icons/1downarrow.svgz</file>
+        <file>icons/1uparrow.png</file>
+        <file>icons/1uparrow.svgz</file>
+        <file>icons/editclear.png</file>
+        <file>icons/editclear.svgz</file>
+    </qresource>
+</RCC>

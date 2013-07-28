@@ -58,5 +58,9 @@ Makefile
 
 # MacOS Framework binaries #
 ############################
-TeXSample
-!include/TeXSample
+TeXSampleCore
+TeXSampleWidgets
+!include/TeXSample/TeXSampleCore
+!include/TeXSample/TeXSampleWidgets
+!include/TeXSampleCore
+!include/TeXSampleWidgets
