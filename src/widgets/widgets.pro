@@ -12,6 +12,8 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
+    tinvitesdialog.h \
+    tinvitesdialog_p.h \
     trecoverydialog.h \
     trecoverydialog_p.h \
     ttagswidget.h \
@@ -22,6 +24,7 @@ HEADERS += \
     tlistwidget.h
 
 SOURCES += \
+    tinvitesdialog.cpp \
     trecoverydialog.cpp \
     ttagswidget.cpp \
     tuserwidget.cpp \

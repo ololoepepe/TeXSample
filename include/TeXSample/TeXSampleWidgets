@@ -1,6 +1,7 @@
 #ifndef TSMP_TEXSAMPLEWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
+#include "tinvitesdialog.h"
 #include "tlistwidget.h"
 #include "trecoverydialog.h"
 #include "ttagswidget.h"

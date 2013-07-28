@@ -41,6 +41,84 @@
     </message>
 </context>
 <context>
+    <name>TInvitesDialogPrivate</name>
+    <message>
+        <source>Invites management</source>
+        <comment>windowTitle</comment>
+        <translation>Управление инвайтами</translation>
+    </message>
+    <message>
+        <source>Expiration date</source>
+        <comment>tblwgt header</comment>
+        <translation>Действует до</translation>
+    </message>
+    <message>
+        <source>Available services</source>
+        <comment>tblwgt header</comment>
+        <translation>Доступные службы</translation>
+    </message>
+    <message>
+        <source>Generate invites...</source>
+        <comment>act text</comment>
+        <translation>Сгенерировать инвайты...</translation>
+    </message>
+    <message>
+        <source>Copy selected invite code to clipboard</source>
+        <comment>act text</comment>
+        <translation>Копировать выбранный инвайт-код в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Generating invites</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Генерирование инвайтов</translation>
+    </message>
+    <message>
+        <source>Expiration date:</source>
+        <comment>lbl text</comment>
+        <translation>Действует до:</translation>
+    </message>
+    <message>
+        <source>Count:</source>
+        <comment>lbl text</comment>
+        <translation>Количество:</translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation>Доступ к</translation>
+    </message>
+    <message>
+        <source>CLab groups</source>
+        <comment>gbox title</comment>
+        <translation>Группы CLab</translation>
+    </message>
+    <message>
+        <source>Generating invites failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Генерирование инвайтов не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to generate invites. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось сгенерировать инвайты. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Invite was copied to clipboard</source>
+        <comment>toolTip</comment>
+        <translation>Инвайт был скопирован в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Updating invites list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Обновление списка инвайтов не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to update invites list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
+    </message>
+</context>
+<context>
     <name>TLabInfo</name>
     <message>
         <source>Desktop application</source>
@@ -506,7 +584,7 @@
     <message>
         <source>CLab groups</source>
         <comment>gbox title</comment>
-        <translation type="unfinished"></translation>
+        <translation>Группы CLab</translation>
     </message>
 </context>
 </TS>
