@@ -15,6 +15,7 @@
     * Update request constant list
     * Add separate headers for lists of data classes
     * Implement email validation, etc. to TUserInfo
+    * Add CLab service support
 
 === TeXSample 0.2.2 (02 July 2013) ===
     * Add a hack for preventing compatibility breaking

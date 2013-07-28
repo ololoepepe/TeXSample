@@ -5,6 +5,8 @@ class TTagsWidgetPrivate;
 
 class QStringList;
 
+#include <TeXSampleCore/TeXSampleGlobal>
+
 #include <BeQtGlobal>
 #include <BBase>
 
@@ -14,7 +16,7 @@ class QStringList;
 ================================ TTagsWidget =================================
 ============================================================================*/
 
-class TTagsWidget : public QWidget, public BBase
+class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TTagsWidget)

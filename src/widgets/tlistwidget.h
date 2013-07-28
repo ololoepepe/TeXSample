@@ -5,6 +5,8 @@ class TListWidgetPrivate;
 
 class QStringList;
 
+#include <TeXSampleCore/TeXSampleGlobal>
+
 #include <BeQtGlobal>
 #include <BBase>
 
@@ -14,7 +16,7 @@ class QStringList;
 ================================ TListWidget =================================
 ============================================================================*/
 
-class TListWidget : public QWidget, public BBase
+class T_WIDGETS_EXPORT TListWidget : public QWidget, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TListWidget)

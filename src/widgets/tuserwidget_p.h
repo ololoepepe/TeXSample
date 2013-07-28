@@ -14,6 +14,7 @@ class QGroupBox;
 
 #include "tuserwidget.h"
 
+#include <TeXSampleCore/TeXSampleGlobal>
 #include <TeXSampleCore/TService>
 #include <TeXSampleCore/TServiceList>
 
