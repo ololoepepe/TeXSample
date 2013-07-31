@@ -73,6 +73,7 @@ public:
         ClientInvalidSampleInfoError,
         ClientInvalidPathError,
         ClientInvalidFileNameError,
+        ClientInvalidLabInfoError,
         //Other errors
         UnknownError
     };

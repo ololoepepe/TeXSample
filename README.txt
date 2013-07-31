@@ -76,6 +76,9 @@ When building TeXSample, you may pass some parameters to qmake:
  * "TSMP_CONFIG+=private_headers"
    Install private headers along with the public ones
 
+ * "TSMP_CONFIG+=no_widgets"
+   Don't build the TeXSampleWidgets module
+
  * "BEQT_PREFIX=<path>"
    Set path to BeQt libraries. Must be used if BeQt libraries were installed
    to a custom location
@@ -128,8 +131,16 @@ See: http://support.microsoft.com/kb/142982 for details.
 
 TeXSample may be used either as a system library, or as a project submodule.
 
-Important: TeXSample may be linked to a project with just two lines of code
-in the .pro file, but in that case you need to use qmake.
+Important: TeXSample may be linked to a project with just two lines of code in the
+.pro file, but in that case you need to use qmake.
+
+First of all, add the following to your .pro file:
+
+ "TSMP = [core] [widgets] [all]"
+
+There are TeXSample module names in the square brackets.
+You may also add all modules (the "[all]" parameter).
+BeQt and Qt modules' dependencies are resolved automatically.
 
 In case TeXSample is used as a system library (or is built and placed to a
 separate directory), you need to add the following line to your .pro file:

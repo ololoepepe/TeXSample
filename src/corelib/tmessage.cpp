@@ -160,6 +160,8 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "Invalid path");
     case ClientInvalidFileNameError:
         return QT_TRANSLATE_NOOP("TMessage", "Invalid file name");
+    case ClientInvalidLabInfoError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid lab info");
     //Other errors
     case UnknownError:
         return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");

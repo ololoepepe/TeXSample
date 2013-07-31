@@ -151,6 +151,14 @@ TLabInfo::Type TLabInfo::typeFromInt(int t)
     return types.contains(t) ? static_cast<Type>(t) : NoType;
 }
 
+QList<TLabInfo::Type> TLabInfo::allTypes(bool includeNoType)
+{
+    QList<Type> list = QList<Type>() << DesktopType << WebType << UrlType;
+    if (includeNoType)
+        list << NoType;
+    return list;
+}
+
 /*============================== Public constructors =======================*/
 
 TLabInfo::TLabInfo(Context c) :

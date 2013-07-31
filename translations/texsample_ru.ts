@@ -339,6 +339,10 @@
         <source>Invalid file name</source>
         <translation>Недействительное имя файла</translation>
     </message>
+    <message>
+        <source>Invalid lab info</source>
+        <translation>Недействительная информация о лаб. работе</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryDialogPrivate</name>

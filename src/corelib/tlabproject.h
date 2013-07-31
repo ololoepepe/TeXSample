@@ -27,13 +27,18 @@ public:
 public:
     explicit TLabProject();
     explicit TLabProject(const QString &dir, const QString &mainFileName);
+    explicit TLabProject(const QString &mainFilePath);
     TLabProject(const TLabProject &other);
     ~TLabProject();
 public:
     void clear();
     QString mainFileName() const;
+    QString mainFileSubdir() const;
+    QString mainFilePath(const QString &path) const;
     bool load(const QString &dir, const QString &mainFileName);
+    bool load(const QString &mainFilePath);
     bool save(const QString &dir) const;
+    bool isExecutable() const;
     bool isValid() const;
     int size() const;
 public:

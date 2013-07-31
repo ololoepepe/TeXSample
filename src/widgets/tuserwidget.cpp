@@ -169,7 +169,7 @@ void TUserWidgetPrivate::init()
         gboxClab->setVisible(false);
         hlt = new QHBoxLayout(gboxClab);
           lstwgtClab = new TListWidget;
-            lstwgtClab->setReadOnly(true);
+            lstwgtClab->setReadOnly(showMode);
             lstwgtClab->setButtonsVisible(addMode || editMode);
           hlt->addWidget(lstwgtClab);
       vlt->addWidget(gboxClab);
