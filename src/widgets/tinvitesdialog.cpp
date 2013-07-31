@@ -236,6 +236,7 @@ TInvitesDialog::TInvitesDialog(TestServiceFunction testf, GetInvitesFunction get
     BDialog(*new TInvitesDialogPrivate(this, testf, getf, 0, genf), parent)
 {
     d_func()->init();
+    setClabEnabled(true);
 }
 
 TInvitesDialog::~TInvitesDialog()
