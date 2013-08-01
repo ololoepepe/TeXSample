@@ -79,6 +79,13 @@ QString TMessage::messageToStringNoTr(int msg)
     //Connection messages
     case AlreadyAuthorizedMessage:
         return QT_TRANSLATE_NOOP("TMessage", "You are already authorized");
+    //TerminalIOHandler messages
+    case ServerAlreadyRunningMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "The server is already running");
+    case ServerIsNotRunningMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "The server is not running");
+    case OkMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "OK");
     //Internal errors
     case InternalParametersError:
         return QT_TRANSLATE_NOOP("TMessage", "Internal parameters error occured");
@@ -162,6 +169,11 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "Invalid file name");
     case ClientInvalidLabInfoError:
         return QT_TRANSLATE_NOOP("TMessage", "Invalid lab info");
+    //TerminalIOHandler errors
+    case FailedToStartServerError:
+        return QT_TRANSLATE_NOOP("TMessage", "Failed to start server");
+    case InvalidCommandArgumentsError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid arguments");
     //Other errors
     case UnknownError:
         return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");

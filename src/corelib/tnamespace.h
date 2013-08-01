@@ -29,6 +29,10 @@ const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
 const QString SubscribeRequest = "subscribe";
 const QString ChangeLocaleRequest = "change_locale";
+const QString StartServerRequest = "start_server";
+const QString StopServerRequest = "stop_server";
+const QString UptimeRequest = "uptime";
+const QString UserRequest = "user";
 
 const QString LogRequest = "log";
 const QString MessageRequest = "message";

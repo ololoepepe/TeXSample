@@ -24,13 +24,16 @@ class T_CORE_EXPORT TMessage : public BBase
 {
     B_DECLARE_PRIVATE(TMessage)
     Q_DECLARE_TR_FUNCTIONS(TMessage)
-    int a;
 public:
     enum Message
     {
         NoMessage = 0,
         //Connection messages
         AlreadyAuthorizedMessage,
+        //TerminalIOHandler messages
+        ServerAlreadyRunningMessage,
+        ServerIsNotRunningMessage,
+        OkMessage,
         //Internal errors
         InternalParametersError,
         InternalFileSystemError,
@@ -74,6 +77,9 @@ public:
         ClientInvalidPathError,
         ClientInvalidFileNameError,
         ClientInvalidLabInfoError,
+        //TerminalIOHandler errors
+        FailedToStartServerError,
+        InvalidCommandArgumentsError,
         //Other errors
         UnknownError
     };

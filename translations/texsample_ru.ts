@@ -343,6 +343,26 @@
         <source>Invalid lab info</source>
         <translation>Недействительная информация о лаб. работе</translation>
     </message>
+    <message>
+        <source>The server is already running</source>
+        <translation>Сервер уже запущен</translation>
+    </message>
+    <message>
+        <source>The server is not running</source>
+        <translation>Сервер не запущен</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <source>Failed to start server</source>
+        <translation>Не удалось запустить сервер</translation>
+    </message>
+    <message>
+        <source>Invalid arguments</source>
+        <translation>Недействительные параметры</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryDialogPrivate</name>
