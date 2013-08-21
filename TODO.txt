@@ -8,5 +8,4 @@
 
 === MAJOR ===
 
-[done] Replace root with superuser
-[done] Improve README
+
