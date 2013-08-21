@@ -10,6 +10,7 @@ class QToolBar;
 
 #include "tinvitesdialog.h"
 
+#include <TeXSampleCore/TeXSampleGlobal>
 #include <TeXSampleCore/TInviteInfoList>
 
 #include <BeQtGlobal>
@@ -21,7 +22,7 @@ class QToolBar;
 ================================ TInvitesDialogPrivate =======================
 ============================================================================*/
 
-class TInvitesDialogPrivate : public BDialogPrivate
+class T_WIDGETS_EXPORT TInvitesDialogPrivate : public BDialogPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TInvitesDialog)

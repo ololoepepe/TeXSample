@@ -8,6 +8,8 @@ class QSignalMapper;
 
 #include "tlistwidget.h"
 
+#include <TeXSampleCore/TeXSampleGlobal>
+
 #include <BeQtGlobal>
 #include <BeQtCore/private/bbase_p.h>
 
@@ -18,7 +20,7 @@ class QSignalMapper;
 ================================ TListWidgetPrivate ==========================
 ============================================================================*/
 
-class TListWidgetPrivate : public BBasePrivate
+class T_WIDGETS_EXPORT TListWidgetPrivate : public BBasePrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TListWidget)

@@ -11,13 +11,15 @@ class QDateTime;
 class QWidget;
 class QStringList;
 
+#include <TeXSampleCore/TeXSampleGlobal>
+
 #include <BDialog>
 
 /*============================================================================
 ================================ TInvitesDialog ==============================
 ============================================================================*/
 
-class TInvitesDialog : public BDialog
+class T_WIDGETS_EXPORT TInvitesDialog : public BDialog
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TInvitesDialog)

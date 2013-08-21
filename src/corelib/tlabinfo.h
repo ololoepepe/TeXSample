@@ -49,6 +49,7 @@ public:
     static QString listToString(const QStringList &list);
     static QStringList listFromString(const QString &s);
     static Type typeFromInt(int t);
+    static QList<Type> allTypes(bool includeNoType = false);
 public:
     explicit TLabInfo(Context c = GeneralContext);
     TLabInfo(const TLabInfo &other);

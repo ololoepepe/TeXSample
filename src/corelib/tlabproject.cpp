@@ -124,6 +124,13 @@ TLabProject::TLabProject(const QString &dir, const QString &mainFileName) :
     load(dir, mainFileName);
 }
 
+TLabProject::TLabProject(const QString &mainFilePath) :
+    BBase(*new TLabProjectPrivate(this))
+{
+    d_func()->init();
+    load(mainFilePath);
+}
+
 TLabProject::TLabProject(const TLabProject &other) :
     BBase(*new TLabProjectPrivate(this))
 {
@@ -148,6 +155,24 @@ void TLabProject::clear()
 QString TLabProject::mainFileName() const
 {
     return d_func()->mainFile.fileName();
+}
+
+QString TLabProject::mainFileSubdir() const
+{
+    return d_func()->mainFile.subdir();
+}
+
+QString TLabProject::mainFilePath(const QString &path) const
+{
+    if (!isValid())
+        return "";
+    QFileInfo fi(path);
+    if (!fi.isAbsolute() || !fi.isDir())
+        return "";
+    QString p = path + "/";
+    if (!d_func()->mainFile.subdir().isEmpty())
+        p += d_func()->mainFile.subdir() + "/";
+    return p + d_func()->mainFile.fileName();
 }
 
 bool TLabProject::load(const QString &dir, const QString &mainFileName)
@@ -182,6 +207,12 @@ bool TLabProject::load(const QString &dir, const QString &mainFileName)
     return true;
 }
 
+bool TLabProject::load(const QString &mainFilePath)
+{
+    QFileInfo fi(mainFilePath);
+    return load(fi.path(), fi.fileName());
+}
+
 bool TLabProject::save(const QString &dir) const
 {
     if (!isValid() || dir.isEmpty() || !d_func()->mainFile.save(dir))
@@ -190,6 +221,11 @@ bool TLabProject::save(const QString &dir) const
         if (!f.save(dir))
             return false;
     return true;
+}
+
+bool TLabProject::isExecutable() const
+{
+    return d_func()->mainFile.isExecutable();
 }
 
 bool TLabProject::isValid() const

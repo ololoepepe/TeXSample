@@ -8,6 +8,8 @@ class QSignalMapper;
 
 #include "ttagswidget.h"
 
+#include <TeXSampleCore/TeXSampleGlobal>
+
 #include <BeQtGlobal>
 #include <BeQtCore/private/bbase_p.h>
 
@@ -17,7 +19,7 @@ class QSignalMapper;
 ================================ TTagsWidgetPrivate ==========================
 ============================================================================*/
 
-class TTagsWidgetPrivate : public BBasePrivate
+class T_WIDGETS_EXPORT TTagsWidgetPrivate : public BBasePrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TTagsWidget)
