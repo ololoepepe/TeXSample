@@ -4,7 +4,6 @@
 #include "tservice.h"
 #include "tservicelist.h"
 #include "tnamespace.h"
-#include "cimg/CImg.h"
 
 #include <BeQtGlobal>
 #include <BBase>
@@ -28,6 +27,7 @@
 #include <QRegExp>
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <QImage>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_DECLARE_METATYPE(QUuid)
@@ -149,27 +149,14 @@ void TUserInfoPrivate::init()
 
 bool TUserInfo::testAvatar(const QByteArray &data)
 {
-    if (data.isEmpty() || (int) data.size() > Texsample::MaximumAvatarSize)
-        return false;
-    QString path = QDir::tempPath() + "/texsample/userinfo/" + BeQt::pureUuidText(QUuid::createUuid());
-    if (!BDirTools::mkpath(path))
-        return false;
-    QTemporaryFile f(path + "/XXXXXX");
-    bool b = f.open() && f.write(data) == data.size() && testAvatar(f.fileName());
-    BDirTools::rmdir(path);
-    f.remove();
-    return b;
+    QImage img = QImage::fromData(data);
+    return img.height() <= Texsample::MaximumAvatarExtent && img.width() <= Texsample::MaximumAvatarExtent;
 }
 
 bool TUserInfo::testAvatar(const QString &fileName)
 {
-    if (fileName.isEmpty())
-        return false;
-    QFileInfo fi(fileName);
-    if (!fi.isFile() || (int) fi.size() > Texsample::MaximumAvatarSize)
-        return false;
-    cimg_library::CImg<unsigned char> cimg(fileName.toLocal8Bit().constData());
-    return (cimg.height() <= Texsample::MaximumAvatarExtent && cimg.width() <= Texsample::MaximumAvatarExtent);
+    QImage img(fileName);
+    return img.height() <= Texsample::MaximumAvatarExtent && img.width() <= Texsample::MaximumAvatarExtent;
 }
 
 /*============================== Public constructors =======================*/

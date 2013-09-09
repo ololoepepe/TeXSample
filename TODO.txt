@@ -1,6 +1,9 @@
 === PATCH ===
 
-
+[done] Fix avatar testing
+[done] Remove CImg dependency
+[done] Use QtGui
+* Rename CLab to CloudLab (strings only)
 
 === MINOR ===
 
