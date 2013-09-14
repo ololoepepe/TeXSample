@@ -3,7 +3,7 @@ TARGET = TeXSampleCore
 
 CONFIG += release
 
-QT = core concurrent
+QT = core concurrent gui
 BEQT = core
 TSMP =
 
@@ -11,13 +11,7 @@ include(../module.pri)
 
 DEFINES += TSMP_BUILD_CORE_LIB
 
-#CImg defines
-DEFINES += "cimg_file_separator=\\\'/\\\'"
-DEFINES += "cimg_verbosity=0"
-DEFINES += "cimg_display=0"
-
 HEADERS += \
-    cimg/CImg.h \
     taccesslevel.h \
     tclientinfo.h \
     tcompilationresult.h \

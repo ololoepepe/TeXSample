@@ -8,4 +8,5 @@
 
 === MAJOR ===
 
-
+* Rename CLab to CloudLab
+* Remove Clab::MaximumInvitesCount constant

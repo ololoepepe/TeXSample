@@ -516,8 +516,8 @@
         <translation>Нет</translation>
     </message>
     <message>
-        <source>CLab</source>
-        <translation>CLab</translation>
+        <source>CloudLab</source>
+        <translation>CloudLab</translation>
     </message>
 </context>
 <context>

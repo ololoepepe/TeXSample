@@ -83,7 +83,7 @@ void TUserWidgetPrivate::init()
     bool registerMode = TUserWidget::RegisterMode == Mode;
     bool editMode = TUserWidget::EditMode == Mode;
     bool showMode = TUserWidget::ShowMode == Mode;
-    bool updateMode =TUserWidget::UpdateMode == Mode;
+    bool updateMode = TUserWidget::UpdateMode == Mode;
     QVBoxLayout *vlt = new QVBoxLayout(q_func());
       QHBoxLayout *hlt = new QHBoxLayout;
         QFormLayout *flt = new QFormLayout;

@@ -73,7 +73,7 @@ QString TService::serviceToStringNoTr(Service srv)
     case TexsampleService:
         return QT_TRANSLATE_NOOP("TService", "TeXSample");
     case ClabService:
-        return QT_TRANSLATE_NOOP("TService", "CLab");
+        return QT_TRANSLATE_NOOP("TService", "CloudLab");
     case NoService:
     default:
         return QT_TRANSLATE_NOOP("TService", "No");
