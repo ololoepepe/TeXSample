@@ -110,7 +110,7 @@ void TInvitesDialogPrivate::generateInvite()
             flt->addRow(tr("Expiration date:", "lbl text"), dtedt);
             QSpinBox *sbox = new QSpinBox;
               sbox->setMinimum(1);
-              sbox->setMaximum(Texsample::MaximumInvitesCount);
+              sbox->setMaximum(10);
               sbox->setValue(1);
             flt->addRow(tr("Count:", "lbl text"), sbox);
             QMap<TService, QCheckBox *> cboxMap;
@@ -125,7 +125,7 @@ void TInvitesDialogPrivate::generateInvite()
           TListWidget *lstwgt = 0;
           if (clab)
           {
-              QGroupBox *gbox = new QGroupBox(tr("CLab groups", "gbox title"));
+              QGroupBox *gbox = new QGroupBox(tr("CloudLab groups", "gbox title"));
                 QHBoxLayout *hlt = new QHBoxLayout(gbox);
                   lstwgt = new TListWidget;
                     lstwgt->setButtonsVisible(true);

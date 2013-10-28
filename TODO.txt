@@ -4,9 +4,11 @@
 
 === MINOR ===
 
-
+* Add access level info to invites generation dialog
 
 === MAJOR ===
 
 * Rename CLab to CloudLab
 * Remove Clab::MaximumInvitesCount constant
+* Replace NoSuchUser message with InvalidLoginOrPassword message
+* Make maximum invites count modifiable
