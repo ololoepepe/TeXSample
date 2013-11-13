@@ -88,11 +88,6 @@
         <translation>Доступ к</translation>
     </message>
     <message>
-        <source>CLab groups</source>
-        <comment>gbox title</comment>
-        <translation>Группы CLab</translation>
-    </message>
-    <message>
         <source>Generating invites failed</source>
         <comment>msgbox windowTitle</comment>
         <translation>Генерирование инвайтов не удалось</translation>
@@ -116,6 +111,11 @@
         <source>Failed to update invites list. The following error occured:</source>
         <comment>msgbox text</comment>
         <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>CloudLab groups</source>
+        <comment>gbox title</comment>
+        <translation>Группы CloudLab</translation>
     </message>
 </context>
 <context>
@@ -626,9 +626,9 @@
         <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
     </message>
     <message>
-        <source>CLab groups</source>
+        <source>CloudLab groups</source>
         <comment>gbox title</comment>
-        <translation>Группы CLab</translation>
+        <translation>Группы CloudLab</translation>
     </message>
 </context>
 </TS>

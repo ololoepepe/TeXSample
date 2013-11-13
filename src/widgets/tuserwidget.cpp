@@ -165,7 +165,7 @@ void TUserWidgetPrivate::init()
           vltw->addLayout(flt);
         hlt->addLayout(vltw);
       vlt->addLayout(hlt);
-      gboxClab = new QGroupBox(tr("CLab groups", "gbox title"));
+      gboxClab = new QGroupBox(tr("CloudLab groups", "gbox title"));
         gboxClab->setVisible(false);
         hlt = new QHBoxLayout(gboxClab);
           lstwgtClab = new TListWidget;
