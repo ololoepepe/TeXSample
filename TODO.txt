@@ -5,6 +5,7 @@
 === MINOR ===
 
 * Add access level info to invites generation dialog
+* Add extra attached files information to lab dialog
 
 === MAJOR ===
 
@@ -12,3 +13,4 @@
 * Remove Clab::MaximumInvitesCount constant
 * Replace NoSuchUser message with InvalidLoginOrPassword message
 * Make maximum invites count modifiable
+* Fix QUuid serialization (store as QByteArray)

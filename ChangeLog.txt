@@ -1,3 +1,6 @@
+=== TeXSample 1.0.2 (13 November 2013) ===
+    * Rename CLab to CloudLab
+
 === TeXSample 1.0.1 (14 September 2013) ===
     * Fix avatar testing
     * Remove CImg dependency
