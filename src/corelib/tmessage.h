@@ -67,6 +67,8 @@ public:
         NotOwnSampleError,
         NotOwnLabError,
         NotModifiableSampleError,
+        InvalidFileNameError,
+        NoSuchFileError,
         //Client errors
         ClientOperationCanceledError,
         ClientConnectionTimeoutError,
@@ -81,6 +83,7 @@ public:
         FailedToStartServerError,
         InvalidCommandArgumentsError,
         //Other errors
+        UnknownApplicationError,
         UnknownError
     };
 public:

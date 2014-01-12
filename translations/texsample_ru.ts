@@ -363,6 +363,14 @@
         <source>Invalid arguments</source>
         <translation>Недействительные параметры</translation>
     </message>
+    <message>
+        <source>Unknown application</source>
+        <translation>Неизвестное приложение</translation>
+    </message>
+    <message>
+        <source>No such file</source>
+        <translation>Нет такого файла</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryDialogPrivate</name>

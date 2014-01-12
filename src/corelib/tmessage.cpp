@@ -150,6 +150,10 @@ QString TMessage::messageToStringNoTr(int msg)
         return QT_TRANSLATE_NOOP("TMessage", "This is not your lab");
     case NotModifiableSampleError:
         return QT_TRANSLATE_NOOP("TMessage", "The sample is not modifiable");
+    case InvalidFileNameError:
+        return QT_TRANSLATE_NOOP("TMessage", "Invalid file name");
+    case NoSuchFileError:
+        return QT_TRANSLATE_NOOP("TMessage", "No such file");
     //Client errors
     case ClientOperationCanceledError:
         return QT_TRANSLATE_NOOP("TMessage", "The operation was canceled");
@@ -175,6 +179,8 @@ QString TMessage::messageToStringNoTr(int msg)
     case InvalidCommandArgumentsError:
         return QT_TRANSLATE_NOOP("TMessage", "Invalid arguments");
     //Other errors
+    case UnknownApplicationError:
+        return QT_TRANSLATE_NOOP("TMessage", "Unknown application");
     case UnknownError:
         return QT_TRANSLATE_NOOP("TMessage", "Unknown error occured");
     case NoMessage:

@@ -1,3 +1,14 @@
+=== TeXSample 1.1.0 (12 January 2014) ===
+    * Update copyright years
+    * Update README
+    * Add extra attached files information to TLabInfo
+    * Add TeXSample::GetLabExtraAttachedFileRequest operation
+    * Add TeXSample::GetLatestAppVersionRequest operation
+    * Add TeXSample::NotifyRequest operation
+    * Use BeQt 3.1.0
+    * Use BPasswordGroup class
+    * Add e-mail confirmation field to TUserWidget in registration mode (use BEditGroup class)
+
 === TeXSample 1.0.2 (13 November 2013) ===
     * Rename CLab to CloudLab
 

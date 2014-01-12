@@ -49,7 +49,6 @@ public:
     quint8 rating;
     QDateTime creationDT;
     QDateTime updateDT;
-    QStringList extraFiles;
 private:
     Q_DISABLE_COPY(TSampleInfoPrivate)
 };
@@ -204,14 +203,12 @@ void TSampleInfo::setContext(int c, bool clear)
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
         d->size = 0;
-        d->extraFiles.clear();
         break;
     case EditContext:
         d->sender.clear();
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
         d->size = 0;
-        d->extraFiles.clear();
         break;
     case UpdateContext:
         d->sender.clear();
@@ -221,7 +218,6 @@ void TSampleInfo::setContext(int c, bool clear)
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
         d->size = 0;
-        d->extraFiles.clear();
         break;
     case GeneralContext:
     default:
@@ -301,11 +297,6 @@ void TSampleInfo::setCreationDateTime(const QDateTime &dt)
 void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
 {
     d_func()->updateDT = dt.toUTC();
-}
-
-void TSampleInfo::setExtraAttachedFileNames(const QStringList &list)
-{
-    d_func()->extraFiles = list;
 }
 
 TSampleInfo::Context TSampleInfo::context() const
@@ -418,11 +409,6 @@ QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
     return d_func()->updateDT.toTimeSpec(spec);
 }
 
-QStringList TSampleInfo::extraAttachedFileNames() const
-{
-    return d_func()->extraFiles;
-}
-
 bool TSampleInfo::isValid(Context c) const
 {
     const B_D(TSampleInfo);
@@ -461,7 +447,6 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->rating = dd->rating;
     d->creationDT = dd->creationDT;
     d->updateDT = dd->updateDT;
-    d->extraFiles = dd->extraFiles;
     return *this;
 }
 
@@ -483,7 +468,7 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
         return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
                 && d->type == dd->type && d->fileName == dd->fileName && d->size == dd->size && d->tags == dd->tags
                 && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
-                && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT && d->extraFiles == dd->extraFiles;
+                && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT;
     }
 }
 
@@ -525,7 +510,6 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
         m.insert("creation_dt", d->creationDT);
         m.insert("update_dt", d->updateDT);
         m.insert("size", d->size);
-        m.insert("extra_file_names", d->extraFiles);
     }
     stream << m;
     return stream;
@@ -550,7 +534,6 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     d->rating = m.value("rating").toUInt();
     d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
     d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
-    d->extraFiles = m.value("extra_file_names").toStringList();
     return stream;
 }
 

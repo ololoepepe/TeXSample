@@ -1,18 +1,10 @@
 === PATCH ===
 
-[done] Update copyright years
-[done] Update README
+
 
 === MINOR ===
 
-[done] Add extra attached files information to TSampleInfo
-[done] Add extra attached files information to TLabInfo
-[done] Add TeXSample::GetSampleExtraAttachedFileRequest operation
-[done] Add TeXSample::GetLabExtraAttachedFileRequest operation
-[done] Add TeXSample::GetLatestAppVersionRequest operation
-[done] Use BeQt 3.1.0
-[done] Use BPasswordGroup class
-[done] Add e-mail confirmation field to TUserWidget in registration mode (use BEditGroup class)
+
 
 === MAJOR ===
 
