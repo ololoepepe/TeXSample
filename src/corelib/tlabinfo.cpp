@@ -46,6 +46,7 @@ public:
     QString comment;
     QDateTime creationDT;
     QDateTime updateDT;
+    QStringList extraFiles;
 private:
     Q_DISABLE_COPY(TLabInfoPrivate)
 };
@@ -208,12 +209,14 @@ void TLabInfo::setContext(int c, bool clear)
         d->size = 0;
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
+        d->extraFiles.clear();
         break;
     case EditContext:
         d->sender.clear();
         d->size = 0;
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
+        d->extraFiles.clear();
         break;
     case GeneralContext:
     default:
@@ -282,6 +285,11 @@ void TLabInfo::setCreationDateTime(const QDateTime &dt)
 void TLabInfo::setUpdateDateTime(const QDateTime &dt)
 {
     d_func()->updateDT = dt.toUTC();
+}
+
+void TLabInfo::setExtraAttachedFileNames(const QStringList &list)
+{
+    d_func()->extraFiles = list;
 }
 
 TLabInfo::Context TLabInfo::context() const
@@ -378,6 +386,11 @@ QDateTime TLabInfo::updateDateTime(Qt::TimeSpec spec) const
     return d_func()->updateDT.toTimeSpec(spec);
 }
 
+QStringList TLabInfo::extraAttachedFileNames() const
+{
+    return d_func()->extraFiles;
+}
+
 bool TLabInfo::isValid(Context c) const
 {
     const B_D(TLabInfo);
@@ -413,6 +426,7 @@ TLabInfo &TLabInfo::operator =(const TLabInfo &other)
     d->comment = dd->comment;
     d->creationDT = dd->creationDT;
     d->updateDT = dd->updateDT;
+    d->extraFiles = dd->extraFiles;
     return *this;
 }
 
@@ -432,7 +446,8 @@ bool TLabInfo::operator ==(const TLabInfo &other) const
     default:
         return d->id == dd->id && d->sender == dd->sender && d->title == dd->title && d->authors == dd->authors
                 && d->type == dd->type &&d->groups == dd->groups && d->size == dd->size && d->tags == dd->tags
-                && d->comment == dd->comment && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT;
+                && d->comment == dd->comment && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT
+                && d->extraFiles == dd->extraFiles;
     }
 }
 
@@ -469,6 +484,7 @@ QDataStream &operator <<(QDataStream &stream, const TLabInfo &info)
     {
         m.insert("creation_dt", d->creationDT);
         m.insert("update_dt", d->updateDT);
+        m.insert("extra_file_names", d->extraFiles);
     }
     stream << m;
     return stream;
@@ -491,6 +507,7 @@ QDataStream &operator >>(QDataStream &stream, TLabInfo &info)
     info.setType(m.value("type").toInt());
     d->creationDT = m.value("creation_dt").toDateTime().toUTC();
     d->updateDT = m.value("update_dt").toDateTime().toUTC();
+    d->extraFiles = m.value("extra_file_names").toStringList();
     return stream;
 }
 

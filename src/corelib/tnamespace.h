@@ -18,12 +18,13 @@ const quint8 MaximumInvitesCount = 3;
 
 //Requests
 const QString RegisterRequest = "register";
+const QString GetRecoveryCodeRequest = "get_recovery_code";
+const QString RecoverAccountRequest = "recover_account";
+const QString GetLatestAppVersionRequest = "get_latest_version";
 const QString AuthorizeRequest = "authorize";
 const QString AddUserRequest = "add_user";
 const QString EditUserRequest = "edit_user";
 const QString UpdateAccountRequest = "update_account";
-const QString GetRecoveryCodeRequest = "get_recovery_code";
-const QString RecoverAccountRequest = "recover_account";
 const QString GetUserInfoRequest = "get_user_info";
 const QString GenerateInvitesRequest = "generate_invites";
 const QString GetInvitesListRequest = "get_invites_list";
@@ -36,6 +37,7 @@ const QString UserRequest = "user";
 
 const QString LogRequest = "log";
 const QString MessageRequest = "message";
+const QString NotifyRequest = "notify";
 
 //TeXSample requests
 const QString AddSampleRequest = "add_sample";
@@ -55,6 +57,7 @@ const QString EditLabRequest = "edit_lab";
 const QString DeleteLabRequest = "delete_lab";
 const QString GetLabRequest = "get_lab";
 const QString GetLabsListRequest = "get_labs_list";
+const QString GetLabExtraAttachedFileRequest = "get_lab_extra_attached_file";
 
 }
 

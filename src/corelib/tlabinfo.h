@@ -70,6 +70,7 @@ public:
     void setComment(const QString &s);
     void setCreationDateTime(const QDateTime &dt);
     void setUpdateDateTime(const QDateTime &dt);
+    void setExtraAttachedFileNames(const QStringList &list);
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
@@ -88,6 +89,7 @@ public:
     QString comment() const;
     QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
     QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
+    QStringList extraAttachedFileNames() const;
     bool isValid(Context c = CurrentContext) const;
 public:
     TLabInfo &operator =(const TLabInfo &other);
