@@ -5,6 +5,8 @@ class TListWidget;
 
 class BPasswordWidget;
 class BInputField;
+class BPasswordGroup;
+class BEditGroup;
 
 class QLineEdit;
 class QComboBox;
@@ -55,10 +57,14 @@ public:
     QByteArray avatar;
     QLineEdit *ledtInvite;
     BInputField *inputInvite;
+    BEditGroup *edtgrpEmail;
     QLineEdit *ledtEmail;
     BInputField *inputEmail;
+    QLineEdit *ledtEmail2;
+    BInputField *inputEmail2;
     QLineEdit *ledtLogin;
     BInputField *inputLogin;
+    BPasswordGroup *pwdgrp;
     BPasswordWidget *pwdwgt1;
     BInputField *inputPwd1;
     BPasswordWidget *pwdwgt2;

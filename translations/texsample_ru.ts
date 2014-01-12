@@ -630,5 +630,10 @@
         <comment>gbox title</comment>
         <translation>Группы CloudLab</translation>
     </message>
+    <message>
+        <source>E-mail confirmation:</source>
+        <comment>lbl text</comment>
+        <translation>Подтверждение эл. почты:</translation>
+    </message>
 </context>
 </TS>

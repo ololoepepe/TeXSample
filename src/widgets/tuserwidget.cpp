@@ -19,6 +19,8 @@
 #include <BTextTools>
 #include <BInputField>
 #include <BApplication>
+#include <BPasswordGroup>
+#include <BEditGroup>
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -94,12 +96,22 @@ void TUserWidgetPrivate::init()
             inputInvite = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputInvite->addWidget(ledtInvite);
           flt->addRow(tr("Invite:", "lbl text"), inputInvite);
+          edtgrpEmail = new BEditGroup(this);
           ledtEmail = new QLineEdit;
             ledtEmail->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
             connect(ledtEmail, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
             inputEmail = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputEmail->addWidget(ledtEmail);
+            edtgrpEmail->addEdit(ledtEmail);
           flt->addRow(tr("E-mail:", "lbl text"), inputEmail);
+          ledtEmail2 = new QLineEdit;
+            ledtEmail2->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
+            connect(ledtEmail2, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
+            inputEmail2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
+            inputEmail2->addWidget(ledtEmail2);
+            edtgrpEmail->addEdit(ledtEmail2);
+            connect(edtgrpEmail, SIGNAL(textsMatchChanged(bool)), inputEmail2, SLOT(setValid(bool)));
+          flt->addRow(tr("E-mail confirmation:", "lbl text"), inputEmail2);
           ledtLogin = new QLineEdit;
             ledtLogin->setMaxLength(20);
             ledtLogin->setReadOnly(!addMode && !registerMode);
@@ -107,23 +119,24 @@ void TUserWidgetPrivate::init()
             inputLogin = new BInputField((showMode || updateMode) ? BInputField::ShowNever : BInputField::ShowAlways);
             inputLogin->addWidget(ledtLogin);
           flt->addRow(tr("Login:", "lbl text"), inputLogin);
+          pwdgrp = new BPasswordGroup(this);
           pwdwgt1 = new BPasswordWidget;
-            pwdwgt1->setMode(BPassword::AlwaysEncryptedMode);
             pwdwgt1->setSavePasswordVisible(false);
             pwdwgt1->setShowPasswordVisible(false);
             pwdwgt1->setGeneratePasswordVisible(true);
             connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
             inputPwd1 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputPwd1->addWidget(pwdwgt1);
+            pwdgrp->addPasswordWidget(pwdwgt1);
           flt->addRow(tr("Password:", "lbl text"), inputPwd1);
           pwdwgt2 = new BPasswordWidget;
-            pwdwgt2->setMode(BPassword::AlwaysEncryptedMode);
             pwdwgt2->setSavePasswordVisible(false);
             connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
             connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
             connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
             inputPwd2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputPwd2->addWidget(pwdwgt2);
+            pwdgrp->addPasswordWidget(pwdwgt2);
           flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
           cmboxAccessLevel = new QComboBox;
             cmboxAccessLevel->setEnabled(addMode || editMode);
@@ -182,6 +195,8 @@ void TUserWidgetPrivate::init()
     foreach (QCheckBox *cbox, cboxMap)
         BApplication::setRowVisible(cbox, !registerMode);
     checkInputs();
+    connect(edtgrpEmail, SIGNAL(textsMatchChanged(bool)), this, SLOT(checkInputs()));
+    connect(pwdgrp, SIGNAL(passwordsMatchChanged(bool)), this, SLOT(checkInputs()));
 }
 
 /*============================== Private slots =============================*/
@@ -217,9 +232,8 @@ void TUserWidgetPrivate::checkInputs()
     inputEmail->setValid(!ledtEmail->text().isEmpty() && ledtEmail->hasAcceptableInput());
     inputLogin->setValid(!ledtLogin->text().isEmpty() && ledtLogin->hasAcceptableInput());
     inputPwd1->setValid(!pwdwgt1->encryptedPassword().isEmpty());
-    bool pwdm = pwdwgt1->encryptedPassword() == pwdwgt2->encryptedPassword();
-    inputPwd2->setValid(inputPwd1->isValid() && pwdm);
-    bool v = q_func()->info().isValid() && (TUserWidget::ShowMode == Mode || pwdm);
+    inputPwd2->setValid(inputPwd1->isValid() && pwdgrp->passwordsMatch());
+    bool v = q_func()->info().isValid() && (TUserWidget::ShowMode == Mode || pwdgrp->passwordsMatch());
     if (TUserWidget::RegisterMode == Mode)
         v = v && !BeQt::uuidFromText(ledtInvite->text()).isNull();
     if (v == valid)
@@ -403,10 +417,10 @@ TUserInfo TUserWidget::info() const
     info.setId(d->id);
     if (d->ledtInvite->hasAcceptableInput())
         info.setInviteCode(d->ledtInvite->text());
-    if (d->ledtEmail->hasAcceptableInput())
+    if (d->ledtEmail->hasAcceptableInput() && d->edtgrpEmail->textsMatch())
         info.setEmail(d->ledtEmail->text());
     info.setLogin(d->ledtLogin->text());
-    if (d->pwdwgt1->encryptedPassword() == d->pwdwgt2->encryptedPassword())
+    if (!d->pwdwgt1->encryptedPassword().isEmpty() && d->pwdgrp->passwordsMatch())
         info.setPassword(d->pwdwgt1->encryptedPassword());
     info.setAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
     TServiceList list;

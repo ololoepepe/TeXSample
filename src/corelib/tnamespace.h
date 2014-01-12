@@ -33,6 +33,9 @@ const QString StartServerRequest = "start_server";
 const QString StopServerRequest = "stop_server";
 const QString UptimeRequest = "uptime";
 const QString UserRequest = "user";
+const QString GetSampleExtraAttachedFileRequest = "get_sample_extra_attached_file";
+const QString GetLabExtraAttachedFileRequest = "get_lab_extra_attached_file";
+const QString GetLatestAppVersionRequest = "get_latest_version";
 
 const QString LogRequest = "log";
 const QString MessageRequest = "message";
