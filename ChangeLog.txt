@@ -1,3 +1,6 @@
+=== TeXSample 1.1.1 (13 January 2014) ===
+    * Fix TUserWidget
+
 === TeXSample 1.1.0 (12 January 2014) ===
     * Update copyright years
     * Update README
