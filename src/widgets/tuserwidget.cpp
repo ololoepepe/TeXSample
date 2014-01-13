@@ -189,6 +189,7 @@ void TUserWidgetPrivate::init()
     //
     BApplication::setRowVisible(inputInvite, registerMode);
     BApplication::setRowVisible(inputEmail, addMode || registerMode);
+    BApplication::setRowVisible(inputEmail2, addMode || registerMode);
     BApplication::setRowVisible(inputPwd1, !editMode && !showMode);
     BApplication::setRowVisible(inputPwd2, !editMode && !showMode);
     BApplication::setRowVisible(cmboxAccessLevel, !registerMode);
