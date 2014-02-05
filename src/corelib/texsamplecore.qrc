@@ -16,5 +16,7 @@
         <file>icons/1uparrow.svgz</file>
         <file>icons/editclear.png</file>
         <file>icons/editclear.svgz</file>
+        <file>icons/network.png</file>
+        <file>icons/network.svgz</file>
     </qresource>
 </RCC>

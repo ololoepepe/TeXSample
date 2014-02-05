@@ -8,6 +8,7 @@
 #include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TService>
 #include <TeXSampleCore/TServiceList>
+#include <TeXSampleCore/TOperationResult>
 
 #include <BBase>
 #include <BeQtGlobal>
@@ -55,6 +56,8 @@
 #include <QUuid>
 #include <QStringList>
 #include <QGroupBox>
+#include <QMessageBox>
+#include <QToolTip>
 
 #include <QDebug>
 
@@ -64,8 +67,9 @@
 
 /*============================== Public constructors =======================*/
 
-TUserWidgetPrivate::TUserWidgetPrivate(TUserWidget *q, TUserWidget::Mode m) :
-    BBasePrivate(q), Mode(m)
+TUserWidgetPrivate::TUserWidgetPrivate(TUserWidget *q, TUserWidget::Mode m, TUserWidget::CheckEmailFunction chkmf,
+                                       TUserWidget::CheckLoginFunction chklf) :
+    BBasePrivate(q), Mode(m), CheckEmailFunction(chkmf), CheckLoginFunction(chklf)
 {
     //
 }
@@ -103,6 +107,18 @@ void TUserWidgetPrivate::init()
             inputEmail = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputEmail->addWidget(ledtEmail);
             edtgrpEmail->addEdit(ledtEmail);
+            if (registerMode)
+            {
+                tbtnCheckEmail = new QToolButton;
+                  tbtnCheckEmail->setToolTip(tr("Check e-mail", "tbtn toolTip"));
+                  tbtnCheckEmail->setIcon(BApplication::icon("network"));
+                  connect(tbtnCheckEmail, SIGNAL(clicked()), this, SLOT(checkEmail()));
+                inputEmail->addWidget(tbtnCheckEmail);
+            }
+            else
+            {
+                tbtnCheckEmail = 0;
+            }
           flt->addRow(tr("E-mail:", "lbl text"), inputEmail);
           ledtEmail2 = new QLineEdit;
             ledtEmail2->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
@@ -110,7 +126,6 @@ void TUserWidgetPrivate::init()
             inputEmail2 = new BInputField(showMode ? BInputField::ShowNever : BInputField::ShowAlways);
             inputEmail2->addWidget(ledtEmail2);
             edtgrpEmail->addEdit(ledtEmail2);
-            connect(edtgrpEmail, SIGNAL(textsMatchChanged(bool)), inputEmail2, SLOT(setValid(bool)));
           flt->addRow(tr("E-mail confirmation:", "lbl text"), inputEmail2);
           ledtLogin = new QLineEdit;
             ledtLogin->setMaxLength(20);
@@ -118,6 +133,18 @@ void TUserWidgetPrivate::init()
             connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
             inputLogin = new BInputField((showMode || updateMode) ? BInputField::ShowNever : BInputField::ShowAlways);
             inputLogin->addWidget(ledtLogin);
+            if (registerMode)
+            {
+                tbtnCheckLogin = new QToolButton;
+                  tbtnCheckLogin->setToolTip(tr("Check login", "tbtn toolTip"));
+                  tbtnCheckLogin->setIcon(BApplication::icon("network"));
+                  connect(tbtnCheckLogin, SIGNAL(clicked()), this, SLOT(checkLogin()));
+                inputLogin->addWidget(tbtnCheckLogin);
+            }
+            else
+            {
+                tbtnCheckLogin = 0;
+            }
           flt->addRow(tr("Login:", "lbl text"), inputLogin);
           pwdgrp = new BPasswordGroup(this);
           pwdwgt1 = new BPasswordWidget;
@@ -229,9 +256,17 @@ void TUserWidgetPrivate::resetAvatar(const QByteArray &data)
 
 void TUserWidgetPrivate::checkInputs()
 {
+    if (tbtnCheckEmail)
+        tbtnCheckEmail->setEnabled(CheckEmailFunction && !ledtEmail->text().isEmpty()
+                                   && ledtEmail->hasAcceptableInput());
+    if (tbtnCheckLogin)
+        tbtnCheckLogin->setEnabled(CheckLoginFunction && !ledtLogin->text().isEmpty());
     inputInvite->setValid(!ledtInvite->text().isEmpty() && ledtInvite->hasAcceptableInput());
-    inputEmail->setValid(!ledtEmail->text().isEmpty() && ledtEmail->hasAcceptableInput());
-    inputLogin->setValid(!ledtLogin->text().isEmpty() && ledtLogin->hasAcceptableInput());
+    inputEmail->setValid(!ledtEmail->text().isEmpty() && ledtEmail->hasAcceptableInput()
+                         && !occupiedEmails.contains(ledtEmail->text()));
+    inputEmail2->setValid(inputEmail->isValid() && edtgrpEmail->textsMatch());
+    inputLogin->setValid(!ledtLogin->text().isEmpty() && ledtLogin->hasAcceptableInput()
+                         && !occupiedLogins.contains(ledtLogin->text()));
     inputPwd1->setValid(!pwdwgt1->encryptedPassword().isEmpty());
     inputPwd2->setValid(inputPwd1->isValid() && pwdgrp->passwordsMatch());
     bool v = q_func()->info().isValid() && (TUserWidget::ShowMode == Mode || pwdgrp->passwordsMatch());
@@ -302,6 +337,70 @@ void TUserWidgetPrivate::tbtnAvatarClicked()
     }
 }
 
+void TUserWidgetPrivate::checkEmail()
+{
+    if (!CheckEmailFunction)
+        return;
+    bool b = false;
+    QString email = ledtEmail->text();
+    TOperationResult r = CheckEmailFunction(email, b, q_func());
+    if (!r)
+    {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Checking e-mail failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to check e-mail. The following error occured:", "msgbox text"));
+        msg.setInformativeText(r.messageString());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    QPoint p = inputEmail->mapToGlobal(tbtnCheckEmail->pos()) + QPoint(tbtnCheckEmail->width(), 0);
+    if (b)
+    {
+        QToolTip::showText(p, tr("The e-mail is free", "toolTip"), tbtnCheckEmail);
+    }
+    else
+    {
+        occupiedEmails.insert(email);
+        checkInputs();
+        QToolTip::showText(p, tr("The e-mail is occupied", "toolTip"), tbtnCheckEmail);
+    }
+}
+
+void TUserWidgetPrivate::checkLogin()
+{
+    if (!CheckLoginFunction)
+        return;
+    bool b = false;
+    QString login = ledtLogin->text();
+    TOperationResult r = CheckLoginFunction(login, b, q_func());
+    if (!r)
+    {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Checking login failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to check login. The following error occured:", "msgbox text"));
+        msg.setInformativeText(r.messageString());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    QPoint p = inputLogin->mapToGlobal(tbtnCheckLogin->pos()) + QPoint(tbtnCheckLogin->width(), 0);
+    if (b)
+    {
+        QToolTip::showText(p, tr("The login is free", "toolTip"), tbtnCheckLogin);
+    }
+    else
+    {
+        occupiedLogins.insert(login);
+        checkInputs();
+        QToolTip::showText(p, tr("The login is occupied", "toolTip"), tbtnCheckLogin);
+    }
+}
+
 /*============================================================================
 ================================ TUserWidget =================================
 ============================================================================*/
@@ -310,6 +409,12 @@ void TUserWidgetPrivate::tbtnAvatarClicked()
 
 TUserWidget::TUserWidget(Mode m, QWidget *parent) :
     QWidget(parent), BBase(*new TUserWidgetPrivate(this, m))
+{
+    d_func()->init();
+}
+
+TUserWidget::TUserWidget(CheckEmailFunction chkmf, CheckLoginFunction chklf, QWidget *parent) :
+    QWidget(parent), BBase(*new TUserWidgetPrivate(this, RegisterMode, chkmf, chklf))
 {
     d_func()->init();
 }

@@ -643,5 +643,55 @@
         <comment>lbl text</comment>
         <translation>Подтверждение эл. почты:</translation>
     </message>
+    <message>
+        <source>Check e-mail</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Проверить адрес эл. почты</translation>
+    </message>
+    <message>
+        <source>Check login</source>
+        <comment>tbtn toolTip</comment>
+        <translation>Проверить логин</translation>
+    </message>
+    <message>
+        <source>Checking e-mail failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Проверка адреса эл. почты не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check e-mail. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось проверить адрес эл. почты. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The e-mail is free</source>
+        <comment>toolTip</comment>
+        <translation>Этот адрес эл. почты свободен</translation>
+    </message>
+    <message>
+        <source>The e-mail is occupied</source>
+        <comment>toolTip</comment>
+        <translation>Этот адрес эл. почты занят</translation>
+    </message>
+    <message>
+        <source>Checking login failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Проверка логина не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check login. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось проверить логин. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The login is free</source>
+        <comment>toolTip</comment>
+        <translation>Этот логин свободен</translation>
+    </message>
+    <message>
+        <source>The login is occupied</source>
+        <comment>toolTip</comment>
+        <translation>Этот логин занят</translation>
+    </message>
 </context>
 </TS>

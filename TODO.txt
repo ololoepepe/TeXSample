@@ -14,3 +14,4 @@
 * Make maximum invites count modifiable
 * Fix QUuid serialization
 * Add access level info to invites generation dialog
+* Rename requests into operations

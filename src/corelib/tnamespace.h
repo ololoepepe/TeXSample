@@ -17,6 +17,8 @@ const int MaximumAvatarExtent = 2048;
 const quint8 MaximumInvitesCount = 3;
 
 //Requests
+const QString CheckEmailRequest = "check_email";
+const QString CheckLoginRequest = "check_login";
 const QString RegisterRequest = "register";
 const QString GetRecoveryCodeRequest = "get_recovery_code";
 const QString RecoverAccountRequest = "recover_account";
@@ -34,6 +36,7 @@ const QString StartServerRequest = "start_server";
 const QString StopServerRequest = "stop_server";
 const QString UptimeRequest = "uptime";
 const QString UserRequest = "user";
+const QString SetLatestAppVersionRequest = "set_latest_app_version";
 
 const QString LogRequest = "log";
 const QString MessageRequest = "message";
