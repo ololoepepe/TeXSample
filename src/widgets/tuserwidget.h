@@ -4,11 +4,13 @@
 class TUserWidgetPrivate;
 class TUserInfo;
 class TServiceList;
+class TOperationResult;
 
 class BPassword;
 
 class QByteArray;
 class QStringList;
+class QString;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 #include <TeXSampleCore/TService>
@@ -36,7 +38,11 @@ public:
         ShowMode
     };
 public:
+    typedef TOperationResult (*CheckEmailFunction)(const QString &, bool &, QWidget *parent);
+    typedef TOperationResult (*CheckLoginFunction)(const QString &, bool &, QWidget *parent);
+public:
     explicit TUserWidget(Mode m, QWidget *parent = 0);
+    explicit TUserWidget(CheckEmailFunction chkmf, CheckLoginFunction chklf, QWidget *parent = 0);
     ~TUserWidget();
 public:
     void setAvailableServices(const TServiceList &list);
