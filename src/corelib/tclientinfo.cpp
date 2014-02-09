@@ -36,6 +36,7 @@ public:
     QLocale locale;
     QString client;
     BVersion clientVersion;
+    bool portable;
     BVersion texsampleVersion;
     BVersion beqtVersion;
     BVersion qtVersion;
@@ -65,6 +66,7 @@ TClientInfoPrivate::~TClientInfoPrivate()
 void TClientInfoPrivate::init()
 {
     locale = QLocale("en");
+    portable = false;
 }
 
 /*============================================================================
@@ -82,6 +84,7 @@ TClientInfo TClientInfo::createInfo()
     d->locale = BCoreApplication::locale();
     d->client = QCoreApplication::applicationName();
     d->clientVersion = BVersion(QCoreApplication::applicationVersion());
+    d->portable = BCoreApplication::isPortable();
     d->texsampleVersion = BVersion(tVersion());
     d->beqtVersion = BVersion(bVersion());
     d->qtVersion = BVersion(qVersion());
@@ -135,6 +138,11 @@ BVersion TClientInfo::clientVersion() const
     return d_func()->clientVersion;
 }
 
+bool TClientInfo::isClientPortable() const
+{
+    return d_func()->portable;
+}
+
 BVersion TClientInfo::texsampleVersion() const
 {
     return d_func()->texsampleVersion;
@@ -152,16 +160,17 @@ BVersion TClientInfo::qtVersion() const
 
 QString TClientInfo::toString(const QString &format) const
 {
-    //%o - OS, %l - locale, %c - client, %v - client version
+    //%o - OS, %l - locale, %c - client, %v - client version, %p - client portability
     //%t - texsample version, %b - BeQt version, %q - Qt version
     const B_D(TClientInfo);
     QString f = format;
     if (f.isEmpty())
-        f = "%o [%l]\n%c v%v; TeXSample v%t; BeQt v%b; Qt v%q";
+        f = "%o [%l]\n%c v%v (%p); TeXSample v%t; BeQt v%b; Qt v%q";
     f.replace("%o", d->os);
     f.replace("%l", d->locale.name());
     f.replace("%c", d->client);
     f.replace("%v", d->clientVersion);
+    f.replace("%p", d->portable ? "portable" : "non-portable");
     f.replace("%t", d->texsampleVersion);
     f.replace("%b", d->beqtVersion);
     f.replace("%q", d->qtVersion);
@@ -186,6 +195,7 @@ TClientInfo &TClientInfo::operator =(const TClientInfo &other)
     d->locale = dd->locale;
     d->client = dd->client;
     d->clientVersion = dd->clientVersion;
+    d->portable = dd->portable;
     d->texsampleVersion = dd->texsampleVersion;
     d->beqtVersion = dd->beqtVersion;
     d->qtVersion = dd->qtVersion;
@@ -197,8 +207,9 @@ bool TClientInfo::operator ==(const TClientInfo &other) const
     const B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
     return d->os == dd->os && d->osType == dd->osType && d->locale == dd->locale && d->client == dd->client
-            && d->clientVersion == dd->clientVersion && d->texsampleVersion == dd->texsampleVersion
-            && d->beqtVersion == dd->beqtVersion && d->qtVersion == dd->qtVersion;
+            && d->clientVersion == dd->clientVersion && d->portable == dd->portable
+            && d->texsampleVersion == dd->texsampleVersion && d->beqtVersion == dd->beqtVersion
+            && d->qtVersion == dd->qtVersion;
 }
 
 TClientInfo::operator QVariant() const
@@ -217,6 +228,7 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
     m.insert("locale", d->locale);
     m.insert("client", d->client);
     m.insert("client_v", d->clientVersion);
+    m.insert("portable", d->portable);
     m.insert("texsample_v", d->texsampleVersion);
     m.insert("beqt_v", d->beqtVersion);
     m.insert("qt_v", d->qtVersion);
@@ -236,6 +248,7 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
     d->locale = m.value("locale").toLocale();
     d->client = m.value("client").toString();
     d->clientVersion = m.value("client_v").value<BVersion>();
+    d->portable = m.value("portable").toBool();
     d->texsampleVersion = m.value("texsample_v").value<BVersion>();
     d->beqtVersion = m.value("beqt_v").value<BVersion>();
     d->qtVersion = m.value("qt_v").value<BVersion>();
@@ -244,6 +257,6 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
 
 QDebug operator <<(QDebug dbg, const TClientInfo &info)
 {
-    dbg.nospace() << "TClientInfo(" << info.toString("%o,%l,%c,%v,%t,%b,%q") << ")";
+    dbg.nospace() << "TClientInfo(" << info.toString("%o,%l,%c,%v,%p,%t,%b,%q") << ")";
     return dbg.space();
 }
