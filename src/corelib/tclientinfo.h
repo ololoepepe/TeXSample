@@ -40,11 +40,12 @@ public:
     QLocale locale() const;
     QString client() const;
     BVersion clientVersion() const;
+    bool isClientPortable() const;
     BVersion texsampleVersion() const;
     BVersion beqtVersion() const;
     BVersion qtVersion() const;
     QString toString(const QString &format = "") const;
-    //%o - OS, %l - locale, %c - client, %v - client version
+    //%o - OS, %l - locale, %c - client, %v - client version, %p - client portability
     //%t - texsample version, %b - BeQt version, %q - Qt version
     bool isValid() const;
 public:
