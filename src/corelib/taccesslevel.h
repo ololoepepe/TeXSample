@@ -43,6 +43,7 @@ public:
     TAccessLevel(const TAccessLevel &other);
     ~TAccessLevel();
 public:
+    bool isValid() const;
     QString toString() const;
     QString toStringNoTr() const;
 public:
@@ -50,6 +51,10 @@ public:
     TAccessLevel &operator =(int lvl);
     bool operator ==(const TAccessLevel &other) const;
     bool operator !=(const TAccessLevel &other) const;
+    bool operator <(const TAccessLevel &other) const;
+    bool operator <=(const TAccessLevel &other) const;
+    bool operator >(const TAccessLevel &other) const;
+    bool operator >=(const TAccessLevel &other) const;
     operator QVariant() const;
     operator int() const;
 public:

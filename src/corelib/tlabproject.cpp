@@ -1,26 +1,25 @@
 #include "tlabproject.h"
-#include "tglobal.h"
-#include "tprojectfile.h"
-#include "tprojectfilelist.h"
 
-#include <BeQtGlobal>
+#include "tbinaryfile.h"
+#include "tbinaryfilelist.h"
+
 #include <BBase>
-#include <BeQtCore/private/bbase_p.h>
 #include <BDirTools>
-#include <BeQt>
+#include <BeQtCore/private/bbase_p.h>
+#include <BTextTools>
 
-#include <QObject>
 #include <QDataStream>
-#include <QVariant>
 #include <QDebug>
-#include <QString>
-#include <QList>
-#include <QTextCodec>
-#include <QStringList>
-#include <QFileInfo>
-#include <QRegExp>
 #include <QDir>
+#include <QFileInfo>
+#include <QList>
+#include <QObject>
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
+#include <QTextCodec>
 #include <QUrl>
+#include <QVariant>
 #include <QVariantMap>
 
 /*============================================================================
@@ -35,10 +34,9 @@ public:
     ~TLabProjectPrivate();
 public:
     void init();
-    bool loadRec(const QString &rootDir, const QString &subdir);
 public:
-    TProjectFile mainFile;
-    TProjectFileList files;
+    TBinaryFileList files;
+    TBinaryFile mainFile;
 private:
     Q_DISABLE_COPY(TLabProjectPrivate)
 };
@@ -67,47 +65,9 @@ void TLabProjectPrivate::init()
     //
 }
 
-bool TLabProjectPrivate::loadRec(const QString &rootDir, const QString &subdir)
-{
-    QDir d(rootDir + "/" + subdir);
-    foreach (const QString &fn, d.entryList(QDir::Files))
-    {
-        QString fnn = d.absoluteFilePath(fn);
-        if (d.absoluteFilePath(mainFile.fileName()) == fnn)
-            continue;
-        TProjectFile pf(fnn, TProjectFile::Binary, 0, subdir);
-        if (!pf.isValid())
-            return false;
-        files << pf;
-    }
-    foreach (const QString &dn, d.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-        if (!loadRec(rootDir, subdir + "/" + dn))
-            return false;
-    return true;
-}
-
 /*============================================================================
 ================================ CProject ====================================
 ============================================================================*/
-
-/*============================== Static public methods =====================*/
-
-int TLabProject::size(const QString &dir)
-{
-    if (dir.isEmpty())
-        return -1;
-    int sz = 0;
-    foreach (const QString &fn, BDirTools::entryList(dir, QDir::Files))
-        sz += QFileInfo(fn).size();
-    foreach (const QString &dn, BDirTools::entryList(dir, QDir::Dirs | QDir::NoDotAndDotDot))
-    {
-        int szt = size(dn);
-        if (szt < 0)
-            return -1;
-        sz += szt;
-    }
-    return sz;
-}
 
 /*============================== Public constructors =======================*/
 
@@ -117,18 +77,12 @@ TLabProject::TLabProject() :
     d_func()->init();
 }
 
-TLabProject::TLabProject(const QString &dir, const QString &mainFileName) :
+TLabProject::TLabProject(const QString &dir, const QString &relativeMainFileName,
+                         const QStringList &relativeFileNames) :
     BBase(*new TLabProjectPrivate(this))
 {
     d_func()->init();
-    load(dir, mainFileName);
-}
-
-TLabProject::TLabProject(const QString &mainFilePath) :
-    BBase(*new TLabProjectPrivate(this))
-{
-    d_func()->init();
-    load(mainFilePath);
+    load(dir, relativeMainFileName, relativeFileNames);
 }
 
 TLabProject::TLabProject(const TLabProject &other) :
@@ -152,89 +106,59 @@ void TLabProject::clear()
     d->files.clear();
 }
 
-QString TLabProject::mainFileName() const
+bool TLabProject::isValid() const
 {
-    return d_func()->mainFile.fileName();
-}
-
-QString TLabProject::mainFileSubdir() const
-{
-    return d_func()->mainFile.subdir();
-}
-
-QString TLabProject::mainFilePath(const QString &path) const
-{
-    if (!isValid())
-        return "";
-    QFileInfo fi(path);
-    if (!fi.isAbsolute() || !fi.isDir())
-        return "";
-    QString p = path + "/";
-    if (!d_func()->mainFile.subdir().isEmpty())
-        p += d_func()->mainFile.subdir() + "/";
-    return p + d_func()->mainFile.fileName();
-}
-
-bool TLabProject::load(const QString &dir, const QString &mainFileName)
-{
-    clear();
-    if (dir.isEmpty())
+    if (!d_func()->mainFile.isValid())
         return false;
-    B_D(TLabProject);
-    QString t = mainFileName;
-    QFileInfo fi(dir + "/" + t.remove(dir + "/"));
-    QString subdir = fi.path().remove(dir);
-    if (!d->mainFile.loadAsBinary(fi.filePath(), subdir))
-        return false;
-    foreach (const QString &fn, BDirTools::entryList(dir, QDir::Files))
-    {
-        TProjectFile pf(fn, TProjectFile::Binary);
-        if (!pf.isValid())
-        {
-            clear();
+    foreach (const TBinaryFile &f, d_func()->files) {
+        if (!f.isValid())
             return false;
-        }
-        d->files << pf;
-    }
-    foreach (const QString &dn, QDir(dir).entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-    {
-        if (!d->loadRec(dir, dn))
-        {
-            clear();
-            return false;
-        }
     }
     return true;
 }
 
-bool TLabProject::load(const QString &mainFilePath)
+bool TLabProject::load(const QString &dir, const QString &relativeMainFileName, QStringList relativeFileNames)
 {
-    QFileInfo fi(mainFilePath);
-    return load(fi.path(), fi.fileName());
+    init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive) {
+#if defined(Q_OS_WIN)
+        cs = Qt::CaseInsensitive;
+#endif
+    }
+    clear();
+    if (dir.isEmpty() || relativeMainFileName.isEmpty())
+        return false;
+    relativeFileNames.removeAll("");
+    BTextTools::removeDuplicates(relativeFileNames, cs);
+    BTextTools::removeAll(relativeFileNames, relativeMainFileName, cs);
+    B_D(TLabProject);
+    if (!d->mainFile.load(dir + "/" + relativeMainFileName, QFileInfo(relativeMainFileName).path())) {
+        clear();
+        return false;
+    }
+    foreach (const QString &fn, relativeFileNames) {
+        TBinaryFile f(dir + "/" + fn, QFileInfo(fn).path());
+        if (!f.isValid()) {
+            clear();
+            return false;
+        }
+        d->files << f;
+    }
+    return true;
+}
+
+bool TLabProject::mayBeExecutable() const
+{
+    return d_func()->mainFile.mayBeExecutable();
 }
 
 bool TLabProject::save(const QString &dir) const
 {
     if (!isValid() || dir.isEmpty() || !d_func()->mainFile.save(dir))
         return false;
-    foreach (const TProjectFile &f, d_func()->files)
+    foreach (const TBinaryFile &f, d_func()->files) {
         if (!f.save(dir))
             return false;
-    return true;
-}
-
-bool TLabProject::isExecutable() const
-{
-    return d_func()->mainFile.isExecutable();
-}
-
-bool TLabProject::isValid() const
-{
-    if (!d_func()->mainFile.isValid() || !d_func()->mainFile.size())
-            return false;
-    foreach (const TProjectFile &f, d_func()->files)
-        if (!f.isValid())
-            return false;
+    }
     return true;
 }
 
@@ -243,7 +167,7 @@ int TLabProject::size() const
     if (!isValid())
         return 0;
     int sz = d_func()->mainFile.size();
-    foreach (const TProjectFile &f, d_func()->files)
+    foreach (const TBinaryFile &f, d_func()->files)
         sz += f.size();
     return sz;
 }
@@ -288,8 +212,8 @@ QDataStream &operator >>(QDataStream &stream, TLabProject &project)
     TLabProjectPrivate *d = project.d_func();
     QVariantMap m;
     stream >> m;
-    d->mainFile = m.value("main_file").value<TProjectFile>();
-    d->files = m.value("files").value<TProjectFileList>();
+    d->mainFile = m.value("main_file").value<TBinaryFile>();
+    d->files = m.value("files").value<TBinaryFileList>();
     return stream;
 }
 

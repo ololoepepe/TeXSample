@@ -7,8 +7,7 @@ class QStringList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtGlobal>
-#include <BBase>
+#include <BBaseObject>
 
 #include <QWidget>
 
@@ -16,7 +15,7 @@ class QStringList;
 ================================ TTagsWidget =================================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBase
+class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TTagsWidget)
@@ -26,12 +25,12 @@ public:
 protected:
     explicit TTagsWidget(TTagsWidgetPrivate &d, QWidget *parent = 0);
 public:
-    void setAvailableTags(const QStringList &list);
-    void setTags(const QStringList &list);
-    void setReadOnly(bool ro);
     QStringList availableTags() const;
-    QStringList tags() const;
     bool isReadOnly() const;
+    void setAvailableTags(const QStringList &list);
+    void setReadOnly(bool ro);
+    void setTags(const QStringList &list);
+    QStringList tags() const;
 private:
     Q_DISABLE_COPY(TTagsWidget)
 };

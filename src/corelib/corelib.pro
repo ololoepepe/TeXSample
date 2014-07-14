@@ -3,7 +3,7 @@ TARGET = TeXSampleCore
 
 CONFIG += release
 
-QT = core concurrent gui
+QT = gui
 BEQT = core
 TSMP =
 
@@ -13,59 +13,78 @@ DEFINES += TSMP_BUILD_CORE_LIB
 
 HEADERS += \
     taccesslevel.h \
+    tbinaryfile.h \
+    tbinaryfilelist.h \
     tclientinfo.h \
-    tcompilationresult.h \
-    tcompiledproject.h \
-    tcompilerparameters.h \
+    tcoreapplication.h \
+    tfileinfo.h \
+    tfileinfolist.h \
     tglobal.h \
+    tgroupinfo.h \
+    tgroupinfolist.h \
+    tgroupmodel.h \
     tidlist.h \
     tinviteinfo.h \
     tinviteinfolist.h \
+    tinvitemodel.h \
     tlabinfo.h \
     tlabinfolist.h \
     tlabproject.h \
     tmessage.h \
     tnamespace.h \
-    toperationresult.h \
-    toperationresult_p.h \
-    tprojectfile.h \
-    tprojectfilelist.h \
     tsampleinfo.h \
     tsampleinfolist.h \
     tservice.h \
     tservicelist.h \
+    ttexcompiler.h \
+    ttexfile.h \
+    ttexfilelist.h \
     ttexproject.h \
-    tuserinfo.h
+    tuseridentifier.h \
+    tuserinfo.h \
+    tuserinfolist.h \
+    tusermodel.h
 
 SOURCES += \
     taccesslevel.cpp \
+    tbinaryfile.cpp \
+    tbinaryfilelist.cpp \
     tclientinfo.cpp \
-    tcompilationresult.cpp \
-    tcompiledproject.cpp \
-    tcompilerparameters.cpp \
+    tcoreapplication.cpp \
+    tfileinfo.cpp \
+    tfileinfolist.cpp \
     tglobal.cpp \
+    tgroupinfo.cpp \
+    tgroupinfolist.cpp \
+    tgroupmodel.cpp \
     tidlist.cpp \
     tinviteinfo.cpp \
     tinviteinfolist.cpp \
+    tinvitemodel.cpp \
     tlabinfo.cpp \
     tlabinfolist.cpp \
     tlabproject.cpp \
     tmessage.cpp \
     tnamespace.cpp \
-    toperationresult.cpp \
-    tprojectfile.cpp \
-    tprojectfilelist.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
     tservice.cpp \
     tservicelist.cpp \
+    ttexcompiler.cpp \
+    ttexfile.cpp \
+    ttexfilelist.cpp \
     ttexproject.cpp \
-    tuserinfo.cpp
+    tuseridentifier.cpp \
+    tuserinfo.cpp \
+    tuserinfolist.cpp \
+    tusermodel.cpp
+
+include(reply/reply.pri)
+include(request/request.pri)
 
 contains(TSMP_CONFIG, builtin_resources) {
     DEFINES += TSMP_BUILTIN_RESOURCES
     RESOURCES += \
-        texsamplecore.qrc \
         ../../translations/texsample_translations.qrc
 }
 

@@ -15,8 +15,7 @@
 #   define T_WIDGETS_EXPORT Q_DECL_IMPORT
 #endif
 
-T_CORE_EXPORT void tInit();
-T_CORE_EXPORT void tCleanup();
+T_CORE_EXPORT void tRegister();
 T_CORE_EXPORT const char *tVersion();
 
 #endif // TGLOBAL_H

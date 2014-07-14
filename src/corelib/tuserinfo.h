@@ -2,25 +2,23 @@
 #define TUSERINFO_H
 
 class TUserInfoPrivate;
+
 class TAccessLevel;
-class TService;
+class TIdList;
+class TServiceList;
 
 class QDataStream;
 class QDateTime;
-class QVariant;
 class QDebug;
-class QByteArray;
+class QImage;
 class QString;
+class QVariant;
 
 #include "tglobal.h"
-#include "tservicelist.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
-#include <QCoreApplication>
-#include <QList>
 
 /*============================================================================
 ================================ TUserInfo ===================================
@@ -29,61 +27,41 @@ class QString;
 class T_CORE_EXPORT TUserInfo : public BBase
 {
     B_DECLARE_PRIVATE(TUserInfo)
-    Q_DECLARE_TR_FUNCTIONS(TUserInfo)
 public:
-    enum Context
-    {
-        CurrentContext,
-        GeneralContext,
-        BriefInfoContext,
-        AddContext,
-        RegisterContext,
-        EditContext,
-        UpdateContext
-    };
-public:
-    static bool testAvatar(const QByteArray &data);
-    static bool testAvatar(const QString &fileName);
-public:
-    explicit TUserInfo(Context c = GeneralContext);
-    explicit TUserInfo(quint64 id, Context c = GeneralContext);
+    explicit TUserInfo();
     TUserInfo(const TUserInfo &other);
     ~TUserInfo();
 public:
-    void setContext(int c, bool clear = false);
-    void setId(quint64 id);
-    void setInviteCode(const QString &code);
-    void setEmail(const QString &email);
-    void setLogin(const QString &login);
-    void setPassword(const QString &s);
-    void setPassword(const QByteArray &data);
-    void setAccessLevel(const TAccessLevel &lvl);
-    void setServices(const TServiceList &list);
-    void setServices(const QList<int> &list);
-    void setRealName(const QString &name);
-    void setAvatar(const QByteArray &data);
-    void setAvatar(const QString &fileName);
-    void setCreationDateTime(const QDateTime &dt);
-    void setUpdateDateTime(const QDateTime &dt);
-    void clear();
-    Context context() const;
-    quint64 id() const;
-    QString idString(int fixedLength = -1) const;
-    QString inviteCode() const;
-    QString email() const;
-    QString login() const;
-    QByteArray password() const;
     TAccessLevel accessLevel() const;
-    QString accessLevelString() const;
-    QString accessLevelStringNoTr() const;
+    bool active() const;
+    QImage avatar() const;
+    void clear();
+    bool containsAvatar() const;
+    QString email() const;
+    TIdList groups() const;
+    quint64 id() const;
+    bool isValid() const;
+    QDateTime lastModificationDateTime() const;
+    QString login() const;
+    QString name() const;
+    QString patronymic() const;
+    QDateTime registrationDateTime() const;
     TServiceList services() const;
-    bool hasAccessToService(TService s) const;
-    QString realName() const;
-    QByteArray avatar() const;
-    QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    bool isValid(Context c = CurrentContext) const;
-    TUserInfo toContext(int c) const;
+    void setAccessLevel(const TAccessLevel &accessLevel);
+    void setActive(bool active);
+    void setAvatar(const QImage &avatar);
+    void setContainsAvatar(bool contains);
+    void setEmail(const QString &email);
+    void setGroups(const TIdList &groups);
+    void setId(quint64 id);
+    void setLastModificationDateTime(const QDateTime &dt);
+    void setLogin(const QString &login);
+    void setName(const QString &name);
+    void setPatronymic(const QString &partonymic);
+    void setRegistrationDateTime(const QDateTime &dt);
+    void setServices(const TServiceList &services);
+    void setSurename(const QString &surename);
+    QString surename() const;
 public:
     TUserInfo &operator =(const TUserInfo &other);
     bool operator ==(const TUserInfo &other) const;

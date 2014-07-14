@@ -2,16 +2,15 @@
 #define TTAGSWIDGET_P_H
 
 class QLineEdit;
-class QToolButton;
-class QString;
 class QSignalMapper;
+class QString;
+class QToolButton;
 
 #include "ttagswidget.h"
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtGlobal>
-#include <BeQtCore/private/bbase_p.h>
+#include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
 
@@ -19,10 +18,14 @@ class QSignalMapper;
 ================================ TTagsWidgetPrivate ==========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TTagsWidgetPrivate : public BBasePrivate
+class T_WIDGETS_EXPORT TTagsWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TTagsWidget)
+public:
+    QToolButton *tbtn;
+    QLineEdit *ledt;
+    QSignalMapper *mpr;
 public:
     explicit TTagsWidgetPrivate(TTagsWidget *q);
     ~TTagsWidgetPrivate();
@@ -30,10 +33,6 @@ public:
     void init();
 public Q_SLOTS:
     void addTag(const QString &tag);
-public:
-    QSignalMapper *mpr;
-    QLineEdit *ledt;
-    QToolButton *tbtn;
 private:
     Q_DISABLE_COPY(TTagsWidgetPrivate)
 };

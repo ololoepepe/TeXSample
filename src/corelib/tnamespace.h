@@ -1,6 +1,10 @@
 #ifndef TNAMESPACE_H
 #define TNAMESPACE_H
 
+class QImage;
+
+#include "tglobal.h"
+
 #include <BeQt>
 
 #include <QString>
@@ -12,8 +16,8 @@ namespace Texsample
 
 const quint16 MainPort = 9044;
 
-const int MaximumAvatarSize = BeQt::Megabyte;
-const int MaximumAvatarExtent = 2048;
+//const int MaximumAvatarSize = BeQt::Megabyte;
+//const int MaximumAvatarExtent = 2048;
 const quint8 MaximumInvitesCount = 3;
 
 //Requests
@@ -61,6 +65,27 @@ const QString DeleteLabRequest = "delete_lab";
 const QString GetLabRequest = "get_lab";
 const QString GetLabsListRequest = "get_labs_list";
 const QString GetLabExtraAttachedFileRequest = "get_lab_extra_attached_file";
+
+const int MaximumAvatarExtent = 2000;
+const int MaximumAvatarSize = 2 * BeQt::Megabyte;
+const int MaximumEmailLength = 60;
+const int MaximumFileDescriptionLength = 1000;
+const int MaximumLoginLength = 20;
+const int MinimumLoginLength = 2;
+const int MaximumNameLength = 20;
+const int MaximumPasswordLength = 20;
+const int MinimumPasswordLength = 8;
+const int MaximumGroupNameLength = 40;
+
+T_CORE_EXPORT bool testAvatar(const QImage &avatar, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QImage *image, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testEmail(const QString &email, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testFileDescription(const QString &desctiption, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testLogin(const QString &login, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testName(const QString &name, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testPassword(const QString &password, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testGroupName(const QString &name, QString *error = 0, bool translate = true);
 
 }
 

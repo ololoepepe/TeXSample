@@ -3,17 +3,17 @@
 
 class TLabProjectPrivate;
 
-class QVariant;
-class QDebug;
 class QDataStream;
+class QDebug;
+class QString;
+class QVariant;
 
 #include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
-#include <QString>
+#include <QStringList>
 
 /*============================================================================
 ================================ TLabProject =================================
@@ -23,23 +23,17 @@ class T_CORE_EXPORT TLabProject : BBase
 {
     B_DECLARE_PRIVATE(TLabProject)
 public:
-    static int size(const QString &dir);
-public:
     explicit TLabProject();
-    explicit TLabProject(const QString &dir, const QString &mainFileName);
-    explicit TLabProject(const QString &mainFilePath);
+    explicit TLabProject(const QString &dir, const QString &relativeMainFileName,
+                         const QStringList &relativeFileNames = QStringList());
     TLabProject(const TLabProject &other);
     ~TLabProject();
 public:
     void clear();
-    QString mainFileName() const;
-    QString mainFileSubdir() const;
-    QString mainFilePath(const QString &path) const;
-    bool load(const QString &dir, const QString &mainFileName);
-    bool load(const QString &mainFilePath);
-    bool save(const QString &dir) const;
-    bool isExecutable() const;
     bool isValid() const;
+    bool load(const QString &dir, const QString &relativeMainFileName, QStringList relativeFileNames = QStringList());
+    bool mayBeExecutable() const;
+    bool save(const QString &dir) const;
     int size() const;
 public:
     TLabProject &operator =(const TLabProject &other);

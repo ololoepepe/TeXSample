@@ -118,6 +118,11 @@ TAccessLevel::~TAccessLevel()
 
 /*============================== Public methods ============================*/
 
+bool TAccessLevel::isValid() const
+{
+    return NoLevel != d_func()->level;
+}
+
 QString TAccessLevel::toString() const
 {
     return accessLevelToString(d_func()->level);
@@ -152,6 +157,26 @@ bool TAccessLevel::operator ==(const TAccessLevel &other) const
 bool TAccessLevel::operator !=(const TAccessLevel &other) const
 {
     return !(*this == other);
+}
+
+bool TAccessLevel::operator <(const TAccessLevel &other) const
+{
+    return d_func()->level < other.d_func()->level;
+}
+
+bool TAccessLevel::operator <=(const TAccessLevel &other) const
+{
+    return d_func()->level <= other.d_func()->level;
+}
+
+bool TAccessLevel::operator >(const TAccessLevel &other) const
+{
+    return d_func()->level > other.d_func()->level;
+}
+
+bool TAccessLevel::operator >=(const TAccessLevel &other) const
+{
+    return d_func()->level >= other.d_func()->level;
 }
 
 TAccessLevel::operator QVariant() const

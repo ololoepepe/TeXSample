@@ -3,21 +3,22 @@
 
 class TInviteInfoPrivate;
 
+class TIdList;
+class TServiceList;
+
+class BUuid;
+
 class QDataStream;
 class QDateTime;
-class QVariant;
 class QDebug;
-class QUuid;
 class QString;
+class QVariant;
 
 #include "tglobal.h"
-#include "tservicelist.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
-#include <QList>
 
 /*============================================================================
 ================================ TInviteInfo =================================
@@ -31,24 +32,24 @@ public:
     TInviteInfo(const TInviteInfo &other);
     ~TInviteInfo();
 public:
-    void setId(quint64 id);
-    void setCode(const QUuid &code);
-    void setCode(const QString &code);
-    void setCreatorId(quint64 id);
-    void setServices(const TServiceList &list);
+    void clear();
+    BUuid code() const;
+    QDateTime creationDateTime() const;
+    QDateTime expirationDateTime() const;
+    TIdList groups() const;
+    quint64 id() const;
+    bool isValid() const;
+    quint64 ownerId() const;
+    QString ownerLogin() const;
+    TServiceList services() const;
+    void setCode(const BUuid &code);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);
-    quint64 id() const;
-    QString idString(int fixedLength = -1) const;
-    QUuid code() const;
-    QString codeString() const;
-    quint64 creatorId() const;
-    QString creatorIdString(int fixedLength = -1) const;
-    TServiceList services() const;
-    QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    bool isExpired() const;
-    bool isValid() const;
+    void setGroups(const TIdList &groups);
+    void setId(quint64 id);
+    void setOwnerId(quint64 id);
+    void setOwnerLogin(const QString &login);
+    void setServices(const TServiceList &services);
 public:
     TInviteInfo &operator =(const TInviteInfo &other);
     bool operator ==(const TInviteInfo &other) const;

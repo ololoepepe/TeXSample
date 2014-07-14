@@ -4,48 +4,48 @@
 class QListWidget;
 class QListWidgetItem;
 class QToolButton;
-class QSignalMapper;
 
 #include "tlistwidget.h"
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtGlobal>
-#include <BeQtCore/private/bbase_p.h>
+#include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
 #include <QString>
+#include <QVariant>
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TListWidgetPrivate : public BBasePrivate
+class T_WIDGETS_EXPORT TListWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TListWidget)
 public:
+    QListWidget *lstwgt;
+    int maxCount;
+    bool readOnly;
+    QToolButton *tbtnAdd;
+    QToolButton *tbtnClear;
+    QToolButton *tbtnDown;
+    QToolButton *tbtnRemove;
+    QToolButton *tbtnUp;
+public:
     explicit TListWidgetPrivate(TListWidget *q);
     ~TListWidgetPrivate();
 public:
+    static bool itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2);
+public:
     void init();
 public Q_SLOTS:
-    void addItem(const QString &text = QString());
-    void removeSelectedItem();
+    void addItem(QString text = QString(), QVariant data = QVariant());
     void clearList();
-    void moveItemUp();
-    void moveItemDown();
     void lstwgtCurrentItemChanged(QListWidgetItem *current);
-public:
-    bool readOnly;
-    int maxCount;
-    QSignalMapper *mpr;
-    QListWidget *lstwgt;
-    QToolButton *tbtnAdd;
-    QToolButton *tbtnRemove;
-    QToolButton *tbtnClear;
-    QToolButton *tbtnUp;
-    QToolButton *tbtnDown;
+    void moveItemDown();
+    void moveItemUp();
+    void removeSelectedItem();
 private:
     Q_DISABLE_COPY(TListWidgetPrivate)
 };

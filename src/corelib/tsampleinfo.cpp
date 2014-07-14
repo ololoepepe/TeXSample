@@ -37,7 +37,7 @@ public:
 public:
     TSampleInfo::Context context;
     quint64 id;
-    TUserInfo sender;
+    //TUserInfo sender;
     QStringList authors;
     QString title;
     TSampleInfo::Type type;
@@ -196,7 +196,7 @@ void TSampleInfo::setContext(int c, bool clear)
     {
     case AddContext:
         d->id = 0;
-        d->sender.clear();
+        //d->sender.clear();
         d->type = Unverified;
         d->remark.clear();
         d->rating = 0;
@@ -205,13 +205,13 @@ void TSampleInfo::setContext(int c, bool clear)
         d->size = 0;
         break;
     case EditContext:
-        d->sender.clear();
+        //d->sender.clear();
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
         d->size = 0;
         break;
     case UpdateContext:
-        d->sender.clear();
+        //d->sender.clear();
         d->type = Unverified;
         d->remark.clear();
         d->rating = 0;
@@ -230,10 +230,10 @@ void TSampleInfo::setId(quint64 id)
     d_func()->id = id;
 }
 
-void TSampleInfo::setSender(const TUserInfo &s)
-{
-    d_func()->sender = s.toContext(TUserInfo::BriefInfoContext);
-}
+//void TSampleInfo::setSender(const TUserInfo &s)
+//{
+//    d_func()->sender = s.toContext(TUserInfo::BriefInfoContext);
+//}
 
 void TSampleInfo::setAuthors(const QStringList &list)
 {
@@ -318,10 +318,10 @@ QString TSampleInfo::idString(int fixedLength) const
     return s;
 }
 
-TUserInfo TSampleInfo::sender() const
-{
-    return d_func()->sender;
-}
+//TUserInfo TSampleInfo::sender() const
+//{
+//    return d_func()->sender;
+//}
 
 QStringList TSampleInfo::authors() const
 {
@@ -422,7 +422,7 @@ bool TSampleInfo::isValid(Context c) const
         return d->id && !d->title.isEmpty() && !d->fileName.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && !d->fileName.isEmpty()
+        return d->id /*&& d->sender.isValid(TUserInfo::BriefInfoContext)*/ && !d->title.isEmpty() && !d->fileName.isEmpty()
                 && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
@@ -435,7 +435,7 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     const TSampleInfoPrivate *dd = other.d_func();
     d->context = dd->context;
     d->id = dd->id;
-    d->sender = dd->sender;
+    //d->sender = dd->sender;
     d->authors = dd->authors;
     d->title = dd->title;
     d->type = dd->type;
@@ -465,7 +465,7 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
         return d->id == dd->id;
     case GeneralContext:
     default:
-        return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
+        return d->id == dd->id /*&& d->sender == dd->sender*/ && d->authors == dd->authors && d->title == dd->title
                 && d->type == dd->type && d->fileName == dd->fileName && d->size == dd->size && d->tags == dd->tags
                 && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
                 && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT;
@@ -496,8 +496,8 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     m.insert("comment", d->comment);
     if (TSampleInfo::AddContext != d->context)
         m.insert("id", d->id);
-    if (TSampleInfo::GeneralContext == d->context)
-        m.insert("sender", d->sender);
+    //if (TSampleInfo::GeneralContext == d->context)
+    //    m.insert("sender", d->sender);
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
         m.insert("type", (int) d->type);
     if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
@@ -528,7 +528,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     info.setTags(m.value("tags").toStringList());
     d->comment = m.value("comment").toString();
     d->id = m.value("id").toULongLong();
-    info.setSender(m.value("sender").value<TUserInfo>());
+    //info.setSender(m.value("sender").value<TUserInfo>());
     d->type = TSampleInfo::typeFromInt(m.value("type").toInt());
     d->remark = m.value("remark").toString();
     d->rating = m.value("rating").toUInt();

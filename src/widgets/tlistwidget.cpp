@@ -1,23 +1,21 @@
 #include "tlistwidget.h"
 #include "tlistwidget_p.h"
 
-#include <BeQtGlobal>
-#include <BBase>
-#include <BeQtCore/private/bbase_p.h>
 #include <BApplication>
+#include <BBaseObject>
+#include <BeQtCore/private/bbaseobject_p.h>
 
-#include <QWidget>
+#include <QAction>
+#include <QDebug>
+#include <QHBoxLayout>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QMenu>
 #include <QString>
 #include <QStringList>
-#include <QHBoxLayout>
 #include <QToolButton>
-#include <QMenu>
-#include <QAction>
-#include <QSignalMapper>
-
-#include <QDebug>
+#include <QVariant>
+#include <QWidget>
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
@@ -26,7 +24,7 @@
 /*============================== Public constructors =======================*/
 
 TListWidgetPrivate::TListWidgetPrivate(TListWidget *q) :
-    BBasePrivate(q)
+    BBaseObjectPrivate(q)
 {
     //
 }
@@ -36,14 +34,19 @@ TListWidgetPrivate::~TListWidgetPrivate()
     //
 }
 
+/*============================== Static public methods =====================*/
+
+bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2)
+{
+    return item1.text == item2.text;
+}
+
 /*============================== Public methods ============================*/
 
 void TListWidgetPrivate::init()
 {
     readOnly = false;
     maxCount = 0;
-    mpr = new QSignalMapper(this);
-    connect(mpr, SIGNAL(mapped(QString)), this, SLOT(addItem(QString)));
     //
     QHBoxLayout *hlt = new QHBoxLayout(q_func());
       lstwgt = new QListWidget;
@@ -94,10 +97,12 @@ void TListWidgetPrivate::init()
 
 /*============================== Public slots ==============================*/
 
-void TListWidgetPrivate::addItem(const QString &text)
+void TListWidgetPrivate::addItem(QString text, QVariant data)
 {
-    if (text.isEmpty())
-    {
+    QAction *act = qobject_cast<QAction *>(sender());
+    if (act)
+        text = act->text();
+    if (text.isEmpty()) {
         QListWidgetItem *lwi = lstwgt->item(lstwgt->count() - 1);
         if (lwi && lwi->text().isEmpty())
             return;
@@ -105,8 +110,11 @@ void TListWidgetPrivate::addItem(const QString &text)
     if (!text.isEmpty() && q_func()->items().contains(text))
         return;
     QListWidgetItem *lwi = new QListWidgetItem(text);
-    if (!q_func()->isReadOnly())
+    if (!readOnly)
         lwi->setFlags(lwi->flags () | Qt::ItemIsEditable);
+    if (act)
+        data = act->data();
+    lwi->setData(Qt::UserRole, data);
     int ind = lstwgt->count();
     if (!text.isEmpty() && ind && lstwgt->item(ind - 1)->text().isEmpty())
         --ind;
@@ -115,27 +123,19 @@ void TListWidgetPrivate::addItem(const QString &text)
         lstwgt->setCurrentItem(lwi);
 }
 
-void TListWidgetPrivate::removeSelectedItem()
-{
-    delete lstwgt->takeItem(lstwgt->currentRow());
-    lstwgtCurrentItemChanged(lstwgt->currentItem());
-}
-
 void TListWidgetPrivate::clearList()
 {
     q_func()->clear();
 }
 
-void TListWidgetPrivate::moveItemUp()
+void TListWidgetPrivate::lstwgtCurrentItemChanged(QListWidgetItem *current)
 {
-    int ind = lstwgt->currentRow();
-    if (!ind)
-        return;
-    QListWidgetItem *lwi = lstwgt->takeItem(ind);
-    if (!lwi)
-        return;
-    lstwgt->insertItem(ind - 1, lwi);
-    lstwgt->setCurrentItem(lwi);
+    QListWidgetItem *last = lstwgt->item(lstwgt->count() - 1);
+    bool lastEmpty = last && last->text().isEmpty();
+    tbtnRemove->setEnabled(current && (current != last || !lastEmpty));
+    tbtnClear->setEnabled(lstwgt->count() > 1 || (lstwgt->count() == 1 && !lastEmpty));
+    tbtnUp->setEnabled(current && current != lstwgt->item(0) && (current != last || !lastEmpty));
+    tbtnDown->setEnabled(current && current != last && (!lastEmpty || current != lstwgt->item(lstwgt->count() - 2)));
 }
 
 void TListWidgetPrivate::moveItemDown()
@@ -150,14 +150,22 @@ void TListWidgetPrivate::moveItemDown()
     lstwgt->setCurrentItem(lwi);
 }
 
-void TListWidgetPrivate::lstwgtCurrentItemChanged(QListWidgetItem *current)
+void TListWidgetPrivate::moveItemUp()
 {
-    QListWidgetItem *last = lstwgt->item(lstwgt->count() - 1);
-    bool lastEmpty = last && last->text().isEmpty();
-    tbtnRemove->setEnabled(current && (current != last || !lastEmpty));
-    tbtnClear->setEnabled(lstwgt->count() > 1 || (lstwgt->count() == 1 && !lastEmpty));
-    tbtnUp->setEnabled(current && current != lstwgt->item(0) && (current != last || !lastEmpty));
-    tbtnDown->setEnabled(current && current != last && (!lastEmpty || current != lstwgt->item(lstwgt->count() - 2)));
+    int ind = lstwgt->currentRow();
+    if (!ind)
+        return;
+    QListWidgetItem *lwi = lstwgt->takeItem(ind);
+    if (!lwi)
+        return;
+    lstwgt->insertItem(ind - 1, lwi);
+    lstwgt->setCurrentItem(lwi);
+}
+
+void TListWidgetPrivate::removeSelectedItem()
+{
+    delete lstwgt->takeItem(lstwgt->currentRow());
+    lstwgtCurrentItemChanged(lstwgt->currentItem());
 }
 
 /*============================================================================
@@ -167,7 +175,7 @@ void TListWidgetPrivate::lstwgtCurrentItemChanged(QListWidgetItem *current)
 /*============================== Public constructors =======================*/
 
 TListWidget::TListWidget(QWidget *parent) :
-    QWidget(parent), BBase(*new TListWidgetPrivate(this))
+    QWidget(parent), BBaseObject(*new TListWidgetPrivate(this))
 {
     d_func()->init();
 }
@@ -180,79 +188,26 @@ TListWidget::~TListWidget()
 /*============================== Protected constructors ====================*/
 
 TListWidget::TListWidget(TListWidgetPrivate &d, QWidget *parent) :
-    QWidget(parent), BBase(d)
+    QWidget(parent), BBaseObject(d)
 {
     d_func()->init();
 }
 
 /*============================== Public methods ============================*/
 
-void TListWidget::setReadOnly(bool ro)
+int TListWidget::availableItemCount() const
 {
-    if (ro == d_func()->readOnly)
-        return;
-    d_func()->readOnly = ro;
-    setItems(items());
+    return d_func()->tbtnAdd->menu()->actions().count();
 }
 
-void TListWidget::setButtonsVisible(bool b)
+QVariant TListWidget::availableItemData(int index) const
 {
-    d_func()->tbtnAdd->setVisible(b);
-    d_func()->tbtnRemove->setVisible(b);
-    d_func()->tbtnClear->setVisible(b);
-    d_func()->tbtnUp->setVisible(b);
-    d_func()->tbtnDown->setVisible(b);
-}
-
-void TListWidget::setAvailableItems(const QStringList &items)
-{
-    d_func()->tbtnAdd->menu()->clear();
-    QStringList list = items;
-    list.removeAll("");
-    list.removeDuplicates();
-    while (d_func()->maxCount && list.size() > d_func()->maxCount)
-        list.removeFirst();
-    foreach (const QString &s, list)
-    {
-        QAction *act = d_func()->tbtnAdd->menu()->addAction(s);
-        bSetMapping(d_func()->mpr, act, SIGNAL(triggered()), s);
-    }
-    d_func()->tbtnAdd->setEnabled(!d_func()->tbtnAdd->menu()->isEmpty());
-}
-
-void TListWidget::setItems(const QStringList &list)
-{
-    d_func()->lstwgt->clear();
-    d_func()->lstwgtCurrentItemChanged(d_func()->lstwgt->currentItem());
-    foreach (const QString &s, list)
-        d_func()->addItem(s);
-    if (!isReadOnly())
-        d_func()->addItem();
-}
-
-void TListWidget::setMaxAvailableItems(int count)
-{
-    if (count < 0)
-        count = 0;
-    if (count == d_func()->maxCount)
-        return;
-    d_func()->maxCount = count;
-    setAvailableItems(availableItems());
-}
-
-void TListWidget::clear()
-{
-    setItems(QStringList());
-}
-
-bool TListWidget::isReadOnly() const
-{
-    return d_func()->readOnly;
-}
-
-bool TListWidget::areButtonsVisible() const
-{
-    return d_func()->tbtnAdd->isVisible();
+    if (index < 0)
+        return QVariant();
+    QList<QAction *> list = d_func()->tbtnAdd->menu()->actions();
+    if (index >= list.size())
+        return QVariant();
+    return list.at(index)->data();
 }
 
 QStringList TListWidget::availableItems() const
@@ -265,6 +220,33 @@ QStringList TListWidget::availableItems() const
     while (d_func()->maxCount && list.size() > d_func()->maxCount)
         list.removeFirst();
     return list;
+}
+
+bool TListWidget::buttonsVisible() const
+{
+    return d_func()->tbtnAdd->isVisible();
+}
+
+void TListWidget::clear()
+{
+    setItems(QStringList());
+}
+
+bool TListWidget::isReadOnly() const
+{
+    return d_func()->readOnly;
+}
+
+int TListWidget::itemCount() const
+{
+    return d_func()->lstwgt->count();
+}
+
+QVariant TListWidget::itemData(int index) const
+{
+    if (index < 0 || index >= d_func()->lstwgt->count())
+        return QVariant();
+    return d_func()->lstwgt->item(index)->data(Qt::UserRole);
 }
 
 QStringList TListWidget::items() const
@@ -280,4 +262,105 @@ QStringList TListWidget::items() const
 int TListWidget::maxAvailableItems() const
 {
     return d_func()->maxCount;
+}
+
+void TListWidget::setAvailableItemData(int index, const QVariant &data)
+{
+    if (index < 0)
+        return;
+    QList<QAction *> list = d_func()->tbtnAdd->menu()->actions();
+    if (index >= list.size())
+        return;
+    list.at(index)->setData(data);
+}
+
+void TListWidget::setAvailableItems(QList<Item> list)
+{
+    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+    }
+    d_func()->tbtnAdd->menu()->clear();
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+        list.removeFirst();
+    foreach (const Item &item, list) {
+        QAction *act = d_func()->tbtnAdd->menu()->addAction(item.text);
+        act->setData(item.data);
+        connect(act, SIGNAL(triggered()), d_func(), SLOT(addItem()));
+    }
+    d_func()->tbtnAdd->setEnabled(!d_func()->tbtnAdd->menu()->isEmpty());
+}
+
+void TListWidget::setAvailableItems(const QStringList &list)
+{
+    QList<Item> items;
+    foreach (const QString &text, list) {
+        Item item;
+        item.text = text;
+        items << item;
+    }
+    setAvailableItems(items);
+}
+
+void TListWidget::setButtonsVisible(bool b)
+{
+    d_func()->tbtnAdd->setVisible(b);
+    d_func()->tbtnRemove->setVisible(b);
+    d_func()->tbtnClear->setVisible(b);
+    d_func()->tbtnUp->setVisible(b);
+    d_func()->tbtnDown->setVisible(b);
+}
+
+void TListWidget::setItemData(int index, const QVariant &data)
+{
+    if (index < 0 || index >= d_func()->lstwgt->count())
+        return;
+    d_func()->lstwgt->item(index)->setData(Qt::UserRole, data);
+}
+
+void TListWidget::setItems(QList<Item> list)
+{
+    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+    }
+    d_func()->lstwgt->clear();
+    d_func()->lstwgtCurrentItemChanged(d_func()->lstwgt->currentItem());
+    foreach (const Item &item, list)
+        d_func()->addItem(item.text, item.data);
+    if (!isReadOnly())
+        d_func()->addItem();
+}
+
+void TListWidget::setItems(const QStringList &list)
+{
+    QList<Item> items;
+    foreach (const QString &text, list) {
+        Item item;
+        item.text = text;
+        items << item;
+    }
+    setItems(items);
+}
+
+void TListWidget::setReadOnly(bool ro)
+{
+    if (ro == d_func()->readOnly)
+        return;
+    d_func()->readOnly = ro;
+    d_func()->lstwgt->setEditTriggers(ro ? QListWidget::NoEditTriggers :
+                                           (QListWidget::EditKeyPressed | QListWidget::DoubleClicked));
+    setItems(items());
+}
+
+void TListWidget::setMaxAvailableItems(int count)
+{
+    if (count < 0)
+        count = 0;
+    if (count == d_func()->maxCount)
+        return;
+    d_func()->maxCount = count;
+    setAvailableItems(availableItems());
 }

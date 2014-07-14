@@ -43,11 +43,7 @@ defineTest(addTexsampleModule) {
     INCLUDEPATH *= $${texsampleHeadersPath}/$${fullName}
     DEPENDPATH *= $${texsampleHeadersPath}/$${fullName}
     libFinalPath=$${texsampleLibsPath}/$$texsampleModuleSubdir($${shortName})$${releaseDebugSuffix}/
-    mac:contains(CONFIG, lib_bundle) {
-        LIBS *= -F$${libFinalPath} -framework $${fullName}
-    } else {
-        LIBS *= -L$${libFinalPath} -l$${fullName}$${libNameSuffix}
-    }
+    LIBS *= -L$${libFinalPath} -l$${fullName}$${libNameSuffix}
     export(INCLUDEPATH)
     export(DEPENDPATH)
     export(LIBS)
@@ -66,11 +62,13 @@ contains(TSMP, all) {
 
 #Adds required Qt, BeQt and TeXSample modules (on which other included modules depend)
 contains(TSMP,core) {
-    QT *= core concurrent
+    QT *= core gui
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= concurrent
     BEQT *= core
 }
 contains(TSMP, widgets) {
-    QT *= core gui widgets concurrent
+    QT *= core gui
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets concurrent
     BEQT *= core widgets
     TSMP *= core
 }
@@ -85,11 +83,10 @@ for(shortName, TSMP_ORDERED) {
 }
 
 isEmpty(BEQT_PREFIX) {
-    #TODO: Add MacOS support
     mac|unix {
-        BEQT_PREFIX=/usr/share/beqt
+        BEQT_PREFIX=/usr
     } else:win32 {
         BEQT_PREFIX=$$(systemdrive)/PROGRA~1/BeQt
     }
 }
-include($${BEQT_PREFIX}/depend.pri)
+include($${BEQT_PREFIX}/share/beqt/depend.pri)

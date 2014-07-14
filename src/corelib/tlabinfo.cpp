@@ -36,7 +36,7 @@ public:
 public:
     TLabInfo::Context context;
     quint64 id;
-    TUserInfo sender;
+    //TUserInfo sender;
     QString title;
     QStringList authors;
     TLabInfo::Type type;
@@ -204,7 +204,7 @@ void TLabInfo::setContext(int c, bool clear)
     {
     case AddContext:
         d->id = 0;
-        d->sender.clear();
+        //d->sender.clear();
         d->type = NoType;
         d->size = 0;
         d->creationDT = QDateTime().toUTC();
@@ -212,7 +212,7 @@ void TLabInfo::setContext(int c, bool clear)
         d->extraFiles.clear();
         break;
     case EditContext:
-        d->sender.clear();
+        //d->sender.clear();
         d->size = 0;
         d->creationDT = QDateTime().toUTC();
         d->updateDT = QDateTime().toUTC();
@@ -229,10 +229,10 @@ void TLabInfo::setId(quint64 id)
     d_func()->id = id;
 }
 
-void TLabInfo::setSender(const TUserInfo &sender)
-{
-    d_func()->sender = sender.toContext(TUserInfo::BriefInfoContext);
-}
+//void TLabInfo::setSender(const TUserInfo &sender)
+//{
+//    d_func()->sender = sender.toContext(TUserInfo::BriefInfoContext);
+//}
 
 void TLabInfo::setTitle(const QString &title)
 {
@@ -311,10 +311,10 @@ QString TLabInfo::idString(int fixedLength) const
     return s;
 }
 
-TUserInfo TLabInfo::sender() const
-{
-    return d_func()->sender;
-}
+//TUserInfo TLabInfo::sender() const
+//{
+//    return d_func()->sender;
+//}
 
 QString TLabInfo::title() const
 {
@@ -403,7 +403,7 @@ bool TLabInfo::isValid(Context c) const
         return d->id && !d->title.isEmpty();
     case GeneralContext:
     default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && NoType != d->type
+        return d->id /*&& d->sender.isValid(TUserInfo::BriefInfoContext)*/ && !d->title.isEmpty() && NoType != d->type
                 && d->size && d->creationDT.isValid() && d->updateDT.isValid();
     }
 }
@@ -416,7 +416,7 @@ TLabInfo &TLabInfo::operator =(const TLabInfo &other)
     const TLabInfoPrivate *dd = other.d_func();
     d->context = dd->context;
     d->id = dd->id;
-    d->sender = dd->sender;
+    //d->sender = dd->sender;
     d->title = dd->title;
     d->authors = dd->authors;
     d->type = dd->type;
@@ -444,7 +444,7 @@ bool TLabInfo::operator ==(const TLabInfo &other) const
         return d->id == dd->id;
     case GeneralContext:
     default:
-        return d->id == dd->id && d->sender == dd->sender && d->title == dd->title && d->authors == dd->authors
+        return d->id == dd->id /*&& d->sender == dd->sender*/ && d->title == dd->title && d->authors == dd->authors
                 && d->type == dd->type &&d->groups == dd->groups && d->size == dd->size && d->tags == dd->tags
                 && d->comment == dd->comment && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT
                 && d->extraFiles == dd->extraFiles;
@@ -476,8 +476,8 @@ QDataStream &operator <<(QDataStream &stream, const TLabInfo &info)
     m.insert("comment", d->comment);
     if (TLabInfo::AddContext != d->context)
         m.insert("id", d->id);
-    if (TLabInfo::GeneralContext == d->context)
-        m.insert("sender", d->sender);
+    //if (TLabInfo::GeneralContext == d->context)
+    //    m.insert("sender", d->sender);
     if (TLabInfo::GeneralContext == d->context)
         m.insert("type", (int) d->type);
     if (TLabInfo::GeneralContext == d->context)
@@ -503,7 +503,7 @@ QDataStream &operator >>(QDataStream &stream, TLabInfo &info)
     info.setTags(m.value("tags").toStringList());
     d->comment = m.value("comment").toString();
     d->id = m.value("id").toULongLong();
-    info.setSender(m.value("sender").value<TUserInfo>());
+    //info.setSender(m.value("sender").value<TUserInfo>());
     info.setType(m.value("type").toInt());
     d->creationDT = m.value("creation_dt").toDateTime().toUTC();
     d->updateDT = m.value("update_dt").toDateTime().toUTC();
@@ -514,7 +514,7 @@ QDataStream &operator >>(QDataStream &stream, TLabInfo &info)
 QDebug operator <<(QDebug dbg, const TLabInfo &info)
 {
     const TLabInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TLabInfo(" << d->id << "," << d->sender.login() << "," << d->title << ","
+    dbg.nospace() << "TLabInfo(" << d->id << "," /*<< d->sender.login() << ","*/ << d->title << ","
                   << info.typeStringNoTr() << ")";
     return dbg.space();
 }

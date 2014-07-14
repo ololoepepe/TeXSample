@@ -1,9 +1,6 @@
 #include "tglobal.h"
 #include "taccesslevel.h"
 #include "tclientinfo.h"
-#include "tcompilationresult.h"
-#include "tcompiledproject.h"
-#include "tcompilerparameters.h"
 #include "tidlist.h"
 #include "tinviteinfo.h"
 #include "tinviteinfolist.h"
@@ -11,9 +8,10 @@
 #include "tlabinfolist.h"
 #include "tlabproject.h"
 #include "tmessage.h"
-#include "toperationresult.h"
-#include "tprojectfile.h"
-#include "tprojectfilelist.h"
+#include "tbinaryfile.h"
+#include "tbinaryfilelist.h"
+#include "ttexfile.h"
+#include "ttexfilelist.h"
 #include "tsampleinfo.h"
 #include "tsampleinfolist.h"
 #include "tservice.h"
@@ -26,35 +24,24 @@
 
 #include <QMetaType>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <QUuid>
-Q_DECLARE_METATYPE(QUuid)
-#endif
-
-void tInit()
+void tRegister()
 {
     static bool registered = false;
     if (registered)
         return;
-#if defined(TSMP_BUILTIN_RESOURCES)
-    Q_INIT_RESOURCE(texsamplecore);
-    Q_INIT_RESOURCE(texsample_translations);
-#endif
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    qRegisterMetaType<QUuid>();
-    qRegisterMetaTypeStreamOperators<QUuid>();
-#endif
     bRegister();
     qRegisterMetaType<TAccessLevel>();
     qRegisterMetaTypeStreamOperators<TAccessLevel>();
     qRegisterMetaType<TClientInfo>();
     qRegisterMetaTypeStreamOperators<TClientInfo>();
-    qRegisterMetaType<TCompilationResult>();
-    qRegisterMetaTypeStreamOperators<TCompilationResult>();
-    qRegisterMetaType<TCompiledProject>();
-    qRegisterMetaTypeStreamOperators<TCompiledProject>();
-    qRegisterMetaType<TCompilerParameters>();
-    qRegisterMetaTypeStreamOperators<TCompilerParameters>();
+    qRegisterMetaType<TBinaryFile>();
+    qRegisterMetaTypeStreamOperators<TBinaryFile>();
+    qRegisterMetaType<TBinaryFileList>();
+    qRegisterMetaTypeStreamOperators<TBinaryFileList>();
+    qRegisterMetaType<TTexFile>();
+    qRegisterMetaTypeStreamOperators<TTexFile>();
+    qRegisterMetaType<TTexFileList>();
+    qRegisterMetaTypeStreamOperators<TTexFileList>();
     qRegisterMetaType<TIdList>();
     qRegisterMetaTypeStreamOperators<TIdList>();
     qRegisterMetaType<TInviteInfo>();
@@ -69,12 +56,6 @@ void tInit()
     qRegisterMetaTypeStreamOperators<TLabProject>();
     qRegisterMetaType<TMessage>();
     qRegisterMetaTypeStreamOperators<TMessage>();
-    qRegisterMetaType<TOperationResult>();
-    qRegisterMetaTypeStreamOperators<TOperationResult>();
-    qRegisterMetaType<TProjectFile>();
-    qRegisterMetaTypeStreamOperators<TProjectFile>();
-    qRegisterMetaType<TProjectFileList>();
-    qRegisterMetaTypeStreamOperators<TProjectFileList>();
     qRegisterMetaType<TSampleInfo>();
     qRegisterMetaTypeStreamOperators<TSampleInfo>();
     qRegisterMetaType<TSampleInfoList>();
@@ -88,14 +69,6 @@ void tInit()
     qRegisterMetaType<TUserInfo>();
     qRegisterMetaTypeStreamOperators<TUserInfo>();
     registered = true;
-}
-
-void tCleanup()
-{
-#if defined(TSMP_BUILTIN_RESOURCES)
-     Q_CLEANUP_RESOURCE(texsamplecore);
-     Q_CLEANUP_RESOURCE(texsample_translations);
-#endif
 }
 
 const char *tVersion()

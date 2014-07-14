@@ -59,7 +59,7 @@ protected:
 public:
     void setContext(int c, bool clear = false);
     void setId(quint64 id);
-    void setSender(const TUserInfo &sender);
+    //void setSender(const TUserInfo &sender);
     void setTitle(const QString &title);
     void setAuthors(const QStringList &list);
     void setType(int t);
@@ -74,7 +74,7 @@ public:
     Context context() const;
     quint64 id() const;
     QString idString(int fixedLength = -1) const;
-    TUserInfo sender() const;
+    //TUserInfo sender() const;
     QString title() const;
     QStringList authors() const;
     Type type() const;

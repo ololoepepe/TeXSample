@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ru_RU">
 <context>
+    <name>BTranslation</name>
+    <message>
+        <source>piiii</source>
+        <comment>poooo</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TAccessLevel</name>
     <message>
         <source>User</source>
@@ -631,12 +639,12 @@
     <message>
         <source>Click to see the picture in full size</source>
         <comment>tbtn toolTip</comment>
-        <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
+        <translation type="obsolete">Щелкните чтобы посмотреть картинку в полном размере</translation>
     </message>
     <message>
         <source>CloudLab groups</source>
         <comment>gbox title</comment>
-        <translation>Группы CloudLab</translation>
+        <translation type="obsolete">Группы CloudLab</translation>
     </message>
     <message>
         <source>E-mail confirmation:</source>
@@ -692,6 +700,89 @@
         <source>The login is occupied</source>
         <comment>toolTip</comment>
         <translation>Этот логин занят</translation>
+    </message>
+    <message>
+        <source>Active:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Patronymic:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Surename:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Old password:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Texsample</name>
+    <message>
+        <source>The image is too big</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The image&apos;s height is too big</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The image&apos;s hwidth is too big</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file name is empty</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file does not exist</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to read file</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The string is empty</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The string is too long</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The string is not an e-mail</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The string is too short</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
