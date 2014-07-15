@@ -4,17 +4,16 @@
 class TMessagePrivate;
 
 class QDataStream;
-class QVariant;
 class QDebug;
+class QString;
+class QVariant;
 
 #include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
-#include <QMetaType>
 #include <QCoreApplication>
-#include <QString>
+#include <QMetaType>
 
 /*============================================================================
 ================================ TMessage ====================================
@@ -87,28 +86,24 @@ public:
         UnknownError
     };
 public:
-    static Message messageFromInt(int msg);
-    static QString messageToString(int msg);
-    static QString messageToStringNoTr(int msg);
-public:
-    TMessage(int msg = NoMessage, const QString &explanation = QString());
+    TMessage(int msg = NoMessage);
+    explicit TMessage(int msg, const QString &extraText);
     TMessage(const TMessage &other);
     ~TMessage();
 protected:
     explicit TMessage(TMessagePrivate &d);
 public:
-    void setMessage(int msg);
-    void setExplanation(const QString &s);
-    Message message() const;
-    QString messageString() const;
-    QString messageStringNoTr() const;
-    QString explanation() const;
+    QString extraText() const;
+    void setExtraText(const QString &extraText);
+    QString text() const;
+    QString textNoTr() const;
 public:
     TMessage &operator =(const TMessage &other);
     TMessage &operator =(int msg);
     bool operator ==(const TMessage &other) const;
-    bool operator ==(int other) const;
+    bool operator !=(const TMessage &other) const;
     operator QVariant() const;
+    operator QString() const;
     operator int() const;
 public:
     friend QDataStream &operator <<(QDataStream &stream, const TMessage &msg);

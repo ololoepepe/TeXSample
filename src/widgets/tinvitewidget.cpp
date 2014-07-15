@@ -143,7 +143,7 @@ void TInviteWidgetPrivate::deleteInvites()
         msg.setWindowTitle(tr("Deleting invites failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to delete invites. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -231,7 +231,7 @@ void TInviteWidgetPrivate::generateInvites()
         msg.setWindowTitle(tr("Generating invites failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to generate invites. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();

@@ -3,8 +3,8 @@
 #include "tauthorinfolist.h"
 #include "tfileinfolist.h"
 #include "tidlist.h"
+#include "tlabdatainfolist.h"
 #include "tnamespace.h"
-#include "tprojectinfolist.h"
 
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
@@ -28,12 +28,12 @@ class TLabInfoPrivate : public BBasePrivate
 public:
     TAuthorInfoList authors;
     QDateTime creationDateTime;
+    TLabDataInfoList dataInfos;
     QString description;
     TFileInfoList extraFiles;
     TIdList groups;
     quint64 id;
     QDateTime lastModificationDateTime;
-    TProjectInfoList projects;
     quint64 senderId;
     QString senderLogin;
     QStringList tags;
@@ -118,6 +118,11 @@ QDateTime TLabInfo::creationDateTime() const
     return d_func()->creationDateTime;
 }
 
+TLabDataInfoList TLabInfo::dataInfos() const
+{
+    return d_func()->dataInfos;
+}
+
 QString TLabInfo::description() const
 {
     return d_func()->description;
@@ -141,18 +146,13 @@ quint64 TLabInfo::id() const
 bool TLabInfo::isValid() const
 {
     const B_D(TLabInfo);
-    return d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid() && !projects().isEmpty()
+    return  !d->dataInfos.isEmpty() && d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid()
             && d->senderId && !d->senderLogin.isEmpty() && !d->title.isEmpty();
 }
 
 QDateTime TLabInfo::lastModificationDateTime() const
 {
     return d_func()->lastModificationDateTime;
-}
-
-TProjectInfoList TLabInfo::projects() const
-{
-    return d_func()->projects;
 }
 
 quint64 TLabInfo::senderId() const
@@ -173,6 +173,11 @@ void TLabInfo::setAuthors(const TAuthorInfoList &authors)
 void TLabInfo::setCreationDateTime(const QDateTime &dt)
 {
     d_func()->creationDateTime = dt.toUTC();
+}
+
+void TLabInfo::setDataInfos(const TLabDataInfoList &dataInfos)
+{
+    d_func()->dataInfos = dataInfos;
 }
 
 void TLabInfo::setDescription(const QString &description)
@@ -201,11 +206,6 @@ void TLabInfo::setId(quint64 id)
 void TLabInfo::setLastModificationDateTime(const QDateTime &dt)
 {
     d_func()->lastModificationDateTime = dt.toUTC();
-}
-
-void TLabInfo::setProjects(const TProjectInfoList &projects)
-{
-    d_func()->projects = projects;
 }
 
 void TLabInfo::setSenderId(quint64 id)
@@ -247,12 +247,12 @@ TLabInfo &TLabInfo::operator =(const TLabInfo &other)
     const TLabInfoPrivate *dd = other.d_func();
     d->authors = dd->authors;
     d->creationDateTime = dd->creationDateTime;
+    d->dataInfos = dd->dataInfos;
     d->description = dd->description;
     d->extraFiles = dd->extraFiles;
     d->groups = dd->groups;
     d->id = dd->id;
     d->lastModificationDateTime = dd->lastModificationDateTime;
-    d->projects = dd->projects;
     d->senderId = dd->senderId;
     d->senderLogin = dd->senderLogin;
     d->tags = dd->tags;
@@ -264,11 +264,11 @@ bool TLabInfo::operator ==(const TLabInfo &other) const
 {
     const B_D(TLabInfo);
     const TLabInfoPrivate *dd = other.d_func();
-    return d->authors == dd->authors && d->creationDateTime == dd->creationDateTime
+    return d->authors == dd->authors && d->creationDateTime == dd->creationDateTime && d->dataInfos == dd->dataInfos
             && d->description == dd->description && d->extraFiles == dd->extraFiles && d->groups == dd->groups
             && d->id == dd->id && d->lastModificationDateTime == dd->lastModificationDateTime
-            && d->projects == dd->projects && d->senderId == dd->senderId && d->senderLogin == dd->senderLogin
-            && d->tags == dd->tags && d->title == dd->title;
+            && d->senderId == dd->senderId && d->senderLogin == dd->senderLogin && d->tags == dd->tags
+            && d->title == dd->title;
 }
 
 bool TLabInfo::operator !=(const TLabInfo &other) const
@@ -289,12 +289,12 @@ QDataStream &operator <<(QDataStream &stream, const TLabInfo &info)
     QVariantMap m;
     m.insert("authors", d->authors);
     m.insert("creation_date_time", d->creationDateTime);
+    m.insert("data_infos", d->dataInfos);
     m.insert("description", d->description);
     m.insert("extra_files", d->extraFiles);
     m.insert("groups", d->groups);
     m.insert("id", d->id);
     m.insert("last_modification_date_time", d->lastModificationDateTime);
-    m.insert("projects", d->projects);
     m.insert("sender_id", d->senderId);
     m.insert("sender_login", d->senderLogin);
     m.insert("tags", d->tags);
@@ -310,12 +310,12 @@ QDataStream &operator >>(QDataStream &stream, TLabInfo &info)
     stream >> m;
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->creationDateTime = m.value("creation_date_time").toDateTime().toUTC();
+    d->dataInfos = m.value("data_infos").value<TLabDataInfoList>();
     d->description = m.value("description").toString();
     d->extraFiles = m.value("extra_files").value<TFileInfoList>();
     d->groups = m.value("groups").value<TIdList>();
     d->id = m.value("id").toULongLong();
     d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();
-    d->projects = m.value("projects").value<TProjectInfoList>();
     d->senderId = m.value("sender_id").toULongLong();
     d->senderLogin = m.value("sender_login").toString();
     d->tags = m.value("tags").toStringList();

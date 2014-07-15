@@ -33,8 +33,8 @@ public:
     void clear();
     QVariant data() const;
     TMessage message() const;
-    QString messageString() const;
-    QString messageStringNoTr() const;
+    QString messageText() const;
+    QString messageTextNoTr() const;
     QDateTime requestDateTime() const;
     void setCacheUpToDate(bool upToDate);
     void setData(const QVariant &data);

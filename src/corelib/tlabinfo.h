@@ -6,7 +6,7 @@ class TLabInfoPrivate;
 class TAuthorInfoList;
 class TFileInfoList;
 class TIdList;
-class TProjectInfoList;
+class TLabDataInfoList;
 
 class QDataStream;
 class QDateTime;
@@ -37,23 +37,23 @@ protected:
 public:
     TAuthorInfoList authors() const;
     QDateTime creationDateTime() const;
+    TLabDataInfoList dataInfos() const;
     QString description() const;
     TFileInfoList extraFiles() const;
     TIdList groups() const;
     quint64 id() const;
     bool isValid() const;
     QDateTime lastModificationDateTime() const;
-    TProjectInfoList projects() const;
     quint64 senderId() const;
     QString senderLogin() const;
     void setAuthors(const TAuthorInfoList &authors);
     void setCreationDateTime(const QDateTime &dt);
+    void setDataInfos(const TLabDataInfoList &dataInfos);
     void setDescription(const QString &description);
     void setExtraFiles(const TFileInfoList &extraFiles);
     void setGroups(const TIdList &groups);
     void setId(quint64 id);
     void setLastModificationDateTime(const QDateTime &dt);
-    void setProjects(const TProjectInfoList &projects);
     void setSenderId(quint64 id);
     void setSenderLogin(const QString &login);
     void setTags(const QStringList &list);

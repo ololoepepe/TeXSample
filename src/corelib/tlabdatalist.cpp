@@ -1,15 +1,15 @@
-#include "tprojectinfolist.h"
+#include "tlabdatalist.h"
 
 #include <QList>
 #include <QVariant>
 
 /*============================================================================
-================================ TProjectInfoList ============================
+================================ TLabDataList =============================
 ============================================================================*/
 
 /*============================== Public operators ==========================*/
 
-TProjectInfoList::operator QVariant() const
+TLabDataList::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }

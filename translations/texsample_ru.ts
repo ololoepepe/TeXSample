@@ -312,6 +312,44 @@
     </message>
 </context>
 <context>
+    <name>TLabType plural</name>
+    <message>
+        <source>Desktop applications</source>
+        <translation type="unfinished">Настольные приложения</translation>
+    </message>
+    <message>
+        <source>Web applications</source>
+        <translation type="unfinished">Веб-приложения</translation>
+    </message>
+    <message>
+        <source>External URLs</source>
+        <translation type="unfinished">Внешние ссылки</translation>
+    </message>
+    <message>
+        <source>No applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TLabType singular</name>
+    <message>
+        <source>Desktop application</source>
+        <translation type="unfinished">Настольное приложение</translation>
+    </message>
+    <message>
+        <source>Web application</source>
+        <translation type="unfinished">Веб-приложение</translation>
+    </message>
+    <message>
+        <source>External URL</source>
+        <translation type="unfinished">Внешняя ссылка</translation>
+    </message>
+    <message>
+        <source>No application</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TListWidgetPrivate</name>
     <message>
         <source>Add...</source>
@@ -538,38 +576,30 @@
     <name>TProjectType plural</name>
     <message>
         <source>Desktop applications</source>
-        <translation type="unfinished">Настольные приложения</translation>
+        <translation type="obsolete">Настольные приложения</translation>
     </message>
     <message>
         <source>Web applications</source>
-        <translation type="unfinished">Веб-приложения</translation>
+        <translation type="obsolete">Веб-приложения</translation>
     </message>
     <message>
         <source>External URLs</source>
-        <translation type="unfinished">Внешние ссылки</translation>
-    </message>
-    <message>
-        <source>No applications</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Внешние ссылки</translation>
     </message>
 </context>
 <context>
     <name>TProjectType singular</name>
     <message>
         <source>Desktop application</source>
-        <translation type="unfinished">Настольное приложение</translation>
+        <translation type="obsolete">Настольное приложение</translation>
     </message>
     <message>
         <source>Web application</source>
-        <translation type="unfinished">Веб-приложение</translation>
+        <translation type="obsolete">Веб-приложение</translation>
     </message>
     <message>
         <source>External URL</source>
-        <translation type="unfinished">Внешняя ссылка</translation>
-    </message>
-    <message>
-        <source>No application</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Внешняя ссылка</translation>
     </message>
 </context>
 <context>

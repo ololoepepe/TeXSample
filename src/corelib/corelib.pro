@@ -29,16 +29,17 @@ HEADERS += \
     tinviteinfo.h \
     tinviteinfolist.h \
     tinvitemodel.h \
-    tlab.h \
+    tlabapplication.h \
+    tlabdata.h \
+    tlabdatainfo.h \
+    tlabdatainfolist.h \
+    tlabdatalist.h \
     tlabinfo.h \
     tlabinfolist.h \
+    tlabtype.h \
     tmessage.h \
     tnamespace.h \
     toperation.h \
-    tproject.h \
-    tprojectinfo.h \
-    tprojectinfolist.h \
-    tprojecttype.h \
     tsampleinfo.h \
     tsampleinfolist.h \
     tsampletype.h \
@@ -71,15 +72,16 @@ SOURCES += \
     tinviteinfo.cpp \
     tinviteinfolist.cpp \
     tinvitemodel.cpp \
-    tlab.cpp \
+    tlabapplication.cpp \
+    tlabdata.cpp \
+    tlabdatainfo.cpp \
+    tlabdatainfolist.cpp \
+    tlabdatalist.cpp \
     tlabinfo.cpp \
     tlabinfolist.cpp \
+    tlabtype.cpp \
     tmessage.cpp \
     tnamespace.cpp \
-    tproject.cpp \
-    tprojectinfo.cpp \
-    tprojectinfolist.cpp \
-    tprojecttype.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
     tsampletype.cpp \

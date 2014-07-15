@@ -112,14 +112,14 @@ TMessage TReply::message() const
     return d_func()->message;
 }
 
-QString TReply::messageString() const
+QString TReply::messageText() const
 {
-    return d_func()->message.messageString();
+    return d_func()->message.text();
 }
 
-QString TReply::messageStringNoTr() const
+QString TReply::messageTextNoTr() const
 {
-    return d_func()->message.messageStringNoTr();
+    return d_func()->message.textNoTr();
 }
 
 QDateTime TReply::requestDateTime() const

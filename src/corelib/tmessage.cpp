@@ -1,15 +1,12 @@
 #include "tmessage.h"
-#include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 
-#include <QObject>
 #include <QDataStream>
-#include <QVariant>
 #include <QDebug>
 #include <QString>
+#include <QVariant>
 #include <QVariantMap>
 
 /*============================================================================
@@ -20,13 +17,13 @@ class TMessagePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TMessage)
 public:
+    QString extraText;
+    TMessage::Message message;
+public:
    explicit TMessagePrivate(TMessage *q);
     ~TMessagePrivate();
 public:
     void init();
-public:
-    TMessage::Message message;
-    QString explanation;
 private:
     Q_DISABLE_COPY(TMessagePrivate)
 };
@@ -59,22 +56,64 @@ void TMessagePrivate::init()
 ================================ TMessage ====================================
 ============================================================================*/
 
-/*============================== Static public methods =====================*/
+/*============================== Public constructors =======================*/
 
-TMessage::Message TMessage::messageFromInt(int msg)
+TMessage::TMessage(int msg) :
+    BBase(*new TMessagePrivate(this))
 {
-    static const QList<int> messages = bRangeD(NoMessage, UnknownError);
-    return messages.contains(msg) ? static_cast<Message>(msg) : NoMessage;
+    d_func()->init();
+    *this = msg;
 }
 
-QString TMessage::messageToString(int msg)
+TMessage::TMessage(int msg, const QString &extraText) :
+    BBase(*new TMessagePrivate(this))
 {
-    return tr(messageToStringNoTr(msg).toUtf8().constData());
+    d_func()->init();
+    *this = msg;
+    d_func()->extraText = extraText;
 }
 
-QString TMessage::messageToStringNoTr(int msg)
+TMessage::TMessage(const TMessage &other) :
+    BBase(*new TMessagePrivate(this))
 {
-    switch (msg)
+    d_func()->init();
+    *this = other;
+}
+
+TMessage::~TMessage()
+{
+    //
+}
+
+/*============================== Protected constructors ====================*/
+
+
+TMessage::TMessage(TMessagePrivate &d) :
+    BBase(d)
+{
+    d_func()->init();
+}
+
+/*============================== Public methods ============================*/
+
+QString TMessage::extraText() const
+{
+    return d_func()->extraText;
+}
+
+void TMessage::setExtraText(const QString &extraText)
+{
+    d_func()->extraText = extraText;
+}
+
+QString TMessage::text() const
+{
+    return tr(textNoTr().toUtf8().constData());
+}
+
+QString TMessage::textNoTr() const
+{
+    switch (d_func()->message)
     {
     //Connection messages
     case AlreadyAuthorizedMessage:
@@ -189,98 +228,40 @@ QString TMessage::messageToStringNoTr(int msg)
     }
 }
 
-/*============================== Public constructors =======================*/
-
-TMessage::TMessage(int msg, const QString &explanation) :
-    BBase(*new TMessagePrivate(this))
-{
-    d_func()->init();
-    setMessage(msg);
-    setExplanation(explanation);
-}
-
-TMessage::TMessage(const TMessage &other) :
-    BBase(*new TMessagePrivate(this))
-{
-    d_func()->init();
-    *this = other;
-}
-
-TMessage::~TMessage()
-{
-    //
-}
-
-/*============================== Protected constructors ====================*/
-
-
-TMessage::TMessage(TMessagePrivate &d) :
-    BBase(d)
-{
-    d_func()->init();
-}
-
-/*============================== Public methods ============================*/
-
-void TMessage::setMessage(int msg)
-{
-    d_func()->message = messageFromInt(msg);
-}
-
-void TMessage::setExplanation(const QString &s)
-{
-    d_func()->explanation = s;
-}
-
-TMessage::Message TMessage::message() const
-{
-    return d_func()->message;
-}
-
-QString TMessage::messageString() const
-{
-    return messageToString(d_func()->message);
-}
-
-QString TMessage::messageStringNoTr() const
-{
-    return messageToStringNoTr(d_func()->message);
-}
-
-QString TMessage::explanation() const
-{
-    return d_func()->explanation;
-}
-
 /*============================== Public operators ==========================*/
 
 TMessage &TMessage::operator =(const TMessage &other)
 {
     d_func()->message = other.d_func()->message;
-    d_func()->explanation = other.d_func()->explanation;
+    d_func()->extraText = other.d_func()->extraText;
     return *this;
 }
 
 TMessage &TMessage::operator =(int msg)
 {
-    d_func()->message = messageFromInt(msg);
-    d_func()->explanation.clear();
+    d_func()->message = enum_cast<Message>(msg, NoMessage, UnknownError);
+    d_func()->extraText.clear();
     return *this;
 }
 
 bool TMessage::operator ==(const TMessage &other) const
 {
-    return d_func()->message == other.d_func()->message && d_func()->explanation == other.d_func()->explanation;
+    return d_func()->message == other.d_func()->message && d_func()->extraText == other.d_func()->extraText;
 }
 
-bool TMessage::operator ==(int other) const
+bool TMessage::operator !=(const TMessage &other) const
 {
-    return d_func()->message == other && d_func()->explanation.isEmpty();
+    return !(*this == other);
 }
 
 TMessage::operator QVariant() const
 {
     return QVariant::fromValue(*this);
+}
+
+TMessage::operator QString() const
+{
+    return text();
 }
 
 TMessage::operator int() const
@@ -294,7 +275,7 @@ QDataStream &operator <<(QDataStream &stream, const TMessage &msg)
 {
     QVariantMap m;
     m.insert("message", (int) msg.d_func()->message);
-    m.insert("explanation", msg.d_func()->explanation);
+    m.insert("extra_text", msg.d_func()->extraText);
     stream << m;
     return stream;
 }
@@ -303,13 +284,14 @@ QDataStream &operator >>(QDataStream &stream, TMessage &msg)
 {
     QVariantMap m;
     stream >> m;
-    msg.d_func()->message = TMessage::messageFromInt(m.value("message").toInt());
-    msg.d_func()->explanation = m.value("explanation").toString();
+    msg.d_func()->message = enum_cast<TMessage::Message>(m.value("message"), TMessage::NoMessage,
+                                                         TMessage::UnknownError);
+    msg.d_func()->extraText = m.value("extra_text").toString();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TMessage &msg)
 {
-    dbg.nospace() << "TMessage(" << msg.messageStringNoTr() << "," << msg.explanation() << ")";
+    dbg.nospace() << "TMessage(" << msg.textNoTr() << "," << msg.extraText() << ")";
     return dbg.space();
 }

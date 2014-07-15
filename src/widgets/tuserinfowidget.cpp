@@ -472,7 +472,7 @@ void TUserInfoWidgetPrivate::changeEmail()
         msg.setWindowTitle(tr("Changing e-mail failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to change e-mail. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.message().messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -496,7 +496,7 @@ void TUserInfoWidgetPrivate::changePassword()
         msg.setWindowTitle(tr("Changing password failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to change password. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.message().messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -532,7 +532,7 @@ void TUserInfoWidgetPrivate::checkEmail()
         msg.setWindowTitle(tr("Checking e-mail failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to check e-mail. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.message().messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -593,7 +593,7 @@ void TUserInfoWidgetPrivate::checkLogin()
         msg.setWindowTitle(tr("Checking login failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to check login. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.message().messageString());
+        msg.setInformativeText(r.messageText());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -651,7 +651,7 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
                 msg.setWindowTitle(tr("Failed to get avatar", "msgbox windowTitle"));
                 msg.setIcon(QMessageBox::Critical);
                 msg.setText(tr("Failed to get user avatar from server. The following error occured:", "msgbox text"));
-                msg.setInformativeText(r.messageString());
+                msg.setInformativeText(r.messageText());
                 msg.setStandardButtons(QMessageBox::Ok);
                 msg.exec();
                 return;

@@ -1,6 +1,6 @@
-#include "tprojectinfo.h"
+#include "tlabdatainfo.h"
 
-#include "tprojecttype.h"
+#include "tlabtype.h"
 
 #include <BBase>
 #include <BeQt>
@@ -12,156 +12,156 @@
 #include <QVariantMap>
 
 /*============================================================================
-================================ TProjectInfoPrivate =========================
+================================ TLabDataInfoPrivate =========================
 ============================================================================*/
 
-class TProjectInfoPrivate : public BBasePrivate
+class TLabDataInfoPrivate : public BBasePrivate
 {
-    B_DECLARE_PUBLIC(TProjectInfo)
+    B_DECLARE_PUBLIC(TLabDataInfo)
 public:
     BeQt::OSType os;
     int size;
-    TProjectType type;
+    TLabType type;
 public:
-    explicit TProjectInfoPrivate(TProjectInfo *q);
-    ~TProjectInfoPrivate();
+    explicit TLabDataInfoPrivate(TLabDataInfo *q);
+    ~TLabDataInfoPrivate();
 public:
     void init();
 private:
-    Q_DISABLE_COPY(TProjectInfoPrivate)
+    Q_DISABLE_COPY(TLabDataInfoPrivate)
 };
 
 /*============================================================================
-================================ TProjectInfoPrivate =========================
+================================ TLabDataInfoPrivate =========================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TProjectInfoPrivate::TProjectInfoPrivate(TProjectInfo *q) :
+TLabDataInfoPrivate::TLabDataInfoPrivate(TLabDataInfo *q) :
     BBasePrivate(q)
 {
     //
 }
 
-TProjectInfoPrivate::~TProjectInfoPrivate()
+TLabDataInfoPrivate::~TLabDataInfoPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TProjectInfoPrivate::init()
+void TLabDataInfoPrivate::init()
 {
     os = BeQt::UnknownOS;
     size = 0;
 }
 
 /*============================================================================
-================================ TProjectInfo ================================
+================================ TLabDataInfo ================================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TProjectInfo::TProjectInfo() :
-    BBase(*new TProjectInfoPrivate(this))
+TLabDataInfo::TLabDataInfo() :
+    BBase(*new TLabDataInfoPrivate(this))
 {
     d_func()->init();
 }
 
-TProjectInfo::TProjectInfo(const TProjectInfo &other) :
-    BBase(*new TProjectInfoPrivate(this))
+TLabDataInfo::TLabDataInfo(const TLabDataInfo &other) :
+    BBase(*new TLabDataInfoPrivate(this))
 {
     d_func()->init();
     *this = other;
 }
 
-TProjectInfo::~TProjectInfo()
+TLabDataInfo::~TLabDataInfo()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TProjectInfo::clear()
+void TLabDataInfo::clear()
 {
-    B_D(TProjectInfo);
+    B_D(TLabDataInfo);
     d->os = BeQt::UnknownOS;
     d->size = 0;
-    d->type = TProjectType();
+    d->type = TLabType();
 }
 
-bool TProjectInfo::isValid() const
+bool TLabDataInfo::isValid() const
 {
-    const B_D(TProjectInfo);
-    return d->type.isValid() && (d->type == TProjectType(TProjectType::UrlType) || BeQt::UnknownOS != d->os);
+    const B_D(TLabDataInfo);
+    return d->type.isValid() && (d->type == TLabType(TLabType::Url) || BeQt::UnknownOS != d->os);
 }
 
-BeQt::OSType TProjectInfo::os() const
+BeQt::OSType TLabDataInfo::os() const
 {
     return d_func()->os;
 }
 
-void TProjectInfo::setOs(BeQt::OSType os)
+void TLabDataInfo::setOs(BeQt::OSType os)
 {
     static const QList<BeQt::OSType> Types = QList<BeQt::OSType>() << BeQt::UnknownOS << BeQt::UnixOS
                                                                    << BeQt::WindowsOS << BeQt::LinuxOS << BeQt::MacOS;
     d_func()->os = enum_cast<BeQt::OSType>(os, Types, BeQt::UnknownOS);
 }
 
-void TProjectInfo::setSize(int size)
+void TLabDataInfo::setSize(int size)
 {
     d_func()->size = (size > 0) ? size : 0;
 }
 
-void TProjectInfo::setType(const TProjectType &type)
+void TLabDataInfo::setType(const TLabType &type)
 {
     d_func()->type = type;
 }
 
-int TProjectInfo::size() const
+int TLabDataInfo::size() const
 {
     return d_func()->size;
 }
 
-TProjectType TProjectInfo::type() const
+TLabType TLabDataInfo::type() const
 {
     return d_func()->type;
 }
 
 /*============================== Public operators ==========================*/
 
-TProjectInfo &TProjectInfo::operator =(const TProjectInfo &other)
+TLabDataInfo &TLabDataInfo::operator =(const TLabDataInfo &other)
 {
-    B_D(TProjectInfo);
-    const TProjectInfoPrivate *dd = other.d_func();
+    B_D(TLabDataInfo);
+    const TLabDataInfoPrivate *dd = other.d_func();
     d->os = dd->os;
     d->size = dd->size;
     d->type = dd->type;
     return *this;
 }
 
-bool TProjectInfo::operator ==(const TProjectInfo &other) const
+bool TLabDataInfo::operator ==(const TLabDataInfo &other) const
 {
-    const B_D(TProjectInfo);
-    const TProjectInfoPrivate *dd = other.d_func();
+    const B_D(TLabDataInfo);
+    const TLabDataInfoPrivate *dd = other.d_func();
     return d->os == dd->os && d->size == dd->size && d->type == dd->type;
 }
 
-bool TProjectInfo::operator !=(const TProjectInfo &other) const
+bool TLabDataInfo::operator !=(const TLabDataInfo &other) const
 {
     return !(*this == other);
 }
 
-TProjectInfo::operator QVariant() const
+TLabDataInfo::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TProjectInfo &data)
+QDataStream &operator <<(QDataStream &stream, const TLabDataInfo &data)
 {
-    const TProjectInfoPrivate *d = data.d_func();
+    const TLabDataInfoPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("os", int(d->os));
     m.insert("size", d->size);
@@ -170,22 +170,22 @@ QDataStream &operator <<(QDataStream &stream, const TProjectInfo &data)
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TProjectInfo &data)
+QDataStream &operator >>(QDataStream &stream, TLabDataInfo &data)
 {
-    TProjectInfoPrivate *d = data.d_func();
+    TLabDataInfoPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
     static const QList<BeQt::OSType> Types = QList<BeQt::OSType>() << BeQt::UnknownOS << BeQt::UnixOS
                                                                    << BeQt::WindowsOS << BeQt::LinuxOS << BeQt::MacOS;
     d->os = enum_cast<BeQt::OSType>(m.value("os"), Types, BeQt::UnknownOS);
     d->size = m.value("size").toInt();
-    d->type = m.value("type").value<TProjectType>();
+    d->type = m.value("type").value<TLabType>();
     return stream;
 }
 
-QDebug operator <<(QDebug dbg, const TProjectInfo &/*data*/)
+QDebug operator <<(QDebug dbg, const TLabDataInfo &/*data*/)
 {
-    //const TProjectInfoPrivate *d = data.d_func();
-    dbg.nospace() << "TProjectInfo(" << ")";
+    //const TLabDataInfoPrivate *d = data.d_func();
+    dbg.nospace() << "TLabDataInfo(" << ")";
     return dbg.space();
 }
