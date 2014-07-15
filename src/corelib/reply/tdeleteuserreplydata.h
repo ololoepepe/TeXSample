@@ -7,6 +7,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -15,7 +17,7 @@ class QVariant;
 ================================ TDeleteUserReplyData ========================
 ============================================================================*/
 
-class TDeleteUserReplyData : public BBase
+class T_CORE_EXPORT TDeleteUserReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TDeleteUserReplyData)
 public:

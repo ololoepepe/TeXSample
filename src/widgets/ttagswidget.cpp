@@ -1,8 +1,6 @@
 #include "ttagswidget.h"
 #include "ttagswidget_p.h"
 
-#include <TeXSampleCore/TSampleInfo>
-
 #include <BApplication>
 #include <BBaseObject>
 #include <BeQtCore/private/bbaseobject_p.h>
@@ -13,6 +11,7 @@
 #include <QLineEdit>
 #include <QList>
 #include <QMenu>
+#include <QRegExp>
 #include <QSignalMapper>
 #include <QString>
 #include <QStringList>
@@ -128,10 +127,10 @@ void TTagsWidget::setReadOnly(bool ro)
 
 void TTagsWidget::setTags(const QStringList &list)
 {
-    d_func()->ledt->setText(TSampleInfo::listToString(list));
+    d_func()->ledt->setText(list.join(", "));
 }
 
 QStringList TTagsWidget::tags() const
 {
-    return TSampleInfo::listFromString(d_func()->ledt->text());
+    return d_func()->ledt->text().split(QRegExp("\\,\\s*"), QString::SkipEmptyParts);
 }

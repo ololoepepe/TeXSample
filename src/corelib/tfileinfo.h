@@ -30,6 +30,7 @@ public:
     QString description() const;
     QString fileName() const;
     int fileSize() const;
+    bool isValid() const;
     void setDescription(const QString &description);
     void setFileName(const QString &fileName);
     void setFileSize(int size);

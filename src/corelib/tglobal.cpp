@@ -6,7 +6,7 @@
 #include "tinviteinfolist.h"
 #include "tlabinfo.h"
 #include "tlabinfolist.h"
-#include "tlabproject.h"
+#include "tproject.h"
 #include "tmessage.h"
 #include "tbinaryfile.h"
 #include "tbinaryfilelist.h"
@@ -52,8 +52,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TLabInfo>();
     qRegisterMetaType<TLabInfoList>();
     qRegisterMetaTypeStreamOperators<TLabInfoList>();
-    qRegisterMetaType<TLabProject>();
-    qRegisterMetaTypeStreamOperators<TLabProject>();
+    qRegisterMetaType<TProject>();
+    qRegisterMetaTypeStreamOperators<TProject>();
     qRegisterMetaType<TMessage>();
     qRegisterMetaTypeStreamOperators<TMessage>();
     qRegisterMetaType<TSampleInfo>();
@@ -73,5 +73,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "1.3.0";
+    return "2.0.0-beta";
 }

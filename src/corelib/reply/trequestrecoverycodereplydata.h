@@ -7,6 +7,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -15,7 +17,7 @@ class QVariant;
 ================================ TRequestRecoveryCodeReplyData ===============
 ============================================================================*/
 
-class TRequestRecoveryCodeReplyData : public BBase
+class T_CORE_EXPORT TRequestRecoveryCodeReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TRequestRecoveryCodeReplyData)
 public:

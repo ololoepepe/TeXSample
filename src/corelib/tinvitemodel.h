@@ -21,7 +21,7 @@ class QVariant;
 ================================ TInviteModel ================================
 ============================================================================*/
 
-class TInviteModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TInviteModel : public QAbstractListModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TInviteModel)

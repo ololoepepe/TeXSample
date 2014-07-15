@@ -21,7 +21,7 @@ class QVariant;
 ================================ TUserModel ==================================
 ============================================================================*/
 
-class TUserModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TUserModel : public QAbstractListModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TUserModel)

@@ -13,6 +13,8 @@ DEFINES += TSMP_BUILD_CORE_LIB
 
 HEADERS += \
     taccesslevel.h \
+    tauthorinfo.h \
+    tauthorinfolist.h \
     tbinaryfile.h \
     tbinaryfilelist.h \
     tclientinfo.h \
@@ -27,13 +29,19 @@ HEADERS += \
     tinviteinfo.h \
     tinviteinfolist.h \
     tinvitemodel.h \
+    tlab.h \
     tlabinfo.h \
     tlabinfolist.h \
-    tlabproject.h \
     tmessage.h \
     tnamespace.h \
+    toperation.h \
+    tproject.h \
+    tprojectinfo.h \
+    tprojectinfolist.h \
+    tprojecttype.h \
     tsampleinfo.h \
     tsampleinfolist.h \
+    tsampletype.h \
     tservice.h \
     tservicelist.h \
     ttexcompiler.h \
@@ -47,6 +55,8 @@ HEADERS += \
 
 SOURCES += \
     taccesslevel.cpp \
+    tauthorinfo.cpp \
+    tauthorinfolist.cpp \
     tbinaryfile.cpp \
     tbinaryfilelist.cpp \
     tclientinfo.cpp \
@@ -61,13 +71,18 @@ SOURCES += \
     tinviteinfo.cpp \
     tinviteinfolist.cpp \
     tinvitemodel.cpp \
+    tlab.cpp \
     tlabinfo.cpp \
     tlabinfolist.cpp \
-    tlabproject.cpp \
     tmessage.cpp \
     tnamespace.cpp \
+    tproject.cpp \
+    tprojectinfo.cpp \
+    tprojectinfolist.cpp \
+    tprojecttype.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
+    tsampletype.cpp \
     tservice.cpp \
     tservicelist.cpp \
     ttexcompiler.cpp \

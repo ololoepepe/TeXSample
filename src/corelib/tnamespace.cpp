@@ -1,5 +1,4 @@
 #include "tnamespace.h"
-#include "tglobal.h"
 
 #include <BDirTools>
 #include <BTextTools>
@@ -8,12 +7,22 @@
 #include <QFileInfo>
 #include <QImage>
 #include <QString>
+#include <QUrl>
 #include <QVariant>
 
 B_DECLARE_TRANSLATE_FUNCTION
 
 namespace Texsample
 {
+
+bool testAdminRemark(const QString &remark, QString *error, bool tr)
+{
+    if (remark.length() > Texsample::MaximumAdminRemarkLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
 
 bool testAvatar(const QImage &avatar, QString *error, bool tr)
 {
@@ -77,9 +86,36 @@ bool testEmail(const QString &email, QString *error, bool tr)
     return bRet(error, QString(), true);
 }
 
-bool testFileDescription(const QString &desctiption, QString *error, bool tr)
+bool testFileDescription(const QString &description, QString *error, bool tr)
 {
-    if (desctiption.length() > Texsample::MaximumFileDescriptionLength) {
+    if (description.length() > Texsample::MaximumFileDescriptionLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testGroupName(const QString &name, QString *error, bool tr)
+{
+    if (name.length() > Texsample::MaximumGroupNameLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testLabDescription(const QString &description, QString *error, bool tr)
+{
+    if (description.length() > Texsample::MaximumLabDescriptionLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testLabTitle(const QString &title, QString *error, bool tr)
+{
+    if (title.length() > Texsample::MaximumLabTitleLength) {
         return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
                                 QString("The string is too long"), false);
     }
@@ -112,6 +148,15 @@ bool testName(const QString &name, QString *error, bool tr)
     return bRet(error, QString(), true);
 }
 
+bool testOrganization(const QString &organization, QString *error, bool tr)
+{
+    if (organization.length() > Texsample::MaximumOrganizationLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
 bool testPassword(const QString &password, QString *error, bool tr)
 {
     if (password.isEmpty()) {
@@ -129,11 +174,51 @@ bool testPassword(const QString &password, QString *error, bool tr)
     return bRet(error, QString(), true);
 }
 
-bool testGroupName(const QString &name, QString *error, bool tr)
+bool testPost(const QString &post, QString *error, bool tr)
 {
-    if (name.length() > Texsample::MaximumGroupNameLength) {
+    if (post.length() > Texsample::MaximumPostLength) {
         return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
                                 QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testRole(const QString &role, QString *error, bool tr)
+{
+    if (role.length() > Texsample::MaximumRoleLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testSampleDescription(const QString &description, QString *error, bool tr)
+{
+    if (description.length() > Texsample::MaximumSampleDescriptionLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testSampleTitle(const QString &title, QString *error, bool tr)
+{
+    if (title.length() > Texsample::MaximumSampleTitleLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testUrl(const QString &url, QString *error, bool tr)
+{
+    if (url.length() > Texsample::MaximumUrlLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    if (!QUrl::fromUserInput(url).isValid()) {
+        return bRet(error, tr ? translate("Texsample", "The URL is invalid", "error") : QString("The URL is invalid"),
+                    false);
     }
     return bRet(error, QString(), true);
 }

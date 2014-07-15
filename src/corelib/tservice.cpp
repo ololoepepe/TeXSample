@@ -1,16 +1,13 @@
 #include "tservice.h"
-#include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
-#include <BTranslator>
 
-#include <QObject>
 #include <QDataStream>
-#include <QVariant>
 #include <QDebug>
+#include <QObject>
 #include <QString>
+#include <QVariant>
 #include <QVariantMap>
 
 /*============================================================================
@@ -21,12 +18,12 @@ class TServicePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TService)
 public:
+    TService::Service service;
+public:
    explicit TServicePrivate(TService *q);
     ~TServicePrivate();
 public:
     void init();
-public:
-    TService::Service service;
 private:
     Q_DISABLE_COPY(TServicePrivate)
 };
@@ -52,7 +49,7 @@ TServicePrivate::~TServicePrivate()
 
 void TServicePrivate::init()
 {
-    service = TService::TexsampleService;
+    service = TService::NoService;
 }
 
 /*============================================================================

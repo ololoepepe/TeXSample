@@ -21,7 +21,7 @@ class QVariant;
 ================================ TGroupModel =================================
 ============================================================================*/
 
-class TGroupModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TGroupModel : public QAbstractListModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TGroupModel)

@@ -1,12 +1,12 @@
 #ifndef TSAMPLEINFOLIST_H
 #define TSAMPLEINFOLIST_H
 
+class QVariant;
+
 #include "tsampleinfo.h"
-#include "tglobal.h"
 
 #include <QList>
 #include <QMetaType>
-#include <QVariant>
 
 /*============================================================================
 ================================ TSampleInfoList =============================

@@ -8,6 +8,8 @@ class QDebug;
 class QString;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QCoreApplication>
@@ -18,7 +20,7 @@ class QVariant;
 ================================ TTexCompiler ================================
 ============================================================================*/
 
-class TTexCompiler : public BBase
+class T_CORE_EXPORT TTexCompiler : public BBase
 {
     B_DECLARE_PRIVATE(TTexCompiler)
     Q_DECLARE_TR_FUNCTIONS(TTexCompiler)

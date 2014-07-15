@@ -7,6 +7,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -15,7 +17,7 @@ class QVariant;
 ================================ TCheckEmailAvailabilityReplyData ============
 ============================================================================*/
 
-class TCheckEmailAvailabilityReplyData : public BBase
+class T_CORE_EXPORT TCheckEmailAvailabilityReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TCheckEmailAvailabilityReplyData)
 public:

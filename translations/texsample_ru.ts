@@ -2,14 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ru_RU">
 <context>
-    <name>BTranslation</name>
-    <message>
-        <source>piiii</source>
-        <comment>poooo</comment>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>TAccessLevel</name>
     <message>
         <source>User</source>
@@ -49,112 +41,274 @@
     </message>
 </context>
 <context>
-    <name>TInvitesDialogPrivate</name>
+    <name>TGroupModel</name>
     <message>
-        <source>Invites management</source>
-        <comment>windowTitle</comment>
-        <translation>Управление инвайтами</translation>
+        <source>ID</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TGroupWidgetPrivate</name>
+    <message>
+        <source>Generate group...</source>
+        <comment>act text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete group</source>
+        <comment>act text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit group...</source>
+        <comment>act text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adding group</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adding group failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to add group. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deleting group failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to delete group. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editing group</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editing group failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to edit group. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TInviteModel</name>
+    <message>
+        <source>ID</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Expiration date</source>
-        <comment>tblwgt header</comment>
-        <translation>Действует до</translation>
+        <comment>headerData</comment>
+        <translation type="unfinished">Действует до</translation>
     </message>
-    <message>
-        <source>Available services</source>
-        <comment>tblwgt header</comment>
-        <translation>Доступные службы</translation>
-    </message>
+</context>
+<context>
+    <name>TInviteWidgetPrivate</name>
     <message>
         <source>Generate invites...</source>
         <comment>act text</comment>
-        <translation>Сгенерировать инвайты...</translation>
+        <translation type="unfinished">Сгенерировать инвайты...</translation>
     </message>
     <message>
-        <source>Copy selected invite code to clipboard</source>
+        <source>Copy selected invite codes to clipboard</source>
         <comment>act text</comment>
-        <translation>Копировать выбранный инвайт-код в буфер обмена</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Generating invites</source>
-        <comment>dlg windowTitle</comment>
-        <translation>Генерирование инвайтов</translation>
+        <source>Delete selected invites</source>
+        <comment>act text</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expiration date:</source>
-        <comment>lbl text</comment>
-        <translation>Действует до:</translation>
-    </message>
-    <message>
-        <source>Count:</source>
-        <comment>lbl text</comment>
-        <translation>Количество:</translation>
-    </message>
-    <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
-    </message>
-    <message>
-        <source>Generating invites failed</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Генерирование инвайтов не удалось</translation>
-    </message>
-    <message>
-        <source>Failed to generate invites. The following error occured:</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось сгенерировать инвайты. Произошла следующая ошибка:</translation>
+        <source>Invite were copied to clipboard</source>
+        <comment>toolTip</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Invite was copied to clipboard</source>
         <comment>toolTip</comment>
-        <translation>Инвайт был скопирован в буфер обмена</translation>
+        <translation type="unfinished">Инвайт был скопирован в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Deleting invites failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to delete invites. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating invites</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="unfinished">Генерирование инвайтов</translation>
+    </message>
+    <message>
+        <source>Expiration date:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Действует до:</translation>
+    </message>
+    <message>
+        <source>Count:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Количество:</translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Доступ к</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating invites failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Генерирование инвайтов не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to generate invites. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Не удалось сгенерировать инвайты. Произошла следующая ошибка:</translation>
+    </message>
+</context>
+<context>
+    <name>TInvitesDialogPrivate</name>
+    <message>
+        <source>Invites management</source>
+        <comment>windowTitle</comment>
+        <translation type="obsolete">Управление инвайтами</translation>
+    </message>
+    <message>
+        <source>Expiration date</source>
+        <comment>tblwgt header</comment>
+        <translation type="obsolete">Действует до</translation>
+    </message>
+    <message>
+        <source>Available services</source>
+        <comment>tblwgt header</comment>
+        <translation type="obsolete">Доступные службы</translation>
+    </message>
+    <message>
+        <source>Generate invites...</source>
+        <comment>act text</comment>
+        <translation type="obsolete">Сгенерировать инвайты...</translation>
+    </message>
+    <message>
+        <source>Copy selected invite code to clipboard</source>
+        <comment>act text</comment>
+        <translation type="obsolete">Копировать выбранный инвайт-код в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Generating invites</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="obsolete">Генерирование инвайтов</translation>
+    </message>
+    <message>
+        <source>Expiration date:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Действует до:</translation>
+    </message>
+    <message>
+        <source>Count:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Количество:</translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Доступ к</translation>
+    </message>
+    <message>
+        <source>Generating invites failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="obsolete">Генерирование инвайтов не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to generate invites. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="obsolete">Не удалось сгенерировать инвайты. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Invite was copied to clipboard</source>
+        <comment>toolTip</comment>
+        <translation type="obsolete">Инвайт был скопирован в буфер обмена</translation>
     </message>
     <message>
         <source>Updating invites list failed</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Обновление списка инвайтов не удалось</translation>
+        <translation type="obsolete">Обновление списка инвайтов не удалось</translation>
     </message>
     <message>
         <source>Failed to update invites list. The following error occured:</source>
         <comment>msgbox text</comment>
-        <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
+        <translation type="obsolete">Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
     </message>
     <message>
         <source>CloudLab groups</source>
         <comment>gbox title</comment>
-        <translation>Группы CloudLab</translation>
+        <translation type="obsolete">Группы CloudLab</translation>
     </message>
 </context>
 <context>
     <name>TLabInfo</name>
     <message>
         <source>Desktop application</source>
-        <translation>Настольное приложение</translation>
+        <translation type="obsolete">Настольное приложение</translation>
     </message>
     <message>
         <source>Web application</source>
-        <translation>Веб-приложение</translation>
+        <translation type="obsolete">Веб-приложение</translation>
     </message>
     <message>
         <source>External URL</source>
-        <translation>Внешняя ссылка</translation>
+        <translation type="obsolete">Внешняя ссылка</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Desktop applications</source>
-        <translation>Настольные приложения</translation>
+        <translation type="obsolete">Настольные приложения</translation>
     </message>
     <message>
         <source>Web applications</source>
-        <translation>Веб-приложения</translation>
+        <translation type="obsolete">Веб-приложения</translation>
     </message>
     <message>
         <source>External URLs</source>
-        <translation>Внешние ссылки</translation>
+        <translation type="obsolete">Внешние ссылки</translation>
     </message>
 </context>
 <context>
@@ -381,111 +535,252 @@
     </message>
 </context>
 <context>
+    <name>TProjectType plural</name>
+    <message>
+        <source>Desktop applications</source>
+        <translation type="unfinished">Настольные приложения</translation>
+    </message>
+    <message>
+        <source>Web applications</source>
+        <translation type="unfinished">Веб-приложения</translation>
+    </message>
+    <message>
+        <source>External URLs</source>
+        <translation type="unfinished">Внешние ссылки</translation>
+    </message>
+    <message>
+        <source>No applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TProjectType singular</name>
+    <message>
+        <source>Desktop application</source>
+        <translation type="unfinished">Настольное приложение</translation>
+    </message>
+    <message>
+        <source>Web application</source>
+        <translation type="unfinished">Веб-приложение</translation>
+    </message>
+    <message>
+        <source>External URL</source>
+        <translation type="unfinished">Внешняя ссылка</translation>
+    </message>
+    <message>
+        <source>No application</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TRecoveryDialogPrivate</name>
     <message>
         <source>Recovering account</source>
         <comment>windowTitle</comment>
-        <translation>Восстановление аккаунта</translation>
+        <translation type="obsolete">Восстановление аккаунта</translation>
     </message>
     <message>
         <source>Getting recovery code</source>
         <comment>gbox title</comment>
-        <translation>Получение кода восстановления</translation>
+        <translation type="obsolete">Получение кода восстановления</translation>
     </message>
     <message>
         <source>E-mail:</source>
         <comment>lbl text</comment>
-        <translation>Эл. почта:</translation>
+        <translation type="obsolete">Эл. почта:</translation>
     </message>
     <message>
         <source>Get recovery code</source>
         <comment>btn text</comment>
-        <translation>Получить код восстановления</translation>
+        <translation type="obsolete">Получить код восстановления</translation>
     </message>
     <message>
         <source>Recovering account</source>
         <comment>gbox title</comment>
-        <translation>Восстановление аккаунта</translation>
+        <translation type="obsolete">Восстановление аккаунта</translation>
     </message>
     <message>
         <source>Code:</source>
         <comment>lbl text</comment>
-        <translation>Код:</translation>
+        <translation type="obsolete">Код:</translation>
     </message>
     <message>
         <source>Password:</source>
         <comment>lbl text</comment>
-        <translation>Пароль:</translation>
+        <translation type="obsolete">Пароль:</translation>
     </message>
     <message>
         <source>Recover account</source>
         <comment>btn text</comment>
-        <translation>Восстановить аккаунт</translation>
+        <translation type="obsolete">Восстановить аккаунт</translation>
     </message>
     <message>
         <source>Getting recovery code</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Получение кода восстановления</translation>
+        <translation type="obsolete">Получение кода восстановления</translation>
     </message>
     <message>
         <source>You are going to get a recovery code. Do you want to continue?</source>
         <comment>msgbox text</comment>
-        <translation>Вы собираетесь получить код восстановления.Хотите продолжить?</translation>
+        <translation type="obsolete">Вы собираетесь получить код восстановления.Хотите продолжить?</translation>
     </message>
     <message>
         <source>Recovery code generated</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Код восстановления сгенерирован</translation>
+        <translation type="obsolete">Код восстановления сгенерирован</translation>
     </message>
     <message>
         <source>Account recovery code was generated and sent to your e-mail</source>
         <comment>msgbox text</comment>
-        <translation>Код восстановления аккаунта был сгенерирован и отправлен на вашу электронную почту</translation>
+        <translation type="obsolete">Код восстановления аккаунта был сгенерирован и отправлен на вашу электронную почту</translation>
     </message>
     <message>
         <source>Getting recovery code error</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Ошибка получения кода восстановления</translation>
+        <translation type="obsolete">Ошибка получения кода восстановления</translation>
     </message>
     <message>
         <source>Failed to get recovery code due to the following error:</source>
         <comment>msgbox text</comment>
-        <translation>Не удалось получить код восстановления из-за следующей ошибки:</translation>
+        <translation type="obsolete">Не удалось получить код восстановления из-за следующей ошибки:</translation>
     </message>
     <message>
         <source>Recovering account</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Восстановление аккаунта</translation>
+        <translation type="obsolete">Восстановление аккаунта</translation>
     </message>
     <message>
         <source>You are going to recover your accont. Do you want to continue?</source>
         <comment>msgbox text</comment>
-        <translation>Вы собираетесь восстановить свой аккаунт. Хотите продолжить?</translation>
+        <translation type="obsolete">Вы собираетесь восстановить свой аккаунт. Хотите продолжить?</translation>
     </message>
     <message>
         <source>Account recovery completed. Please, check your e-mail</source>
         <comment>msgbox text</comment>
-        <translation>Восстановление аккаунта успешно выполнено. Пожалуйста, проверьте свою электронную почту</translation>
+        <translation type="obsolete">Восстановление аккаунта успешно выполнено. Пожалуйста, проверьте свою электронную почту</translation>
     </message>
     <message>
         <source>Account recovering error</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Ошибка восстановления аккаунта</translation>
+        <translation type="obsolete">Ошибка восстановления аккаунта</translation>
     </message>
     <message>
         <source>Failed to recover account due to the following error:</source>
         <comment>msgbox text</comment>
-        <translation>Не удалосб восстановить аккаунт из-за следующей ошибки:</translation>
+        <translation type="obsolete">Не удалосб восстановить аккаунт из-за следующей ошибки:</translation>
     </message>
     <message>
         <source>Password confirmation:</source>
         <comment>lbl text</comment>
-        <translation>Подтверждение пароля:</translation>
+        <translation type="obsolete">Подтверждение пароля:</translation>
     </message>
     <message>
         <source>Account recovered</source>
         <comment>msgbox windowTitle</comment>
-        <translation>Аккаунт восстановлен</translation>
+        <translation type="obsolete">Аккаунт восстановлен</translation>
+    </message>
+</context>
+<context>
+    <name>TRecoveryWidgetPrivate</name>
+    <message>
+        <source>Getting recovery code</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished">Получение кода восстановления</translation>
+    </message>
+    <message>
+        <source>E-mail:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Эл. почта:</translation>
+    </message>
+    <message>
+        <source>Get recovery code</source>
+        <comment>btn text</comment>
+        <translation type="unfinished">Получить код восстановления</translation>
+    </message>
+    <message>
+        <source>Recovering account</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished">Восстановление аккаунта</translation>
+    </message>
+    <message>
+        <source>Code:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Код:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Пароль:</translation>
+    </message>
+    <message>
+        <source>Password confirmation:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Подтверждение пароля:</translation>
+    </message>
+    <message>
+        <source>Recover account</source>
+        <comment>btn text</comment>
+        <translation type="unfinished">Восстановить аккаунт</translation>
+    </message>
+    <message>
+        <source>Getting recovery code</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Получение кода восстановления</translation>
+    </message>
+    <message>
+        <source>You are going to get a recovery code. Do you want to continue?</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Вы собираетесь получить код восстановления.Хотите продолжить?</translation>
+    </message>
+    <message>
+        <source>Recovery code generated</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Код восстановления сгенерирован</translation>
+    </message>
+    <message>
+        <source>Account recovery code was generated and sent to your e-mail</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Код восстановления аккаунта был сгенерирован и отправлен на вашу электронную почту</translation>
+    </message>
+    <message>
+        <source>Getting recovery code error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Ошибка получения кода восстановления</translation>
+    </message>
+    <message>
+        <source>Failed to get recovery code due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Не удалось получить код восстановления из-за следующей ошибки:</translation>
+    </message>
+    <message>
+        <source>Recovering account</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Восстановление аккаунта</translation>
+    </message>
+    <message>
+        <source>You are going to recover your accont. Do you want to continue?</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Вы собираетесь восстановить свой аккаунт. Хотите продолжить?</translation>
+    </message>
+    <message>
+        <source>Account recovered</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Аккаунт восстановлен</translation>
+    </message>
+    <message>
+        <source>Account recovery completed. Please, check your e-mail</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Восстановление аккаунта успешно выполнено. Пожалуйста, проверьте свою электронную почту</translation>
+    </message>
+    <message>
+        <source>Account recovering error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Ошибка восстановления аккаунта</translation>
+    </message>
+    <message>
+        <source>Failed to recover account due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Не удалосб восстановить аккаунт из-за следующей ошибки:</translation>
     </message>
 </context>
 <context>
@@ -493,32 +788,62 @@
     <message>
         <source>Approved</source>
         <comment>type (singular)</comment>
-        <translation>Утверждённый</translation>
+        <translation type="obsolete">Утверждённый</translation>
     </message>
     <message>
         <source>Rejected</source>
         <comment>type (singular)</comment>
-        <translation>Отклонённый</translation>
+        <translation type="obsolete">Отклонённый</translation>
     </message>
     <message>
         <source>Unverified</source>
         <comment>type (singular)</comment>
-        <translation>Непроверенный</translation>
+        <translation type="obsolete">Непроверенный</translation>
     </message>
     <message>
         <source>Approved</source>
         <comment>type (plural)</comment>
-        <translation>Утверждённые</translation>
+        <translation type="obsolete">Утверждённые</translation>
     </message>
     <message>
         <source>Rejected</source>
         <comment>type (plural)</comment>
-        <translation>Отклонённые</translation>
+        <translation type="obsolete">Отклонённые</translation>
     </message>
     <message>
         <source>Unverified</source>
         <comment>type (plural)</comment>
-        <translation>Непроверенные</translation>
+        <translation type="obsolete">Непроверенные</translation>
+    </message>
+</context>
+<context>
+    <name>TSampleType plural</name>
+    <message>
+        <source>Unverified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TSampleType singular</name>
+    <message>
+        <source>Unverified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -545,166 +870,81 @@
     </message>
 </context>
 <context>
-    <name>TUserWidgetPrivate</name>
-    <message>
-        <source>Invite:</source>
-        <comment>lbl text</comment>
-        <translation>Инвайт:</translation>
-    </message>
-    <message>
-        <source>E-mail:</source>
-        <comment>lbl text</comment>
-        <translation>Эл. почта:</translation>
-    </message>
-    <message>
-        <source>Login:</source>
-        <comment>lbl text</comment>
-        <translation>Логин:</translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <comment>lbl text</comment>
-        <translation>Пароль:</translation>
-    </message>
+    <name>TUserInfoWidgetPrivate</name>
     <message>
         <source>Access level:</source>
         <comment>lbl text</comment>
-        <translation>Уровень доступа:</translation>
-    </message>
-    <message>
-        <source>Real name:</source>
-        <comment>lbl text</comment>
-        <translation>Настоящее имя:</translation>
-    </message>
-    <message>
-        <source>Click to select a new picture</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Щелкните чтобы выбрать новую картинку</translation>
-    </message>
-    <message>
-        <source>Clear avatar</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Сбросить аватар</translation>
-    </message>
-    <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
-    </message>
-    <message>
-        <source>Avatar:</source>
-        <comment>dlg windowTitle</comment>
-        <translation>Аватар:</translation>
-    </message>
-    <message>
-        <source>Select file</source>
-        <comment>fdlg caption</comment>
-        <translation>Выберите файл</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <comment>fdlg filter</comment>
-        <translation>Картинки</translation>
-    </message>
-    <message>
-        <source>Failed to change avatar</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Не удалось сменить аватар</translation>
-    </message>
-    <message>
-        <source>Failed to change account avatar. The file is too big</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось сменить аватар аккаунта. Файл слишком большой</translation>
-    </message>
-    <message>
-        <source>Maximum size:</source>
-        <comment>msgbox informativeText</comment>
-        <translation>Максимальный размер:</translation>
-    </message>
-    <message>
-        <source>Failed to change account avatar</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось сменить аватар аккаунта</translation>
-    </message>
-    <message>
-        <source>Some filesystem error occured</source>
-        <comment>msgbox informativeText</comment>
-        <translation>Произошла ошибка файловой системы</translation>
-    </message>
-    <message>
-        <source>Password confirmation:</source>
-        <comment>lbl text</comment>
-        <translation>Подтверждение пароля:</translation>
-    </message>
-    <message>
-        <source>Click to see the picture in full size</source>
-        <comment>tbtn toolTip</comment>
-        <translation type="obsolete">Щелкните чтобы посмотреть картинку в полном размере</translation>
-    </message>
-    <message>
-        <source>CloudLab groups</source>
-        <comment>gbox title</comment>
-        <translation type="obsolete">Группы CloudLab</translation>
-    </message>
-    <message>
-        <source>E-mail confirmation:</source>
-        <comment>lbl text</comment>
-        <translation>Подтверждение эл. почты:</translation>
-    </message>
-    <message>
-        <source>Check e-mail</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Проверить адрес эл. почты</translation>
-    </message>
-    <message>
-        <source>Check login</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Проверить логин</translation>
-    </message>
-    <message>
-        <source>Checking e-mail failed</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Проверка адреса эл. почты не удалась</translation>
-    </message>
-    <message>
-        <source>Failed to check e-mail. The following error occured:</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось проверить адрес эл. почты. Произошла следующая ошибка:</translation>
-    </message>
-    <message>
-        <source>The e-mail is free</source>
-        <comment>toolTip</comment>
-        <translation>Этот адрес эл. почты свободен</translation>
-    </message>
-    <message>
-        <source>The e-mail is occupied</source>
-        <comment>toolTip</comment>
-        <translation>Этот адрес эл. почты занят</translation>
-    </message>
-    <message>
-        <source>Checking login failed</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Проверка логина не удалась</translation>
-    </message>
-    <message>
-        <source>Failed to check login. The following error occured:</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось проверить логин. Произошла следующая ошибка:</translation>
-    </message>
-    <message>
-        <source>The login is free</source>
-        <comment>toolTip</comment>
-        <translation>Этот логин свободен</translation>
-    </message>
-    <message>
-        <source>The login is occupied</source>
-        <comment>toolTip</comment>
-        <translation>Этот логин занят</translation>
+        <translation type="unfinished">Уровень доступа:</translation>
     </message>
     <message>
         <source>Active:</source>
         <comment>lbl text</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to select a new picture</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Щелкните чтобы выбрать новую картинку</translation>
+    </message>
+    <message>
+        <source>Clear avatar</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Сбросить аватар</translation>
+    </message>
+    <message>
+        <source>Change e-mail:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Old e-mail:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check e-mail</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Проверить адрес эл. почты</translation>
+    </message>
+    <message>
+        <source>E-mail:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Эл. почта:</translation>
+    </message>
+    <message>
+        <source>E-mail confirmation:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Подтверждение эл. почты:</translation>
+    </message>
+    <message>
+        <source>Change e-mail</source>
+        <comment>btn text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Инвайт:</translation>
+    </message>
+    <message>
+        <source>Last modified:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check login</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Проверить логин</translation>
+    </message>
+    <message>
+        <source>Login:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Логин:</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -722,14 +962,330 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Security</source>
-        <comment>gbox title</comment>
+        <source>Change password:</source>
+        <comment>lbl text</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Old password:</source>
         <comment>lbl text</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Пароль:</translation>
+    </message>
+    <message>
+        <source>Password confirmation:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Подтверждение пароля:</translation>
+    </message>
+    <message>
+        <source>Change password</source>
+        <comment>btn text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Registration date:</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation type="unfinished">Доступ к</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <comment>gbox title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changing e-mail failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to change e-mail. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changing password failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to change password. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking e-mail failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Проверка адреса эл. почты не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check e-mail. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Не удалось проверить адрес эл. почты. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The e-mail is free</source>
+        <comment>toolTip</comment>
+        <translation type="unfinished">Этот адрес эл. почты свободен</translation>
+    </message>
+    <message>
+        <source>The e-mail is occupied</source>
+        <comment>toolTip</comment>
+        <translation type="unfinished">Этот адрес эл. почты занят</translation>
+    </message>
+    <message>
+        <source>Checking login failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Проверка логина не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check login. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished">Не удалось проверить логин. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The login is free</source>
+        <comment>toolTip</comment>
+        <translation type="unfinished">Этот логин свободен</translation>
+    </message>
+    <message>
+        <source>The login is occupied</source>
+        <comment>toolTip</comment>
+        <translation type="unfinished">Этот логин занят</translation>
+    </message>
+    <message>
+        <source>Click to see the picture in full size</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Щелкните чтобы посмотреть картинку в полном размере</translation>
+    </message>
+    <message>
+        <source>Click to see the avatar</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get avatar</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get user avatar from server. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avatar:</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="unfinished">Аватар:</translation>
+    </message>
+    <message>
+        <source>Select file</source>
+        <comment>fdlg caption</comment>
+        <translation type="unfinished">Выберите файл</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <comment>fdlg filter</comment>
+        <translation type="unfinished">Картинки</translation>
+    </message>
+    <message>
+        <source>Failed to change avatar</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished">Не удалось сменить аватар</translation>
+    </message>
+</context>
+<context>
+    <name>TUserModel</name>
+    <message>
+        <source>active</source>
+        <comment>data</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inactive</source>
+        <comment>data</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <comment>headerData</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TUserWidgetPrivate</name>
+    <message>
+        <source>Invite:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Инвайт:</translation>
+    </message>
+    <message>
+        <source>E-mail:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Эл. почта:</translation>
+    </message>
+    <message>
+        <source>Login:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Логин:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Пароль:</translation>
+    </message>
+    <message>
+        <source>Access level:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Уровень доступа:</translation>
+    </message>
+    <message>
+        <source>Real name:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Настоящее имя:</translation>
+    </message>
+    <message>
+        <source>Click to select a new picture</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="obsolete">Щелкните чтобы выбрать новую картинку</translation>
+    </message>
+    <message>
+        <source>Clear avatar</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="obsolete">Сбросить аватар</translation>
+    </message>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Доступ к</translation>
+    </message>
+    <message>
+        <source>Avatar:</source>
+        <comment>dlg windowTitle</comment>
+        <translation type="obsolete">Аватар:</translation>
+    </message>
+    <message>
+        <source>Select file</source>
+        <comment>fdlg caption</comment>
+        <translation type="obsolete">Выберите файл</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <comment>fdlg filter</comment>
+        <translation type="obsolete">Картинки</translation>
+    </message>
+    <message>
+        <source>Failed to change avatar</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="obsolete">Не удалось сменить аватар</translation>
+    </message>
+    <message>
+        <source>Failed to change account avatar. The file is too big</source>
+        <comment>msgbox text</comment>
+        <translation type="obsolete">Не удалось сменить аватар аккаунта. Файл слишком большой</translation>
+    </message>
+    <message>
+        <source>Maximum size:</source>
+        <comment>msgbox informativeText</comment>
+        <translation type="obsolete">Максимальный размер:</translation>
+    </message>
+    <message>
+        <source>Failed to change account avatar</source>
+        <comment>msgbox text</comment>
+        <translation type="obsolete">Не удалось сменить аватар аккаунта</translation>
+    </message>
+    <message>
+        <source>Some filesystem error occured</source>
+        <comment>msgbox informativeText</comment>
+        <translation type="obsolete">Произошла ошибка файловой системы</translation>
+    </message>
+    <message>
+        <source>Password confirmation:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Подтверждение пароля:</translation>
+    </message>
+    <message>
+        <source>Click to see the picture in full size</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="obsolete">Щелкните чтобы посмотреть картинку в полном размере</translation>
+    </message>
+    <message>
+        <source>CloudLab groups</source>
+        <comment>gbox title</comment>
+        <translation type="obsolete">Группы CloudLab</translation>
+    </message>
+    <message>
+        <source>E-mail confirmation:</source>
+        <comment>lbl text</comment>
+        <translation type="obsolete">Подтверждение эл. почты:</translation>
+    </message>
+    <message>
+        <source>Check e-mail</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="obsolete">Проверить адрес эл. почты</translation>
+    </message>
+    <message>
+        <source>Check login</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="obsolete">Проверить логин</translation>
+    </message>
+    <message>
+        <source>Checking e-mail failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="obsolete">Проверка адреса эл. почты не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check e-mail. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="obsolete">Не удалось проверить адрес эл. почты. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The e-mail is free</source>
+        <comment>toolTip</comment>
+        <translation type="obsolete">Этот адрес эл. почты свободен</translation>
+    </message>
+    <message>
+        <source>The e-mail is occupied</source>
+        <comment>toolTip</comment>
+        <translation type="obsolete">Этот адрес эл. почты занят</translation>
+    </message>
+    <message>
+        <source>Checking login failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="obsolete">Проверка логина не удалась</translation>
+    </message>
+    <message>
+        <source>Failed to check login. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="obsolete">Не удалось проверить логин. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>The login is free</source>
+        <comment>toolTip</comment>
+        <translation type="obsolete">Этот логин свободен</translation>
+    </message>
+    <message>
+        <source>The login is occupied</source>
+        <comment>toolTip</comment>
+        <translation type="obsolete">Этот логин занят</translation>
     </message>
 </context>
 <context>
@@ -781,6 +1337,16 @@
     </message>
     <message>
         <source>The string is too short</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The image is invalid</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The URL is invalid</source>
         <comment>error</comment>
         <translation type="unfinished"></translation>
     </message>

@@ -29,8 +29,10 @@ public:
 public:
     void clear();
     TUserIdentifier identifier() const;
+    bool includeAvatar() const;
     bool isValid() const;
     void setIdentifier(const TUserIdentifier &identifier);
+    void setIncludeAvatar(bool include);
 public:
     TGetUserInfoAdminRequestData &operator =(const TGetUserInfoAdminRequestData &other);
     bool operator ==(const TGetUserInfoAdminRequestData &other) const;

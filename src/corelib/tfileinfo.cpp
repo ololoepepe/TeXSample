@@ -104,6 +104,11 @@ int TFileInfo::fileSize() const
     return d_func()->fileSize;
 }
 
+bool TFileInfo::isValid() const
+{
+    return !d_func()->fileName.isEmpty();
+}
+
 void TFileInfo::setDescription(const QString &description)
 {
     d_func()->description = Texsample::testFileDescription(description) ? description : QString();

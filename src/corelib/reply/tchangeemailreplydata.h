@@ -8,6 +8,8 @@ class QDebug;
 class QString;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -16,7 +18,7 @@ class QVariant;
 ================================ TChangeEmailReplyData =======================
 ============================================================================*/
 
-class TChangeEmailReplyData : public BBase
+class T_CORE_EXPORT TChangeEmailReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TChangeEmailReplyData)
 public:

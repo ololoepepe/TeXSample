@@ -10,6 +10,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -18,7 +20,7 @@ class QVariant;
 ================================ TGetInviteInfoListReplyData =================
 ============================================================================*/
 
-class TGetInviteInfoListReplyData : public BBase
+class T_CORE_EXPORT TGetInviteInfoListReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TGetInviteInfoListReplyData)
 public:

@@ -1,12 +1,12 @@
 #ifndef TLABINFOLIST_H
 #define TLABINFOLIST_H
 
+class QVariant;
+
 #include "tlabinfo.h"
-#include "tglobal.h"
 
 #include <QList>
 #include <QMetaType>
-#include <QVariant>
 
 /*============================================================================
 ================================ TLabInfoList ================================

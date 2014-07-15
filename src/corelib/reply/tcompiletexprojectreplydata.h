@@ -10,6 +10,8 @@ class QDebug;
 class QString;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -18,7 +20,7 @@ class QVariant;
 ================================ TCompileTexProjectReplyData =================
 ============================================================================*/
 
-class TCompileTexProjectReplyData : public BBase
+class T_CORE_EXPORT TCompileTexProjectReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TCompileTexProjectReplyData)
 public:

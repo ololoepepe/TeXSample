@@ -6,19 +6,16 @@ class TClientInfoPrivate;
 class BVersion;
 
 class QDataStream;
-class QVariant;
 class QDebug;
-class QString;
+class QVariant;
 
 #include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 #include <BeQt>
 
 #include <QMetaType>
-#include <QCoreApplication>
-#include <QLocale>
+#include <QString>
 
 /*============================================================================
 ================================ TClientInfo =================================
@@ -27,27 +24,24 @@ class QString;
 class T_CORE_EXPORT TClientInfo : public BBase
 {
     B_DECLARE_PRIVATE(TClientInfo)
-    Q_DECLARE_TR_FUNCTIONS(TClientInfo)
-public:
-    static TClientInfo createInfo();
 public:
     explicit TClientInfo();
     TClientInfo(const TClientInfo &other);
     ~TClientInfo();
 public:
-    QString os() const;
-    BeQt::OSType osType() const;
-    QLocale locale() const;
-    QString client() const;
-    BVersion clientVersion() const;
-    bool isClientPortable() const;
-    BVersion texsampleVersion() const;
-    BVersion beqtVersion() const;
-    BVersion qtVersion() const;
-    QString toString(const QString &format = "") const;
-    //%o - OS, %l - locale, %c - client, %v - client version, %p - client portability
-    //%t - texsample version, %b - BeQt version, %q - Qt version
+    static TClientInfo create();
+public:
+    QString applicationName() const;                        //%n
+    BVersion applicationVersion() const;                    //%v
+    BVersion beqtVersion() const;                           //%b
+    bool isPortable() const;                                //%p
     bool isValid() const;
+    QString os() const;                                     //%o
+    BeQt::OSType osType() const;
+    BeQt::ProcessorArchitecture processorArchitecture() const;
+    BVersion qtVersion() const;                             //%q
+    BVersion texsampleVersion() const;                      //%t
+    QString toString(const QString &format = "%n v%v (%p)\nTeXSample v%t; BeQt v%b; Qt v%q\nOS: %o") const;
 public:
     TClientInfo &operator =(const TClientInfo &other);
     bool operator ==(const TClientInfo &other) const;

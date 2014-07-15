@@ -7,6 +7,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -15,7 +17,7 @@ class QVariant;
 ================================ TRecoverAccountReplyData ====================
 ============================================================================*/
 
-class TRecoverAccountReplyData : public BBase
+class T_CORE_EXPORT TRecoverAccountReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TRecoverAccountReplyData)
 public:

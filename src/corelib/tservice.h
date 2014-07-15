@@ -4,17 +4,16 @@
 class TServicePrivate;
 
 class QDataStream;
-class QVariant;
 class QDebug;
 class QString;
+class QVariant;
 
 #include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
-#include <QMetaType>
 #include <QCoreApplication>
+#include <QMetaType>
 
 /*============================================================================
 ================================ TService ====================================

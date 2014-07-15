@@ -19,6 +19,7 @@ class TGetUserInfoRequestDataPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TGetUserInfoRequestData)
 public:
     TUserIdentifier identifier;
+    bool includeAvatar;
 public:
     explicit TGetUserInfoRequestDataPrivate(TGetUserInfoRequestData *q);
     ~TGetUserInfoRequestDataPrivate();
@@ -50,7 +51,7 @@ TGetUserInfoRequestDataPrivate::~TGetUserInfoRequestDataPrivate()
 
 void TGetUserInfoRequestDataPrivate::init()
 {
-    //
+    includeAvatar = false;
 }
 
 /*============================================================================
@@ -82,11 +83,17 @@ TGetUserInfoRequestData::~TGetUserInfoRequestData()
 void TGetUserInfoRequestData::clear()
 {
     d_func()->identifier.clear();
+    d_func()->includeAvatar = false;
 }
 
 TUserIdentifier TGetUserInfoRequestData::identifier() const
 {
     return d_func()->identifier;
+}
+
+bool TGetUserInfoRequestData::includeAvatar() const
+{
+    return d_func()->includeAvatar;
 }
 
 bool TGetUserInfoRequestData::isValid() const
@@ -99,6 +106,11 @@ void TGetUserInfoRequestData::setIdentifier(const TUserIdentifier &identifier)
     d_func()->identifier = identifier;
 }
 
+void TGetUserInfoRequestData::setIncludeAvatar(bool include)
+{
+    d_func()->includeAvatar = include;
+}
+
 /*============================== Public operators ==========================*/
 
 TGetUserInfoRequestData &TGetUserInfoRequestData::operator =(const TGetUserInfoRequestData &other)
@@ -106,6 +118,7 @@ TGetUserInfoRequestData &TGetUserInfoRequestData::operator =(const TGetUserInfoR
     B_D(TGetUserInfoRequestData);
     const TGetUserInfoRequestDataPrivate *dd = other.d_func();
     d->identifier = dd->identifier;
+    d->includeAvatar = dd->includeAvatar;
     return *this;
 }
 
@@ -113,7 +126,7 @@ bool TGetUserInfoRequestData::operator ==(const TGetUserInfoRequestData &other) 
 {
     const B_D(TGetUserInfoRequestData);
     const TGetUserInfoRequestDataPrivate *dd = other.d_func();
-    return d->identifier == dd->identifier;
+    return d->identifier == dd->identifier && d->includeAvatar == dd->includeAvatar;
 }
 
 bool TGetUserInfoRequestData::operator !=(const TGetUserInfoRequestData &other) const
@@ -133,6 +146,7 @@ QDataStream &operator <<(QDataStream &stream, const TGetUserInfoRequestData &dat
     const TGetUserInfoRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("identifier", d->identifier);
+    m.insert("include_avatar", d->includeAvatar);
     stream << m;
     return stream;
 }
@@ -143,6 +157,7 @@ QDataStream &operator >>(QDataStream &stream, TGetUserInfoRequestData &data)
     QVariantMap m;
     stream >> m;
     d->identifier = m.value("identifier").value<TUserIdentifier>();
+    d->includeAvatar = m.value("include_avatar").toBool();
     return stream;
 }
 

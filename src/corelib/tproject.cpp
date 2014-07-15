@@ -1,4 +1,4 @@
-#include "tlabproject.h"
+#include "tproject.h"
 
 #include "tbinaryfile.h"
 #include "tbinaryfilelist.h"
@@ -10,103 +10,97 @@
 
 #include <QDataStream>
 #include <QDebug>
-#include <QDir>
 #include <QFileInfo>
-#include <QList>
-#include <QObject>
-#include <QRegExp>
 #include <QString>
 #include <QStringList>
-#include <QTextCodec>
-#include <QUrl>
 #include <QVariant>
 #include <QVariantMap>
 
 /*============================================================================
-================================ TLabProjectPrivate ==========================
+================================ TProjectPrivate =============================
 ============================================================================*/
 
-class TLabProjectPrivate : public BBasePrivate
+class TProjectPrivate : public BBasePrivate
 {
-    B_DECLARE_PUBLIC(TLabProject)
-public:
-    explicit TLabProjectPrivate(TLabProject *q);
-    ~TLabProjectPrivate();
-public:
-    void init();
+    B_DECLARE_PUBLIC(TProject)
 public:
     TBinaryFileList files;
     TBinaryFile mainFile;
+public:
+    explicit TProjectPrivate(TProject *q);
+    ~TProjectPrivate();
+public:
+    void init();
 private:
-    Q_DISABLE_COPY(TLabProjectPrivate)
+    Q_DISABLE_COPY(TProjectPrivate)
 };
 
 /*============================================================================
-================================ TLabProjectPrivate ==========================
+================================ TProjectPrivate =============================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TLabProjectPrivate::TLabProjectPrivate(TLabProject *q) :
+TProjectPrivate::TProjectPrivate(TProject *q) :
     BBasePrivate(q)
 {
     //
 }
 
-TLabProjectPrivate::~TLabProjectPrivate()
+TProjectPrivate::~TProjectPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TLabProjectPrivate::init()
+void TProjectPrivate::init()
 {
     //
 }
 
 /*============================================================================
-================================ CProject ====================================
+================================ TProject ====================================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TLabProject::TLabProject() :
-    BBase(*new TLabProjectPrivate(this))
+TProject::TProject() :
+    BBase(*new TProjectPrivate(this))
 {
     d_func()->init();
 }
 
-TLabProject::TLabProject(const QString &dir, const QString &relativeMainFileName,
+TProject::TProject(const QString &dir, const QString &relativeMainFileName,
                          const QStringList &relativeFileNames) :
-    BBase(*new TLabProjectPrivate(this))
+    BBase(*new TProjectPrivate(this))
 {
     d_func()->init();
     load(dir, relativeMainFileName, relativeFileNames);
 }
 
-TLabProject::TLabProject(const TLabProject &other) :
-    BBase(*new TLabProjectPrivate(this))
+TProject::TProject(const TProject &other) :
+    BBase(*new TProjectPrivate(this))
 {
     d_func()->init();
     *this = other;
 }
 
-TLabProject::~TLabProject()
+TProject::~TProject()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TLabProject::clear()
+void TProject::clear()
 {
-    B_D(TLabProject);
+    B_D(TProject);
     d->mainFile.clear();
     d->files.clear();
 }
 
-bool TLabProject::isValid() const
+bool TProject::isValid() const
 {
     if (!d_func()->mainFile.isValid())
         return false;
@@ -117,7 +111,7 @@ bool TLabProject::isValid() const
     return true;
 }
 
-bool TLabProject::load(const QString &dir, const QString &relativeMainFileName, QStringList relativeFileNames)
+bool TProject::load(const QString &dir, const QString &relativeMainFileName, QStringList relativeFileNames)
 {
     init_once(Qt::CaseSensitivity, cs, Qt::CaseSensitive) {
 #if defined(Q_OS_WIN)
@@ -130,7 +124,7 @@ bool TLabProject::load(const QString &dir, const QString &relativeMainFileName, 
     relativeFileNames.removeAll("");
     BTextTools::removeDuplicates(relativeFileNames, cs);
     BTextTools::removeAll(relativeFileNames, relativeMainFileName, cs);
-    B_D(TLabProject);
+    B_D(TProject);
     if (!d->mainFile.load(dir + "/" + relativeMainFileName, QFileInfo(relativeMainFileName).path())) {
         clear();
         return false;
@@ -146,12 +140,12 @@ bool TLabProject::load(const QString &dir, const QString &relativeMainFileName, 
     return true;
 }
 
-bool TLabProject::mayBeExecutable() const
+bool TProject::mayBeExecutable() const
 {
     return d_func()->mainFile.mayBeExecutable();
 }
 
-bool TLabProject::save(const QString &dir) const
+bool TProject::save(const QString &dir) const
 {
     if (!isValid() || dir.isEmpty() || !d_func()->mainFile.save(dir))
         return false;
@@ -162,7 +156,7 @@ bool TLabProject::save(const QString &dir) const
     return true;
 }
 
-int TLabProject::size() const
+int TProject::size() const
 {
     if (!isValid())
         return 0;
@@ -174,32 +168,32 @@ int TLabProject::size() const
 
 /*============================== Public operators ==========================*/
 
-TLabProject &TLabProject::operator =(const TLabProject &other)
+TProject &TProject::operator =(const TProject &other)
 {
-    B_D(TLabProject);
-    const TLabProjectPrivate *dd = other.d_func();
+    B_D(TProject);
+    const TProjectPrivate *dd = other.d_func();
     d->mainFile = dd->mainFile;
     d->files = dd->files;
     return *this;
 }
 
-bool TLabProject::operator ==(const TLabProject &other) const
+bool TProject::operator ==(const TProject &other) const
 {
-    const B_D(TLabProject);
-    const TLabProjectPrivate *dd = other.d_func();
+    const B_D(TProject);
+    const TProjectPrivate *dd = other.d_func();
     return d->mainFile == dd->mainFile && d->files == dd->files;
 }
 
-TLabProject::operator QVariant() const
+TProject::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TLabProject &project)
+QDataStream &operator <<(QDataStream &stream, const TProject &project)
 {
-    const TLabProjectPrivate *d = project.d_func();
+    const TProjectPrivate *d = project.d_func();
     QVariantMap m;
     m.insert("main_file", d->mainFile);
     m.insert("files", d->files);
@@ -207,9 +201,9 @@ QDataStream &operator <<(QDataStream &stream, const TLabProject &project)
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TLabProject &project)
+QDataStream &operator >>(QDataStream &stream, TProject &project)
 {
-    TLabProjectPrivate *d = project.d_func();
+    TProjectPrivate *d = project.d_func();
     QVariantMap m;
     stream >> m;
     d->mainFile = m.value("main_file").value<TBinaryFile>();
@@ -217,8 +211,8 @@ QDataStream &operator >>(QDataStream &stream, TLabProject &project)
     return stream;
 }
 
-QDebug operator <<(QDebug dbg, const TLabProject &project)
+QDebug operator <<(QDebug dbg, const TProject &project)
 {
-    dbg.nospace() << "TLabProject(" << project.size() << ")";
+    dbg.nospace() << "TProject(" << project.size() << ")";
     return dbg.space();
 }

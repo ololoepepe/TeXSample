@@ -25,6 +25,10 @@ public:
     TGetSelfInfoRequestData(const TGetSelfInfoRequestData &other);
     ~TGetSelfInfoRequestData();
 public:
+    void clear();
+    bool includeAvatar() const;
+    void setIncludeAvatar(bool include);
+public:
     TGetSelfInfoRequestData &operator =(const TGetSelfInfoRequestData &other);
     bool operator ==(const TGetSelfInfoRequestData &other) const;
     bool operator !=(const TGetSelfInfoRequestData &other) const;
