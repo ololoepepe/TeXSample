@@ -1,7 +1,7 @@
 #ifndef TGETSELFINFOREPLYDATA_H
 #define TGETSELFINFOREPLYDATA_H
 
-class TGetDelfInfoReplyDataPrivate;
+class TGetSelfInfoReplyDataPrivate;
 
 class TUserInfo;
 
@@ -16,30 +16,30 @@ class QVariant;
 #include <QMetaType>
 
 /*============================================================================
-================================ TGetDelfInfoReplyData =======================
+================================ TGetSelfInfoReplyData =======================
 ============================================================================*/
 
-class T_CORE_EXPORT TGetDelfInfoReplyData : public BBase
+class T_CORE_EXPORT TGetSelfInfoReplyData : public BBase
 {
-    B_DECLARE_PRIVATE(TGetDelfInfoReplyData)
+    B_DECLARE_PRIVATE(TGetSelfInfoReplyData)
 public:
-    explicit TGetDelfInfoReplyData();
-    TGetDelfInfoReplyData(const TGetDelfInfoReplyData &other);
-    ~TGetDelfInfoReplyData();
+    explicit TGetSelfInfoReplyData();
+    TGetSelfInfoReplyData(const TGetSelfInfoReplyData &other);
+    ~TGetSelfInfoReplyData();
 public:
     void setUserInfo(const TUserInfo &info);
     TUserInfo userInfo() const;
 public:
-    TGetDelfInfoReplyData &operator =(const TGetDelfInfoReplyData &other);
-    bool operator ==(const TGetDelfInfoReplyData &other) const;
-    bool operator !=(const TGetDelfInfoReplyData &other) const;
+    TGetSelfInfoReplyData &operator =(const TGetSelfInfoReplyData &other);
+    bool operator ==(const TGetSelfInfoReplyData &other) const;
+    bool operator !=(const TGetSelfInfoReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TGetDelfInfoReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TGetDelfInfoReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TGetDelfInfoReplyData &data);
+    friend QDataStream &operator <<(QDataStream &stream, const TGetSelfInfoReplyData &data);
+    friend QDataStream &operator >>(QDataStream &stream, TGetSelfInfoReplyData &data);
+    friend QDebug operator <<(QDebug dbg, const TGetSelfInfoReplyData &data);
 };
 
-Q_DECLARE_METATYPE(TGetDelfInfoReplyData)
+Q_DECLARE_METATYPE(TGetSelfInfoReplyData)
 
 #endif // TGETSELFINFOREPLYDATA_H

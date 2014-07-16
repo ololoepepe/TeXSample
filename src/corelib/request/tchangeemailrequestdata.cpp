@@ -32,7 +32,6 @@ private:
     Q_DISABLE_COPY(TChangeEmailRequestDataPrivate)
 };
 
-
 /*============================================================================
 ================================ TChangeEmailRequestDataPrivate ==============
 ============================================================================*/
@@ -85,8 +84,9 @@ TChangeEmailRequestData::~TChangeEmailRequestData()
 
 void TChangeEmailRequestData::clear()
 {
-    d_func()->email.clear();
-    d_func()->password.clear();
+    B_D(TChangeEmailRequestData);
+    d->email.clear();
+    d->password.clear();
 }
 
 QString TChangeEmailRequestData::email() const

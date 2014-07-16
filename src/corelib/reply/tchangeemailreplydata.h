@@ -5,7 +5,6 @@ class TChangeEmailReplyDataPrivate;
 
 class QDataStream;
 class QDebug;
-class QString;
 class QVariant;
 
 #include "tglobal.h"
@@ -25,9 +24,6 @@ public:
     explicit TChangeEmailReplyData();
     TChangeEmailReplyData(const TChangeEmailReplyData &other);
     ~TChangeEmailReplyData();
-public:
-    QString email() const;
-    void setEmail(const QString &email);
 public:
     TChangeEmailReplyData &operator =(const TChangeEmailReplyData &other);
     bool operator ==(const TChangeEmailReplyData &other) const;

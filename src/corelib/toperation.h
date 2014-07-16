@@ -24,6 +24,7 @@ const QString DeleteUser = "delete_user";
 const QString EditGroup = "edit_group";
 const QString EditLab = "edit_lab";
 const QString EditSample = "edit_sample";
+const QString EditSampleAdmin = "edit_sample_admin";
 const QString EditSelf = "edit_self";
 const QString EditUser = "edit_user";
 const QString ExecuteCommand = "execute_command";

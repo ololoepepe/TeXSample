@@ -11,134 +11,133 @@
 #include <QVariantMap>
 
 /*============================================================================
-================================ TGetDelfInfoReplyDataPrivate ================
+================================ TGetSelfInfoReplyDataPrivate ================
 ============================================================================*/
 
-class TGetDelfInfoReplyDataPrivate : public BBasePrivate
+class TGetSelfInfoReplyDataPrivate : public BBasePrivate
 {
-    B_DECLARE_PUBLIC(TGetDelfInfoReplyData)
+    B_DECLARE_PUBLIC(TGetSelfInfoReplyData)
 public:
     TUserInfo userInfo;
 public:
-    explicit TGetDelfInfoReplyDataPrivate(TGetDelfInfoReplyData *q);
-    ~TGetDelfInfoReplyDataPrivate();
+    explicit TGetSelfInfoReplyDataPrivate(TGetSelfInfoReplyData *q);
+    ~TGetSelfInfoReplyDataPrivate();
 public:
     void init();
 private:
-    Q_DISABLE_COPY(TGetDelfInfoReplyDataPrivate)
+    Q_DISABLE_COPY(TGetSelfInfoReplyDataPrivate)
 };
 
-
 /*============================================================================
-================================ TGetDelfInfoReplyDataPrivate ================
+================================ TGetSelfInfoReplyDataPrivate ================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TGetDelfInfoReplyDataPrivate::TGetDelfInfoReplyDataPrivate(TGetDelfInfoReplyData *q) :
+TGetSelfInfoReplyDataPrivate::TGetSelfInfoReplyDataPrivate(TGetSelfInfoReplyData *q) :
     BBasePrivate(q)
 {
     //
 }
 
-TGetDelfInfoReplyDataPrivate::~TGetDelfInfoReplyDataPrivate()
+TGetSelfInfoReplyDataPrivate::~TGetSelfInfoReplyDataPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TGetDelfInfoReplyDataPrivate::init()
+void TGetSelfInfoReplyDataPrivate::init()
 {
     //
 }
 
 /*============================================================================
-================================ TGetDelfInfoReplyData =======================
+================================ TGetSelfInfoReplyData =======================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TGetDelfInfoReplyData::TGetDelfInfoReplyData() :
-    BBase(*new TGetDelfInfoReplyDataPrivate(this))
+TGetSelfInfoReplyData::TGetSelfInfoReplyData() :
+    BBase(*new TGetSelfInfoReplyDataPrivate(this))
 {
     d_func()->init();
 }
 
-TGetDelfInfoReplyData::TGetDelfInfoReplyData(const TGetDelfInfoReplyData &other) :
-    BBase(*new TGetDelfInfoReplyDataPrivate(this))
+TGetSelfInfoReplyData::TGetSelfInfoReplyData(const TGetSelfInfoReplyData &other) :
+    BBase(*new TGetSelfInfoReplyDataPrivate(this))
 {
     d_func()->init();
     *this = other;
 }
 
-TGetDelfInfoReplyData::~TGetDelfInfoReplyData()
+TGetSelfInfoReplyData::~TGetSelfInfoReplyData()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TGetDelfInfoReplyData::setUserInfo(const TUserInfo &info)
+void TGetSelfInfoReplyData::setUserInfo(const TUserInfo &info)
 {
     d_func()->userInfo = info;
 }
 
-TUserInfo TGetDelfInfoReplyData::userInfo() const
+TUserInfo TGetSelfInfoReplyData::userInfo() const
 {
     return d_func()->userInfo;
 }
 
 /*============================== Public operators ==========================*/
 
-TGetDelfInfoReplyData &TGetDelfInfoReplyData::operator =(const TGetDelfInfoReplyData &other)
+TGetSelfInfoReplyData &TGetSelfInfoReplyData::operator =(const TGetSelfInfoReplyData &other)
 {
-    B_D(TGetDelfInfoReplyData);
-    const TGetDelfInfoReplyDataPrivate *dd = other.d_func();
+    B_D(TGetSelfInfoReplyData);
+    const TGetSelfInfoReplyDataPrivate *dd = other.d_func();
     d->userInfo = dd->userInfo;
     return *this;
 }
 
-bool TGetDelfInfoReplyData::operator ==(const TGetDelfInfoReplyData &other) const
+bool TGetSelfInfoReplyData::operator ==(const TGetSelfInfoReplyData &other) const
 {
-    const B_D(TGetDelfInfoReplyData);
-    const TGetDelfInfoReplyDataPrivate *dd = other.d_func();
+    const B_D(TGetSelfInfoReplyData);
+    const TGetSelfInfoReplyDataPrivate *dd = other.d_func();
     return d->userInfo == dd->userInfo;
 }
 
-bool TGetDelfInfoReplyData::operator !=(const TGetDelfInfoReplyData &other) const
+bool TGetSelfInfoReplyData::operator !=(const TGetSelfInfoReplyData &other) const
 {
     return !(*this == other);
 }
 
-TGetDelfInfoReplyData::operator QVariant() const
+TGetSelfInfoReplyData::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TGetDelfInfoReplyData &data)
+QDataStream &operator <<(QDataStream &stream, const TGetSelfInfoReplyData &data)
 {
-    const TGetDelfInfoReplyDataPrivate *d = data.d_func();
+    const TGetSelfInfoReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("user_info", d->userInfo);
     stream << m;
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TGetDelfInfoReplyData &data)
+QDataStream &operator >>(QDataStream &stream, TGetSelfInfoReplyData &data)
 {
-    TGetDelfInfoReplyDataPrivate *d = data.d_func();
+    TGetSelfInfoReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
     d->userInfo = m.value("user_info").value<TUserInfo>();
     return stream;
 }
 
-QDebug operator <<(QDebug dbg, const TGetDelfInfoReplyData &/*data*/)
+QDebug operator <<(QDebug dbg, const TGetSelfInfoReplyData &/*data*/)
 {
-    //const TGetDelfInfoReplyDataPrivate *d = data.d_func();
-    dbg.nospace() << "TGetDelfInfoReplyData(" << ")";
+    //const TGetSelfInfoReplyDataPrivate *d = data.d_func();
+    dbg.nospace() << "TGetSelfInfoReplyData(" << ")";
     return dbg.space();
 }

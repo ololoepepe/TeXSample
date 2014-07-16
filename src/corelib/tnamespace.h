@@ -1,6 +1,7 @@
 #ifndef TNAMESPACE_H
 #define TNAMESPACE_H
 
+class QByteArray;
 class QImage;
 class QString;
 
@@ -16,6 +17,7 @@ const quint16 MainPort = 9044; //TODO: Change to 9045 or something else
 const int MaximumAdminRemarkLength = 1000;
 const int MaximumAvatarExtent = 2000;
 const int MaximumAvatarSize = 2 * BeQt::Megabyte;
+const int MaximumCommandLength = 40;
 const int MaximumEmailLength = 60;
 const int MaximumFileDescriptionLength = 1000;
 const int MaximumGroupNameLength = 40;
@@ -32,11 +34,13 @@ const int MaximumSampleDescriptionLength = 1000;
 const int MaximumSampleTitleLength = 100;
 const int MinimumLoginLength = 2;
 const int MinimumPasswordLength = 8;
+const int RawPasswordSize = 20;
 
 T_CORE_EXPORT bool testAdminRemark(const QString &remark, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QImage &avatar, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QImage *image, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testCommand(const QString &command, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testEmail(const QString &email, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testFileDescription(const QString &description, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testGroupName(const QString &name, QString *error = 0, bool translate = true);
@@ -46,6 +50,7 @@ T_CORE_EXPORT bool testLogin(const QString &login, QString *error = 0, bool tran
 T_CORE_EXPORT bool testName(const QString &name, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testOrganization(const QString &organization, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testPassword(const QString &password, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testPassword(const QByteArray &password, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testPost(const QString &post, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testRole(const QString &role, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testSampleDescription(const QString &description, QString *error = 0, bool translate = true);

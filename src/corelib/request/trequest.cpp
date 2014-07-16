@@ -6,6 +6,7 @@
 #include <QDataStream>
 #include <QDateTime>
 #include <QDebug>
+#include <QLocale>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -20,6 +21,7 @@ public:
     bool cachingEnabled;
     QVariant data;
     QDateTime lastRequestDateTime;
+    QLocale locale;
 public:
     explicit TRequestPrivate(TRequest *q);
     ~TRequestPrivate();
@@ -28,7 +30,6 @@ public:
 private:
     Q_DISABLE_COPY(TRequestPrivate)
 };
-
 
 /*============================================================================
 ================================ TRequestPrivate =============================
@@ -53,6 +54,7 @@ void TRequestPrivate::init()
 {
     cachingEnabled = false;
     lastRequestDateTime.setTimeSpec(Qt::UTC);
+    locale = QLocale::c();
 }
 
 /*============================================================================
@@ -92,6 +94,7 @@ void TRequest::clear()
     d->cachingEnabled = false;
     d->data.clear();
     d->lastRequestDateTime = QDateTime().toUTC();
+    d->locale = QLocale::c();
 }
 
 QVariant TRequest::data() const
@@ -102,6 +105,11 @@ QVariant TRequest::data() const
 QDateTime TRequest::lastRequestDateTime() const
 {
     return d_func()->lastRequestDateTime;
+}
+
+QLocale TRequest::locale() const
+{
+    return d_func()->locale;
 }
 
 void TRequest::setCachingEnabled(bool enabled)
@@ -119,6 +127,11 @@ void TRequest::setLastRequestDateTime(const QDateTime &dt)
     d_func()->lastRequestDateTime = dt.toUTC();
 }
 
+void TRequest::setLocale(const QLocale &locale)
+{
+    d_func()->locale = locale;
+}
+
 /*============================== Public operators ==========================*/
 
 TRequest &TRequest::operator =(const TRequest &other)
@@ -128,6 +141,7 @@ TRequest &TRequest::operator =(const TRequest &other)
     d->cachingEnabled = dd->cachingEnabled;
     d->data = dd->data;
     d->lastRequestDateTime = dd->lastRequestDateTime;
+    d->locale = dd->locale;
     return *this;
 }
 
@@ -136,7 +150,7 @@ bool TRequest::operator ==(const TRequest &other) const
     const B_D(TRequest);
     const TRequestPrivate *dd = other.d_func();
     return d->cachingEnabled == dd->cachingEnabled && d->data == dd->data
-            && d->lastRequestDateTime == dd->lastRequestDateTime;
+            && d->lastRequestDateTime == dd->lastRequestDateTime && d->locale == dd->locale;
 }
 
 bool TRequest::operator !=(const TRequest &other) const
@@ -158,6 +172,7 @@ QDataStream &operator <<(QDataStream &stream, const TRequest &data)
     m.insert("caching_enabled", d->cachingEnabled);
     m.insert("data", d->data);
     m.insert("last_request_date_time", d->lastRequestDateTime);
+    m.insert("locale", d->locale);
     stream << m;
     return stream;
 }
@@ -170,6 +185,7 @@ QDataStream &operator >>(QDataStream &stream, TRequest &data)
     d->cachingEnabled = m.value("caching_enabled").toBool();
     d->data = m.value("data");
     d->lastRequestDateTime = m.value("last_request_date_time").toDateTime().toUTC();
+    d->locale = m.value("locale").toLocale();
     return stream;
 }
 

@@ -6,6 +6,7 @@ class TRequestPrivate;
 class QDataStream;
 class QDateTime;
 class QDebug;
+class QLocale;
 class QVariant;
 
 #include "tglobal.h"
@@ -30,9 +31,11 @@ public:
     void clear();
     QVariant data() const;
     QDateTime lastRequestDateTime() const;
+    QLocale locale() const;
     void setCachingEnabled(bool enabled);
     void setData(const QVariant &data);
     void setLastRequestDateTime(const QDateTime &dt);
+    void setLocale(const QLocale &locale);
 public:
     TRequest &operator =(const TRequest &other);
     bool operator ==(const TRequest &other) const;

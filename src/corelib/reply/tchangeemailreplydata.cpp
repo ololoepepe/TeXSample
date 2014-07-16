@@ -1,13 +1,10 @@
 #include "tchangeemailreplydata.h"
 
-#include "tnamespace.h"
-
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 
 #include <QDataStream>
 #include <QDebug>
-#include <QString>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -19,8 +16,6 @@ class TChangeEmailReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TChangeEmailReplyData)
 public:
-    QString email;
-public:
     explicit TChangeEmailReplyDataPrivate(TChangeEmailReplyData *q);
     ~TChangeEmailReplyDataPrivate();
 public:
@@ -28,7 +23,6 @@ public:
 private:
     Q_DISABLE_COPY(TChangeEmailReplyDataPrivate)
 };
-
 
 /*============================================================================
 ================================ TChangeEmailReplyDataPrivate ================
@@ -78,33 +72,20 @@ TChangeEmailReplyData::~TChangeEmailReplyData()
     //
 }
 
-/*============================== Public methods ============================*/
-
-QString TChangeEmailReplyData::email() const
-{
-    return d_func()->email;
-}
-
-void TChangeEmailReplyData::setEmail(const QString &email)
-{
-    d_func()->email = Texsample::testEmail(email) ? email : QString();
-}
-
 /*============================== Public operators ==========================*/
 
-TChangeEmailReplyData &TChangeEmailReplyData::operator =(const TChangeEmailReplyData &other)
+TChangeEmailReplyData &TChangeEmailReplyData::operator =(const TChangeEmailReplyData &/*other*/)
 {
-    B_D(TChangeEmailReplyData);
-    const TChangeEmailReplyDataPrivate *dd = other.d_func();
-    d->email = dd->email;
+    //B_D(TChangeEmailReplyData);
+    //const TChangeEmailReplyDataPrivate *dd = other.d_func();
     return *this;
 }
 
-bool TChangeEmailReplyData::operator ==(const TChangeEmailReplyData &other) const
+bool TChangeEmailReplyData::operator ==(const TChangeEmailReplyData &/*other*/) const
 {
-    const B_D(TChangeEmailReplyData);
-    const TChangeEmailReplyDataPrivate *dd = other.d_func();
-    return d->email == dd->email;
+    //const B_D(TChangeEmailReplyData);
+    //const TChangeEmailReplyDataPrivate *dd = other.d_func();
+    return true;
 }
 
 bool TChangeEmailReplyData::operator !=(const TChangeEmailReplyData &other) const
@@ -119,21 +100,19 @@ TChangeEmailReplyData::operator QVariant() const
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TChangeEmailReplyData &data)
+QDataStream &operator <<(QDataStream &stream, const TChangeEmailReplyData &/*data*/)
 {
-    const TChangeEmailReplyDataPrivate *d = data.d_func();
+    //const TChangeEmailReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream << m;
-    m.insert("email", d->email);
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TChangeEmailReplyData &data)
+QDataStream &operator >>(QDataStream &stream, TChangeEmailReplyData &/*data*/)
 {
-    TChangeEmailReplyDataPrivate *d = data.d_func();
+    //TChangeEmailReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->email = m.value("email").toString();
     return stream;
 }
 

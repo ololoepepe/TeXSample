@@ -69,6 +69,19 @@ bool testAvatar(const QString &avatarFileName, QImage *image, QString *error, bo
     return bRet(image, img, testAvatar(img, error, tr));
 }
 
+bool testCommand(const QString &command, QString *error, bool tr)
+{
+    if (command.isEmpty()) {
+        return bRet(error, tr ? translate("Texsample", "The string is empty", "error") :
+                                QString("The string is empty"), false);
+    }
+    if (command.length() > Texsample::MaximumCommandLength) {
+        return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
+                                QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
 bool testEmail(const QString &email, QString *error, bool tr)
 {
     if (email.isEmpty()) {
@@ -170,6 +183,15 @@ bool testPassword(const QString &password, QString *error, bool tr)
     if (password.length() > Texsample::MaximumPasswordLength) {
         return bRet(error, tr ? translate("Texsample", "The string is too long", "error") :
                                 QString("The string is too long"), false);
+    }
+    return bRet(error, QString(), true);
+}
+
+bool testPassword(const QByteArray &password, QString *error, bool tr)
+{
+    if (password.size() != RawPasswordSize) {
+        return bRet(error, tr ? translate("Texsample", "The password is not a correct SHA1 hash", "error") :
+                                QString("The password is not a correct SHA1 hash"), false);
     }
     return bRet(error, QString(), true);
 }

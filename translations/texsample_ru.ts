@@ -1380,5 +1380,10 @@
         <comment>error</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The password is not a correct SHA1 hash</source>
+        <comment>error</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -29,7 +29,6 @@ private:
     Q_DISABLE_COPY(TCheckLoginAvailabilityRequestDataPrivate)
 };
 
-
 /*============================================================================
 ================================ TCheckLoginAvailabilityRequestDataPrivate ==============
 ============================================================================*/

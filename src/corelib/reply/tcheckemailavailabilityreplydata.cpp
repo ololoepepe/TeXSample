@@ -26,7 +26,6 @@ private:
     Q_DISABLE_COPY(TCheckEmailAvailabilityReplyDataPrivate)
 };
 
-
 /*============================================================================
 ================================ TCheckEmailAvailabilityReplyDataPrivate =====
 ============================================================================*/
