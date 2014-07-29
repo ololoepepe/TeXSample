@@ -1,10 +1,13 @@
 #include "texecutecommandreplydata.h"
 
+#include "tcommandmessage.h"
+
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 
 #include <QDataStream>
 #include <QDebug>
+#include <QStringList>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -16,7 +19,8 @@ class TExecuteCommandReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TExecuteCommandReplyData)
 public:
-    QVariant data;
+    TCommandMessage message;
+    QStringList arguments;
 public:
     explicit TExecuteCommandReplyDataPrivate(TExecuteCommandReplyData *q);
     ~TExecuteCommandReplyDataPrivate();
@@ -76,14 +80,24 @@ TExecuteCommandReplyData::~TExecuteCommandReplyData()
 
 /*============================== Public methods ============================*/
 
-QVariant TExecuteCommandReplyData::data() const
+QStringList TExecuteCommandReplyData::arguments() const
 {
-    return d_func()->data;
+    return d_func()->arguments;
 }
 
-void TExecuteCommandReplyData::setData(const QVariant &data)
+TCommandMessage TExecuteCommandReplyData::message() const
 {
-    d_func()->data = data;
+    return d_func()->message;
+}
+
+void TExecuteCommandReplyData::setArguments(const QStringList &arguments)
+{
+    d_func()->arguments = arguments;
+}
+
+void TExecuteCommandReplyData::setMessage(const TCommandMessage &message)
+{
+    d_func()->message = message;
 }
 
 /*============================== Public operators ==========================*/
@@ -92,7 +106,8 @@ TExecuteCommandReplyData &TExecuteCommandReplyData::operator =(const TExecuteCom
 {
     B_D(TExecuteCommandReplyData);
     const TExecuteCommandReplyDataPrivate *dd = other.d_func();
-    d->data = dd->data;
+    d->arguments = dd->arguments;
+    d->message = dd->message;
     return *this;
 }
 
@@ -100,7 +115,7 @@ bool TExecuteCommandReplyData::operator ==(const TExecuteCommandReplyData &other
 {
     const B_D(TExecuteCommandReplyData);
     const TExecuteCommandReplyDataPrivate *dd = other.d_func();
-    return d->data == dd->data;
+    return d->arguments == dd->arguments && d->message == dd->message;
 }
 
 bool TExecuteCommandReplyData::operator !=(const TExecuteCommandReplyData &other) const
@@ -119,7 +134,8 @@ QDataStream &operator <<(QDataStream &stream, const TExecuteCommandReplyData &da
 {
     const TExecuteCommandReplyDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("data", d->data);
+    m.insert("arguments", d->arguments);
+    m.insert("message", d->message);
     stream << m;
     return stream;
 }
@@ -129,7 +145,8 @@ QDataStream &operator >>(QDataStream &stream, TExecuteCommandReplyData &data)
     TExecuteCommandReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->data = m.value("data");
+    d->arguments = m.value("arguments").toStringList();
+    d->message = m.value("message").value<TCommandMessage>();
     return stream;
 }
 

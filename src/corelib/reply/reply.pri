@@ -34,6 +34,7 @@ HEADERS += \
     $${PWD}/tgetselfinforeplydata.h \
     $${PWD}/tgetuseravatarreplydata.h \
     $${PWD}/tgetuserinfoadminreplydata.h \
+    $${PWD}/tgetuserinfolistadminreplydata.h \
     $${PWD}/tgetuserinforeplydata.h \
     $${PWD}/tlogreplydata.h \
     $${PWD}/trecoveraccountreplydata.h \
@@ -78,6 +79,7 @@ SOURCES += \
     $${PWD}/tgetselfinforeplydata.cpp \
     $${PWD}/tgetuseravatarreplydata.cpp \
     $${PWD}/tgetuserinfoadminreplydata.cpp \
+    $${PWD}/tgetuserinfolistadminreplydata.cpp \
     $${PWD}/tgetuserinforeplydata.cpp \
     $${PWD}/tlogreplydata.cpp \
     $${PWD}/trecoveraccountreplydata.cpp \

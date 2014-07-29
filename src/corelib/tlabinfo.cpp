@@ -113,6 +113,23 @@ TAuthorInfoList TLabInfo::authors() const
     return d_func()->authors;
 }
 
+void TLabInfo::clear()
+{
+    B_D(TLabInfo);
+    d->authors.clear();
+    d->creationDateTime = QDateTime().toUTC();
+    d->dataInfos.clear();
+    d->description.clear();
+    d->extraFiles.clear();
+    d->groups.clear();
+    d->id = 0;
+    d->lastModificationDateTime = QDateTime().toUTC();
+    d->senderId = 0;
+    d->senderLogin.clear();
+    d->tags.clear();
+    d->title.clear();
+}
+
 QDateTime TLabInfo::creationDateTime() const
 {
     return d_func()->creationDateTime;

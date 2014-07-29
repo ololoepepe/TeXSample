@@ -18,6 +18,7 @@ HEADERS += \
     tbinaryfile.h \
     tbinaryfilelist.h \
     tclientinfo.h \
+    tcommandmessage.h \
     tcoreapplication.h \
     tfileinfo.h \
     tfileinfolist.h \
@@ -61,6 +62,7 @@ SOURCES += \
     tbinaryfile.cpp \
     tbinaryfilelist.cpp \
     tclientinfo.cpp \
+    tcommandmessage.cpp \
     tcoreapplication.cpp \
     tfileinfo.cpp \
     tfileinfolist.cpp \

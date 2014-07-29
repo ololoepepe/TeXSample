@@ -124,6 +124,27 @@ TAuthorInfoList TSampleInfo::authors() const
     return d_func()->authors;
 }
 
+void TSampleInfo::clear()
+{
+    B_D(TSampleInfo);
+    d->authors.clear();
+    d->creationDateTime = QDateTime().toUTC();
+    d->description.clear();
+    d->extraPreviewFiles.clear();
+    d->extraSourceFiles.clear();
+    d->id = 0;
+    d->lastModificationDateTime = QDateTime().toUTC();
+    d->mainPreviewFile.clear();
+    d->mainSourceFile.clear();
+    d->rating = 0;
+    d->remark.clear();
+    d->senderId = 0;
+    d->senderLogin.clear();
+    d->tags.clear();
+    d->title.clear();
+    d->type = TSampleType();
+}
+
 QDateTime TSampleInfo::creationDateTime() const
 {
     return d_func()->creationDateTime;

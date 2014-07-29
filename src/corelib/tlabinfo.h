@@ -36,6 +36,7 @@ protected:
     explicit TLabInfo(TLabInfoPrivate &d);
 public:
     TAuthorInfoList authors() const;
+    void clear();
     QDateTime creationDateTime() const;
     TLabDataInfoList dataInfos() const;
     QString description() const;

@@ -3,8 +3,11 @@
 
 class TExecuteCommandReplyDataPrivate;
 
+class TCommandMessage;
+
 class QDataStream;
 class QDebug;
+class QStringList;
 class QVariant;
 
 #include "tglobal.h"
@@ -25,8 +28,10 @@ public:
     TExecuteCommandReplyData(const TExecuteCommandReplyData &other);
     ~TExecuteCommandReplyData();
 public:
-    QVariant data() const;
-    void setData(const QVariant &data);
+    QStringList arguments() const;
+    TCommandMessage message() const;
+    void setArguments(const QStringList &arguments);
+    void setMessage(const TCommandMessage &message);
 public:
     TExecuteCommandReplyData &operator =(const TExecuteCommandReplyData &other);
     bool operator ==(const TExecuteCommandReplyData &other) const;

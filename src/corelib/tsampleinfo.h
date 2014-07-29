@@ -37,6 +37,7 @@ protected:
 public:
     QString adminRemark() const;
     TAuthorInfoList authors() const;
+    void clear();
     QDateTime creationDateTime() const;
     QString description() const;
     TFileInfoList extraPreviewFiles() const;

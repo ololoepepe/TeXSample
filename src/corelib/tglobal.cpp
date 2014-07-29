@@ -35,6 +35,7 @@
 #include "reply/tgetselfinforeplydata.h"
 #include "reply/tgetuseravatarreplydata.h"
 #include "reply/tgetuserinfoadminreplydata.h"
+#include "reply/tgetuserinfolistadminreplydata.h"
 #include "reply/tgetuserinforeplydata.h"
 #include "reply/tlogreplydata.h"
 #include "reply/trecoveraccountreplydata.h"
@@ -77,6 +78,7 @@
 #include "request/tgetselfinforequestdata.h"
 #include "request/tgetuseravatarrequestdata.h"
 #include "request/tgetuserinfoadminrequestdata.h"
+#include "request/tgetuserinfolistadminrequestdata.h"
 #include "request/tgetuserinforequestdata.h"
 #include "request/tlogrequestdata.h"
 #include "request/trecoveraccountrequestdata.h"
@@ -198,6 +200,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetUserAvatarReplyData>();
     qRegisterMetaType<TGetUserInfoAdminReplyData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoAdminReplyData>();
+    qRegisterMetaType<TGetUserInfoListAdminReplyData>();
+    qRegisterMetaTypeStreamOperators<TGetUserInfoListAdminReplyData>();
     qRegisterMetaType<TGetUserInfoReplyData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoReplyData>();
     qRegisterMetaType<TLogReplyData>();
@@ -283,6 +287,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetUserAvatarRequestData>();
     qRegisterMetaType<TGetUserInfoAdminRequestData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoAdminRequestData>();
+    qRegisterMetaType<TGetUserInfoListAdminRequestData>();
+    qRegisterMetaTypeStreamOperators<TGetUserInfoListAdminRequestData>();
     qRegisterMetaType<TGetUserInfoRequestData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoRequestData>();
     qRegisterMetaType<TLogRequestData>();

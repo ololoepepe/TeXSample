@@ -34,6 +34,7 @@ HEADERS += \
     $${PWD}/tgetselfinforequestdata.h \
     $${PWD}/tgetuseravatarrequestdata.h \
     $${PWD}/tgetuserinfoadminrequestdata.h \
+    $${PWD}/tgetuserinfolistadminrequestdata.h \
     $${PWD}/tgetuserinforequestdata.h \
     $${PWD}/tlogrequestdata.h \
     $${PWD}/trecoveraccountrequestdata.h \
@@ -78,6 +79,7 @@ SOURCES += \
     $${PWD}/tgetselfinforequestdata.cpp \
     $${PWD}/tgetuseravatarrequestdata.cpp \
     $${PWD}/tgetuserinfoadminrequestdata.cpp \
+    $${PWD}/tgetuserinfolistadminrequestdata.cpp \
     $${PWD}/tgetuserinforequestdata.cpp \
     $${PWD}/tlogrequestdata.cpp \
     $${PWD}/trecoveraccountrequestdata.cpp \
