@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tuserinfo.h"
 
 #include "taccesslevel.h"
@@ -37,7 +58,7 @@ public:
     QString patronymic;
     QDateTime registrationDateTime;
     TServiceList services;
-    QString surename;
+    QString surname;
 public:
     explicit TUserInfoPrivate(TUserInfo *q);
     ~TUserInfoPrivate();
@@ -136,7 +157,7 @@ void TUserInfo::clear()
     d->patronymic.clear();
     d->registrationDateTime = QDateTime().toUTC();
     d->services.clear();
-    d->surename.clear();
+    d->surname.clear();
 }
 
 QString TUserInfo::email() const
@@ -261,14 +282,14 @@ void TUserInfo::setServices(const TServiceList &services)
     bRemoveDuplicates(d->services);
 }
 
-void TUserInfo::setSurename(const QString &surename)
+void TUserInfo::setSurname(const QString &surname)
 {
-    d_func()->surename = Texsample::testName(surename) ? surename : QString();
+    d_func()->surname = Texsample::testName(surname) ? surname : QString();
 }
 
-QString TUserInfo::surename() const
+QString TUserInfo::surname() const
 {
-    return d_func()->surename;
+    return d_func()->surname;
 }
 
 /*============================== Public operators ==========================*/
@@ -290,7 +311,7 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     d->patronymic = dd->patronymic;
     d->registrationDateTime = dd->registrationDateTime;
     d->services = dd->services;
-    d->surename = dd->surename;
+    d->surname = dd->surname;
     return *this;
 }
 
@@ -303,7 +324,7 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
             && d->id == dd->id && d->lastModificationDateTime == dd->lastModificationDateTime && d->login == dd->login
             && d->name == dd->name && d->patronymic == dd->patronymic
             && d->registrationDateTime == dd->registrationDateTime && d->services == dd->services
-            && d->surename == dd->surename;
+            && d->surname == dd->surname;
 }
 
 bool TUserInfo::operator !=(const TUserInfo &other) const
@@ -335,7 +356,7 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     m.insert("patronymic", d->patronymic);
     m.insert("registration_date_time", d->registrationDateTime);
     m.insert("services", d->services);
-    m.insert("surename", d->surename);
+    m.insert("surname", d->surname);
     stream << m;
     return stream;
 }
@@ -358,7 +379,7 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     d->patronymic = m.value("patronymic").toString();
     d->registrationDateTime = m.value("registration_date_time").toDateTime().toUTC();
     d->services = m.value("services").value<TServiceList>();
-    d->surename = m.value("surename").toString();
+    d->surname = m.value("surname").toString();
     return stream;
 }
 

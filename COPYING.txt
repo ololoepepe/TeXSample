@@ -1,4 +1,4 @@
-Copyright (С) 2013-2014 TeXSample Team
+Copyright (С) 2013-2014 Andrey Bogdanov
 
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

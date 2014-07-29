@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleWidgets module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tinvitewidget.h"
 #include "tinvitewidget_p.h"
 
@@ -69,6 +90,8 @@ TInviteWidgetPrivate::~TInviteWidgetPrivate()
 
 void TInviteWidgetPrivate::init()
 {
+    maxInviteCount = 0;
+    //
     B_Q(TInviteWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
       view = new QTableView;
@@ -115,7 +138,7 @@ void TInviteWidgetPrivate::copyInvites()
         return;
     QApplication::clipboard()->setText(list.join("\n"));
     BeQt::waitNonBlocking(100);
-    QString s = (list.size() > 1) ? tr("Invite were copied to clipboard", "toolTip") :
+    QString s = (list.size() > 1) ? tr("Invites were copied to clipboard", "toolTip") :
                                     tr("Invite was copied to clipboard", "toolTip");
     QToolTip::showText(view->mapToGlobal(view->visualRect(sel->currentIndex()).topLeft()), s, view);
 }
@@ -177,7 +200,7 @@ void TInviteWidgetPrivate::generateInvites()
             flt->addRow(tr("Expiration date:", "lbl text"), dtedt);
             QSpinBox *sbox = new QSpinBox;
               sbox->setMinimum(1);
-              sbox->setMaximum(USHRT_MAX);
+              sbox->setMaximum(maxInviteCount ? maxInviteCount : quint16(USHRT_MAX));
               sbox->setValue(1);
             flt->addRow(tr("Count:", "lbl text"), sbox);
             QMap<TService, QCheckBox *> cboxMap;
@@ -285,6 +308,11 @@ TInviteWidget::GenerateInvitesFunction TInviteWidget::generateInvitesFunction() 
     return d_func()->generateInvitesFunction;
 }
 
+quint16 TInviteWidget::maximumInviteCount() const
+{
+    return d_func()->maxInviteCount;
+}
+
 void TInviteWidget::setAvailableGroups(const TGroupInfoList &groups)
 {
     d_func()->availableGroups = groups;
@@ -308,4 +336,9 @@ void TInviteWidget::setGenerateInvitesFunction(GenerateInvitesFunction generateI
     d_func()->generateInvitesFunction = generateInvitesFunction;
     d_func()->actGenerate->setEnabled(generateInvitesFunction
                                       && d_func()->AccessLevel >= TAccessLevel(TAccessLevel::ModeratorLevel));
+}
+
+void TInviteWidget::setMaximumInviteCount(quint16 count)
+{
+    d_func()->maxInviteCount = count;
 }

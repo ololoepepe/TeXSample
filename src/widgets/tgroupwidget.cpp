@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleWidgets module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tgroupwidget.h"
 #include "tgroupwidget_p.h"
 
@@ -63,7 +84,7 @@ void TGroupWidgetPrivate::init()
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
       vlt->addWidget(view);
       QToolBar *tbar = new QToolBar;
-        actAdd = tbar->addAction(BApplication::icon("edit_add"), tr("Generate group...", "act text"),
+        actAdd = tbar->addAction(BApplication::icon("edit_add"), tr("Add group...", "act text"),
                                  this, SLOT(addGroup()));
           actAdd->setEnabled(false);
         actDelete = tbar->addAction(BApplication::icon("editdelete"), tr("Delete group", "act text"),

@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tadduserrequestdata.h"
 
 #include "taccesslevel.h"
@@ -34,7 +55,7 @@ public:
     QByteArray password;
     QString patronymic;
     TServiceList services;
-    QString surename;
+    QString surname;
 public:
     explicit TAddUserRequestDataPrivate(TAddUserRequestData *q);
     ~TAddUserRequestDataPrivate();
@@ -116,7 +137,7 @@ void TAddUserRequestData::clear()
     d->password.clear();
     d->patronymic.clear();
     d->services.clear();
-    d->surename.clear();
+    d->surname.clear();
 }
 
 QString TAddUserRequestData::email() const
@@ -211,14 +232,14 @@ void TAddUserRequestData::setServices(const TServiceList &services)
     bRemoveDuplicates(d->services);
 }
 
-void TAddUserRequestData::setSurename(const QString &surename)
+void TAddUserRequestData::setSurname(const QString &surname)
 {
-    d_func()->surename = Texsample::testName(surename) ? surename : QString();
+    d_func()->surname = Texsample::testName(surname) ? surname : QString();
 }
 
-QString TAddUserRequestData::surename() const
+QString TAddUserRequestData::surname() const
 {
-    return d_func()->surename;
+    return d_func()->surname;
 }
 
 /*============================== Public operators ==========================*/
@@ -236,7 +257,7 @@ TAddUserRequestData &TAddUserRequestData::operator =(const TAddUserRequestData &
     d->password = dd->password;
     d->patronymic = dd->patronymic;
     d->services = dd->services;
-    d->surename = dd->surename;
+    d->surname = dd->surname;
     return *this;
 }
 
@@ -246,7 +267,7 @@ bool TAddUserRequestData::operator ==(const TAddUserRequestData &other) const
     const TAddUserRequestDataPrivate *dd = other.d_func();
     return d->accessLevel == dd->accessLevel && d->avatar == dd->avatar && d->email == dd->email
             && d->groups == dd->groups && d->login == dd->login && d->name == dd->name && d->password == dd->password
-            && d->patronymic == dd->patronymic && d->services == dd->services && d->surename == dd->surename;
+            && d->patronymic == dd->patronymic && d->services == dd->services && d->surname == dd->surname;
 }
 
 bool TAddUserRequestData::operator !=(const TAddUserRequestData &other) const
@@ -274,7 +295,7 @@ QDataStream &operator <<(QDataStream &stream, const TAddUserRequestData &data)
     m.insert("password", d->password);
     m.insert("patronymic", d->patronymic);
     m.insert("services", d->services);
-    m.insert("surename", d->surename);
+    m.insert("surname", d->surname);
     stream << m;
     return stream;
 }
@@ -293,7 +314,7 @@ QDataStream &operator >>(QDataStream &stream, TAddUserRequestData &data)
     d->password = m.value("password").toByteArray();
     d->patronymic = m.value("patronymic").toString();
     d->services = m.value("services").value<TServiceList>();
-    d->surename = m.value("surename").toString();
+    d->surname = m.value("surname").toString();
     return stream;
 }
 

@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tcommandmessage.h"
 
 #include <BBase>
@@ -17,6 +38,7 @@ class TCommandMessagePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TCommandMessage)
 public:
+    QString extraText;
     TCommandMessage::Message message;
 public:
    explicit TCommandMessagePrivate(TCommandMessage *q);
@@ -28,7 +50,7 @@ private:
 };
 
 /*============================================================================
-================================ TCommandMessagePrivate =============================
+================================ TCommandMessagePrivate ======================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
@@ -52,7 +74,7 @@ void TCommandMessagePrivate::init()
 }
 
 /*============================================================================
-================================ TCommandMessage ====================================
+================================ TCommandMessage =============================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
@@ -62,6 +84,14 @@ TCommandMessage::TCommandMessage(int msg) :
 {
     d_func()->init();
     *this = msg;
+}
+
+TCommandMessage::TCommandMessage(int msg, const QString &extraText) :
+    BBase(*new TCommandMessagePrivate(this))
+{
+    d_func()->init();
+    *this = msg;
+    d_func()->extraText = extraText;
 }
 
 TCommandMessage::TCommandMessage(const TCommandMessage &other) :
@@ -87,6 +117,16 @@ TCommandMessage::TCommandMessage(TCommandMessagePrivate &d) :
 
 /*============================== Public methods ============================*/
 
+QString TCommandMessage::extraText() const
+{
+    return d_func()->extraText;
+}
+
+void TCommandMessage::setExtraText(const QString &extraText)
+{
+    d_func()->extraText = extraText;
+}
+
 QString TCommandMessage::text() const
 {
     return tr(textNoTr().toUtf8().constData());
@@ -94,8 +134,35 @@ QString TCommandMessage::text() const
 
 QString TCommandMessage::textNoTr() const
 {
-    switch (d_func()->message)
-    {
+    switch (d_func()->message) {
+    case FailedToStartServerMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Failed to start server");
+    case InvalidArgumentCountMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Invalid argument count");
+    case InvalidArgumentsMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Invalid arguments");
+    case NoSuchUserError:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "No such user");
+    case ServerAlreadyRunningMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "The server is already started");
+    case ServerNotRunningMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "The server is not started");
+    case ServerStartedMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "The server was successfully started");
+    case ServerStoppedMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "The server was successfully stopped");
+    case UptimeMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Uptime: %1");
+    case UserCountMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "User count: %1");
+    case UserInfoListMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Users:\n%1");
+    case UserInfoMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "User info: %1\n%2");
+    case UserKickedMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "User %1 was successfully kicked. Connections closed: %2");
+    case UnknownErrorMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Some mysterious error");
     case NoMessage:
     default:
         return "";
@@ -107,18 +174,19 @@ QString TCommandMessage::textNoTr() const
 TCommandMessage &TCommandMessage::operator =(const TCommandMessage &other)
 {
     d_func()->message = other.d_func()->message;
+    d_func()->extraText = other.d_func()->extraText;
     return *this;
 }
 
 TCommandMessage &TCommandMessage::operator =(int msg)
 {
-    d_func()->message = enum_cast<Message>(msg, NoMessage, NoMessage); //TODO
+    d_func()->message = enum_cast<Message>(msg, NoMessage, UnknownErrorMessage);
     return *this;
 }
 
 bool TCommandMessage::operator ==(const TCommandMessage &other) const
 {
-    return d_func()->message == other.d_func()->message;
+    return d_func()->message == other.d_func()->message && d_func()->extraText == other.d_func()->extraText;
 }
 
 bool TCommandMessage::operator !=(const TCommandMessage &other) const
@@ -147,6 +215,7 @@ QDataStream &operator <<(QDataStream &stream, const TCommandMessage &msg)
 {
     QVariantMap m;
     m.insert("message", (int) msg.d_func()->message);
+    m.insert("extra_text", msg.d_func()->extraText);
     stream << m;
     return stream;
 }
@@ -156,12 +225,13 @@ QDataStream &operator >>(QDataStream &stream, TCommandMessage &msg)
     QVariantMap m;
     stream >> m;
     msg.d_func()->message = enum_cast<TCommandMessage::Message>(m.value("message"), TCommandMessage::NoMessage,
-                                                                TCommandMessage::NoMessage); //TODO
+                                                                TCommandMessage::UnknownErrorMessage);
+    msg.d_func()->extraText = m.value("extra_text").toString();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TCommandMessage &msg)
 {
-    dbg.nospace() << "TCommandMessage(" << msg.textNoTr() << ")";
+    dbg.nospace() << "TCommandMessage(" << msg.textNoTr() << "," << msg.extraText() << ")";
     return dbg.space();
 }

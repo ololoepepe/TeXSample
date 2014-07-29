@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "teditselfrequestdata.h"
 
 #include "tnamespace.h"
@@ -24,7 +45,7 @@ public:
     bool editAvatar;
     QString name;
     QString patronymic;
-    QString surename;
+    QString surname;
 public:
     explicit TEditSelfRequestDataPrivate(TEditSelfRequestData *q);
     ~TEditSelfRequestDataPrivate();
@@ -96,7 +117,7 @@ void TEditSelfRequestData::clear()
     d->editAvatar = false;
     d->name.clear();
     d->patronymic.clear();
-    d->surename.clear();
+    d->surname.clear();
 }
 
 bool TEditSelfRequestData::editAvatar() const
@@ -112,6 +133,11 @@ QString TEditSelfRequestData::name() const
 QString TEditSelfRequestData::patronymic() const
 {
     return d_func()->patronymic;
+}
+
+bool TEditSelfRequestData::isValid() const
+{
+    return true;
 }
 
 void TEditSelfRequestData::setAvatar(const QImage &avatar)
@@ -134,14 +160,14 @@ void TEditSelfRequestData::setPatronymic(const QString &patronymic)
     d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
 }
 
-void TEditSelfRequestData::setSurename(const QString &surename)
+void TEditSelfRequestData::setSurname(const QString &surname)
 {
-    d_func()->surename = Texsample::testName(surename) ? surename : QString();
+    d_func()->surname = Texsample::testName(surname) ? surname : QString();
 }
 
-QString TEditSelfRequestData::surename() const
+QString TEditSelfRequestData::surname() const
 {
-    return d_func()->surename;
+    return d_func()->surname;
 }
 
 /*============================== Public operators ==========================*/
@@ -154,7 +180,7 @@ TEditSelfRequestData &TEditSelfRequestData::operator =(const TEditSelfRequestDat
     d->editAvatar = dd->editAvatar;
     d->name = dd->name;
     d->patronymic = dd->patronymic;
-    d->surename = dd->surename;
+    d->surname = dd->surname;
     return *this;
 }
 
@@ -163,7 +189,7 @@ bool TEditSelfRequestData::operator ==(const TEditSelfRequestData &other) const
     const B_D(TEditSelfRequestData);
     const TEditSelfRequestDataPrivate *dd = other.d_func();
     return d->avatar == dd->avatar && d->editAvatar == dd->editAvatar && d->name == dd->name
-            && d->patronymic == dd->patronymic && d->surename == dd->surename;
+            && d->patronymic == dd->patronymic && d->surname == dd->surname;
 }
 
 bool TEditSelfRequestData::operator !=(const TEditSelfRequestData &other) const
@@ -187,7 +213,7 @@ QDataStream &operator <<(QDataStream &stream, const TEditSelfRequestData &data)
     m.insert("edit_avatar", d->editAvatar);
     m.insert("name", d->name);
     m.insert("patronymic", d->patronymic);
-    m.insert("surename", d->surename);
+    m.insert("surname", d->surname);
     stream << m;
     return stream;
 }
@@ -201,7 +227,7 @@ QDataStream &operator >>(QDataStream &stream, TEditSelfRequestData &data)
     d->editAvatar = m.value("edit_avatar").toBool();
     d->name = m.value("name").toString();
     d->patronymic = m.value("patronymic").toString();
-    d->surename = m.value("surename").toString();
+    d->surname = m.value("surname").toString();
     return stream;
 }
 

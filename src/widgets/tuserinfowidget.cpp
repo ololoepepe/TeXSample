@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleWidgets module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tuserinfowidget.h"
 #include "tuserinfowidget_p.h"
 
@@ -238,10 +259,10 @@ void TUserInfoWidgetPrivate::createNameFields(QFormLayout *flt, bool readOnly)
       ledtPatronymic->setMaxLength(Texsample::MaximumNameLength);
       ledtPatronymic->setReadOnly(readOnly);
     flt->addRow(tr("Patronymic:", "lbl text"), ledtPatronymic);
-    ledtSurename = new QLineEdit;
-      ledtSurename->setMaxLength(Texsample::MaximumNameLength);
-      ledtSurename->setReadOnly(readOnly);
-    flt->addRow(tr("Surename:", "lbl text"), ledtSurename);
+    ledtSurname = new QLineEdit;
+      ledtSurname->setMaxLength(Texsample::MaximumNameLength);
+      ledtSurname->setReadOnly(readOnly);
+    flt->addRow(tr("Surname:", "lbl text"), ledtSurname);
 }
 
 void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode mode)
@@ -353,7 +374,7 @@ void TUserInfoWidgetPrivate::init()
     ledtLogin = 0;
     ledtName = 0;
     ledtPatronymic = 0;
-    ledtSurename = 0;
+    ledtSurname = 0;
     lstwgtGroups = 0;
     pwdgrp = 0;
     pwdwgt1 = 0;
@@ -766,7 +787,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
         data.setServices(d->services());
-        data.setSurename(d->ledtSurename->text());
+        data.setSurname(d->ledtSurname->text());
         return data;
     }
     case EditMode: {
@@ -787,7 +808,7 @@ QVariant TUserInfoWidget::createRequestData() const
             data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
         data.setServices(d->services());
-        data.setSurename(d->ledtSurename->text());
+        data.setSurname(d->ledtSurname->text());
         return data;
     }
     case EditSelfMode: {
@@ -797,7 +818,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setEditAvatar(d->editAvatar);
         data.setName(d->ledtName->text());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setSurename(d->ledtSurename->text());
+        data.setSurname(d->ledtSurname->text());
         return data;
     }
     case RegisterMode: {
@@ -809,7 +830,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setName(d->ledtName->text());
         data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setSurename(d->ledtSurename->text());
+        data.setSurname(d->ledtSurname->text());
         return data;
     }
     case ShowMode:
@@ -914,8 +935,8 @@ void TUserInfoWidget::setInfo(const TUserInfo &info)
         d->ledtName->setText(info.name());
     if (d->ledtPatronymic)
         d->ledtPatronymic->setText(info.patronymic());
-    if (d->ledtSurename)
-        d->ledtSurename->setText(info.surename());
+    if (d->ledtSurname)
+        d->ledtSurname->setText(info.surname());
     if (d->lblRegistrationDateTime) {
         d->lblRegistrationDateTime->setText(
                     info.registrationDateTime().toLocalTime().toString(TUserInfoWidgetPrivate::DateTimeFormat));

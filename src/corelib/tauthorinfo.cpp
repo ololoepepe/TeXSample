@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tauthorinfo.h"
 
 #include "tnamespace.h"
@@ -24,7 +45,7 @@ public:
     QString patronymic;
     QString post;
     QString role;
-    QString surename;
+    QString surname;
 public:
     explicit TAuthorInfoPrivate(TAuthorInfo *q);
     ~TAuthorInfoPrivate();
@@ -92,7 +113,7 @@ void TAuthorInfo::clear()
     d->patronymic.clear();
     d->post.clear();
     d->role.clear();
-    d->surename.clear();
+    d->surname.clear();
 }
 
 bool TAuthorInfo::isValid() const
@@ -151,14 +172,14 @@ void TAuthorInfo::setRole(const QString &role)
     d_func()->role = Texsample::testRole(role) ? role : QString();
 }
 
-void TAuthorInfo::setSurename(const QString &surename)
+void TAuthorInfo::setSurname(const QString &surname)
 {
-    d_func()->surename = Texsample::testName(surename) ? surename : QString();
+    d_func()->surname = Texsample::testName(surname) ? surname : QString();
 }
 
-QString TAuthorInfo::surename() const
+QString TAuthorInfo::surname() const
 {
-    return d_func()->surename;
+    return d_func()->surname;
 }
 
 /*============================== Public operators ==========================*/
@@ -172,7 +193,7 @@ TAuthorInfo &TAuthorInfo::operator =(const TAuthorInfo &other)
     d->patronymic = dd->patronymic;
     d->post = dd->post;
     d->role = dd->role;
-    d->surename = dd->surename;
+    d->surname = dd->surname;
     return *this;
 }
 
@@ -181,7 +202,7 @@ bool TAuthorInfo::operator ==(const TAuthorInfo &other) const
     const B_D(TAuthorInfo);
     const TAuthorInfoPrivate *dd = other.d_func();
     return d->name == dd->name && d->organization == dd->organization && d->patronymic == dd->patronymic
-            && d->post == dd->post && d->role == dd->role && d->surename == dd->surename;
+            && d->post == dd->post && d->role == dd->role && d->surname == dd->surname;
 }
 
 bool TAuthorInfo::operator !=(const TAuthorInfo &other) const
@@ -205,7 +226,7 @@ QDataStream &operator <<(QDataStream &stream, const TAuthorInfo &data)
     m.insert("patronymic", d->patronymic);
     m.insert("post", d->post);
     m.insert("role", d->role);
-    m.insert("surename", d->surename);
+    m.insert("surname", d->surname);
     stream << m;
     return stream;
 }
@@ -220,7 +241,7 @@ QDataStream &operator >>(QDataStream &stream, TAuthorInfo &data)
     d->patronymic = m.value("patronymic").toString();
     d->post = m.value("post").toString();
     d->role = m.value("role").toString();
-    d->surename = m.value("surename").toString();
+    d->surname = m.value("surname").toString();
     return stream;
 }
 

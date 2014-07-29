@@ -2,9 +2,9 @@
  TeXSample
 ==============================================================================
 
-Homepage: https://github.com/TeXSample-Team/TeXSample
+Homepage: https://github.com/the-dark-angel/TeXSample
 
-Author: TeXSample Team (ololoepepe@gmail.com)
+Author: Andrey Bogdanov (ololoepepe@gmail.com)
 
 License: GNU LGPL (see COPYING.txt)
 

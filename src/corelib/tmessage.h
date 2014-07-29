@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TMESSAGE_H
 #define TMESSAGE_H
 
@@ -27,63 +48,19 @@ public:
     enum Message
     {
         NoMessage = 0,
-        //Connection messages
         AlreadyAuthorizedMessage,
-        //TerminalIOHandler messages
-        ServerAlreadyRunningMessage,
-        ServerIsNotRunningMessage,
-        OkMessage,
-        //Internal errors
-        InternalParametersError,
-        InternalFileSystemError,
-        InternalNetworkError,
-        InternalStorageError,
-        InternalQueryError,
-        InternalDatabaseError,
-        //Storage errors
-        ReadOnlyError,
-        InvalidDataError,
-        InvalidUserIdError,
-        InvalidSampleIdError,
-        InvalidLabIdError,
-        InvalidEmailError,
-        InvalidOSTypeError,
-        NoSuchSampleError,
-        NoSuchCodeError,
-        NoLabForPlatformError,
-        LoginOrEmailOccupiedError,
-        SampleAlreadyDeletedError,
-        LabAlreadyDeletedError,
-        //Connection errors
-        InvalidUserInfoError,
-        InvalidLoginError,
-        InvalidPasswordError,
-        NoSuchUserError,
-        NotAuthorizedError,
-        NotEnoughRightsError,
-        CantEditSelfError,
-        NotOwnAccountError,
-        NotOwnSampleError,
-        NotOwnLabError,
-        NotModifiableSampleError,
-        InvalidFileNameError,
-        NoSuchFileError,
-        //Client errors
-        ClientOperationCanceledError,
-        ClientConnectionTimeoutError,
-        ClientOperationError,
-        ClientFileSystemError,
-        ClientInvalidInvitesCountError,
-        ClientInvalidSampleInfoError,
-        ClientInvalidPathError,
-        ClientInvalidFileNameError,
-        ClientInvalidLabInfoError,
-        //TerminalIOHandler errors
-        FailedToStartServerError,
-        InvalidCommandArgumentsError,
-        //Other errors
-        UnknownApplicationError,
-        UnknownError
+        AlreadyDeletedMessage,
+        AlreadyExistsMessage,
+        InternalErrorMessage,
+        InvalidCommandMessage,
+        InvalidDataMessage,
+        InvalidIdentifierMessage,
+        InvalidUsernameOrPasswordMessage,
+        NoAccessToServiceMessage,
+        NotAuthorizedMessage,
+        NotEnoughRightsMessage,
+        NotModifiableMessage,
+        UnknownErrorMessage
     };
 public:
     TMessage(int msg = NoMessage);

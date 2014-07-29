@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "tregisterrequestdata.h"
 
 #include "tnamespace.h"
@@ -31,7 +52,7 @@ public:
     QString name;
     QByteArray password;
     QString patronymic;
-    QString surename;
+    QString surname;
 public:
     explicit TRegisterRequestDataPrivate(TRegisterRequestData *q);
     ~TRegisterRequestDataPrivate();
@@ -106,7 +127,7 @@ void TRegisterRequestData::clear()
     d->name.clear();
     d->password.clear();
     d->patronymic.clear();
-    d->surename.clear();
+    d->surname.clear();
 }
 
 QString TRegisterRequestData::email() const
@@ -181,14 +202,14 @@ void TRegisterRequestData::setPatronymic(const QString &patronymic)
     d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
 }
 
-void TRegisterRequestData::setSurename(const QString &surename)
+void TRegisterRequestData::setSurname(const QString &surname)
 {
-    d_func()->surename = Texsample::testName(surename) ? surename : QString();
+    d_func()->surname = Texsample::testName(surname) ? surname : QString();
 }
 
-QString TRegisterRequestData::surename() const
+QString TRegisterRequestData::surname() const
 {
-    return d_func()->surename;
+    return d_func()->surname;
 }
 
 /*============================== Public operators ==========================*/
@@ -204,7 +225,7 @@ TRegisterRequestData &TRegisterRequestData::operator =(const TRegisterRequestDat
     d->name = dd->name;
     d->password = dd->password;
     d->patronymic = dd->patronymic;
-    d->surename = dd->surename;
+    d->surname = dd->surname;
     return *this;
 }
 
@@ -214,7 +235,7 @@ bool TRegisterRequestData::operator ==(const TRegisterRequestData &other) const
     const TRegisterRequestDataPrivate *dd = other.d_func();
     return d->avatar == dd->avatar && d->email == dd->email && d->inviteCode == dd->inviteCode
             && d->login == dd->login && d->name == dd->name && d->password == dd->password
-            && d->patronymic == dd->patronymic && d->surename == dd->surename;
+            && d->patronymic == dd->patronymic && d->surname == dd->surname;
 }
 
 bool TRegisterRequestData::operator !=(const TRegisterRequestData &other) const
@@ -240,7 +261,7 @@ QDataStream &operator <<(QDataStream &stream, const TRegisterRequestData &data)
     m.insert("name", d->name);
     m.insert("password", d->password);
     m.insert("patronymic", d->patronymic);
-    m.insert("surename", d->surename);
+    m.insert("surname", d->surname);
     stream << m;
     return stream;
 }
@@ -257,7 +278,7 @@ QDataStream &operator >>(QDataStream &stream, TRegisterRequestData &data)
     d->name = m.value("name").toString();
     d->password = m.value("password").toByteArray();
     d->patronymic = m.value("patronymic").toString();
-    d->surename = m.value("surename").toString();
+    d->surname = m.value("surname").toString();
     return stream;
 }
 
