@@ -1,16 +1,34 @@
-#include "tservice.h"
-#include "tglobal.h"
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
 
-#include <BeQtGlobal>
+#include "tservice.h"
+
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
-#include <BTranslator>
 
-#include <QObject>
 #include <QDataStream>
-#include <QVariant>
 #include <QDebug>
+#include <QObject>
 #include <QString>
+#include <QVariant>
 #include <QVariantMap>
 
 /*============================================================================
@@ -21,12 +39,12 @@ class TServicePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TService)
 public:
+    TService::Service service;
+public:
    explicit TServicePrivate(TService *q);
     ~TServicePrivate();
 public:
     void init();
-public:
-    TService::Service service;
 private:
     Q_DISABLE_COPY(TServicePrivate)
 };
@@ -52,7 +70,7 @@ TServicePrivate::~TServicePrivate()
 
 void TServicePrivate::init()
 {
-    service = TService::TexsampleService;
+    service = TService::NoService;
 }
 
 /*============================================================================
@@ -72,7 +90,7 @@ QString TService::serviceToStringNoTr(Service srv)
     {
     case TexsampleService:
         return QT_TRANSLATE_NOOP("TService", "TeXSample");
-    case ClabService:
+    case CloudlabService:
         return QT_TRANSLATE_NOOP("TService", "CloudLab");
     case NoService:
     default:
@@ -123,7 +141,7 @@ TService &TService::operator =(const TService &other)
 
 TService &TService::operator =(int srv)
 {
-    static const QList<int> Services = bRangeD(TexsampleService, ClabService);
+    static const QList<int> Services = bRangeD(TexsampleService, CloudlabService);
     d_func()->service = Services.contains(srv) ? static_cast<Service>(srv) : NoService;
     return *this;
 }

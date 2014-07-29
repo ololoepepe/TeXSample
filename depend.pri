@@ -25,29 +25,12 @@ defineReplace(texsampleModuleSubdir) {
 isEmpty(TSMP_SUBDIR_NAME):TSMP_SUBDIR_NAME=texsample
 
 #Searching for headers
-texsampleHeadersPath=
-mac:exists($${PWD}/../Headers):texsampleHeadersPath=$${PWD}/../Headers
-else:unix:!mac:exists($${PWD}/../../include/texsample):texsampleHeadersPath=$${PWD}/../../include/texsample
-else:exists($${PWD}/include):texsampleHeadersPath=$${PWD}/include
-isEmpty(texsampleHeadersPath):error("TeXSample headers not found")
+texsampleHeadersPath=$${PWD}/../../include/$${TSMP_SUBDIR_NAME}
+!exists($${texsampleHeadersPath}):error("TeXSample headers not found")
+
 #Searching for libraries
-texsampleLibsPath=
-texsampleLibsOneFolder=
-mac:exists($${PWD}/../Frameworks) {
-    texsampleLibsPath=$${PWD}/../Frameworks
-    texsampleLibsOneFolder=true
-}
-else:exists($${PWD}/lib) {
-    texsampleLibsPath=$${PWD}/lib
-    texsampleLibsOneFolder=true
-}
-else:exists($${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/../$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src):texsampleLibsPath=$${OUT_PWD}/../../$${TSMP_SUBDIR_NAME}/src
-else:exists($${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src) {
-    texsampleLibsPath=$${OUT_PWD}/../../../$${TSMP_SUBDIR_NAME}/src
-}
-else:texsampleLibsOneFolder=true
+texsampleLibsPath=$${PWD}/../../lib
+!exists($${texsampleLibsPath}):error("TeXSample libs not found")
 
 win32 {
     #If CONFIG contains "release" or "debug", set special suffix for libs' path
@@ -65,20 +48,7 @@ defineTest(addTexsampleModule) {
     fullName=$$fullTexsampleModuleName($${shortName})
     INCLUDEPATH *= $${texsampleHeadersPath}/$${fullName}
     DEPENDPATH *= $${texsampleHeadersPath}/$${fullName}
-    !isEmpty(texsampleLibsPath) {
-        texsampleModuleSubdir=
-        isEmpty(texsampleLibsOneFolder):texsampleModuleSubdir=/$$texsampleModuleSubdir($${shortName})
-        texsampleFinalLibPath=$${texsampleLibsPath}$${texsampleModuleSubdir}$${releaseDebugSuffix}
-        !exists($${texsampleFinalLibPath}):texsampleFinalLibPath=$${texsampleLibsPath}$${texsampleModuleSubdir}
-        mac:contains(CONFIG, lib_bundle) {
-            LIBS *= -F$${texsampleFinalLibPath}/ -framework $${fullName}
-        } else {
-            LIBS *= -L$${texsampleFinalLibPath}/ -l$${fullName}$${libNameSuffix}
-        }
-    } else {
-        mac:LIBS *= -framework $${fullName}
-        else:LIBS *= -l$${fullName}$${libNameSuffix}
-    }
+    LIBS *= -L$${texsampleLibsPath}$${releaseDebugSuffix}/ -l$${fullName}$${libNameSuffix}
     export(INCLUDEPATH)
     export(DEPENDPATH)
     export(LIBS)
@@ -97,11 +67,13 @@ contains(TSMP, all) {
 
 #Adds required Qt, BeQt and TeXSample modules (on which other included modules depend)
 contains(TSMP, core) {
-    QT *= core concurrent
+    QT *= core gui
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= concurrent
     BEQT *= core
 }
 contains(TSMP, widgets) {
-    QT *= core concurrent gui widgets 
+    QT *= core gui
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= concurrent widgets
     BEQT *= core widgets
     TSMP *= core
 }

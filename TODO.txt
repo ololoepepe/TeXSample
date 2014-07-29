@@ -8,10 +8,4 @@
 
 === MAJOR ===
 
-* Rename CLab to CloudLab
-* Remove Clab::MaximumInvitesCount constant
-* Replace NoSuchUser message with InvalidLoginOrPassword message
-* Make maximum invites count modifiable
-* Fix QUuid serialization
-* Add access level info to invites generation dialog
-* Rename requests into operations
+

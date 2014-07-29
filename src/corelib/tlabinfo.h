@@ -1,24 +1,46 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TLABINFO_H
 #define TLABINFO_H
 
 class TLabInfoPrivate;
 
+class TAuthorInfoList;
+class TFileInfoList;
+class TIdList;
+class TLabDataInfoList;
+
 class QDataStream;
-class QStringList;
 class QDateTime;
-class QVariant;
 class QDebug;
+class QString;
+class QStringList;
+class QVariant;
 
 #include "tglobal.h"
-#include "tuserinfo.h"
 
-#include <BeQtGlobal>
 #include <BBase>
-#include <BeQt>
 
 #include <QMetaType>
-#include <QString>
-#include <QCoreApplication>
 
 /*============================================================================
 ================================ TLabInfo ====================================
@@ -27,70 +49,39 @@ class QDebug;
 class T_CORE_EXPORT TLabInfo : public BBase
 {
     B_DECLARE_PRIVATE(TLabInfo)
-    Q_DECLARE_TR_FUNCTIONS(TLabInfo)
 public:
-    enum Type
-    {
-        NoType = 0,
-        DesktopType,
-        WebType,
-        UrlType
-    };
-    enum Context
-    {
-        CurrentContext,
-        GeneralContext,
-        AddContext,
-        EditContext
-    };
-public:
-    static QString typeToString(Type t, bool singular = true);
-    static QString typeToStringNoTr(Type t, bool singular = true);
-    static QString listToString(const QStringList &list);
-    static QStringList listFromString(const QString &s);
-    static Type typeFromInt(int t);
-    static QList<Type> allTypes(bool includeNoType = false);
-public:
-    explicit TLabInfo(Context c = GeneralContext);
+    explicit TLabInfo();
     TLabInfo(const TLabInfo &other);
     ~TLabInfo();
 protected:
     explicit TLabInfo(TLabInfoPrivate &d);
 public:
-    void setContext(int c, bool clear = false);
-    void setId(quint64 id);
-    void setSender(const TUserInfo &sender);
-    void setTitle(const QString &title);
-    void setAuthors(const QStringList &list);
-    void setType(int t);
-    void setGroups(const QStringList &list);
-    void setProjectSize(int sz);
-    void setTags(const QStringList &list);
-    void setTags(const QString &s);
-    void setComment(const QString &s);
-    void setCreationDateTime(const QDateTime &dt);
-    void setUpdateDateTime(const QDateTime &dt);
-    void setExtraAttachedFileNames(const QStringList &list);
-    Context context() const;
+    TAuthorInfoList authors() const;
+    void clear();
+    QDateTime creationDateTime() const;
+    TLabDataInfoList dataInfos() const;
+    QString description() const;
+    TFileInfoList extraFiles() const;
+    TIdList groups() const;
     quint64 id() const;
-    QString idString(int fixedLength = -1) const;
-    TUserInfo sender() const;
-    QString title() const;
-    QStringList authors() const;
-    Type type() const;
-    QString typeString() const;
-    QString typeStringNoTr() const;
-    QStringList groups() const;
-    int projectSize() const;
-    QString projectSizeString(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
-    QString projectSizeStringNoTr(BeQt::FileSizeFormat format = BeQt::KilobytesFormat, quint8 precision = 1) const;
+    bool isValid() const;
+    QDateTime lastModificationDateTime() const;
+    quint64 senderId() const;
+    QString senderLogin() const;
+    void setAuthors(const TAuthorInfoList &authors);
+    void setCreationDateTime(const QDateTime &dt);
+    void setDataInfos(const TLabDataInfoList &dataInfos);
+    void setDescription(const QString &description);
+    void setExtraFiles(const TFileInfoList &extraFiles);
+    void setGroups(const TIdList &groups);
+    void setId(quint64 id);
+    void setLastModificationDateTime(const QDateTime &dt);
+    void setSenderId(quint64 id);
+    void setSenderLogin(const QString &login);
+    void setTags(const QStringList &list);
+    void setTitle(const QString &title);
     QStringList tags() const;
-    QString tagsString() const;
-    QString comment() const;
-    QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime updateDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QStringList extraAttachedFileNames() const;
-    bool isValid(Context c = CurrentContext) const;
+    QString title() const;
 public:
     TLabInfo &operator =(const TLabInfo &other);
     bool operator ==(const TLabInfo &other) const;

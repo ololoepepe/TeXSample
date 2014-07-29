@@ -1,10 +1,12 @@
 #ifndef TSMP_TEXSAMPLEWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
-#include "tinvitesdialog.h"
+#include "tapplication.h"
+#include "tgroupwidget.h"
+#include "tinvitewidget.h"
 #include "tlistwidget.h"
-#include "trecoverydialog.h"
+#include "trecoverywidget.h"
 #include "ttagswidget.h"
-#include "tuserwidget.h"
+#include "tuserinfowidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

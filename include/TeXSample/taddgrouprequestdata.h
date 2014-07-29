@@ -1,0 +1,1 @@
+#include "../../src/corelib/request/taddgrouprequestdata.h"

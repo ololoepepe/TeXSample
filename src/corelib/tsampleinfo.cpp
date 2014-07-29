@@ -1,23 +1,43 @@
-#include "tsampleinfo.h"
-#include "tglobal.h"
-#include "tuserinfo.h"
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
 
-#include <BeQtGlobal>
+#include "tsampleinfo.h"
+
+#include "tauthorinfolist.h"
+#include "tfileinfo.h"
+#include "tfileinfolist.h"
+#include "tnamespace.h"
+#include "tsampletype.h"
+
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
-#include <BTranslator>
-#include <BeQt>
+#include <BTextTools>
 
-#include <QObject>
 #include <QDataStream>
+#include <QDateTime>
+#include <QDebug>
+#include <QList>
 #include <QString>
 #include <QStringList>
-#include <QDateTime>
-#include <QRegExp>
 #include <QVariant>
-#include <QDebug>
-#include <QFileInfo>
-#include <QList>
 #include <QVariantMap>
 
 /*============================================================================
@@ -28,27 +48,27 @@ class TSampleInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TSampleInfo)
 public:
-    static TSampleInfo::Context contextFromInt(int c);
+    TAuthorInfoList authors;
+    QDateTime creationDateTime;
+    QString description;
+    TFileInfoList extraPreviewFiles;
+    TFileInfoList extraSourceFiles;
+    quint64 id;
+    QDateTime lastModificationDateTime;
+    TFileInfo mainPreviewFile;
+    TFileInfo mainSourceFile;
+    quint8 rating;
+    QString remark;
+    quint64 senderId;
+    QString senderLogin;
+    QStringList tags;
+    QString title;
+    TSampleType type;
 public:
     explicit TSampleInfoPrivate(TSampleInfo *q);
     ~TSampleInfoPrivate();
 public:
     void init();
-public:
-    TSampleInfo::Context context;
-    quint64 id;
-    TUserInfo sender;
-    QStringList authors;
-    QString title;
-    TSampleInfo::Type type;
-    QString fileName;
-    int size;
-    QStringList tags;
-    QString comment;
-    QString remark;
-    quint8 rating;
-    QDateTime creationDT;
-    QDateTime updateDT;
 private:
     Q_DISABLE_COPY(TSampleInfoPrivate)
 };
@@ -56,14 +76,6 @@ private:
 /*============================================================================
 ================================ TSampleInfoPrivate ==========================
 ============================================================================*/
-
-/*============================== Static public methods =====================*/
-
-TSampleInfo::Context TSampleInfoPrivate::contextFromInt(int c)
-{
-    static const QList<int> contexts = bRangeD(TSampleInfo::GeneralContext, TSampleInfo::UpdateContext);
-    return contexts.contains(c) ? static_cast<TSampleInfo::Context>(c) : TSampleInfo::GeneralContext;
-}
 
 /*============================== Public constructors =======================*/
 
@@ -82,83 +94,23 @@ TSampleInfoPrivate::~TSampleInfoPrivate()
 
 void TSampleInfoPrivate::init()
 {
-    context = TSampleInfo::GeneralContext;
+    creationDateTime.setTimeSpec(Qt::UTC);
     id = 0;
-    type = TSampleInfo::Unverified;
-    size = 0;
+    lastModificationDateTime.setTimeSpec(Qt::UTC);
     rating = 0;
-    creationDT.setTimeSpec(Qt::UTC);
-    updateDT.setTimeSpec(Qt::UTC);
+    senderId = 0;
 }
 
 /*============================================================================
 ================================ TSampleInfo =================================
 ============================================================================*/
 
-/*============================== Static public methods =====================*/
-
-QString TSampleInfo::typeToString(Type t, bool singular)
-{
-    switch (t)
-    {
-    case Approved:
-        return singular ? tr("Approved", "type (singular)") : tr("Approved", "type (plural)");
-    case Rejected:
-        return singular ? tr("Rejected", "type (singular)") : tr("Rejected", "type (plural)");
-    default:
-    case Unverified:
-        return singular ? tr("Unverified", "type (singular)") : tr("Unverified", "type (plural)");
-    }
-}
-
-QString TSampleInfo::typeToStringNoTr(Type t, bool)
-{
-    switch (t)
-    {
-    case Approved:
-        return "Approved";
-    case Rejected:
-        return "Rejected";
-    default:
-    case Unverified:
-        return "Unverified";
-    }
-}
-
-QList<TSampleInfo::Type> TSampleInfo::allTypes()
-{
-    return QList<Type>() << Unverified << Approved << Rejected;
-}
-
-QString TSampleInfo::listToString(const QStringList &list)
-{
-    QStringList nlist = list;
-    nlist.removeAll("");
-    nlist.removeDuplicates();
-    return nlist.join(", ");
-}
-
-QStringList TSampleInfo::listFromString(const QString &s)
-{
-    QStringList sl = s.split(QRegExp("(\\,|\n+\\,?)\\s*"), QString::SkipEmptyParts);
-    sl.removeAll("");
-    sl.removeDuplicates();
-    return sl;
-}
-
-TSampleInfo::Type TSampleInfo::typeFromInt(int t)
-{
-    static const QList<int> types = bRangeM(Approved, Rejected);
-    return types.contains(t) ? static_cast<Type>(t) : Unverified;
-}
-
 /*============================== Public constructors =======================*/
 
-TSampleInfo::TSampleInfo(Context c) :
+TSampleInfo::TSampleInfo() :
     BBase(*new TSampleInfoPrivate(this))
 {
     d_func()->init();
-    setContext(c);
 }
 
 TSampleInfo::TSampleInfo(const TSampleInfo &other) :
@@ -183,125 +135,55 @@ TSampleInfo::TSampleInfo(TSampleInfoPrivate &d) :
 
 /*============================== Public methods ============================*/
 
-void TSampleInfo::setContext(int c, bool clear)
+QString TSampleInfo::adminRemark() const
+{
+    return d_func()->remark;
+}
+
+TAuthorInfoList TSampleInfo::authors() const
+{
+    return d_func()->authors;
+}
+
+void TSampleInfo::clear()
 {
     B_D(TSampleInfo);
-    Context cc = TSampleInfoPrivate::contextFromInt(c);
-    if (cc == d->context)
-        return;
-    d->context = cc;
-    if (!clear)
-        return;
-    switch (cc)
-    {
-    case AddContext:
-        d->id = 0;
-        d->sender.clear();
-        d->type = Unverified;
-        d->remark.clear();
-        d->rating = 0;
-        d->creationDT = QDateTime().toUTC();
-        d->updateDT = QDateTime().toUTC();
-        d->size = 0;
-        break;
-    case EditContext:
-        d->sender.clear();
-        d->creationDT = QDateTime().toUTC();
-        d->updateDT = QDateTime().toUTC();
-        d->size = 0;
-        break;
-    case UpdateContext:
-        d->sender.clear();
-        d->type = Unverified;
-        d->remark.clear();
-        d->rating = 0;
-        d->creationDT = QDateTime().toUTC();
-        d->updateDT = QDateTime().toUTC();
-        d->size = 0;
-        break;
-    case GeneralContext:
-    default:
-        break;
-    }
+    d->authors.clear();
+    d->creationDateTime = QDateTime().toUTC();
+    d->description.clear();
+    d->extraPreviewFiles.clear();
+    d->extraSourceFiles.clear();
+    d->id = 0;
+    d->lastModificationDateTime = QDateTime().toUTC();
+    d->mainPreviewFile.clear();
+    d->mainSourceFile.clear();
+    d->rating = 0;
+    d->remark.clear();
+    d->senderId = 0;
+    d->senderLogin.clear();
+    d->tags.clear();
+    d->title.clear();
+    d->type = TSampleType();
 }
 
-void TSampleInfo::setId(quint64 id)
+QDateTime TSampleInfo::creationDateTime() const
 {
-    d_func()->id = id;
+    return d_func()->creationDateTime;
 }
 
-void TSampleInfo::setSender(const TUserInfo &s)
+QString TSampleInfo::description() const
 {
-    d_func()->sender = s.toContext(TUserInfo::BriefInfoContext);
+    return d_func()->description;
 }
 
-void TSampleInfo::setAuthors(const QStringList &list)
+TFileInfoList TSampleInfo::extraPreviewFiles() const
 {
-    d_func()->authors = bWithoutDuplicates(list);
-    d_func()->authors.removeAll("");
+    return d_func()->extraPreviewFiles;
 }
 
-void TSampleInfo::setTitle(const QString &title)
+TFileInfoList TSampleInfo::extraSourceFiles() const
 {
-    d_func()->title = (title.length() <= 120) ? title : QString();
-}
-
-void TSampleInfo::setType(int t)
-{
-    d_func()->type = typeFromInt(t);
-}
-
-void TSampleInfo::setFileName(const QString &fileName)
-{
-    d_func()->fileName = !fileName.isEmpty() ? QFileInfo(fileName).fileName() : QString();
-    if (d_func()->fileName.indexOf(QRegExp("^[a-zA-Z0-9\\-]+\\.tex$")))
-        d_func()->fileName.clear();
-}
-
-void TSampleInfo::setProjectSize(int size)
-{
-    d_func()->size = (size > 0) ? size : 0;
-}
-
-void TSampleInfo::setTags(const QStringList &list)
-{
-    d_func()->tags = bWithoutDuplicates(list);
-    d_func()->tags.removeAll("");
-}
-
-void TSampleInfo::setTags(const QString &s)
-{
-    setTags(listFromString(s));
-}
-
-void TSampleInfo::setComment(const QString &s)
-{
-    d_func()->comment = s;
-}
-
-void TSampleInfo::setAdminRemark(const QString &s)
-{
-    d_func()->remark = s;
-}
-
-void TSampleInfo::setRating(quint8 r)
-{
-    d_func()->rating = (r < 100) ? r : 100;
-}
-
-void TSampleInfo::setCreationDateTime(const QDateTime &dt)
-{
-    d_func()->creationDT = dt.toUTC();
-}
-
-void TSampleInfo::setUpdateDateTime(const QDateTime &dt)
-{
-    d_func()->updateDT = dt.toUTC();
-}
-
-TSampleInfo::Context TSampleInfo::context() const
-{
-    return d_func()->context;
+    return d_func()->extraSourceFiles;
 }
 
 quint64 TSampleInfo::id() const
@@ -309,83 +191,35 @@ quint64 TSampleInfo::id() const
     return d_func()->id;
 }
 
-QString TSampleInfo::idString(int fixedLength) const
+bool TSampleInfo::isValid() const
 {
-    QString s = QString::number(d_func()->id);
-    int dlen = fixedLength - s.length();
-    if (dlen > 0)
-        s.prepend( QString().fill('0', dlen) );
-    return s;
+    const B_D(TSampleInfo);
+    return d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid() && d->mainPreviewFile.isValid()
+            && d->mainSourceFile.isValid() && d->senderId && !d->senderLogin.isEmpty() && !d->title.isEmpty();
 }
 
-TUserInfo TSampleInfo::sender() const
+QDateTime TSampleInfo::lastModificationDateTime() const
 {
-    return d_func()->sender;
+    return d_func()->lastModificationDateTime;
 }
 
-QStringList TSampleInfo::authors() const
+TFileInfo TSampleInfo::mainPreviewFile() const
 {
-    return d_func()->authors;
+    return d_func()->mainPreviewFile;
 }
 
-QString TSampleInfo::title() const
+TFileInfo TSampleInfo::mainSourceFile() const
 {
-    return d_func()->title;
+    return d_func()->mainSourceFile;
 }
 
-TSampleInfo::Type TSampleInfo::type() const
+int TSampleInfo::previewSize() const
 {
-    return d_func()->type;
-}
-
-QString TSampleInfo::typeString() const
-{
-    return typeToString(d_func()->type);
-}
-
-QString TSampleInfo::typeStringNoTr() const
-{
-    return typeToStringNoTr(d_func()->type);
-}
-
-QString TSampleInfo::fileName() const
-{
-    return d_func()->fileName;
-}
-
-int TSampleInfo::projectSize() const
-{
-    return d_func()->size;
-}
-
-QString TSampleInfo::projectSizeString(BeQt::FileSizeFormat format, quint8 precision) const
-{
-    return BeQt::fileSizeToString(d_func()->size, format, precision);
-}
-
-QString TSampleInfo::projectSizeStringNoTr(BeQt::FileSizeFormat format, quint8 precision) const
-{
-    return BeQt::fileSizeToStringNoTr(d_func()->size, format, precision);
-}
-
-QStringList TSampleInfo::tags() const
-{
-    return d_func()->tags;
-}
-
-QString TSampleInfo::tagsString() const
-{
-    return listToString(d_func()->tags);
-}
-
-QString TSampleInfo::comment() const
-{
-    return d_func()->comment;
-}
-
-QString TSampleInfo::adminRemark() const
-{
-    return d_func()->remark;
+    const B_D(TSampleInfo);
+    int sz = d->mainPreviewFile.fileSize();
+    foreach (const TFileInfo &f, d->extraPreviewFiles)
+        sz += f.fileSize();
+    return sz;
 }
 
 quint8 TSampleInfo::rating() const
@@ -393,38 +227,120 @@ quint8 TSampleInfo::rating() const
     return d_func()->rating;
 }
 
-QString TSampleInfo::ratingString(const QString &format) const
+quint64 TSampleInfo::senderId() const
 {
-    QString f = !format.isEmpty() ? format : QString("%r");
-    return f.replace("%r", QString::number(d_func()->rating));
+    return d_func()->senderId;
 }
 
-QDateTime TSampleInfo::creationDateTime(Qt::TimeSpec spec) const
+QString TSampleInfo::senderLogin() const
 {
-    return d_func()->creationDT.toTimeSpec(spec);
+    return d_func()->senderLogin;
 }
 
-QDateTime TSampleInfo::updateDateTime(Qt::TimeSpec spec) const
+void TSampleInfo::setAdminRemark(const QString &remark)
 {
-    return d_func()->updateDT.toTimeSpec(spec);
+    d_func()->remark = Texsample::testAdminRemark(remark) ? remark : QString();
 }
 
-bool TSampleInfo::isValid(Context c) const
+void TSampleInfo::setAuthors(const TAuthorInfoList &authors)
+{
+    d_func()->authors = authors;
+}
+
+void TSampleInfo::setCreationDateTime(const QDateTime &dt)
+{
+    d_func()->creationDateTime = dt.toUTC();
+}
+
+void TSampleInfo::setDescription(const QString &description)
+{
+    d_func()->description = Texsample::testSampleDescription(description) ? description : QString();
+}
+
+void TSampleInfo::setExtraPreviewFiles(const TFileInfoList &files)
+{
+    d_func()->extraPreviewFiles = files;
+}
+
+void TSampleInfo::setExtraSourceFiles(const TFileInfoList &files)
+{
+    d_func()->extraSourceFiles = files;
+}
+
+void TSampleInfo::setId(quint64 id)
+{
+    d_func()->id = id;
+}
+
+void TSampleInfo::setLastModificationDateTime(const QDateTime &dt)
+{
+    d_func()->lastModificationDateTime = dt.toUTC();
+}
+
+void TSampleInfo::setMainPreviewFile(const TFileInfo &file)
+{
+    d_func()->mainPreviewFile = file;
+}
+
+void TSampleInfo::setMainSourceFile(const TFileInfo &file)
+{
+    d_func()->mainSourceFile = file;
+}
+
+void TSampleInfo::setRating(quint8 r)
+{
+    d_func()->rating = (r < 100) ? r : 100;
+}
+
+void TSampleInfo::setSenderId(quint64 id)
+{
+    d_func()->senderId = id;
+}
+
+void TSampleInfo::setSenderLogin(const QString &login)
+{
+    d_func()->senderLogin = Texsample::testLogin(login) ? login : QString();
+}
+
+void TSampleInfo::setTags(const QStringList &tags)
+{
+    B_D(TSampleInfo);
+    d->tags = BTextTools::removeDuplicates(tags, Qt::CaseInsensitive);
+    d->tags.removeAll("");
+}
+
+void TSampleInfo::setTitle(const QString &title)
+{
+    d_func()->title = Texsample::testSampleTitle(title) ? title : QString();
+}
+
+void TSampleInfo::setType(const TSampleType &type)
+{
+    d_func()->type = type;
+}
+
+int TSampleInfo::sourceSize() const
 {
     const B_D(TSampleInfo);
+    int sz = d->mainSourceFile.fileSize();
+    foreach (const TFileInfo &f, d->extraSourceFiles)
+        sz += f.fileSize();
+    return sz;
+}
 
-    switch ((CurrentContext == c) ? d->context : c)
-    {
-    case AddContext:
-        return !d->title.isEmpty() && !d->fileName.isEmpty();
-    case EditContext:
-    case UpdateContext:
-        return d->id && !d->title.isEmpty() && !d->fileName.isEmpty();
-    case GeneralContext:
-    default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && !d->fileName.isEmpty()
-                && d->size && d->creationDT.isValid() && d->updateDT.isValid();
-    }
+QStringList TSampleInfo::tags() const
+{
+    return d_func()->tags;
+}
+
+QString TSampleInfo::title() const
+{
+    return d_func()->title;
+}
+
+TSampleType TSampleInfo::type() const
+{
+    return d_func()->type;
 }
 
 /*============================== Public operators ==========================*/
@@ -433,20 +349,22 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
 {
     B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
-    d->context = dd->context;
-    d->id = dd->id;
-    d->sender = dd->sender;
     d->authors = dd->authors;
+    d->creationDateTime = dd->creationDateTime;
+    d->description = dd->description;
+    d->extraPreviewFiles = dd->extraPreviewFiles;
+    d->extraSourceFiles = dd->extraSourceFiles;
+    d->id = dd->id;
+    d->lastModificationDateTime = dd->lastModificationDateTime;
+    d->mainPreviewFile = dd->mainPreviewFile;
+    d->mainSourceFile = dd->mainSourceFile;
+    d->rating = dd->rating;
+    d->remark = dd->remark;
+    d->senderId = dd->senderId;
+    d->senderLogin = dd->senderLogin;
+    d->tags = dd->tags;
     d->title = dd->title;
     d->type = dd->type;
-    d->fileName = dd->fileName;
-    d->size = dd->size;
-    d->tags = dd->tags;
-    d->comment = dd->comment;
-    d->remark = dd->remark;
-    d->rating = dd->rating;
-    d->creationDT = dd->creationDT;
-    d->updateDT = dd->updateDT;
     return *this;
 }
 
@@ -454,22 +372,14 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
 {
     const B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
-    if (d->context != dd->context)
-        return false;
-    switch (d->context)
-    {
-    case AddContext:
-        return d->title == dd->title && d->fileName == dd->fileName;
-    case EditContext:
-    case UpdateContext:
-        return d->id == dd->id;
-    case GeneralContext:
-    default:
-        return d->id == dd->id && d->sender == dd->sender && d->authors == dd->authors && d->title == dd->title
-                && d->type == dd->type && d->fileName == dd->fileName && d->size == dd->size && d->tags == dd->tags
-                && d->comment == dd->comment && d->remark == dd->remark && d->rating == dd->rating
-                && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT;
-    }
+    return d->authors == dd->authors && d->creationDateTime == dd->creationDateTime
+            && d->description == dd->description && d->extraPreviewFiles == dd->extraPreviewFiles
+            && d->extraSourceFiles == dd->extraSourceFiles && d->id == dd->id
+            && d->lastModificationDateTime == dd->lastModificationDateTime
+            && d->mainPreviewFile == dd->mainPreviewFile && d->mainSourceFile == dd->mainSourceFile
+            && d->rating == dd->rating && d->remark == dd->remark && d->senderId == dd->senderId
+            && d->senderLogin == dd->senderLogin && d->tags == dd->tags && d->title == dd->title
+            && d->type == dd->type;
 }
 
 bool TSampleInfo::operator !=(const TSampleInfo &other) const
@@ -488,29 +398,22 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
     QVariantMap m;
-    m.insert("context", (int) d->context);
     m.insert("authors", d->authors);
-    m.insert("title", d->title);
-    m.insert("file_name", d->fileName);
+    m.insert("creation_date_time", d->creationDateTime);
+    m.insert("description", d->description);
+    m.insert("extra_preview_files", d->extraPreviewFiles);
+    m.insert("extra_source_files", d->extraSourceFiles);
+    m.insert("id", d->id);
+    m.insert("last_modification_date_time", d->lastModificationDateTime);
+    m.insert("main_preview_file", d->mainPreviewFile);
+    m.insert("main_source_file", d->mainSourceFile);
+    m.insert("rating", d->rating);
+    m.insert("remark", d->remark);
+    m.insert("sender_id", d->senderId);
+    m.insert("sender_login", d->senderLogin);
     m.insert("tags", d->tags);
-    m.insert("comment", d->comment);
-    if (TSampleInfo::AddContext != d->context)
-        m.insert("id", d->id);
-    if (TSampleInfo::GeneralContext == d->context)
-        m.insert("sender", d->sender);
-    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-        m.insert("type", (int) d->type);
-    if (TSampleInfo::EditContext == d->context || TSampleInfo::GeneralContext == d->context)
-    {
-        m.insert("remark", d->remark);
-        m.insert("rating", d->rating);
-    }
-    if (TSampleInfo::GeneralContext == d->context)
-    {
-        m.insert("creation_dt", d->creationDT);
-        m.insert("update_dt", d->updateDT);
-        m.insert("size", d->size);
-    }
+    m.insert("title", d->title);
+    m.insert("type", d->type);
     stream << m;
     return stream;
 }
@@ -520,26 +423,28 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     TSampleInfoPrivate *d = info.d_func();
     QVariantMap m;
     stream >> m;
-    d->context = TSampleInfoPrivate::contextFromInt(m.value("context").toInt());
-    info.setAuthors(m.value("authors").toStringList());
-    d->title = m.value("title").toString();
-    info.setFileName(m.value("file_name").toString());
-    info.setProjectSize(m.value("size").toInt());
-    info.setTags(m.value("tags").toStringList());
-    d->comment = m.value("comment").toString();
+    d->authors = m.value("authors").value<TAuthorInfoList>();
+    d->creationDateTime = m.value("creation_date_time").toDateTime().toUTC();
+    d->description = m.value("descrtiption").toString();
+    d->extraPreviewFiles = m.value("extra_preview_files").value<TFileInfoList>();
+    d->extraSourceFiles = m.value("extra_source_files").value<TFileInfoList>();
     d->id = m.value("id").toULongLong();
-    info.setSender(m.value("sender").value<TUserInfo>());
-    d->type = TSampleInfo::typeFromInt(m.value("type").toInt());
-    d->remark = m.value("remark").toString();
+    d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();
+    d->mainPreviewFile = m.value("main_preview_file").value<TFileInfo>();
+    d->mainSourceFile = m.value("main_source_file").value<TFileInfo>();
     d->rating = m.value("rating").toUInt();
-    d->creationDT = m.value("creation_dt").toDateTime().toTimeSpec(Qt::UTC);
-    d->updateDT = m.value("update_dt").toDateTime().toTimeSpec(Qt::UTC);
+    d->remark = m.value("remark").toString();
+    d->senderId = m.value("sender_id").toULongLong();
+    d->senderLogin = m.value("sender_login").toString();
+    d->tags = m.value("tags").toStringList();
+    d->title = m.value("title").toString();
+    d->type = m.value("type").value<TSampleType>();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TSampleInfo &info)
 {
     const TSampleInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TSampleInfo(" << d->context << "," << d->id << "," << d->title << ")";
+    dbg.nospace() << "TSampleInfo(" << d->id << "," << d->title << ")";
     return dbg.space();
 }

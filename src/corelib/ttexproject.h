@@ -1,19 +1,39 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TTEXPROJECT_H
 #define TTEXPROJECT_H
 
 class TTexProjectPrivate;
 
-class QVariant;
-class QDebug;
 class QDataStream;
+class QDebug;
 class QString;
-class QTextCodec;
 class QStringList;
+class QTextCodec;
+class QVariant;
 
-#include "tglobal.h"
-#include "tprojectfile.h"
+#include "tbinaryfile.h"
+#include "ttexfile.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
@@ -26,36 +46,25 @@ class T_CORE_EXPORT TTexProject : BBase
 {
     B_DECLARE_PRIVATE(TTexProject)
 public:
-    static int size(const QString &rootFilePath, QTextCodec *codec = 0, bool sourceOnly = false);
-    static int size(const QString &rootFilePath, const QString &codecName, bool sourceOnly = false);
-public:
     explicit TTexProject();
-    explicit TTexProject(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
-    explicit TTexProject(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
-    explicit TTexProject(const QString &rootFileName, QTextCodec *codec = 0);
-    explicit TTexProject(const QString &rootFileName, const QString &codecName);
     TTexProject(const TTexProject &other);
     ~TTexProject();
 public:
+    QList<TBinaryFile> &binaryFiles();
+    const QList<TBinaryFile> &binaryFiles() const;
     void clear();
-    TProjectFile *rootFile();
-    const TProjectFile *rootFile() const;
-    QList<TProjectFile> *files();
-    const QList<TProjectFile> *files() const;
-    QString rootFileName() const;
-    QStringList externalFiles(bool *ok = 0) const;
-    QStringList restrictedCommands() const;
-    void removeRestrictedCommands();
-    bool prependExternalFileNames(const QString &subdir);
-    void replace(const QString &oldString, const QString &newString, Qt::CaseSensitivity cs = Qt::CaseSensitive);
-    bool load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec);
-    bool load(const QString &rootFileName, const QString &rootFileText, const QString &codecName);
-    bool load(const QString &rootFileName, QTextCodec *codec = 0);
-    bool load(const QString &rootFileName, const QString &codecName);
-    bool save(const QString &dir, QTextCodec *codec = 0) const;
-    bool save(const QString &dir, const QString &codecName) const;
     bool isValid() const;
+    bool load(const QString &rootFileName, const QString &rootFileText, QTextCodec *codec = 0);
+    bool load(const QString &rootFileName, QTextCodec *codec = 0);
+    bool prependExternalFileNames(const QString &subpath);
+    void removeRestrictedCommands();
+    QStringList restrictedCommands() const;
+    TTexFile &rootFile();
+    const TTexFile &rootFile() const;
+    bool save(const QString &dir, QTextCodec *codec = 0) const;
     int size() const;
+    QList<TTexFile> &texFiles();
+    const QList<TTexFile> &texFiles() const;
 public:
     TTexProject &operator =(const TTexProject &other);
     bool operator ==(const TTexProject &other) const;

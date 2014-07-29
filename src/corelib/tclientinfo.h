@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TCLIENTINFO_H
 #define TCLIENTINFO_H
 
@@ -6,19 +27,16 @@ class TClientInfoPrivate;
 class BVersion;
 
 class QDataStream;
-class QVariant;
 class QDebug;
-class QString;
+class QVariant;
 
 #include "tglobal.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 #include <BeQt>
 
 #include <QMetaType>
-#include <QCoreApplication>
-#include <QLocale>
+#include <QString>
 
 /*============================================================================
 ================================ TClientInfo =================================
@@ -27,27 +45,24 @@ class QString;
 class T_CORE_EXPORT TClientInfo : public BBase
 {
     B_DECLARE_PRIVATE(TClientInfo)
-    Q_DECLARE_TR_FUNCTIONS(TClientInfo)
-public:
-    static TClientInfo createInfo();
 public:
     explicit TClientInfo();
     TClientInfo(const TClientInfo &other);
     ~TClientInfo();
 public:
-    QString os() const;
-    BeQt::OSType osType() const;
-    QLocale locale() const;
-    QString client() const;
-    BVersion clientVersion() const;
-    bool isClientPortable() const;
-    BVersion texsampleVersion() const;
-    BVersion beqtVersion() const;
-    BVersion qtVersion() const;
-    QString toString(const QString &format = "") const;
-    //%o - OS, %l - locale, %c - client, %v - client version, %p - client portability
-    //%t - texsample version, %b - BeQt version, %q - Qt version
+    static TClientInfo create();
+public:
+    QString applicationName() const;                        //%n
+    BVersion applicationVersion() const;                    //%v
+    BVersion beqtVersion() const;                           //%b
+    bool isPortable() const;                                //%p
     bool isValid() const;
+    QString os() const;                                     //%o
+    BeQt::OSType osType() const;
+    BeQt::ProcessorArchitecture processorArchitecture() const;
+    BVersion qtVersion() const;                             //%q
+    BVersion texsampleVersion() const;                      //%t
+    QString toString(const QString &format = "%n v%v (%p)\nTeXSample v%t; BeQt v%b; Qt v%q\nOS: %o") const;
 public:
     TClientInfo &operator =(const TClientInfo &other);
     bool operator ==(const TClientInfo &other) const;

@@ -1,0 +1,60 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleWidgets module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
+#include "tapplication.h"
+
+#include <BApplication>
+
+#include <QString>
+
+/*============================================================================
+================================ TApplication ================================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TApplication::TApplication(int &argc, char **argv, const QString &applicationName, const QString &organizationName) :
+    BApplication(argc, argv, applicationName, organizationName)
+{
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_INIT_RESOURCE(texsample_translations);
+    Q_INIT_RESOURCE(texsamplewidgets);
+#endif
+    tRegister();
+}
+
+TApplication::TApplication(int &argc, char **argv, const InitialSettings &s) :
+    BApplication(argc, argv, s)
+{
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_INIT_RESOURCE(texsample_translations);
+    Q_INIT_RESOURCE(texsamplewidgets);
+#endif
+    tRegister();
+}
+
+TApplication::~TApplication()
+{
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_CLEANUP_RESOURCE(texsample_translations);
+    Q_CLEANUP_RESOURCE(texsamplewidgets);
+#endif
+}

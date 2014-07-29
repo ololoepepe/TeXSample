@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleWidgets module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TTAGSWIDGET_H
 #define TTAGSWIDGET_H
 
@@ -7,8 +28,7 @@ class QStringList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtGlobal>
-#include <BBase>
+#include <BBaseObject>
 
 #include <QWidget>
 
@@ -16,7 +36,7 @@ class QStringList;
 ================================ TTagsWidget =================================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBase
+class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TTagsWidget)
@@ -26,12 +46,12 @@ public:
 protected:
     explicit TTagsWidget(TTagsWidgetPrivate &d, QWidget *parent = 0);
 public:
-    void setAvailableTags(const QStringList &list);
-    void setTags(const QStringList &list);
-    void setReadOnly(bool ro);
     QStringList availableTags() const;
-    QStringList tags() const;
     bool isReadOnly() const;
+    void setAvailableTags(const QStringList &list);
+    void setReadOnly(bool ro);
+    void setTags(const QStringList &list);
+    QStringList tags() const;
 private:
     Q_DISABLE_COPY(TTagsWidget)
 };

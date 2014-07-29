@@ -1,22 +1,23 @@
-#mac {
-    #isEmpty(TSMP_PREFIX):TSMP_PREFIX=/Library
-    #TODO: Add ability to create bundles
-#} else:unix:!mac {
-#TODO: Add MacOS support
-mac|unix {
-    isEmpty(TSMP_PREFIX):TSMP_PREFIX=/usr
-    equals(TSMP_PREFIX, "/")|equals(TSMP_PREFIX, "/usr")|equals(TSMP_PREFIX, "/usr/local") {
-        isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include/texsample
-        isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-        isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}/share/texsample
-    } else {
-        isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include
-        isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-        isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}
+isEmpty(TSMP_PREFIX) {
+    mac|unix {
+        TSMP_PREFIX=/usr/local
+    } else:win32 {
+        TSMP_PREFIX=$$(systemdrive)/PROGRA~1/TeXSample
     }
-} else:win32 {
-    isEmpty(TSMP_PREFIX):TSMP_PREFIX=$$(systemdrive)/PROGRA~1/TeXSample
-    isEmpty(TSMP_HEADERS_INSTALLS_PATH):TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include
-    isEmpty(TSMP_LIBS_INSTALLS_PATH):TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
-    isEmpty(TSMP_RESOURCES_INSTALLS_PATH):TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}
+    export(TSMP_PREFIX)
+}
+
+isEmpty(TSMP_HEADERS_INSTALLS_PATH) {
+    TSMP_HEADERS_INSTALLS_PATH=$${TSMP_PREFIX}/include/texsample
+    export(TSMP_HEADERS_INSTALLS_PATH)
+}
+
+isEmpty(TSMP_LIBS_INSTALLS_PATH) {
+    TSMP_LIBS_INSTALLS_PATH=$${TSMP_PREFIX}/lib
+    export(TSMP_LIBS_INSTALLS_PATH)
+}
+
+isEmpty(TSMP_RESOURCES_INSTALLS_PATH) {
+    TSMP_RESOURCES_INSTALLS_PATH=$${TSMP_PREFIX}/share/texsample
+    export(TSMP_RESOURCES_INSTALLS_PATH)
 }

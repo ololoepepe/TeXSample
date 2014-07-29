@@ -1,23 +1,45 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TINVITEINFO_H
 #define TINVITEINFO_H
 
 class TInviteInfoPrivate;
 
+class TIdList;
+class TServiceList;
+
+class BUuid;
+
 class QDataStream;
 class QDateTime;
-class QVariant;
 class QDebug;
-class QUuid;
 class QString;
+class QVariant;
 
 #include "tglobal.h"
-#include "tservicelist.h"
 
-#include <BeQtGlobal>
 #include <BBase>
 
 #include <QMetaType>
-#include <QList>
 
 /*============================================================================
 ================================ TInviteInfo =================================
@@ -31,24 +53,24 @@ public:
     TInviteInfo(const TInviteInfo &other);
     ~TInviteInfo();
 public:
-    void setId(quint64 id);
-    void setCode(const QUuid &code);
-    void setCode(const QString &code);
-    void setCreatorId(quint64 id);
-    void setServices(const TServiceList &list);
+    void clear();
+    BUuid code() const;
+    QDateTime creationDateTime() const;
+    QDateTime expirationDateTime() const;
+    TIdList groups() const;
+    quint64 id() const;
+    bool isValid() const;
+    quint64 ownerId() const;
+    QString ownerLogin() const;
+    TServiceList services() const;
+    void setCode(const BUuid &code);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);
-    quint64 id() const;
-    QString idString(int fixedLength = -1) const;
-    QUuid code() const;
-    QString codeString() const;
-    quint64 creatorId() const;
-    QString creatorIdString(int fixedLength = -1) const;
-    TServiceList services() const;
-    QDateTime creationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    QDateTime expirationDateTime(Qt::TimeSpec spec = Qt::UTC) const;
-    bool isExpired() const;
-    bool isValid() const;
+    void setGroups(const TIdList &groups);
+    void setId(quint64 id);
+    void setOwnerId(quint64 id);
+    void setOwnerLogin(const QString &login);
+    void setServices(const TServiceList &services);
 public:
     TInviteInfo &operator =(const TInviteInfo &other);
     bool operator ==(const TInviteInfo &other) const;

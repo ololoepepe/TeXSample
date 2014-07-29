@@ -1,3 +1,24 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #include "taccesslevel.h"
 #include "tglobal.h"
 
@@ -118,6 +139,11 @@ TAccessLevel::~TAccessLevel()
 
 /*============================== Public methods ============================*/
 
+bool TAccessLevel::isValid() const
+{
+    return NoLevel != d_func()->level;
+}
+
 QString TAccessLevel::toString() const
 {
     return accessLevelToString(d_func()->level);
@@ -138,7 +164,6 @@ TAccessLevel &TAccessLevel::operator =(const TAccessLevel &other)
 
 TAccessLevel &TAccessLevel::operator =(int lvl)
 {
-
     static const QList<int> Levels = bRangeM(UserLevel, SuperuserLevel);
     d_func()->level = Levels.contains(lvl) ? static_cast<AccessLevel>(lvl) : NoLevel;
     return *this;
@@ -152,6 +177,26 @@ bool TAccessLevel::operator ==(const TAccessLevel &other) const
 bool TAccessLevel::operator !=(const TAccessLevel &other) const
 {
     return !(*this == other);
+}
+
+bool TAccessLevel::operator <(const TAccessLevel &other) const
+{
+    return d_func()->level < other.d_func()->level;
+}
+
+bool TAccessLevel::operator <=(const TAccessLevel &other) const
+{
+    return d_func()->level <= other.d_func()->level;
+}
+
+bool TAccessLevel::operator >(const TAccessLevel &other) const
+{
+    return d_func()->level > other.d_func()->level;
+}
+
+bool TAccessLevel::operator >=(const TAccessLevel &other) const
+{
+    return d_func()->level >= other.d_func()->level;
 }
 
 TAccessLevel::operator QVariant() const

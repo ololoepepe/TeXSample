@@ -1,23 +1,43 @@
-#include "tlabinfo.h"
-#include "tglobal.h"
-#include "tuserinfo.h"
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
 
-#include <BeQtGlobal>
+#include "tlabinfo.h"
+
+#include "tauthorinfolist.h"
+#include "tfileinfolist.h"
+#include "tidlist.h"
+#include "tlabdatainfolist.h"
+#include "tnamespace.h"
+
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
-#include <BeQt>
+#include <BTextTools>
 
-#include <QObject>
 #include <QDataStream>
+#include <QDateTime>
+#include <QDebug>
 #include <QString>
 #include <QStringList>
-#include <QDateTime>
-#include <QRegExp>
 #include <QVariant>
 #include <QVariantMap>
-#include <QDebug>
-#include <QFileInfo>
-#include <QList>
 
 /*============================================================================
 ================================ TLabInfoPrivate =============================
@@ -27,26 +47,23 @@ class TLabInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TLabInfo)
 public:
-    static TLabInfo::Context contextFromInt(int c);
+    TAuthorInfoList authors;
+    QDateTime creationDateTime;
+    TLabDataInfoList dataInfos;
+    QString description;
+    TFileInfoList extraFiles;
+    TIdList groups;
+    quint64 id;
+    QDateTime lastModificationDateTime;
+    quint64 senderId;
+    QString senderLogin;
+    QStringList tags;
+    QString title;
 public:
     explicit TLabInfoPrivate(TLabInfo *q);
     ~TLabInfoPrivate();
 public:
     void init();
-public:
-    TLabInfo::Context context;
-    quint64 id;
-    TUserInfo sender;
-    QString title;
-    QStringList authors;
-    TLabInfo::Type type;
-    QStringList groups;
-    int size;
-    QStringList tags;
-    QString comment;
-    QDateTime creationDT;
-    QDateTime updateDT;
-    QStringList extraFiles;
 private:
     Q_DISABLE_COPY(TLabInfoPrivate)
 };
@@ -54,14 +71,6 @@ private:
 /*============================================================================
 ================================ TLabInfoPrivate =============================
 ============================================================================*/
-
-/*============================== Static public methods =====================*/
-
-TLabInfo::Context TLabInfoPrivate::contextFromInt(int c)
-{
-    static const QList<int> contexts = bRangeD(TLabInfo::GeneralContext, TLabInfo::EditContext);
-    return contexts.contains(c) ? static_cast<TLabInfo::Context>(c) : TLabInfo::GeneralContext;
-}
 
 /*============================== Public constructors =======================*/
 
@@ -80,93 +89,22 @@ TLabInfoPrivate::~TLabInfoPrivate()
 
 void TLabInfoPrivate::init()
 {
-    context = TLabInfo::GeneralContext;
+    creationDateTime.setTimeSpec(Qt::UTC);
     id = 0;
-    type = TLabInfo::NoType;
-    size = 0;
-    creationDT.setTimeSpec(Qt::UTC);
-    updateDT.setTimeSpec(Qt::UTC);
+    lastModificationDateTime.setTimeSpec(Qt::UTC);
+    senderId = 0;
 }
 
 /*============================================================================
 ================================ TLabInfo ====================================
 ============================================================================*/
 
-/*============================== Static public methods =====================*/
-
-QString TLabInfo::typeToString(Type t, bool singular)
-{
-    return tr(typeToStringNoTr(t, singular).toUtf8().constData());
-}
-
-QString TLabInfo::typeToStringNoTr(Type t, bool singular)
-{
-    if (singular)
-    {
-        switch (t)
-        {
-        case DesktopType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "Desktop application");
-        case WebType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "Web application");
-        case UrlType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "External URL");
-        case NoType:
-        default:
-            return QT_TRANSLATE_NOOP("TLabInfo", "No");
-        }
-    }
-    else
-    {
-        switch (t)
-        {
-        case DesktopType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "Desktop applications");
-        case WebType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "Web applications");
-        case UrlType:
-            return QT_TRANSLATE_NOOP("TLabInfo", "External URLs");
-        case NoType:
-        default:
-            return QT_TRANSLATE_NOOP("TLabInfo", "No");
-        }
-    }
-}
-
-QString TLabInfo::listToString(const QStringList &list)
-{
-    return list.join(", ");
-}
-
-QStringList TLabInfo::listFromString(const QString &s)
-{
-    QStringList sl = s.split(QRegExp("(\\,|\n+\\,?)\\s*"), QString::SkipEmptyParts);
-    sl.removeAll("");
-    sl.removeDuplicates();
-    return sl;
-}
-
-TLabInfo::Type TLabInfo::typeFromInt(int t)
-{
-    static const QList<int> types = bRangeD(DesktopType, UrlType);
-    return types.contains(t) ? static_cast<Type>(t) : NoType;
-}
-
-QList<TLabInfo::Type> TLabInfo::allTypes(bool includeNoType)
-{
-    QList<Type> list = QList<Type>() << DesktopType << WebType << UrlType;
-    if (includeNoType)
-        list << NoType;
-    return list;
-}
-
 /*============================== Public constructors =======================*/
 
-TLabInfo::TLabInfo(Context c) :
+TLabInfo::TLabInfo() :
     BBase(*new TLabInfoPrivate(this))
 {
     d_func()->init();
-    setContext(c);
 }
 
 TLabInfo::TLabInfo(const TLabInfo &other) :
@@ -191,110 +129,51 @@ TLabInfo::TLabInfo(TLabInfoPrivate &d) :
 
 /*============================== Public methods ============================*/
 
-void TLabInfo::setContext(int c, bool clear)
+TAuthorInfoList TLabInfo::authors() const
+{
+    return d_func()->authors;
+}
+
+void TLabInfo::clear()
 {
     B_D(TLabInfo);
-    Context cc = TLabInfoPrivate::contextFromInt(c);
-    if (cc == d->context)
-        return;
-    d->context = cc;
-    if (!clear)
-        return;
-    switch (cc)
-    {
-    case AddContext:
-        d->id = 0;
-        d->sender.clear();
-        d->type = NoType;
-        d->size = 0;
-        d->creationDT = QDateTime().toUTC();
-        d->updateDT = QDateTime().toUTC();
-        d->extraFiles.clear();
-        break;
-    case EditContext:
-        d->sender.clear();
-        d->size = 0;
-        d->creationDT = QDateTime().toUTC();
-        d->updateDT = QDateTime().toUTC();
-        d->extraFiles.clear();
-        break;
-    case GeneralContext:
-    default:
-        break;
-    }
+    d->authors.clear();
+    d->creationDateTime = QDateTime().toUTC();
+    d->dataInfos.clear();
+    d->description.clear();
+    d->extraFiles.clear();
+    d->groups.clear();
+    d->id = 0;
+    d->lastModificationDateTime = QDateTime().toUTC();
+    d->senderId = 0;
+    d->senderLogin.clear();
+    d->tags.clear();
+    d->title.clear();
 }
 
-void TLabInfo::setId(quint64 id)
+QDateTime TLabInfo::creationDateTime() const
 {
-    d_func()->id = id;
+    return d_func()->creationDateTime;
 }
 
-void TLabInfo::setSender(const TUserInfo &sender)
+TLabDataInfoList TLabInfo::dataInfos() const
 {
-    d_func()->sender = sender.toContext(TUserInfo::BriefInfoContext);
+    return d_func()->dataInfos;
 }
 
-void TLabInfo::setTitle(const QString &title)
+QString TLabInfo::description() const
 {
-    d_func()->title = title;
+    return d_func()->description;
 }
 
-void TLabInfo::setAuthors(const QStringList &list)
+TFileInfoList TLabInfo::extraFiles() const
 {
-    d_func()->authors = bWithoutDuplicates(list);
-    d_func()->authors.removeAll("");
+    return d_func()->extraFiles;
 }
 
-void TLabInfo::setType(int t)
+TIdList TLabInfo::groups() const
 {
-    d_func()->type = typeFromInt(t);
-}
-
-void TLabInfo::setGroups(const QStringList &list)
-{
-    d_func()->groups = bWithoutDuplicates(list);
-    d_func()->groups.removeAll("");
-}
-
-void TLabInfo::setProjectSize(int sz)
-{
-    d_func()->size = (sz > 0) ? sz : 0;
-}
-
-void TLabInfo::setTags(const QStringList &list)
-{
-    d_func()->tags = bWithoutDuplicates(list);
-    d_func()->tags.removeAll("");
-}
-
-void TLabInfo::setTags(const QString &s)
-{
-    setTags(listFromString(s));
-}
-
-void TLabInfo::setComment(const QString &s)
-{
-    d_func()->comment = s;
-}
-
-void TLabInfo::setCreationDateTime(const QDateTime &dt)
-{
-    d_func()->creationDT = dt.toUTC();
-}
-
-void TLabInfo::setUpdateDateTime(const QDateTime &dt)
-{
-    d_func()->updateDT = dt.toUTC();
-}
-
-void TLabInfo::setExtraAttachedFileNames(const QStringList &list)
-{
-    d_func()->extraFiles = list;
-}
-
-TLabInfo::Context TLabInfo::context() const
-{
-    return d_func()->context;
+    return d_func()->groups;
 }
 
 quint64 TLabInfo::id() const
@@ -302,63 +181,90 @@ quint64 TLabInfo::id() const
     return d_func()->id;
 }
 
-QString TLabInfo::idString(int fixedLength) const
+bool TLabInfo::isValid() const
 {
-    QString s = QString::number(d_func()->id);
-    int dlen = fixedLength - s.length();
-    if (dlen > 0)
-        s.prepend( QString().fill('0', dlen) );
-    return s;
+    const B_D(TLabInfo);
+    return  !d->dataInfos.isEmpty() && d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid()
+            && d->senderId && !d->senderLogin.isEmpty() && !d->title.isEmpty();
 }
 
-TUserInfo TLabInfo::sender() const
+QDateTime TLabInfo::lastModificationDateTime() const
 {
-    return d_func()->sender;
+    return d_func()->lastModificationDateTime;
 }
 
-QString TLabInfo::title() const
+quint64 TLabInfo::senderId() const
 {
-    return d_func()->title;
+    return d_func()->senderId;
 }
 
-QStringList TLabInfo::authors() const
+QString TLabInfo::senderLogin() const
 {
-    return d_func()->authors;
+    return d_func()->senderLogin;
 }
 
-TLabInfo::Type TLabInfo::type() const
+void TLabInfo::setAuthors(const TAuthorInfoList &authors)
 {
-    return d_func()->type;
+    d_func()->authors = authors;
 }
 
-QString TLabInfo::typeString() const
+void TLabInfo::setCreationDateTime(const QDateTime &dt)
 {
-    return typeToString(d_func()->type);
+    d_func()->creationDateTime = dt.toUTC();
 }
 
-QString TLabInfo::typeStringNoTr() const
+void TLabInfo::setDataInfos(const TLabDataInfoList &dataInfos)
 {
-    return typeToStringNoTr(d_func()->type);
+    d_func()->dataInfos = dataInfos;
 }
 
-QStringList TLabInfo::groups() const
+void TLabInfo::setDescription(const QString &description)
 {
-    return d_func()->groups;
+    d_func()->description = Texsample::testLabDescription(description) ? description : QString();
 }
 
-int TLabInfo::projectSize() const
+void TLabInfo::setExtraFiles(const TFileInfoList &extraFiles)
 {
-    return d_func()->size;
+    d_func()->extraFiles = extraFiles;
 }
 
-QString TLabInfo::projectSizeString(BeQt::FileSizeFormat format, quint8 precision) const
+void TLabInfo::setGroups(const TIdList &groups)
 {
-    return BeQt::fileSizeToString(d_func()->size, format, precision);
+    B_D(TLabInfo);
+    d->groups = groups;
+    d->groups.removeAll(0);
+    bRemoveDuplicates(d->groups);
 }
 
-QString TLabInfo::projectSizeStringNoTr(BeQt::FileSizeFormat format, quint8 precision) const
+void TLabInfo::setId(quint64 id)
 {
-    return BeQt::fileSizeToStringNoTr(d_func()->size, format, precision);
+    d_func()->id = id;
+}
+
+void TLabInfo::setLastModificationDateTime(const QDateTime &dt)
+{
+    d_func()->lastModificationDateTime = dt.toUTC();
+}
+
+void TLabInfo::setSenderId(quint64 id)
+{
+    d_func()->senderId = id;
+}
+
+void TLabInfo::setSenderLogin(const QString &login)
+{
+    d_func()->senderLogin = Texsample::testLogin(login) ? login : QString();
+}
+
+void TLabInfo::setTags(const QStringList &list)
+{
+    d_func()->tags = BTextTools::removeDuplicates(list, Qt::CaseInsensitive);
+    d_func()->tags.removeAll("");
+}
+
+void TLabInfo::setTitle(const QString &title)
+{
+    d_func()->title = Texsample::testLabTitle(title) ? title : QString();
 }
 
 QStringList TLabInfo::tags() const
@@ -366,46 +272,9 @@ QStringList TLabInfo::tags() const
     return d_func()->tags;
 }
 
-QString TLabInfo::tagsString() const
+QString TLabInfo::title() const
 {
-    return listToString(d_func()->tags);
-}
-
-QString TLabInfo::comment() const
-{
-    return d_func()->comment;
-}
-
-QDateTime TLabInfo::creationDateTime(Qt::TimeSpec spec) const
-{
-    return d_func()->creationDT.toTimeSpec(spec);
-}
-
-QDateTime TLabInfo::updateDateTime(Qt::TimeSpec spec) const
-{
-    return d_func()->updateDT.toTimeSpec(spec);
-}
-
-QStringList TLabInfo::extraAttachedFileNames() const
-{
-    return d_func()->extraFiles;
-}
-
-bool TLabInfo::isValid(Context c) const
-{
-    const B_D(TLabInfo);
-
-    switch ((CurrentContext == c) ? d->context : c)
-    {
-    case AddContext:
-        return !d->title.isEmpty();
-    case EditContext:
-        return d->id && !d->title.isEmpty();
-    case GeneralContext:
-    default:
-        return d->id && d->sender.isValid(TUserInfo::BriefInfoContext) && !d->title.isEmpty() && NoType != d->type
-                && d->size && d->creationDT.isValid() && d->updateDT.isValid();
-    }
+    return d_func()->title;
 }
 
 /*============================== Public operators ==========================*/
@@ -414,19 +283,18 @@ TLabInfo &TLabInfo::operator =(const TLabInfo &other)
 {
     B_D(TLabInfo);
     const TLabInfoPrivate *dd = other.d_func();
-    d->context = dd->context;
-    d->id = dd->id;
-    d->sender = dd->sender;
-    d->title = dd->title;
     d->authors = dd->authors;
-    d->type = dd->type;
-    d->groups = dd->groups;
-    d->size = dd->size;
-    d->tags = dd->tags;
-    d->comment = dd->comment;
-    d->creationDT = dd->creationDT;
-    d->updateDT = dd->updateDT;
+    d->creationDateTime = dd->creationDateTime;
+    d->dataInfos = dd->dataInfos;
+    d->description = dd->description;
     d->extraFiles = dd->extraFiles;
+    d->groups = dd->groups;
+    d->id = dd->id;
+    d->lastModificationDateTime = dd->lastModificationDateTime;
+    d->senderId = dd->senderId;
+    d->senderLogin = dd->senderLogin;
+    d->tags = dd->tags;
+    d->title = dd->title;
     return *this;
 }
 
@@ -434,21 +302,11 @@ bool TLabInfo::operator ==(const TLabInfo &other) const
 {
     const B_D(TLabInfo);
     const TLabInfoPrivate *dd = other.d_func();
-    if (d->context != dd->context)
-        return false;
-    switch (d->context)
-    {
-    case AddContext:
-        return d->title == dd->title;
-    case EditContext:
-        return d->id == dd->id;
-    case GeneralContext:
-    default:
-        return d->id == dd->id && d->sender == dd->sender && d->title == dd->title && d->authors == dd->authors
-                && d->type == dd->type &&d->groups == dd->groups && d->size == dd->size && d->tags == dd->tags
-                && d->comment == dd->comment && d->creationDT == dd->creationDT && d->updateDT == dd->updateDT
-                && d->extraFiles == dd->extraFiles;
-    }
+    return d->authors == dd->authors && d->creationDateTime == dd->creationDateTime && d->dataInfos == dd->dataInfos
+            && d->description == dd->description && d->extraFiles == dd->extraFiles && d->groups == dd->groups
+            && d->id == dd->id && d->lastModificationDateTime == dd->lastModificationDateTime
+            && d->senderId == dd->senderId && d->senderLogin == dd->senderLogin && d->tags == dd->tags
+            && d->title == dd->title;
 }
 
 bool TLabInfo::operator !=(const TLabInfo &other) const
@@ -467,25 +325,18 @@ QDataStream &operator <<(QDataStream &stream, const TLabInfo &info)
 {
     const TLabInfoPrivate *d = info.d_func();
     QVariantMap m;
-    m.insert("context", (int) d->context);
-    m.insert("title", d->title);
     m.insert("authors", d->authors);
+    m.insert("creation_date_time", d->creationDateTime);
+    m.insert("data_infos", d->dataInfos);
+    m.insert("description", d->description);
+    m.insert("extra_files", d->extraFiles);
     m.insert("groups", d->groups);
-    m.insert("size", d->size);
+    m.insert("id", d->id);
+    m.insert("last_modification_date_time", d->lastModificationDateTime);
+    m.insert("sender_id", d->senderId);
+    m.insert("sender_login", d->senderLogin);
     m.insert("tags", d->tags);
-    m.insert("comment", d->comment);
-    if (TLabInfo::AddContext != d->context)
-        m.insert("id", d->id);
-    if (TLabInfo::GeneralContext == d->context)
-        m.insert("sender", d->sender);
-    if (TLabInfo::GeneralContext == d->context)
-        m.insert("type", (int) d->type);
-    if (TLabInfo::GeneralContext == d->context)
-    {
-        m.insert("creation_dt", d->creationDT);
-        m.insert("update_dt", d->updateDT);
-        m.insert("extra_file_names", d->extraFiles);
-    }
+    m.insert("title", d->title);
     stream << m;
     return stream;
 }
@@ -495,26 +346,24 @@ QDataStream &operator >>(QDataStream &stream, TLabInfo &info)
     TLabInfoPrivate *d = info.d_func();
     QVariantMap m;
     stream >> m;
-    d->context = TLabInfoPrivate::contextFromInt(m.value("context").toInt());
-    d->title = m.value("title").toString();
-    info.setAuthors(m.value("authors").toStringList());
-    info.setGroups(m.value("groups").toStringList());
-    info.setProjectSize(m.value("size").toInt());
-    info.setTags(m.value("tags").toStringList());
-    d->comment = m.value("comment").toString();
+    d->authors = m.value("authors").value<TAuthorInfoList>();
+    d->creationDateTime = m.value("creation_date_time").toDateTime().toUTC();
+    d->dataInfos = m.value("data_infos").value<TLabDataInfoList>();
+    d->description = m.value("description").toString();
+    d->extraFiles = m.value("extra_files").value<TFileInfoList>();
+    d->groups = m.value("groups").value<TIdList>();
     d->id = m.value("id").toULongLong();
-    info.setSender(m.value("sender").value<TUserInfo>());
-    info.setType(m.value("type").toInt());
-    d->creationDT = m.value("creation_dt").toDateTime().toUTC();
-    d->updateDT = m.value("update_dt").toDateTime().toUTC();
-    d->extraFiles = m.value("extra_file_names").toStringList();
+    d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();
+    d->senderId = m.value("sender_id").toULongLong();
+    d->senderLogin = m.value("sender_login").toString();
+    d->tags = m.value("tags").toStringList();
+    d->title = m.value("title").toString();
     return stream;
 }
 
 QDebug operator <<(QDebug dbg, const TLabInfo &info)
 {
     const TLabInfoPrivate *d = info.d_func();
-    dbg.nospace() << "TLabInfo(" << d->id << "," << d->sender.login() << "," << d->title << ","
-                  << info.typeStringNoTr() << ")";
+    dbg.nospace() << "TLabInfo(" << d->id << "," << d->title << ")";
     return dbg.space();
 }

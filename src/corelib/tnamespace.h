@@ -1,66 +1,82 @@
+/****************************************************************************
+**
+** Copyright (C) 2013-2014 Andrey Bogdanov
+**
+** This file is part of the TeXSampleCore module of the TeXSample library.
+**
+** TeXSample is free software: you can redistribute it and/or modify it under
+** the terms of the GNU Lesser General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** TeXSample is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with TeXSample.  If not, see <http://www.gnu.org/licenses/>.
+**
+****************************************************************************/
+
 #ifndef TNAMESPACE_H
 #define TNAMESPACE_H
 
-#include <BeQt>
+class QByteArray;
+class QImage;
+class QString;
 
-#include <QString>
-#include <QtGlobal>
-#include <QMetaType>
+#include "tglobal.h"
+
+#include <BeQt>
 
 namespace Texsample
 {
 
-const quint16 MainPort = 9044;
+const quint16 MainPort = 9045;
 
-const int MaximumAvatarSize = BeQt::Megabyte;
-const int MaximumAvatarExtent = 2048;
-const quint8 MaximumInvitesCount = 3;
+const int MaximumAdminRemarkLength = 1000;
+const int MaximumAvatarExtent = 2000;
+const int MaximumAvatarSize = 2 * BeQt::Megabyte;
+const int MaximumCommandLength = 40;
+const int MaximumEmailLength = 60;
+const int MaximumFileDescriptionLength = 1000;
+const int MaximumGroupNameLength = 40;
+const int MaximumLabDescriptionLength = 1000;
+const int MaximumLabTitleLength = 100;
+const int MaximumLoginLength = 20;
+const int MaximumNameLength = 20;
+const int MaximumOrganizationLength = 250;
+const int MaximumPasswordLength = 20;
+const int MaximumPostLength = 40;
+const int MaximumUrlLength = 1000;
+const int MaximumRoleLength = 40;
+const int MaximumSampleDescriptionLength = 1000;
+const int MaximumSampleTitleLength = 100;
+const int MinimumLoginLength = 2;
+const int MinimumPasswordLength = 8;
+const int RawPasswordSize = 20;
 
-//Requests
-const QString CheckEmailRequest = "check_email";
-const QString CheckLoginRequest = "check_login";
-const QString RegisterRequest = "register";
-const QString GetRecoveryCodeRequest = "get_recovery_code";
-const QString RecoverAccountRequest = "recover_account";
-const QString GetLatestAppVersionRequest = "get_latest_version";
-const QString AuthorizeRequest = "authorize";
-const QString AddUserRequest = "add_user";
-const QString EditUserRequest = "edit_user";
-const QString UpdateAccountRequest = "update_account";
-const QString GetUserInfoRequest = "get_user_info";
-const QString GenerateInvitesRequest = "generate_invites";
-const QString GetInvitesListRequest = "get_invites_list";
-const QString SubscribeRequest = "subscribe";
-const QString ChangeLocaleRequest = "change_locale";
-const QString StartServerRequest = "start_server";
-const QString StopServerRequest = "stop_server";
-const QString UptimeRequest = "uptime";
-const QString UserRequest = "user";
-const QString SetLatestAppVersionRequest = "set_latest_app_version";
-
-const QString LogRequest = "log";
-const QString MessageRequest = "message";
-const QString NotifyRequest = "notify";
-
-//TeXSample requests
-const QString AddSampleRequest = "add_sample";
-const QString EditSampleRequest = "edit_sample";
-const QString UpdateSampleRequest = "update_sample";
-const QString DeleteSampleRequest = "delete_sample";
-const QString GetSamplesListRequest = "get_samples_list";
-const QString GetSampleSourceRequest = "get_sample_source";
-const QString GetSamplePreviewRequest = "get_sample_preview";
-const QString CompileProjectRequest = "compile_project";
-
-//CLab requests
-const QString EditClabGroupsRequest = "edit_clab_groups";
-const QString GetClabGroupsListRequest = "get_clab_groups_list";
-const QString AddLabRequest = "add_lab";
-const QString EditLabRequest = "edit_lab";
-const QString DeleteLabRequest = "delete_lab";
-const QString GetLabRequest = "get_lab";
-const QString GetLabsListRequest = "get_labs_list";
-const QString GetLabExtraAttachedFileRequest = "get_lab_extra_attached_file";
+T_CORE_EXPORT bool testAdminRemark(const QString &remark, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testAvatar(const QImage &avatar, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QImage *image, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testCommand(const QString &command, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testEmail(const QString &email, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testFileDescription(const QString &description, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testGroupName(const QString &name, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testLabDescription(const QString &description, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testLabTitle(const QString &title, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testLogin(const QString &login, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testName(const QString &name, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testOrganization(const QString &organization, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testPassword(const QString &password, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testPassword(const QByteArray &password, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testPost(const QString &post, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testRole(const QString &role, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testSampleDescription(const QString &description, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testSampleTitle(const QString &title, QString *error = 0, bool translate = true);
+T_CORE_EXPORT bool testUrl(const QString &url, QString *error = 0, bool translate = true);
 
 }
 
