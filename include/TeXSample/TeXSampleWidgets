@@ -3,10 +3,7 @@
 
 #include "tapplication.h"
 #include "tgroupwidget.h"
-#include "tinvitewidget.h"
 #include "tlistwidget.h"
-#include "trecoverywidget.h"
 #include "ttagswidget.h"
-#include "tuserinfowidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

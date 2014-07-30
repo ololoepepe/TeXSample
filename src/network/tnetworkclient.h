@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetwork module of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,38 +19,43 @@
 **
 ****************************************************************************/
 
-#ifndef TRECOVERYWIDGET_H
-#define TRECOVERYWIDGET_H
+#ifndef TNETWORKCLIENT_H
+#define TNETWORKCLIENT_H
 
-class TRecoveryWidgetPrivate;
+class TNetworkClientPrivate;
 
-class TRecoverAccountRequestData;
-class TReply;
-class TRequestRecoveryCodeRequestData;
+#include "tglobal.h"
 
-#include <TeXSampleCore/TeXSampleGlobal>
+#include <BeQtCore/BBaseObject>
 
-#include <BBaseObject>
-
-#include <QWidget>
+#include <QObject>
 
 /*============================================================================
-================================ TRecoveryWidget =============================
+================================ TNetworkClient ==============================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TRecoveryWidget : public QWidget, public BBaseObject
+class T_NETWORK_EXPORT TNetworkClient : public QObject, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PRIVATE(TRecoveryWidget)
+    B_DECLARE_PRIVATE(TNetworkClient)
 public:
-    typedef TReply (*RecoverAccountFunction)(const TRecoverAccountRequestData &data, QWidget *parent);
-    typedef TReply (*RequestRecoveryCodeFunction)(const TRequestRecoveryCodeRequestData &data, QWidget *parent);
+    enum State
+    {
+        AuthorizedState = 1,
+        ConnectedState,
+        ConnectingState,
+        DisconnectedState,
+        DisconnectingState
+    };
 public:
-    explicit TRecoveryWidget(RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                             RecoverAccountFunction recoverAccountFunction, QWidget *parent = 0);
-    ~TRecoveryWidget();
+    explicit TNetworkClient(QObject *parent = 0);
+    ~TNetworkClient();
+protected:
+    explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
+public:
+    //
 private:
-    Q_DISABLE_COPY(TRecoveryWidget)
+    Q_DISABLE_COPY(TNetworkClient)
 };
 
-#endif // TRECOVERYWIDGET_H
+#endif // TNETWORKCLIENT_H

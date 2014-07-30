@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleCore module of the TeXSample library.
+** This file is part of the TeXSampleNetwork module of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,36 +19,30 @@
 **
 ****************************************************************************/
 
-#ifndef TGLOBAL_H
-#define TGLOBAL_H
+#ifndef TNETWORKCLIENT_P_H
+#define TNETWORKCLIENT_P_H
 
-#include <QtGlobal>
+#include "tnetworkclient.h"
 
-#if defined(TSMP_BUILD_CORE_LIB)
-#   define T_CORE_EXPORT Q_DECL_EXPORT
-#else
-#   define T_CORE_EXPORT Q_DECL_IMPORT
-#endif
+#include <BeQtCore/private/bbaseobject_p.h>
 
-#if defined(TSMP_BUILD_NETWORK_LIB)
-#   define T_NETWORK_EXPORT Q_DECL_EXPORT
-#else
-#   define T_NETWORK_EXPORT Q_DECL_IMPORT
-#endif
+#include <QObject>
 
-#if defined(TSMP_BUILD_WIDGETS_LIB)
-#   define T_WIDGETS_EXPORT Q_DECL_EXPORT
-#else
-#   define T_WIDGETS_EXPORT Q_DECL_IMPORT
-#endif
+/*============================================================================
+================================ TNetworkClientPrivate =======================
+============================================================================*/
 
-#if defined(TSMP_BUILD_NETWORKWIDGETS_LIB)
-#   define T_NETWORKWIDGETS_EXPORT Q_DECL_EXPORT
-#else
-#   define T_NETWORKWIDGETS_EXPORT Q_DECL_IMPORT
-#endif
+class TNetworkClientPrivate : public BBaseObjectPrivate
+{
+    Q_OBJECT
+    B_DECLARE_PUBLIC(TNetworkClient)
+public:
+    explicit TNetworkClientPrivate(TNetworkClient *q);
+    ~TNetworkClientPrivate();
+public:
+    void init();
+private:
+    Q_DISABLE_COPY(TNetworkClientPrivate)
+};
 
-T_CORE_EXPORT void tRegister();
-T_CORE_EXPORT const char *tVersion();
-
-#endif // TGLOBAL_H
+#endif // TNETWORKCLIENT_P_H
