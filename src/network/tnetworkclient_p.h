@@ -22,6 +22,11 @@
 #ifndef TNETWORKCLIENT_P_H
 #define TNETWORKCLIENT_P_H
 
+class BNetworkConnection;
+class BNetworkOperation;
+
+class QWidget;
+
 #include "tnetworkclient.h"
 
 #include <BeQtCore/private/bbaseobject_p.h>
@@ -37,10 +42,15 @@ class TNetworkClientPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TNetworkClient)
 public:
+    TNetworkClient::WaitForConnectedFunction waitForConnectedFunction;
+    TNetworkClient::WaitForFinishedFunction waitForFinishedFunction;
+public:
     explicit TNetworkClientPrivate(TNetworkClient *q);
     ~TNetworkClientPrivate();
 public:
     void init();
+    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget);
+    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget);
 private:
     Q_DISABLE_COPY(TNetworkClientPrivate)
 };

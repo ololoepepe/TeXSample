@@ -24,9 +24,14 @@
 
 class TNetworkClientPrivate;
 
+class BNetworkConnection;
+class BNetworkOperation;
+
+class QWidget;
+
 #include "tglobal.h"
 
-#include <BeQtCore/BBaseObject>
+#include <BBaseObject>
 
 #include <QObject>
 
@@ -48,12 +53,18 @@ public:
         DisconnectingState
     };
 public:
+    typedef bool (*WaitForConnectedFunction)(BNetworkConnection *, QWidget *parentWidget);
+    typedef bool (*WaitForFinishedFunction)(BNetworkOperation *, QWidget *parentWidget);
+public:
     explicit TNetworkClient(QObject *parent = 0);
     ~TNetworkClient();
 protected:
     explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
 public:
-    //
+    void setWaitForConnectedFunction(WaitForConnectedFunction function);
+    void setWaitForFinishedFunction(WaitForFinishedFunction function);
+    WaitForConnectedFunction waitForConnectedFunction() const;
+    WaitForFinishedFunction waitForFinishedFunction() const;
 private:
     Q_DISABLE_COPY(TNetworkClient)
 };

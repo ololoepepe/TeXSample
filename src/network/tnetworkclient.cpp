@@ -19,12 +19,19 @@
 **
 ****************************************************************************/
 
+class QWidget;
+
 #include "tnetworkclient.h"
 #include "tnetworkclient_p.h"
 
-#include <BeQtCore/BBaseObject>
+#include <BBaseObject>
+#include <BeQt>
 #include <BeQtCore/private/bbaseobject_p.h>
+#include <BNetworkConnection>
+#include <BNetworkOperation>
 
+#include <QAbstractSocket>
+#include <QList>
 #include <QObject>
 
 /*============================================================================
@@ -48,7 +55,40 @@ TNetworkClientPrivate::~TNetworkClientPrivate()
 
 void TNetworkClientPrivate::init()
 {
-    //
+    waitForConnectedFunction = 0;
+    waitForFinishedFunction = 0;
+}
+
+bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWidget *parentWidget)
+{
+    if (!connection)
+        return false;
+    if (connection->isConnected())
+        return true;
+    if (waitForConnectedFunction)
+        return waitForConnectedFunction(connection, parentWidget);
+    QList<BeQt::Until> until;
+    until << BeQt::until(connection, SIGNAL(connected()));
+    until << BeQt::until(connection, SIGNAL(disconnected()));
+    until << BeQt::until(connection, SIGNAL(error(QAbstractSocket::SocketError)));
+    BeQt::waitNonBlocking(until);
+    return connection->isConnected();
+}
+
+bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidget *parentWidget)
+{
+    if (!operation)
+        return false;
+    if (operation->isFinished())
+        return true;
+    if (waitForFinishedFunction)
+        return waitForFinishedFunction(operation, parentWidget);
+    QList<BeQt::Until> until;
+    until << BeQt::until(operation, SIGNAL(finished()));
+    until << BeQt::until(operation, SIGNAL(error()));
+    until << BeQt::until(operation, SIGNAL(canceled()));
+    BeQt::waitNonBlocking(until, BeQt::Second);
+    return operation->isFinished();
 }
 
 /*============================================================================
@@ -78,4 +118,22 @@ TNetworkClient::TNetworkClient(TNetworkClientPrivate &d, QObject *parent) :
 
 /*============================== Public methods ============================*/
 
-//
+void TNetworkClient::setWaitForConnectedFunction(WaitForConnectedFunction function)
+{
+    d_func()->waitForConnectedFunction = function;
+}
+
+void TNetworkClient::setWaitForFinishedFunction(WaitForFinishedFunction function)
+{
+    d_func()->waitForFinishedFunction = function;
+}
+
+TNetworkClient::WaitForConnectedFunction TNetworkClient::waitForConnectedFunction() const
+{
+    return d_func()->waitForConnectedFunction;
+}
+
+TNetworkClient::WaitForFinishedFunction TNetworkClient::waitForFinishedFunction() const
+{
+    return d_func()->waitForFinishedFunction;
+}
