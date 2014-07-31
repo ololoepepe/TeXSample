@@ -25,13 +25,9 @@
 
 class TUserInfoWidgetPrivate;
 
-class TAccessLevel;
-class TGroupInfoList;
 class TNetworkClient;
-class TServiceList;
 class TUserInfo;
 
-class QString;
 class QVariant;
 
 #include <TeXSampleCore/TeXSampleGlobal>
@@ -58,18 +54,14 @@ public:
         ShowMode
     };
 public:
-    explicit TUserInfoWidget(Mode mode, const TAccessLevel &accessLevel, QWidget *parent = 0);
+    explicit TUserInfoWidget(Mode mode, QWidget *parent = 0);
     explicit TUserInfoWidget(QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
-    TGroupInfoList availableGroups() const;
-    TServiceList availableServices() const;
     TNetworkClient *client() const;
     QVariant createRequestData() const;
     bool hasValidInput() const;
     Mode mode() const;
-    void setAvailableGroups(const TGroupInfoList &groups);
-    void setAvailableServices(const TServiceList &services);
     void setClient(TNetworkClient *client);
     void setInfo(const TUserInfo &info);
 Q_SIGNALS:

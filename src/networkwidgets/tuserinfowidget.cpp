@@ -84,6 +84,8 @@
 #include <QRegExpValidator>
 #include <QScrollArea>
 #include <QSize>
+#include <QStandardItem>
+#include <QStandardItemModel>
 #include <QStringList>
 #include <QToolButton>
 #include <QToolTip>
@@ -102,9 +104,8 @@ const QString TUserInfoWidgetPrivate::DateTimeFormat = "dd MMMM yyyy hh:mm";
 
 /*============================== Public constructors =======================*/
 
-TUserInfoWidgetPrivate::TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m,
-                                               const TAccessLevel &accessLevel) :
-    BBaseObjectPrivate(q), Accesslevel(accessLevel), Mode(m)
+TUserInfoWidgetPrivate::TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m) :
+    BBaseObjectPrivate(q), Mode(m)
 {
     //
 }
@@ -120,11 +121,8 @@ void TUserInfoWidgetPrivate::createAccessLevelField(QFormLayout *flt, bool readO
 {
     cmboxAccessLevel = new QComboBox;
       cmboxAccessLevel->setEnabled(!readOnly);
-      foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
-          if (TUserInfoWidget::ShowMode != Mode && lvl > Accesslevel)
-              break;
+      foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels())
           cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
-      }
       if (cmboxAccessLevel->count())
         cmboxAccessLevel->setCurrentIndex(0);
     flt->addRow(tr("Access level:", "lbl text"), cmboxAccessLevel);
@@ -632,6 +630,54 @@ void TUserInfoWidgetPrivate::checkLogin()
     checkInputs();
 }
 
+void TUserInfoWidgetPrivate::clientAnonymousValidityChanged(bool valid)
+{
+    if (tbtnCheckLogin)
+        tbtnCheckLogin->setEnabled(client && valid && ledtLogin->hasAcceptableInput());
+    if (tbtnCheckEmail)
+        tbtnCheckEmail->setEnabled(client && valid && ledtEmail1->hasAcceptableInput());
+}
+
+void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
+{
+    checkChangeEmailInputs();
+    checkChangePasswordInputs();
+    if (TUserInfoWidget::ShowMode == Mode && !containsAvatar)
+        tbtnAvatar->setEnabled(client && authorized);
+    if (cmboxAccessLevel && TUserInfoWidget::ShowMode != Mode) {
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(cmboxAccessLevel->model());
+        foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
+            int ind = cmboxAccessLevel->findData(int(lvl));
+            QStandardItem *item = model->item(ind);
+            Qt::ItemFlags flags = 0;
+            if (client && client->isAuthorized() && client->userInfo().accessLevel() >= lvl)
+                flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            else if (cmboxAccessLevel->currentIndex() == ind)
+                cmboxAccessLevel->setCurrentIndex((ind > 0) ? (ind - 1) : 0);
+            item->setFlags(flags);
+        }
+    }
+    if (lstwgtGroups) {
+        lstwgtGroups->clear();
+        QList<TListWidget::Item> list;
+        if (client && client->isAuthorized()) {
+            foreach (const TGroupInfo &group, client->userInfo().availableGroups()) {
+                TListWidget::Item item;
+                item.text = group.name();
+                item.data = group.id();
+                list << item;
+            }
+        }
+        lstwgtGroups->setAvailableItems(list);
+    }
+    if (!cboxServiceMap.isEmpty() && (TUserInfoWidget::AddMode == Mode || TUserInfoWidget::EditMode == Mode)) {
+        foreach (const TService &service, TServiceList::allServices()) {
+            cboxServiceMap.value(service)->setEnabled(client && client->isAuthorized()
+                                                      && client->userInfo().availableServices().contains(service));
+        }
+    }
+}
+
 void TUserInfoWidgetPrivate::resetAvatar(const QImage &image)
 {
     if (!tbtnAvatar)
@@ -722,8 +768,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 
 /*============================== Public constructors =======================*/
 
-TUserInfoWidget::TUserInfoWidget(Mode mode, const TAccessLevel &accessLevel, QWidget *parent) :
-    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this, mode, accessLevel))
+TUserInfoWidget::TUserInfoWidget(Mode mode, QWidget *parent) :
+    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this, mode))
 {
     d_func()->init();
 }
@@ -762,7 +808,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setName(d->ledtName->text());
         data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setAvailableServices(d->availableServices);
+        data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -827,53 +873,20 @@ TUserInfoWidget::Mode TUserInfoWidget::mode() const
     return d_func()->Mode;
 }
 
-void TUserInfoWidget::setAvailableGroups(const TGroupInfoList &groups)
-{
-    B_D(TUserInfoWidget);
-    d->availableGroups = groups;
-    bRemoveDuplicates(d->availableGroups);
-    if (d->lstwgtGroups) {
-        QList<TListWidget::Item> list;
-        foreach (const TGroupInfo &group, d->availableGroups) {
-            TListWidget::Item item;
-            item.text = group.name();
-            item.data = group.id();
-            list << item;
-        }
-        d->lstwgtGroups->setAvailableItems(list);
-    }
-}
-
-void TUserInfoWidget::setAvailableServices(const TServiceList &services)
-{
-    B_D(TUserInfoWidget);
-    d->availableServices = services;
-    bRemoveDuplicates(d->availableServices);
-    if (!d->cboxServiceMap.isEmpty() && (AddMode == d->Mode || EditMode == d->Mode)) {
-        foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setEnabled(d->availableServices.contains(service));
-    }
-}
-
 void TUserInfoWidget::setClient(TNetworkClient *client)
 {
     B_D(TUserInfoWidget);
     if (d->client) {
-        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeEmailInputs()));
-        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeLoginInputs()));
-        disconnect(d->client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(checkInputs()));
+        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+        disconnect(d->client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(clientAnonymousValidityChanged(bool)));
     }
     d->client = client;
     if (client) {
-        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeEmailInputs()));
-        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeLoginInputs()));
-        connect(client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(checkInputs()));
+        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+        connect(client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(clientAnonymousValidityChanged(bool)));
     }
-    d->checkChangeEmailInputs();
-    d->checkChangePasswordInputs();
-    d->checkInputs();
-    if (ShowMode == d->Mode && !d->containsAvatar)
-        d->tbtnAvatar->setEnabled(client);
+    d->clientAuthorizedChanged(client && client->isAuthorized());
+    d->clientAnonymousValidityChanged(client && client->isValid(true));
 }
 
 void TUserInfoWidget::setInfo(const TUserInfo &info)

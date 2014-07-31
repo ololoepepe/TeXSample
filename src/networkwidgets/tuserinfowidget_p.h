@@ -23,8 +23,10 @@
 #ifndef TUSERINFOWIDGET_P_H
 #define TUSERINFOWIDGET_P_H
 
+class TIdList;
 class TListWidget;
 class TNetworkClient;
+class TServiceList;
 
 class BEditGroup;
 class BInputField;
@@ -42,11 +44,7 @@ class QVBoxLayout;
 
 #include "tuserinfowidget.h"
 
-#include <TeXSampleCore/TAccessLevel>
-#include <TeXSampleCore/TGroupInfoList>
-#include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TService>
-#include <TeXSampleCore/TServiceList>
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
@@ -73,11 +71,8 @@ public:
 public:
     static const QString DateTimeFormat;
 public:
-    const TAccessLevel Accesslevel;
     const TUserInfoWidget::Mode Mode;
 public:
-    TServiceList availableServices;
-    TGroupInfoList availableGroups;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
@@ -122,8 +117,7 @@ public:
     QToolButton *tbtnClearAvatar;
     bool valid;
 public:
-    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m = TUserInfoWidget::ShowMode,
-                                    const TAccessLevel &accessLevel = TAccessLevel());
+    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m = TUserInfoWidget::ShowMode);
     ~TUserInfoWidgetPrivate();
 public:
     void createAccessLevelField(QFormLayout *flt, bool readOnly = false);
@@ -149,6 +143,8 @@ public Q_SLOTS:
     void checkEmail();
     void checkInputs();
     void checkLogin();
+    void clientAnonymousValidityChanged(bool valid);
+    void clientAuthorizedChanged(bool);
     void resetAvatar(const QImage &image = QImage());
     void tbtnAvatarClicked();
 private:
