@@ -25,9 +25,7 @@
 
 class TRecoveryWidgetPrivate;
 
-class TRecoverAccountRequestData;
-class TReply;
-class TRequestRecoveryCodeRequestData;
+class TNetworkClient;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
@@ -44,11 +42,7 @@ class T_WIDGETS_EXPORT TRecoveryWidget : public QWidget, public BBaseObject
     Q_OBJECT
     B_DECLARE_PRIVATE(TRecoveryWidget)
 public:
-    typedef TReply (*RecoverAccountFunction)(const TRecoverAccountRequestData &data, QWidget *parent);
-    typedef TReply (*RequestRecoveryCodeFunction)(const TRequestRecoveryCodeRequestData &data, QWidget *parent);
-public:
-    explicit TRecoveryWidget(RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                             RecoverAccountFunction recoverAccountFunction, QWidget *parent = 0);
+    explicit TRecoveryWidget(TNetworkClient *client, QWidget *parent = 0);
     ~TRecoveryWidget();
 private:
     Q_DISABLE_COPY(TRecoveryWidget)

@@ -41,12 +41,14 @@
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TMessage>
+#include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TRegisterRequestData>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TService>
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserIdentifier>
 #include <TeXSampleCore/TUserInfo>
+#include <TeXSampleNetwork/TNetworkClient>
 
 #include <BApplication>
 #include <BBaseObject>
@@ -346,11 +348,7 @@ TIdList TUserInfoWidgetPrivate::groups() const
 
 void TUserInfoWidgetPrivate::init()
 {
-    changeEmailFunction = 0;
-    changePasswordFunction = 0;
-    checkEmailFunction = 0;
-    checkLoginFunction = 0;
-    getUserAvatarFunction = 0;
+    client = 0;
     editAvatar = false;
     containsAvatar = false;
     valid = false;
@@ -482,13 +480,13 @@ TServiceList TUserInfoWidgetPrivate::services() const
 
 void TUserInfoWidgetPrivate::changeEmail()
 {
-    if (!changeEmailFunction)
+    if (!client)
         return;
     QString email = ledtEmail1->text();
     TChangeEmailRequestData data;
     data.setEmail(email);
     data.setPassword(pwdwgtOld->openPassword());
-    TReply r = changeEmailFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::ChangeEmail, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Changing e-mail failed", "msgbox windowTitle"));
@@ -507,12 +505,12 @@ void TUserInfoWidgetPrivate::changeEmail()
 
 void TUserInfoWidgetPrivate::changePassword()
 {
-    if (!changePasswordFunction)
+    if (!client)
         return;
     TChangePasswordRequestData data;
     data.setOldPassword(pwdwgtOld->openPassword());
     data.setNewPassword(pwdwgt1->openPassword());
-    TReply r = changePasswordFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::ChangePassword, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Changing password failed", "msgbox windowTitle"));
@@ -530,7 +528,7 @@ void TUserInfoWidgetPrivate::checkChangeEmailInputs()
 {
     if (!btnChangeEmail)
         return;
-    btnChangeEmail->setEnabled(pwdwgtOld->hasAcceptableInput() && edtgrpEmail->textsMatchAndAcceptable());
+    btnChangeEmail->setEnabled(client && pwdwgtOld->hasAcceptableInput() && edtgrpEmail->textsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkChangePasswordInputs()
@@ -538,17 +536,17 @@ void TUserInfoWidgetPrivate::checkChangePasswordInputs()
     if (!btnChangePassword)
         return;
     inputPwdOld->setValid(pwdwgtOld->hasAcceptableInput());
-    btnChangePassword->setEnabled(pwdwgtOld->hasAcceptableInput() && pwdgrp->passwordsMatchAndAcceptable());
+    btnChangePassword->setEnabled(client && pwdwgtOld->hasAcceptableInput() && pwdgrp->passwordsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkEmail()
 {
-    if (!checkEmailFunction)
+    if (!client)
         return;
     QString email = ledtEmail1->text();
     TCheckEmailAvailabilityRequestData data;
     data.setEmail(email);
-    TReply r = checkEmailFunction(data, q_func());
+    TReply r = client->performAnonymousOperation(TOperation::CheckEmailAvailability, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Checking e-mail failed", "msgbox windowTitle"));
@@ -584,11 +582,11 @@ void TUserInfoWidgetPrivate::checkInputs()
     if (inputLogin)
         inputLogin->setValid(loginValid);
     if (tbtnCheckLogin)
-        tbtnCheckLogin->setEnabled(checkLoginFunction && ledtLogin->hasAcceptableInput());
+        tbtnCheckLogin->setEnabled(client && ledtLogin->hasAcceptableInput());
     if (inputEmail1)
         inputEmail1->setValid(ledtEmail1->hasAcceptableInput());
     if (tbtnCheckEmail)
-        tbtnCheckEmail->setEnabled(changeEmailFunction && ledtEmail1->hasAcceptableInput());
+        tbtnCheckEmail->setEnabled(client && ledtEmail1->hasAcceptableInput());
     if (inputEmail2)
         inputEmail2->setValid(emailValid);
     if (inputPwd1)
@@ -604,12 +602,12 @@ void TUserInfoWidgetPrivate::checkInputs()
 
 void TUserInfoWidgetPrivate::checkLogin()
 {
-    if (!checkLoginFunction)
+    if (!client)
         return;
     QString login = ledtLogin->text();
     TCheckLoginAvailabilityRequestData data;
     data.setLogin(login);
-    TReply r = checkLoginFunction(data, q_func());
+    TReply r = client->performAnonymousOperation(TOperation::CheckLoginAvailability, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Checking login failed", "msgbox windowTitle"));
@@ -653,7 +651,7 @@ void TUserInfoWidgetPrivate::resetAvatar(const QImage &image)
             tbtnAvatar->setEnabled(!avatar.isNull());
         } else {
             tbtnAvatar->setToolTip(!avatar.isNull() ? tr("Click to see the avatar", "tbtn toolTip") : QString());
-            tbtnAvatar->setEnabled(getUserAvatarFunction);
+            tbtnAvatar->setEnabled(client);
         }
     }
     editAvatar = true;
@@ -663,11 +661,11 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 {
     if (TUserInfoWidget::ShowMode == Mode) {
         if (!containsAvatar) {
-            if (!getUserAvatarFunction)
+            if (!client)
                 return;
             TGetUserAvatarRequestData data;
             data.setIdentifier(id);
-            TReply r = getUserAvatarFunction(data, q_func());
+            TReply r = client->performOperation(TOperation::GetUserAvatar, data, q_func());
             if (!r) {
                 QMessageBox msg(q_func());
                 msg.setWindowTitle(tr("Failed to get avatar", "msgbox windowTitle"));
@@ -741,34 +739,9 @@ TUserInfoWidget::~TUserInfoWidget()
 
 /*============================== Public methods ============================*/
 
-TGroupInfoList TUserInfoWidget::availableGroups() const
+TNetworkClient *TUserInfoWidget::client() const
 {
-    return d_func()->availableGroups;
-}
-
-TServiceList TUserInfoWidget::availableServices() const
-{
-    return d_func()->availableServices;
-}
-
-TUserInfoWidget::ChangeEmailFunction TUserInfoWidget::changeEmailFunction() const
-{
-    return d_func()->changeEmailFunction;
-}
-
-TUserInfoWidget::ChangePasswordFunction TUserInfoWidget::changePasswordFunction() const
-{
-    return d_func()->changePasswordFunction;
-}
-
-TUserInfoWidget::CheckEmailFunction TUserInfoWidget::checkEmailFunction() const
-{
-    return d_func()->checkEmailFunction;
-}
-
-TUserInfoWidget::CheckLoginFunction TUserInfoWidget::checkLoginFunction() const
-{
-    return d_func()->checkLoginFunction;
+    return d_func()->client;
 }
 
 QVariant TUserInfoWidget::createRequestData() const
@@ -842,11 +815,6 @@ QVariant TUserInfoWidget::createRequestData() const
     return QVariant();
 }
 
-TUserInfoWidget::GetUserAvatarFunction TUserInfoWidget::getUserAvatarFunction() const
-{
-    return d_func()->getUserAvatarFunction;
-}
-
 bool TUserInfoWidget::hasValidInput() const
 {
     return d_func()->valid;
@@ -885,37 +853,14 @@ void TUserInfoWidget::setAvailableServices(const TServiceList &services)
     }
 }
 
-void TUserInfoWidget::setChangeEmailFunction(ChangeEmailFunction function)
+void TUserInfoWidget::setClient(TNetworkClient *client)
 {
-    d_func()->changeEmailFunction = function;
+    d_func()->client = client;
     d_func()->checkChangeEmailInputs();
-}
-
-void TUserInfoWidget::setChangePasswordFunction(ChangePasswordFunction function)
-{
-    d_func()->changePasswordFunction = function;
     d_func()->checkChangePasswordInputs();
-}
-
-void TUserInfoWidget::setCheckEmailFunction(CheckEmailFunction function)
-{
-    d_func()->checkEmailFunction = function;
-    if (d_func()->tbtnCheckEmail)
-        d_func()->tbtnCheckEmail->setEnabled(function);
-}
-
-void TUserInfoWidget::setCheckLoginFunction(CheckLoginFunction function)
-{
-    d_func()->checkLoginFunction = function;
-    if (d_func()->tbtnCheckLogin)
-        d_func()->tbtnCheckLogin->setEnabled(function);
-}
-
-void TUserInfoWidget::setGetUserAvatarFunction(GetUserAvatarFunction function)
-{
-    d_func()->getUserAvatarFunction = function;
+    d_func()->checkInputs();
     if (ShowMode == d_func()->Mode && !d_func()->containsAvatar)
-        d_func()->tbtnAvatar->setEnabled(function);
+        d_func()->tbtnAvatar->setEnabled(client);
 }
 
 void TUserInfoWidget::setInfo(const TUserInfo &info)

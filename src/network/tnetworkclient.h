@@ -24,9 +24,16 @@
 
 class TNetworkClientPrivate;
 
+class TMessage;
+class TReply;
+class TUserInfo;
+
 class BNetworkConnection;
 class BNetworkOperation;
 
+class QByteArray;
+class QString;
+class QVariant;
 class QWidget;
 
 #include "tglobal.h"
@@ -53,18 +60,55 @@ public:
         DisconnectingState
     };
 public:
-    typedef bool (*WaitForConnectedFunction)(BNetworkConnection *, QWidget *parentWidget);
-    typedef bool (*WaitForFinishedFunction)(BNetworkOperation *, QWidget *parentWidget);
+    typedef void (*ShowMessageFunction)(const QString &text, const QString &informativeText, QWidget *parentWidget);
+    typedef bool (*WaitForConnectedFunction)(BNetworkConnection *, int timeout, QWidget *parentWidget, TMessage *);
+    typedef bool (*WaitForFinishedFunction)(BNetworkOperation *, int timeout, QWidget *parentWidget, TMessage *);
 public:
     explicit TNetworkClient(QObject *parent = 0);
     ~TNetworkClient();
 protected:
     explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
 public:
+    bool canConnect() const;
+    bool canDisconnect() const;
+    QString hostName() const;
+    bool isAuthorized() const;
+    bool isConnected() const;
+    bool isValid() const;
+    QString login() const;
+    QByteArray password() const;
+    virtual TReply performAnonymousOperation(const QString &operation, const QVariant &data,
+                                             QWidget *parentWidget = 0);
+    virtual TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    void setHostName(const QString &hostName);
+    void setLogin(const QString &login);
+    void setPassword(const QByteArray &password);
+    void setShowMessageFunction(ShowMessageFunction function);
+    void setWaitForConnectedDelay(int msecs);
     void setWaitForConnectedFunction(WaitForConnectedFunction function);
+    void setWaitForConnectedTimeout(int msecs);
+    void setWaitForFinishedDelay(int msecs);
     void setWaitForFinishedFunction(WaitForFinishedFunction function);
+    void setWaitForFinishedTimeout(int msecs);
+    ShowMessageFunction showMessageFunction() const;
+    State state() const;
+    TUserInfo userInfo() const;
+    int waitForConnectedDelay() const;
     WaitForConnectedFunction waitForConnectedFunction() const;
+    int waitForConnectedTimeout() const;
+    int waitForFinishedDelay() const;
     WaitForFinishedFunction waitForFinishedFunction() const;
+    int waitForFinishedTimeout() const;
+public Q_SLOTS:
+    void connectToServer();
+    void disconnectFromServer();
+    void reconnect();
+Q_SIGNALS:
+    void authorizedChanged(bool authorized);
+    void canDisconnectChanged(bool canConnect);
+    void canConnectChanged(bool canConnect);
+    void connectedChanged(bool connected);
+    void stateChanged(State s);
 private:
     Q_DISABLE_COPY(TNetworkClient)
 };

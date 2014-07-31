@@ -74,6 +74,30 @@ contains(TSMP_CONFIG, private_headers) {
     INSTALLS += tsmpInstallsPrivateHeadersCore
 }
 
+#Network
+!contains(TSMP_CONFIG, no_network) {
+    tsmpInstallsHeadersNetwork.files=$$getActualHeaderPaths(TeXSampleNetwork)
+    tsmpInstallsHeadersNetwork.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleNetwork
+    INSTALLS += tsmpInstallsHeadersNetwork
+    contains(TSMP_CONFIG, private_headers) {
+        tsmpInstallsPrivateHeadersNetwork.files=$$getActualPrivateHeaderPaths(TeXSampleNetwork)
+        tsmpInstallsPrivateHeadersNetwork.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleNetwork/private
+        INSTALLS += tsmpInstallsPrivateHeadersNetwork
+    }
+}
+
+#NetworkWidgets
+!contains(TSMP_CONFIG, no_network):!contains(TSMP_CONFIG, no_widgets):!contains(TSMP_CONFIG, no_networkwidgets) {
+    tsmpInstallsHeadersNetworkWidgets.files=$$getActualHeaderPaths(TeXSampleNetworkWidgets)
+    tsmpInstallsHeadersNetworkWidgets.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleNetworkWidgets
+    INSTALLS += tsmpInstallsHeadersNetworkWidgets
+    contains(TSMP_CONFIG, private_headers) {
+        tsmpInstallsPrivateHeadersNetworkWidgets.files=$$getActualPrivateHeaderPaths(TeXSampleNetworkWidgets)
+        tsmpInstallsPrivateHeadersNetworkWidgets.path=$${TSMP_HEADERS_INSTALLS_PATH}/TeXSampleNetworkWidgets/private
+        INSTALLS += tsmpInstallsPrivateHeadersNetworkWidgets
+    }
+}
+
 #Widgets
 !contains(TSMP_CONFIG, no_widgets) {
     tsmpInstallsHeadersWidgets.files=$$getActualHeaderPaths(TeXSampleWidgets)

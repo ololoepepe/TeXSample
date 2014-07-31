@@ -34,10 +34,13 @@
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TInviteInfo>
+#include <TeXSampleCore/TInviteInfoList>
 #include <TeXSampleCore/TInviteModel>
+#include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TService>
 #include <TeXSampleCore/TServiceList>
+#include <TeXSampleNetwork/TNetworkClient>
 
 #include <BApplication>
 #include <BDialog>
@@ -91,6 +94,7 @@ TInviteWidgetPrivate::~TInviteWidgetPrivate()
 
 void TInviteWidgetPrivate::init()
 {
+    client = 0;
     maxInviteCount = 0;
     //
     B_Q(TInviteWidget);
@@ -146,7 +150,7 @@ void TInviteWidgetPrivate::copyInvites()
 
 void TInviteWidgetPrivate::deleteInvites()
 {
-    if (!deleteInvitesFunction)
+    if (!client)
         return;
     TIdList list;
     foreach (const QModelIndex &index, view->selectionModel()->selectedRows()) {
@@ -161,7 +165,7 @@ void TInviteWidgetPrivate::deleteInvites()
         return;
     TDeleteInvitesRequestData data;
     data.setIds(list);
-    TReply r = deleteInvitesFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::DeleteInvites, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Deleting invites failed", "msgbox windowTitle"));
@@ -173,11 +177,12 @@ void TInviteWidgetPrivate::deleteInvites()
         msg.exec();
         return;
     }
+    Model->removeInvites(r.data().value<TDeleteInvitesReplyData>().identifiers());
 }
 
 void TInviteWidgetPrivate::generateInvites()
 {
-    if (!generateInvitesFunction || AccessLevel < TAccessLevel(TAccessLevel::ModeratorLevel))
+    if (!client || AccessLevel < TAccessLevel(TAccessLevel::ModeratorLevel))
         return;
     BDialog dlg(q_func());
     dlg.setWindowTitle(tr("Generating invites", "dlg windowTitle"));
@@ -249,7 +254,7 @@ void TInviteWidgetPrivate::generateInvites()
     data.setServices(services);
     if (!data.isValid())
         return;
-    TReply r = generateInvitesFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::GenerateInvites, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Generating invites failed", "msgbox windowTitle"));
@@ -261,13 +266,14 @@ void TInviteWidgetPrivate::generateInvites()
         msg.exec();
         return;
     }
+    Model->addInvites(r.data().value<TGenerateInvitesReplyData>().generatedInvites());
 }
 
 void TInviteWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
     bool b = !selected.isEmpty();
     actCopy->setEnabled(b);
-    actDelete->setEnabled(b && deleteInvitesFunction);
+    actDelete->setEnabled(b && client);
 }
 
 /*============================================================================
@@ -299,14 +305,9 @@ TServiceList TInviteWidget::availableServices() const
     return d_func()->availableServices;
 }
 
-TInviteWidget::DeleteInvitesFunction TInviteWidget::deleteInvitesFunction() const
+TNetworkClient *TInviteWidget::client() const
 {
-    return d_func()->deleteInvitesFunction;
-}
-
-TInviteWidget::GenerateInvitesFunction TInviteWidget::generateInvitesFunction() const
-{
-    return d_func()->generateInvitesFunction;
+    return d_func()->client;
 }
 
 quint16 TInviteWidget::maximumInviteCount() const
@@ -326,17 +327,11 @@ void TInviteWidget::setAvailableServices(const TServiceList &services)
     bRemoveDuplicates(d_func()->availableServices);
 }
 
-void TInviteWidget::setDeleteInvitesFunction(DeleteInvitesFunction deleteInvitesFunction)
+void TInviteWidget::setClient(TNetworkClient *client)
 {
-    d_func()->deleteInvitesFunction = deleteInvitesFunction;
-    d_func()->actDelete->setEnabled(deleteInvitesFunction && d_func()->view->selectionModel()->hasSelection());
-}
-
-void TInviteWidget::setGenerateInvitesFunction(GenerateInvitesFunction generateInvitesFunction)
-{
-    d_func()->generateInvitesFunction = generateInvitesFunction;
-    d_func()->actGenerate->setEnabled(generateInvitesFunction
-                                      && d_func()->AccessLevel >= TAccessLevel(TAccessLevel::ModeratorLevel));
+    d_func()->client = client;
+    d_func()->actDelete->setEnabled(client && d_func()->view->selectionModel()->hasSelection());
+    d_func()->actGenerate->setEnabled(client && d_func()->AccessLevel >= TAccessLevel(TAccessLevel::ModeratorLevel));
 }
 
 void TInviteWidget::setMaximumInviteCount(quint16 count)

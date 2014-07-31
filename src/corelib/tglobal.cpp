@@ -394,5 +394,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "2.0.0-beta";
+    return "2.0.0-beta2";
 }

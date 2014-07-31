@@ -45,6 +45,7 @@ class T_CORE_EXPORT TRequest : public BBase
     B_DECLARE_PRIVATE(TRequest)
 public:
     explicit TRequest();
+    explicit TRequest(const QVariant &data);
     TRequest(const TRequest &other);
     ~TRequest();
 public:

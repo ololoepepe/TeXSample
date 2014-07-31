@@ -377,6 +377,30 @@
         <source>Not enough rights for this operation</source>
         <translation>Недостаточно прав для данной операции</translation>
     </message>
+    <message>
+        <source>The connection timed out</source>
+        <translation>Время ожидания соединения истекло</translation>
+    </message>
+    <message>
+        <source>The operation was canceled</source>
+        <translation>Операция была отменена</translation>
+    </message>
+    <message>
+        <source>An operation error occured</source>
+        <translation>Произошла ошибка операции</translation>
+    </message>
+    <message>
+        <source>The operation timed out</source>
+        <translation>Время ожидания завершения операции истекло</translation>
+    </message>
+</context>
+<context>
+    <name>TNetworkClientPrivate</name>
+    <message>
+        <source>An error occured</source>
+        <comment>message text</comment>
+        <translation>Произошла ошибка</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryWidgetPrivate</name>

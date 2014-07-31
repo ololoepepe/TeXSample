@@ -26,13 +26,8 @@
 class TUserInfoWidgetPrivate;
 
 class TAccessLevel;
-class TChangeEmailRequestData;
-class TChangePasswordRequestData;
-class TCheckEmailAvailabilityRequestData;
-class TCheckLoginAvailabilityRequestData;
-class TGetUserAvatarRequestData;
 class TGroupInfoList;
-class TReply;
+class TNetworkClient;
 class TServiceList;
 class TUserInfo;
 
@@ -63,33 +58,19 @@ public:
         ShowMode
     };
 public:
-    typedef TReply (*ChangeEmailFunction)(const TChangeEmailRequestData &data, QWidget *parent);
-    typedef TReply (*ChangePasswordFunction)(const TChangePasswordRequestData &data, QWidget *parent);
-    typedef TReply (*CheckEmailFunction)(const TCheckEmailAvailabilityRequestData, QWidget *parent);
-    typedef TReply (*CheckLoginFunction)(const TCheckLoginAvailabilityRequestData, QWidget *parent);
-    typedef TReply (*GetUserAvatarFunction)(const TGetUserAvatarRequestData, QWidget *parent);
-public:
     explicit TUserInfoWidget(Mode mode, const TAccessLevel &accessLevel, QWidget *parent = 0);
     explicit TUserInfoWidget(QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
     TGroupInfoList availableGroups() const;
     TServiceList availableServices() const;
-    ChangeEmailFunction changeEmailFunction() const;
-    ChangePasswordFunction changePasswordFunction() const;
-    CheckEmailFunction checkEmailFunction() const;
-    CheckLoginFunction checkLoginFunction() const;
+    TNetworkClient *client() const;
     QVariant createRequestData() const;
-    GetUserAvatarFunction getUserAvatarFunction() const;
     bool hasValidInput() const;
     Mode mode() const;
     void setAvailableGroups(const TGroupInfoList &groups);
     void setAvailableServices(const TServiceList &services);
-    void setChangeEmailFunction(ChangeEmailFunction function);
-    void setChangePasswordFunction(ChangePasswordFunction function);
-    void setCheckEmailFunction(CheckEmailFunction function);
-    void setCheckLoginFunction(CheckLoginFunction function);
-    void setGetUserAvatarFunction(GetUserAvatarFunction function);
+    void setClient(TNetworkClient *client);
     void setInfo(const TUserInfo &info);
 Q_SIGNALS:
     void inputValidityChanged(bool valid);

@@ -22,15 +22,24 @@
 #ifndef TNETWORKCLIENT_P_H
 #define TNETWORKCLIENT_P_H
 
+class TMessage;
+class TReply;
+
 class BNetworkConnection;
 class BNetworkOperation;
 
+class QVariant;
 class QWidget;
 
 #include "tnetworkclient.h"
 
+#include <TeXSampleCore/TUserInfo>
+
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QAbstractSocket>
+#include <QByteArray>
+#include <QString>
 #include <QObject>
 
 /*============================================================================
@@ -42,15 +51,36 @@ class TNetworkClientPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TNetworkClient)
 public:
+    BNetworkConnection *connection;
+    QString hostName;
+    QString login;
+    QByteArray password;
+    bool reconnecting;
+    TNetworkClient::ShowMessageFunction showMessageFunction;
+    TNetworkClient::State state;
+    TUserInfo userInfo;
+    int waitForConnectedDelay;
     TNetworkClient::WaitForConnectedFunction waitForConnectedFunction;
+    int waitForConnectedTimeout;
+    int waitForFinishedDelay;
     TNetworkClient::WaitForFinishedFunction waitForFinishedFunction;
+    int waitForFinishedTimeout;
 public:
     explicit TNetworkClientPrivate(TNetworkClient *q);
     ~TNetworkClientPrivate();
 public:
+    TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    TReply performOperation(BNetworkConnection *connection, const QString &operation, const QVariant &data,
+                            QWidget *parentWidget = 0);
     void init();
-    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget);
-    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget);
+    void setState(TNetworkClient::State s, TUserInfo info = TUserInfo());
+    void showMessage(const QString &text, const QString &informativeText = QString());
+    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget = 0, TMessage *message = 0);
+    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget = 0, TMessage *message = 0);
+public Q_SLOTS:
+    void connected();
+    void disconnected();
+    void error(QAbstractSocket::SocketError error);
 private:
     Q_DISABLE_COPY(TNetworkClientPrivate)
 };

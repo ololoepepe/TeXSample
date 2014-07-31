@@ -24,6 +24,7 @@
 #define INVITEWIDGET_H
 
 class TInviteModel;
+class TNetworkClient;
 
 class BPasswordWidget;
 
@@ -49,9 +50,6 @@ class T_WIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TInviteWidget)
 public:
-    typedef TInviteWidget::DeleteInvitesFunction DeleteInvitesFunction;
-    typedef TInviteWidget::GenerateInvitesFunction GenerateInvitesFunction;
-public:
     const TAccessLevel AccessLevel;
     TInviteModel * const Model;
 public:
@@ -60,8 +58,7 @@ public:
     QAction *actGenerate;
     TServiceList availableServices;
     TGroupInfoList availableGroups;
-    DeleteInvitesFunction deleteInvitesFunction;
-    GenerateInvitesFunction generateInvitesFunction;
+    TNetworkClient *client;
     quint16 maxInviteCount;
     QTableView *view;
 public:

@@ -24,6 +24,8 @@
 
 class TDeleteInvitesReplyDataPrivate;
 
+class TIdList;
+
 class QDataStream;
 class QDebug;
 class QVariant;
@@ -46,8 +48,8 @@ public:
     TDeleteInvitesReplyData(const TDeleteInvitesReplyData &other);
     ~TDeleteInvitesReplyData();
 public:
-    quint32 count() const;
-    void setCount(quint32 count);
+    TIdList identifiers() const;
+    void setIdentifiers(const TIdList &identifiers);
 public:
     TDeleteInvitesReplyData &operator =(const TDeleteInvitesReplyData &other);
     bool operator ==(const TDeleteInvitesReplyData &other) const;

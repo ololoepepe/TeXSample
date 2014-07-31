@@ -23,6 +23,8 @@
 #ifndef TRECOVERYWIDGET_P_H
 #define TRECOVERYWIDGET_P_H
 
+class TNetworkClient;
+
 class BInputField;
 class BPasswordGroup;
 class BPasswordWidget;
@@ -45,11 +47,7 @@ class T_WIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TRecoveryWidget)
 public:
-    typedef TRecoveryWidget::RequestRecoveryCodeFunction RequestRecoveryCodeFunction;
-    typedef TRecoveryWidget::RecoverAccountFunction RecoverAccountFunction;
-public:
-    const RequestRecoveryCodeFunction RequestFunction;
-    const RecoverAccountFunction RecoverFunction;
+    TNetworkClient * const Client;
 public:
     QPushButton *btnGet;
     QPushButton *btnRecover;
@@ -63,8 +61,7 @@ public:
     BPasswordWidget *pwdwgt1;
     BPasswordWidget *pwdwgt2;
 public:
-    explicit TRecoveryWidgetPrivate(TRecoveryWidget *q, RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                                    RecoverAccountFunction recoverAccountFunction);
+    explicit TRecoveryWidgetPrivate(TRecoveryWidget *q, TNetworkClient *client);
     ~TRecoveryWidgetPrivate();
 public:
     void init();

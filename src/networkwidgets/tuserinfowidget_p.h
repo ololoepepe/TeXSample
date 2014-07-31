@@ -24,6 +24,7 @@
 #define TUSERINFOWIDGET_P_H
 
 class TListWidget;
+class TNetworkClient;
 
 class BEditGroup;
 class BInputField;
@@ -85,15 +86,11 @@ public:
     QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
-    TUserInfoWidget::ChangeEmailFunction changeEmailFunction;
-    TUserInfoWidget::ChangePasswordFunction changePasswordFunction;
-    TUserInfoWidget::CheckEmailFunction checkEmailFunction;
-    TUserInfoWidget::CheckLoginFunction checkLoginFunction;
+    TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
     bool containsAvatar;
     bool editAvatar;
     BEditGroup *edtgrpEmail;
-    TUserInfoWidget::GetUserAvatarFunction getUserAvatarFunction;
     quint64 id;
     BInputField *inputEmail1;
     BInputField *inputEmail2;

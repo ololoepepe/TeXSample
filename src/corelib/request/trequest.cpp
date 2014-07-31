@@ -90,6 +90,13 @@ TRequest::TRequest() :
     d_func()->init();
 }
 
+TRequest::TRequest(const QVariant &data) :
+    BBase(*new TRequestPrivate(this))
+{
+    d_func()->init();
+    d_func()->data = data;
+}
+
 TRequest::TRequest(const TRequest &other) :
     BBase(*new TRequestPrivate(this))
 {
