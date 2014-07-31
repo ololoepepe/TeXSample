@@ -476,7 +476,7 @@ TServiceList TUserInfoWidgetPrivate::services() const
     return list;
 }
 
-/*============================== Private slots =============================*/
+/*============================== Public slots ==============================*/
 
 void TUserInfoWidgetPrivate::changeEmail()
 {
@@ -528,7 +528,8 @@ void TUserInfoWidgetPrivate::checkChangeEmailInputs()
 {
     if (!btnChangeEmail)
         return;
-    btnChangeEmail->setEnabled(client && pwdwgtOld->hasAcceptableInput() && edtgrpEmail->textsMatchAndAcceptable());
+    btnChangeEmail->setEnabled(client && client->isAuthorized() && pwdwgtOld->hasAcceptableInput()
+                               && edtgrpEmail->textsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkChangePasswordInputs()
@@ -536,7 +537,8 @@ void TUserInfoWidgetPrivate::checkChangePasswordInputs()
     if (!btnChangePassword)
         return;
     inputPwdOld->setValid(pwdwgtOld->hasAcceptableInput());
-    btnChangePassword->setEnabled(client && pwdwgtOld->hasAcceptableInput() && pwdgrp->passwordsMatchAndAcceptable());
+    btnChangePassword->setEnabled(client && client->isAuthorized() && pwdwgtOld->hasAcceptableInput()
+                                  && pwdgrp->passwordsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkEmail()
@@ -582,11 +584,11 @@ void TUserInfoWidgetPrivate::checkInputs()
     if (inputLogin)
         inputLogin->setValid(loginValid);
     if (tbtnCheckLogin)
-        tbtnCheckLogin->setEnabled(client && ledtLogin->hasAcceptableInput());
+        tbtnCheckLogin->setEnabled(client && client->isValid(true) && ledtLogin->hasAcceptableInput());
     if (inputEmail1)
         inputEmail1->setValid(ledtEmail1->hasAcceptableInput());
     if (tbtnCheckEmail)
-        tbtnCheckEmail->setEnabled(client && ledtEmail1->hasAcceptableInput());
+        tbtnCheckEmail->setEnabled(client && client->isValid(true) && ledtEmail1->hasAcceptableInput());
     if (inputEmail2)
         inputEmail2->setValid(emailValid);
     if (inputPwd1)
@@ -760,7 +762,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setName(d->ledtName->text());
         data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setServices(d->services());
+        data.setAvailableServices(d->availableServices);
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -781,7 +783,7 @@ QVariant TUserInfoWidget::createRequestData() const
         if (d->cboxChangePassword->isChecked())
             data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setServices(d->services());
+        data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -855,12 +857,23 @@ void TUserInfoWidget::setAvailableServices(const TServiceList &services)
 
 void TUserInfoWidget::setClient(TNetworkClient *client)
 {
-    d_func()->client = client;
-    d_func()->checkChangeEmailInputs();
-    d_func()->checkChangePasswordInputs();
-    d_func()->checkInputs();
-    if (ShowMode == d_func()->Mode && !d_func()->containsAvatar)
-        d_func()->tbtnAvatar->setEnabled(client);
+    B_D(TUserInfoWidget);
+    if (d->client) {
+        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeEmailInputs()));
+        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeLoginInputs()));
+        disconnect(d->client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(checkInputs()));
+    }
+    d->client = client;
+    if (client) {
+        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeEmailInputs()));
+        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(checkChangeLoginInputs()));
+        connect(client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(checkInputs()));
+    }
+    d->checkChangeEmailInputs();
+    d->checkChangePasswordInputs();
+    d->checkInputs();
+    if (ShowMode == d->Mode && !d->containsAvatar)
+        d->tbtnAvatar->setEnabled(client);
 }
 
 void TUserInfoWidget::setInfo(const TUserInfo &info)
@@ -895,20 +908,15 @@ void TUserInfoWidget::setInfo(const TUserInfo &info)
     d->resetAvatar(info.avatar());
     if (!d->cboxServiceMap.isEmpty()) {
         foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setChecked(info.services().contains(service));
+            d->cboxServiceMap.value(service)->setChecked(info.availableServices().contains(service));
     }
     if (d->lstwgtGroups) {
         QList<TListWidget::Item> list;
-        foreach (quint64 groupId, info.groups()) {
-            foreach (const TGroupInfo &groupInfo, d->availableGroups) {
-                if (groupInfo.id() == groupId) {
-                    TListWidget::Item item;
-                    item.text = groupInfo.name();
-                    item.data = groupId;
-                    list << item;
-                    break;
-                }
-            }
+        foreach (const TGroupInfo &groupInfo, info.groups()) {
+            TListWidget::Item item;
+            item.text = groupInfo.name();
+            item.data = groupInfo.id();
+            list << item;
         }
         d->lstwgtGroups->setItems(list);
     }

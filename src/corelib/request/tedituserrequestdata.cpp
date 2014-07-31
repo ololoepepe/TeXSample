@@ -49,6 +49,7 @@ class TEditUserRequestDataPrivate : public BBasePrivate
 public:
     TAccessLevel accessLevel;
     bool active;
+    TServiceList availableServices;
     QImage avatar;
     bool editAvatar;
     bool editEmail;
@@ -59,7 +60,6 @@ public:
     QString name;
     QByteArray password;
     QString patronymic;
-    TServiceList services;
     QString surname;
 public:
     explicit TEditUserRequestDataPrivate(TEditUserRequestData *q);
@@ -133,6 +133,11 @@ bool TEditUserRequestData::active() const
     return d_func()->active;
 }
 
+TServiceList TEditUserRequestData::availableServices() const
+{
+    return d_func()->availableServices;
+}
+
 QImage TEditUserRequestData::avatar() const
 {
     return d_func()->avatar;
@@ -143,6 +148,7 @@ void TEditUserRequestData::clear()
     B_D(TEditUserRequestData);
     d->accessLevel = TAccessLevel();
     d->active = true;
+    d->availableServices.clear();
     d->avatar = QImage();
     d->editAvatar = false;
     d->editEmail = false;
@@ -153,7 +159,6 @@ void TEditUserRequestData::clear()
     d->name.clear();
     d->password.clear();
     d->patronymic.clear();
-    d->services.clear();
     d->surname.clear();
 }
 
@@ -209,11 +214,6 @@ QString TEditUserRequestData::patronymic() const
     return d_func()->patronymic;
 }
 
-TServiceList TEditUserRequestData::services() const
-{
-    return d_func()->services;
-}
-
 void TEditUserRequestData::setAccesslevel(const TAccessLevel &accessLevel)
 {
     d_func()->accessLevel = accessLevel;
@@ -222,6 +222,13 @@ void TEditUserRequestData::setAccesslevel(const TAccessLevel &accessLevel)
 void TEditUserRequestData::setActive(bool active)
 {
     d_func()->active = active;
+}
+
+void TEditUserRequestData::setAvailableServices(const TServiceList &services)
+{
+    B_D(TEditUserRequestData);
+    d->availableServices = services;
+    bRemoveDuplicates(d->availableServices);
 }
 
 void TEditUserRequestData::setAvatar(const QImage &avatar)
@@ -278,13 +285,6 @@ void TEditUserRequestData::setPatronymic(const QString &patronymic)
     d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
 }
 
-void TEditUserRequestData::setServices(const TServiceList &services)
-{
-    B_D(TEditUserRequestData);
-    d->services = services;
-    bRemoveDuplicates(d->services);
-}
-
 void TEditUserRequestData::setSurname(const QString &surname)
 {
     d_func()->surname = Texsample::testName(surname) ? surname : QString();
@@ -303,6 +303,7 @@ TEditUserRequestData &TEditUserRequestData::operator =(const TEditUserRequestDat
     const TEditUserRequestDataPrivate *dd = other.d_func();
     d->accessLevel = dd->accessLevel;
     d->active = dd->active;
+    d->availableServices = dd->availableServices;
     d->avatar = dd->avatar;
     d->editAvatar = dd->editAvatar;
     d->editEmail = dd->editEmail;
@@ -313,7 +314,6 @@ TEditUserRequestData &TEditUserRequestData::operator =(const TEditUserRequestDat
     d->name = dd->name;
     d->password = dd->password;
     d->patronymic = dd->patronymic;
-    d->services = dd->services;
     d->surname = dd->surname;
     return *this;
 }
@@ -322,11 +322,12 @@ bool TEditUserRequestData::operator ==(const TEditUserRequestData &other) const
 {
     const B_D(TEditUserRequestData);
     const TEditUserRequestDataPrivate *dd = other.d_func();
-    return d->accessLevel == dd->accessLevel && d->active == dd->active && d->avatar == dd->avatar
+    return d->accessLevel == dd->accessLevel && d->active == dd->active
+            && d->availableServices == dd->availableServices && d->avatar == dd->avatar
             && d->editAvatar == dd->editAvatar && d->editEmail == dd->editEmail
             && d->editPassword == dd->editPassword && d->email == dd->email && d->groups == dd->groups
             && d->identifier == dd->identifier && d->name == dd->name && d->password == dd->password
-            && d->patronymic == dd->patronymic && d->services == dd->services && d->surname == dd->surname;
+            && d->patronymic == dd->patronymic && d->surname == dd->surname;
 }
 
 bool TEditUserRequestData::operator !=(const TEditUserRequestData &other) const
@@ -347,6 +348,7 @@ QDataStream &operator <<(QDataStream &stream, const TEditUserRequestData &data)
     QVariantMap m;
     m.insert("access_level", d->accessLevel);
     m.insert("active", d->active);
+    m.insert("available_services", d->availableServices);
     if (d->editAvatar)
         m.insert("avatar", d->avatar);
     m.insert("edit_avatar", d->editAvatar);
@@ -360,7 +362,6 @@ QDataStream &operator <<(QDataStream &stream, const TEditUserRequestData &data)
     if (d->editPassword)
         m.insert("password", d->password);
     m.insert("patronymic", d->patronymic);
-    m.insert("services", d->services);
     m.insert("surname", d->surname);
     stream << m;
     return stream;
@@ -373,6 +374,7 @@ QDataStream &operator >>(QDataStream &stream, TEditUserRequestData &data)
     stream >> m;
     d->accessLevel = m.value("access_level").value<TAccessLevel>();
     d->active = m.value("active", true).toBool();
+    d->availableServices = m.value("available_services").value<TServiceList>();
     d->avatar = m.value("avatar").value<QImage>();
     d->editAvatar = m.value("edit_avatar").toBool();
     d->editEmail = m.value("edit_email").toBool();
@@ -383,7 +385,6 @@ QDataStream &operator >>(QDataStream &stream, TEditUserRequestData &data)
     d->name = m.value("name").toString();
     d->password = m.value("password").toByteArray();
     d->patronymic = m.value("patronymic").toString();
-    d->services = m.value("services").value<TServiceList>();
     d->surname = m.value("surname").toString();
     return stream;
 }

@@ -1,6 +1,7 @@
 #ifndef TSMP_TEXSAMPLENETWORKWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLENETWORKWIDGETS_MODULE_H
 
+#include "tgroupwidget.h"
 #include "tinvitewidget.h"
 #include "trecoverywidget.h"
 #include "tuserinfowidget.h"

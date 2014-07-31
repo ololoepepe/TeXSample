@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -23,6 +24,7 @@
 #define IGROUPWIDGET_H
 
 class TGroupModel;
+class TNetworkClient;
 
 class BPasswordWidget;
 
@@ -44,18 +46,12 @@ class T_WIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TGroupWidget)
 public:
-    typedef TGroupWidget::AddGroupFunction AddGroupFunction;
-    typedef TGroupWidget::DeleteGroupFunction DeleteGroupFunction;
-    typedef TGroupWidget::EditGroupFunction EditGroupFunction;
-public:
     TGroupModel * const Model;
 public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
-    AddGroupFunction addGroupFunction;
-    DeleteGroupFunction deleteGroupFunction;
-    EditGroupFunction editGroupFunction;
+    TNetworkClient *client;
     QTableView *view;
 public:
     explicit TGroupWidgetPrivate(TGroupWidget *q, TGroupModel *model);
@@ -64,6 +60,7 @@ public:
     void init();
 public Q_SLOTS:
     void addGroup();
+    void clientAuthorizedChanged(bool authorized);
     void deleteGroup();
     void editGroup(const QModelIndex &index);
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);

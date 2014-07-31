@@ -260,41 +260,6 @@ bool TNetworkClient::canDisconnect() const
     return (ConnectingState == d->state || ConnectedState == d->state || AuthorizedState == d->state);
 }
 
-/*TReply TNetworkClient::changeEmail(const TChangeEmailRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::ChangeEamil, data, parentWidget);
-}
-
-TReply TNetworkClient::changePassword(const TChangePasswordRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::ChangePassword, data, parentWidget);
-}
-
-TReply TNetworkClient::checkEmail(const TCheckEmailAvailabilityRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::CheckEmailAvailability, data, parentWidget);
-}
-
-TReply TNetworkClient::checkLogin(const TCheckLoginAvailabilityRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::CheckLoginAvailability, data, parentWidget);
-}
-
-TReply TNetworkClient::deleteInvites(const TDeleteInvitesRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::DeleteInvites, data, parentWidget);
-}
-
-TReply TNetworkClient::generateInvites(const TGenerateInvitesRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::GenerateInvites, data, parentWidget);
-}
-
-TReply TNetworkClient::getUserAvatar(const TGetUserAvatarRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::GetUserAvatar, data, parentWidget);
-}*/
-
 QString TNetworkClient::hostName() const
 {
     return d_func()->hostName;
@@ -310,9 +275,10 @@ bool TNetworkClient::isConnected() const
     return (ConnectedState == d_func()->state || AuthorizedState == d_func()->state);
 }
 
-bool TNetworkClient::isValid() const
+bool TNetworkClient::isValid(bool anonymous) const
 {
-    return !d_func()->hostName.isEmpty() && !d_func()->login.isEmpty() && !d_func()->password.isEmpty();
+    return !d_func()->hostName.isEmpty()
+            && (anonymous || (!d_func()->login.isEmpty() && !d_func()->password.isEmpty()));
 }
 
 QString TNetworkClient::login() const
@@ -337,29 +303,43 @@ TReply TNetworkClient::performOperation(const QString &operation, const QVariant
     return d_func()->performOperation(d_func()->connection, operation, data, parentWidget);
 }
 
-/*TReply TNetworkClient::recoverAccount(const TRecoverAccountRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::RecoverAccount, data, parentWidget);
-}
-
-TReply TNetworkClient::requestRecoveryCode(const TRequestRecoveryCodeRequestData &data, QWidget *parentWidget)
-{
-    return d_func()->performOperation(TOperation::RequestRecoveryCode, data, parentWidget);
-}*/
-
 void TNetworkClient::setHostName(const QString &hostName)
 {
-    d_func()->hostName = hostName;
+    B_D(TNetworkClient);
+    bool b = hostName != d->hostName;
+    bool bvalid = isValid();
+    bool bvalida = isValid(true);
+    d->hostName = hostName;
+    if (b)
+        Q_EMIT hostNameChanged(hostName);
+    if (bvalid != isValid())
+        Q_EMIT validityChanged(!bvalid);
+    if (bvalida != isValid(true))
+        Q_EMIT anonymousValidityChanged(!bvalida);
 }
 
 void TNetworkClient::setLogin(const QString &login)
 {
-    d_func()->login = login;
+    B_D(TNetworkClient);
+    bool b = login != d->login;
+    bool bvalid = isValid();
+    d->login = login;
+    if (b)
+        Q_EMIT loginChanged(login);
+    if (bvalid != isValid())
+        Q_EMIT validityChanged(!bvalid);
 }
 
 void TNetworkClient::setPassword(const QByteArray &password)
 {
-    d_func()->password = password;
+    B_D(TNetworkClient);
+    bool b = password != d->password;
+    bool bvalid = isValid();
+    d->password = password;
+    if (b)
+        Q_EMIT passwordChanged(password);
+    if (bvalid != isValid())
+        Q_EMIT validityChanged(!bvalid);
 }
 
 void TNetworkClient::setShowMessageFunction(ShowMessageFunction function)

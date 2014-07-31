@@ -11,6 +11,8 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_NETWORKWIDGETS_LIB
 
 HEADERS += \
+    tgroupwidget.h \
+    tgroupwidget_p.h \
     tinvitewidget.h \
     tinvitewidget_p.h \
     trecoverywidget.h \
@@ -19,6 +21,7 @@ HEADERS += \
     tuserinfowidget_p.h
 
 SOURCES += \
+    tgroupwidget.cpp \
     tinvitewidget.cpp \
     trecoverywidget.cpp \
     tuserinfowidget.cpp

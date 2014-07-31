@@ -28,6 +28,7 @@ class TIdList;
 class TUserInfo;
 class TUserInfoList;
 
+class QImage;
 class QObject;
 class QVariant;
 
@@ -35,14 +36,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TUserModel ==================================
 ============================================================================*/
 
-class T_CORE_EXPORT TUserModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TUserModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TUserModel)
@@ -60,6 +61,8 @@ public:
     void removeUser(quint64 id);
     void removeUsers(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    void updateUser(quint64 userId, const TUserInfo &newInfo);
+    void updateUserAvatar(quint64 userId, const QImage &avatar);
 private:
     Q_DISABLE_COPY(TUserModel)
 };

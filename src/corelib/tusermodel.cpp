@@ -22,7 +22,9 @@
 #include "tusermodel.h"
 
 #include "taccesslevel.h"
+#include "tgroupinfolist.h"
 #include "tidlist.h"
+#include "tservicelist.h"
 #include "tuserinfo.h"
 #include "tuserinfolist.h"
 
@@ -30,7 +32,9 @@
 #include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
+#include <QDateTime>
+#include <QImage>
 #include <QMap>
 #include <QModelIndex>
 #include <QObject>
@@ -51,6 +55,7 @@ public:
     explicit TUserModelPrivate(TUserModel *q);
     ~TUserModelPrivate();
 public:
+    int indexOf(quint64 id) const;
     void init();
 private:
     Q_DISABLE_COPY(TUserModelPrivate)
@@ -75,6 +80,17 @@ TUserModelPrivate::~TUserModelPrivate()
 
 /*============================== Public methods ============================*/
 
+int TUserModelPrivate::indexOf(quint64 id) const
+{
+    if (!id)
+        return -1;
+    foreach (int i, bRangeD(0, users.size() - 1)) {
+        if (users.at(i).id() == id)
+            return i;
+    }
+    return -1;
+}
+
 void TUserModelPrivate::init()
 {
     //
@@ -87,7 +103,7 @@ void TUserModelPrivate::init()
 /*============================== Public constructors =======================*/
 
 TUserModel::TUserModel(QObject *parent) :
-    QAbstractListModel(parent), BBase(*new TUserModelPrivate(this))
+    QAbstractTableModel(parent), BBase(*new TUserModelPrivate(this))
 {
     d_func()->init();
 }
@@ -130,27 +146,47 @@ void TUserModel::addUsers(const TUserInfoList &userList)
 
 int TUserModel::columnCount(const QModelIndex &) const
 {
-    return 3;
+    return 15;
 }
 
 QVariant TUserModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 2)
+    if (!index.isValid() || index.column() > 14 || Qt::DisplayRole != role)
         return QVariant();
     const TUserInfo *info = userInfoAt(index.row());
     if (!info)
         return QVariant();
-    if (Qt::ToolTipRole == role)
-        return info->accessLevel().toString() + ", "
-                + (info->active() ? tr("active", "data") : tr("inactive", "data"));
     switch (index.column()) {
     case 0:
         return info->id();
     case 1:
         return info->login();
     case 2:
-        return info->name() + (!info->patronymic().isEmpty() ? (" " + info->patronymic()) : QString())
-                + (!info->surname().isEmpty() ? (" " + info->surname()) : QString());
+        return info->email();
+    case 3:
+        return info->active();
+    case 4:
+        return info->accessLevel();
+    case 5:
+        return info->name();
+    case 6:
+        return info->patronymic();
+    case 7:
+        return info->surname();
+    case 8:
+        return info->availableServices();
+    case 9:
+        return info->groups();
+    case 10:
+        return info->availableGroups();
+    case 11:
+        return info->containsAvatar();
+    case 12:
+        return info->avatar();
+    case 13:
+        return info->registrationDateTime();
+    case 14:
+        return info->lastModificationDateTime();
     default:
         return QVariant();
     }
@@ -166,7 +202,31 @@ QVariant TUserModel::headerData(int section, Qt::Orientation orientation, int ro
     case 1:
         return tr("Login", "headerData");
     case 2:
+        return tr("E-mail", "headerData");
+    case 3:
+        return tr("Active", "headerData");
+    case 4:
+        return tr("Access level", "headerData");
+    case 5:
         return tr("Name", "headerData");
+    case 6:
+        return tr("Patronymic", "headerData");
+    case 7:
+        return tr("Surname", "headerData");
+    case 8:
+        return tr("Available services", "headerData");
+    case 9:
+        return tr("Groups", "headerData");
+    case 10:
+        return tr("Available groups", "headerData");
+    case 11:
+        return tr("Avatar present", "headerData");
+    case 12:
+        return tr("Avatar", "headerData");
+    case 13:
+        return tr("Registration date", "headerData");
+    case 14:
+        return tr("Last modified", "headerData");
     default:
         return QVariant();
     }
@@ -186,8 +246,8 @@ void TUserModel::removeUser(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
         return;
-    TUserInfo *info = d_func()->map.take(id);
-    int ind = d_func()->users.indexOf(*info);
+    d_func()->map.remove(id);
+    int ind = d_func()->indexOf(id);
     beginRemoveRows(QModelIndex(), ind, ind);
     d_func()->users.removeAt(ind);
     endRemoveRows();
@@ -202,4 +262,25 @@ void TUserModel::removeUsers(const TIdList &idList)
 int TUserModel::rowCount(const QModelIndex &) const
 {
     return d_func()->users.size();
+}
+
+void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo)
+{
+    TUserInfo *info = d_func()->map.value(userId);
+    if (!info)
+        return;
+    int row = d_func()->indexOf(userId);
+    *info = newInfo;
+    emit dataChanged(index(row, 0), index(row, 14));
+}
+
+void TUserModel::updateUserAvatar(quint64 userId, const QImage &avatar)
+{
+    TUserInfo *info = d_func()->map.value(userId);
+    if (!info)
+        return;
+    info->setContainsAvatar(true);
+    info->setAvatar(avatar);
+    int row = d_func()->indexOf(userId);
+    emit dataChanged(index(row, 11), index(row, 12));
 }

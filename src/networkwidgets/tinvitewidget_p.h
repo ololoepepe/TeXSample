@@ -35,10 +35,6 @@ class QTableView;
 
 #include "tinvitewidget.h"
 
-#include <TeXSampleCore/TAccessLevel>
-#include <TeXSampleCore/TGroupInfoList>
-#include <TeXSampleCore/TServiceList>
-
 #include <BeQtCore/private/bbaseobject_p.h>
 
 /*============================================================================
@@ -50,23 +46,21 @@ class T_WIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TInviteWidget)
 public:
-    const TAccessLevel AccessLevel;
     TInviteModel * const Model;
 public:
     QAction *actCopy;
     QAction *actDelete;
     QAction *actGenerate;
-    TServiceList availableServices;
-    TGroupInfoList availableGroups;
     TNetworkClient *client;
     quint16 maxInviteCount;
     QTableView *view;
 public:
-    explicit TInviteWidgetPrivate(TInviteWidget *q, TInviteModel *model, const TAccessLevel &accessLevel);
+    explicit TInviteWidgetPrivate(TInviteWidget *q, TInviteModel *model);
     ~TInviteWidgetPrivate();
 public:
     void init();
 public Q_SLOTS:
+    void clientAthorizedChanged(bool authorized);
     void copyInvites();
     void deleteInvites();
     void generateInvites();

@@ -67,6 +67,7 @@ public:
     void init();
 public Q_SLOTS:
     void checkInputs();
+    void clientAnonymousValidityChanged(bool valid);
     void getCode();
     void recoverAccount();
 };

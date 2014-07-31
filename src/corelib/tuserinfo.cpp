@@ -22,7 +22,7 @@
 #include "tuserinfo.h"
 
 #include "taccesslevel.h"
-#include "tidlist.h"
+#include "tgroupinfolist.h"
 #include "tnamespace.h"
 #include "tservicelist.h"
 
@@ -47,17 +47,18 @@ class TUserInfoPrivate : public BBasePrivate
 public:
     TAccessLevel accessLevel;
     bool active;
+    TGroupInfoList availableGroups;
+    TServiceList availableServices;
     QImage avatar;
     bool containsAvatar;
     QString email;
-    TIdList groups;
+    TGroupInfoList groups;
     quint64 id;
     QDateTime lastModificationDateTime;
     QString login;
     QString name;
     QString patronymic;
     QDateTime registrationDateTime;
-    TServiceList services;
     QString surname;
 public:
     explicit TUserInfoPrivate(TUserInfo *q);
@@ -132,6 +133,16 @@ bool TUserInfo::active() const
     return d_func()->active;
 }
 
+TGroupInfoList TUserInfo::availableGroups() const
+{
+    return d_func()->availableGroups;
+}
+
+TServiceList TUserInfo::availableServices() const
+{
+    return d_func()->availableServices;
+}
+
 QImage TUserInfo::avatar() const
 {
     return d_func()->avatar;
@@ -147,6 +158,8 @@ void TUserInfo::clear()
     B_D(TUserInfo);
     d->accessLevel = TAccessLevel();
     d->active = true;
+    d->availableGroups.clear();
+    d->availableServices.clear();
     d->avatar = QImage();
     d->containsAvatar = false;
     d->email.clear();
@@ -156,7 +169,6 @@ void TUserInfo::clear()
     d->name.clear();
     d->patronymic.clear();
     d->registrationDateTime = QDateTime().toUTC();
-    d->services.clear();
     d->surname.clear();
 }
 
@@ -165,7 +177,7 @@ QString TUserInfo::email() const
     return d_func()->email;
 }
 
-TIdList TUserInfo::groups() const
+TGroupInfoList TUserInfo::groups() const
 {
     return d_func()->groups;
 }
@@ -206,11 +218,6 @@ QDateTime TUserInfo::registrationDateTime() const
     return d_func()->registrationDateTime;
 }
 
-TServiceList TUserInfo::services() const
-{
-    return d_func()->services;
-}
-
 void TUserInfo::setAccessLevel(const TAccessLevel &lvl)
 {
     d_func()->accessLevel = lvl;
@@ -219,6 +226,19 @@ void TUserInfo::setAccessLevel(const TAccessLevel &lvl)
 void TUserInfo::setActive(bool active)
 {
     d_func()->active = active;
+}
+
+void TUserInfo::setAvailableGroups(const TGroupInfoList &groups)
+{
+    d_func()->availableGroups = groups;
+    bRemoveDuplicates(d_func()->availableGroups);
+}
+
+void TUserInfo::setAvailableServices(const TServiceList &services)
+{
+    B_D(TUserInfo);
+    d->availableServices = services;
+    bRemoveDuplicates(d->availableServices);
 }
 
 void TUserInfo::setAvatar(const QImage &avatar)
@@ -237,11 +257,10 @@ void TUserInfo::setEmail(const QString &email)
     d_func()->email = Texsample::testEmail(email) ? email : QString();
 }
 
-void TUserInfo::setGroups(const TIdList &groups)
+void TUserInfo::setGroups(const TGroupInfoList &groups)
 {
     B_D(TUserInfo);
     d->groups = groups;
-    d->groups.removeAll(0);
     bRemoveDuplicates(d->groups);
 }
 
@@ -275,13 +294,6 @@ void TUserInfo::setRegistrationDateTime(const QDateTime &dt)
     d_func()->registrationDateTime = dt.toUTC();
 }
 
-void TUserInfo::setServices(const TServiceList &services)
-{
-    B_D(TUserInfo);
-    d->services = services;
-    bRemoveDuplicates(d->services);
-}
-
 void TUserInfo::setSurname(const QString &surname)
 {
     d_func()->surname = Texsample::testName(surname) ? surname : QString();
@@ -300,6 +312,8 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     const TUserInfoPrivate *dd = other.d_func();
     d->accessLevel = dd->accessLevel;
     d->active = dd->active;
+    d->availableGroups = dd->availableGroups;
+    d->availableServices = dd->availableServices;
     d->avatar = dd->avatar;
     d->containsAvatar = dd->containsAvatar;
     d->email = dd->email;
@@ -310,7 +324,6 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     d->name = dd->name;
     d->patronymic = dd->patronymic;
     d->registrationDateTime = dd->registrationDateTime;
-    d->services = dd->services;
     d->surname = dd->surname;
     return *this;
 }
@@ -319,12 +332,12 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
 {
     const B_D(TUserInfo);
     const TUserInfoPrivate *dd = other.d_func();
-    return d->accessLevel == dd->accessLevel && d->active == dd->active && d->avatar == dd->avatar
+    return d->accessLevel == dd->accessLevel && d->active == dd->active && d->availableGroups == dd->availableGroups
+            && d->availableServices == dd->availableServices && d->avatar == dd->avatar
             && d->containsAvatar == dd->containsAvatar && d->email == dd->email && d->groups == dd->groups
             && d->id == dd->id && d->lastModificationDateTime == dd->lastModificationDateTime && d->login == dd->login
             && d->name == dd->name && d->patronymic == dd->patronymic
-            && d->registrationDateTime == dd->registrationDateTime && d->services == dd->services
-            && d->surname == dd->surname;
+            && d->registrationDateTime == dd->registrationDateTime && d->surname == dd->surname;
 }
 
 bool TUserInfo::operator !=(const TUserInfo &other) const
@@ -345,6 +358,8 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     QVariantMap m;
     m.insert("access_level", d->accessLevel);
     m.insert("active", d->active);
+    m.insert("available_groups", d->availableGroups);
+    m.insert("available_services", d->availableServices);
     m.insert("avatar", d->avatar);
     m.insert("contains_avatar", d->containsAvatar);
     m.insert("email", d->email);
@@ -355,7 +370,6 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     m.insert("name", d->name);
     m.insert("patronymic", d->patronymic);
     m.insert("registration_date_time", d->registrationDateTime);
-    m.insert("services", d->services);
     m.insert("surname", d->surname);
     stream << m;
     return stream;
@@ -368,17 +382,18 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     stream >> m;
     d->accessLevel = m.value("access_level").value<TAccessLevel>();
     d->active = m.value("active", true).toBool();
+    d->availableGroups = m.value("available_groups").value<TGroupInfoList>();
+    d->availableServices = m.value("available_services").value<TServiceList>();
     d->avatar = m.value("avatar").value<QImage>();
     d->containsAvatar = m.value("contains_avatar").toBool();
     d->email = m.value("email").toString();
-    d->groups = m.value("groups").value<TIdList>();
+    d->groups = m.value("groups").value<TGroupInfoList>();
     d->id = m.value("id").toULongLong();
     d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();
     d->login = m.value("login").toString();
     d->name = m.value("name").toString();
     d->patronymic = m.value("patronymic").toString();
     d->registrationDateTime = m.value("registration_date_time").toDateTime().toUTC();
-    d->services = m.value("services").value<TServiceList>();
     d->surname = m.value("surname").toString();
     return stream;
 }

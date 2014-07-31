@@ -73,6 +73,8 @@ TRecoveryWidgetPrivate::~TRecoveryWidgetPrivate()
 
 void TRecoveryWidgetPrivate::init()
 {
+    if (Client)
+        connect(Client, SIGNAL(anonymousValidityChanged(bool)), this, SLOT(checkInputs()));
     B_Q(TRecoveryWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
       QGroupBox *gbox = new QGroupBox(tr("Getting recovery code", "gbox title"));
@@ -111,6 +113,7 @@ void TRecoveryWidgetPrivate::init()
               pwdwgt1->setSavePasswordVisible(false);
               pwdwgt1->setShowPasswordVisible(false);
               pwdwgt1->setGeneratePasswordVisible(true);
+              pwdwgt1->setValidator(new QRegExpValidator(rx, this));
               connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
               inputPwd1 = new BInputField;
               inputPwd1->addWidget(pwdwgt1);
@@ -118,6 +121,7 @@ void TRecoveryWidgetPrivate::init()
             flt->addRow(tr("Password:", "lbl text"), inputPwd1);
             pwdwgt2 = new BPasswordWidget;
               pwdwgt2->setSavePasswordVisible(false);
+              pwdwgt2->setValidator(new QRegExpValidator(rx, this));
               connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
               connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
               connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
@@ -147,14 +151,14 @@ void TRecoveryWidgetPrivate::checkInputs()
     bool codeValid = ledtCode->hasAcceptableInput();
     inputEmail->setValid(emailValid);
     inputCode->setValid(codeValid);
-    btnGet->setEnabled(Client && emailValid);
+    btnGet->setEnabled(Client && Client->isValid(true) && emailValid);
     inputPwd1->setValid(pwdwgt1->hasAcceptableInput());
-    btnRecover->setEnabled(Client && codeValid && pwdgrp->passwordsMatchAndAcceptable());
+    btnRecover->setEnabled(Client && Client->isValid(true) && codeValid && pwdgrp->passwordsMatchAndAcceptable());
 }
 
 void TRecoveryWidgetPrivate::getCode()
 {
-    if (!Client)
+    if (!Client || !Client->isValid(true))
         return;
     static QMessageBox *msg = 0;
     if (msg)
@@ -195,7 +199,7 @@ void TRecoveryWidgetPrivate::getCode()
 
 void TRecoveryWidgetPrivate::recoverAccount()
 {
-    if (!Client)
+    if (!Client || !Client->isValid(true))
         return;
     static QMessageBox *msg = 0;
     if (msg)

@@ -35,14 +35,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TGroupModel =================================
 ============================================================================*/
 
-class T_CORE_EXPORT TGroupModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TGroupModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TGroupModel)
@@ -60,6 +60,7 @@ public:
     void removeGroup(quint64 id);
     void removeGroups(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
 private:
     Q_DISABLE_COPY(TGroupModel)
 };

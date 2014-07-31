@@ -2,7 +2,6 @@
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
 #include "tapplication.h"
-#include "tgroupwidget.h"
 #include "tlistwidget.h"
 #include "ttagswidget.h"
 

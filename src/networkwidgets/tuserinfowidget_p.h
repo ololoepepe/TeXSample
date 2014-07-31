@@ -141,7 +141,7 @@ public:
     TIdList groups() const;
     void init();
     TServiceList services() const;
-private Q_SLOTS:
+public Q_SLOTS:
     void changeEmail();
     void changePassword();
     void checkChangeEmailInputs();

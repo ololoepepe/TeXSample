@@ -29,7 +29,8 @@
 #include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
+#include <QDateTime>
 #include <QMap>
 #include <QModelIndex>
 #include <QObject>
@@ -50,6 +51,7 @@ public:
     explicit TGroupModelPrivate(TGroupModel *q);
     ~TGroupModelPrivate();
 public:
+    int indexOf(quint64 id) const;
     void init();
 private:
     Q_DISABLE_COPY(TGroupModelPrivate)
@@ -74,6 +76,17 @@ TGroupModelPrivate::~TGroupModelPrivate()
 
 /*============================== Public methods ============================*/
 
+int TGroupModelPrivate::indexOf(quint64 id) const
+{
+    if (!id)
+        return -1;
+    foreach (int i, bRangeD(0, groups.size() - 1)) {
+        if (groups.at(i).id() == id)
+            return i;
+    }
+    return -1;
+}
+
 void TGroupModelPrivate::init()
 {
     //
@@ -86,7 +99,7 @@ void TGroupModelPrivate::init()
 /*============================== Public constructors =======================*/
 
 TGroupModel::TGroupModel(QObject *parent) :
-    QAbstractListModel(parent), BBase(*new TGroupModelPrivate(this))
+    QAbstractTableModel(parent), BBase(*new TGroupModelPrivate(this))
 {
     d_func()->init();
 }
@@ -129,23 +142,29 @@ void TGroupModel::addGroups(const TGroupInfoList &groupList)
 
 int TGroupModel::columnCount(const QModelIndex &) const
 {
-    return 2;
+    return 6;
 }
 
 QVariant TGroupModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
+    if (!index.isValid() || index.column() > 5 || Qt::DisplayRole != role)
         return QVariant();
     const TGroupInfo *info = groupInfoAt(index.row());
     if (!info)
         return QVariant();
-    if (Qt::ToolTipRole == role)
-        return info->name() + " [" + info->ownerLogin() + "]";
     switch (index.column()) {
     case 0:
         return info->id();
     case 1:
         return info->name();
+    case 2:
+        return info->ownerId();
+    case 3:
+        return info->ownerLogin();
+    case 4:
+        return info->creationDateTime();
+    case 5:
+        return info->lastModificationDateTime();
     default:
         return QVariant();
     }
@@ -160,6 +179,14 @@ QVariant TGroupModel::headerData(int section, Qt::Orientation orientation, int r
         return tr("ID", "headerData");
     case 1:
         return tr("Name", "headerData");
+    case 2:
+        return tr("Owner ID", "headerData");
+    case 3:
+        return tr("Owner login", "headerData");
+    case 4:
+        return tr("Creation date", "headerData");
+    case 5:
+        return tr("Last modified", "headerData");
     default:
         return QVariant();
     }
@@ -179,8 +206,8 @@ void TGroupModel::removeGroup(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
         return;
-    TGroupInfo *info = d_func()->map.take(id);
-    int ind = d_func()->groups.indexOf(*info);
+    d_func()->map.remove(id);
+    int ind = d_func()->indexOf(id);
     beginRemoveRows(QModelIndex(), ind, ind);
     d_func()->groups.removeAt(ind);
     endRemoveRows();
@@ -195,4 +222,16 @@ void TGroupModel::removeGroups(const TIdList &idList)
 int TGroupModel::rowCount(const QModelIndex &) const
 {
     return d_func()->groups.size();
+}
+
+void TGroupModel::updateGroup(quint64 groupId, const TGroupInfo &newInfo)
+{
+    if (!groupId)
+        return;
+    TGroupInfo *info = d_func()->map.value(groupId);
+    if (!info)
+        return;
+    int row = d_func()->indexOf(groupId);
+    *info = newInfo;
+    emit dataChanged(index(row, 0), index(row, 5));
 }

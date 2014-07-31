@@ -1,6 +1,7 @@
 === PATCH ===
 
-
+* Check client state in network widgets
+* Check client access level
 
 === MINOR ===
 

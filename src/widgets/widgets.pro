@@ -12,8 +12,6 @@ DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
     tapplication.h \
-    tgroupwidget.h \
-    tgroupwidget_p.h \
     tlistwidget_p.h \
     tlistwidget.h \
     ttagswidget.h \
@@ -21,7 +19,6 @@ HEADERS += \
 
 SOURCES += \
     tapplication.cpp \
-    tgroupwidget.cpp \
     tlistwidget.cpp \
     ttagswidget.cpp
 

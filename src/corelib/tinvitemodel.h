@@ -35,14 +35,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TInviteModel ================================
 ============================================================================*/
 
-class T_CORE_EXPORT TInviteModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TInviteModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TInviteModel)

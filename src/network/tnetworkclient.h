@@ -74,7 +74,7 @@ public:
     QString hostName() const;
     bool isAuthorized() const;
     bool isConnected() const;
-    bool isValid() const;
+    bool isValid(bool anonymous = false) const;
     QString login() const;
     QByteArray password() const;
     virtual TReply performAnonymousOperation(const QString &operation, const QVariant &data,
@@ -108,7 +108,12 @@ Q_SIGNALS:
     void canDisconnectChanged(bool canConnect);
     void canConnectChanged(bool canConnect);
     void connectedChanged(bool connected);
+    void hostNameChanged(const QString &hostName);
+    void loginChanged(const QString &login);
+    void passwordChanged(const QByteArray &password);
     void stateChanged(State s);
+    void validityChanged(bool valid);
+    void anonymousValidityChanged(bool valid);
 private:
     Q_DISABLE_COPY(TNetworkClient)
 };

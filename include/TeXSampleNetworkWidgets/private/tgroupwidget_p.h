@@ -1,0 +1,1 @@
+#include "../../../src/networkwidgets/tgroupwidget_p.h"

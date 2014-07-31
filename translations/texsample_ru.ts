@@ -115,6 +115,26 @@
         <comment>headerData</comment>
         <translation>Имя</translation>
     </message>
+    <message>
+        <source>Owner ID</source>
+        <comment>headerData</comment>
+        <translation>ID владельца</translation>
+    </message>
+    <message>
+        <source>Owner login</source>
+        <comment>headerData</comment>
+        <translation>Логин владельца</translation>
+    </message>
+    <message>
+        <source>Creation date</source>
+        <comment>headerData</comment>
+        <translation>Дата создания</translation>
+    </message>
+    <message>
+        <source>Last modified</source>
+        <comment>headerData</comment>
+        <translation>Последнее изменение</translation>
+    </message>
 </context>
 <context>
     <name>TGroupWidgetPrivate</name>
@@ -190,6 +210,36 @@
         <source>Expiration date</source>
         <comment>headerData</comment>
         <translation>Действует до</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <comment>headerData</comment>
+        <translation>Код</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>headerData</comment>
+        <translation>Сервисы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>headerData</comment>
+        <translation>Группы</translation>
+    </message>
+    <message>
+        <source>Owner ID</source>
+        <comment>headerData</comment>
+        <translation>ID владельца</translation>
+    </message>
+    <message>
+        <source>Owner login</source>
+        <comment>headerData</comment>
+        <translation>Логин владельца</translation>
+    </message>
+    <message>
+        <source>Creation date</source>
+        <comment>headerData</comment>
+        <translation>Дата создания</translation>
     </message>
 </context>
 <context>
@@ -794,16 +844,6 @@
 <context>
     <name>TUserModel</name>
     <message>
-        <source>active</source>
-        <comment>data</comment>
-        <translation>активен</translation>
-    </message>
-    <message>
-        <source>inactive</source>
-        <comment>data</comment>
-        <translation>неактивен</translation>
-    </message>
-    <message>
         <source>ID</source>
         <comment>headerData</comment>
         <translation>ID</translation>
@@ -817,6 +857,66 @@
         <source>Name</source>
         <comment>headerData</comment>
         <translation>Имя</translation>
+    </message>
+    <message>
+        <source>E-mail</source>
+        <comment>headerData</comment>
+        <translation>Эл. почта</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <comment>headerData</comment>
+        <translation>Активен</translation>
+    </message>
+    <message>
+        <source>Access level</source>
+        <comment>headerData</comment>
+        <translation>Уровень доступа</translation>
+    </message>
+    <message>
+        <source>Patronymic</source>
+        <comment>headerData</comment>
+        <translation>Отчество</translation>
+    </message>
+    <message>
+        <source>Surname</source>
+        <comment>headerData</comment>
+        <translation>Фамилия</translation>
+    </message>
+    <message>
+        <source>Available services</source>
+        <comment>headerData</comment>
+        <translation>Доступные сервисы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>headerData</comment>
+        <translation>Группы</translation>
+    </message>
+    <message>
+        <source>Available groups</source>
+        <comment>headerData</comment>
+        <translation>Доступные группы</translation>
+    </message>
+    <message>
+        <source>Avatar</source>
+        <comment>headerData</comment>
+        <translation>Аватар</translation>
+    </message>
+    <message>
+        <source>Registration date</source>
+        <comment>headerData</comment>
+        <translation>Дата регистрации</translation>
+    </message>
+    <message>
+        <source>Last modified</source>
+        <comment>headerData</comment>
+        <translation>Последнее изменение</translation>
+    </message>
+    <message>
+        <source>Avatar present</source>
+        <comment>headerData</comment>
+        <translation>Аватар присутствует</translation>
     </message>
 </context>
 <context>
