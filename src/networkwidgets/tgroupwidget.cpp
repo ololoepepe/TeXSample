@@ -50,24 +50,62 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QSortFilterProxyModel>
 #include <QString>
 #include <QTableView>
 #include <QToolBar>
+#include <QVariant>
 #include <QVBoxLayout>
 
-/*if (Qt::ToolTipRole == role)
-    return info->name() + " [" + info->ownerLogin() + "]";
-switch (index.column()) {
-case 0:
-    return info->id();
-case 1:
-    return info->name();
-default:
-    return QVariant();
-}*/
+/*============================================================================
+================================ TGroupProxyModel ============================
+============================================================================*/
 
-//if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
-//    return QVariant();
+/*============================== Public constructors =======================*/
+
+TGroupProxyModel::TGroupProxyModel(QObject *parent) :
+    QSortFilterProxyModel(parent)
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+int TGroupProxyModel::columnCount(const QModelIndex &) const
+{
+    return 1;
+}
+
+QVariant TGroupProxyModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
+        return QVariant();
+    if (Qt::ToolTipRole == role) {
+        QModelIndex ind = sourceModel()->index(index.row(), 1);
+        QString name = sourceModel()->data(ind).toString();
+        ind = sourceModel()->index(index.row(), 3);
+        QString ownerLogin = sourceModel()->data(ind).toString();
+        return name + " [" + ownerLogin + "]";
+    }
+    switch (index.column()) {
+    case 0:
+        return sourceModel()->data(sourceModel()->index(index.row(), 0)); //Name
+    default:
+        return QVariant();
+    }
+}
+
+QVariant TGroupProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (Qt::Horizontal != orientation || Qt::DisplayRole != role)
+        return QVariant();
+    switch (section) {
+    case 0:
+        return tr("Name", "headerData");
+    default:
+        return QVariant();
+    }
+}
 
 /*============================================================================
 ================================ TGroupWidgetPrivate =========================
@@ -91,6 +129,8 @@ TGroupWidgetPrivate::~TGroupWidgetPrivate()
 void TGroupWidgetPrivate::init()
 {
     client = 0;
+    proxyModel = new TGroupProxyModel(this);
+    proxyModel->setSourceModel(Model);
     B_Q(TGroupWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
       view = new QTableView;
@@ -101,7 +141,7 @@ void TGroupWidgetPrivate::init()
         view->horizontalHeader()->setStretchLastSection(true);
         view->verticalHeader()->setVisible(false);
         view->setContextMenuPolicy(Qt::NoContextMenu);
-        view->setModel(Model);
+        view->setModel(proxyModel);
         connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(editGroup(QModelIndex)));
         connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
@@ -166,7 +206,7 @@ void TGroupWidgetPrivate::deleteGroup()
 {
     if (!client || !client->isAuthorized())
         return;
-    QModelIndex index = view->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(view->selectionModel()->currentIndex());
     if (!index.isValid())
         return;
     const TGroupInfo *info = Model->groupInfoAt(index.row());
@@ -195,7 +235,7 @@ void TGroupWidgetPrivate::editGroup(const QModelIndex &index)
         return;
     if (!index.isValid())
         return;
-    const TGroupInfo *info = Model->groupInfoAt(index.row());
+    const TGroupInfo *info = Model->groupInfoAt(proxyModel->mapToSource(index).row());
     if (!info)
         return;
     BDialog dlg(q_func());
@@ -233,7 +273,7 @@ void TGroupWidgetPrivate::editGroup(const QModelIndex &index)
 void TGroupWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
     bool b = !selected.isEmpty() && !selected.first().indexes().isEmpty();
-    QModelIndex ind = selected.first().indexes().first();
+    QModelIndex ind = b ? proxyModel->mapToSource(selected.first().indexes().first()) : QModelIndex();
     b = b && ind.isValid();
     b = b && client && client->isAuthorized();
     b = b && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel);

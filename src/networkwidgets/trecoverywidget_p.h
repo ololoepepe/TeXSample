@@ -42,7 +42,7 @@ class QPushButton;
 ================================ TRecoveryWidgetPrivate ======================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TRecoveryWidget)

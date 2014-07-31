@@ -64,6 +64,7 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QSortFilterProxyModel>
 #include <QSpinBox>
 #include <QString>
 #include <QTableView>
@@ -74,39 +75,56 @@
 
 #include <climits>
 
-/*QVariant TInviteModel::data(const QModelIndex &index, int role) const
+/*============================================================================
+================================ TInviteProxyModel ===========================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TInviteProxyModel::TInviteProxyModel(QObject *parent) :
+    QSortFilterProxyModel(parent)
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+int TInviteProxyModel::columnCount(const QModelIndex &) const
+{
+    return 1;
+}
+
+QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
-    const TInviteInfo *info = inviteInfoAt(index.row());
-    if (!info)
-        return QVariant();
-    if (Qt::ToolTipRole == role)
-        return BeQt::pureUuidText(info->code()) + " [" + info->ownerLogin() + "]";
+    if (Qt::ToolTipRole == role) {
+        QModelIndex ind = sourceModel()->index(index.row(), 1);
+        QString code = BeQt::pureUuidText(sourceModel()->data(ind).value<BUuid>());
+        ind = sourceModel()->index(index.row(), 5);
+        QString ownerLogin = sourceModel()->data(ind).toString();
+        return code + " [" + ownerLogin + "]";
+    }
     switch (index.column()) {
     case 0:
-        return info->id();
-    case 1:
-        return info->expirationDateTime().toString("dd MMMM yyyy hh:mm");
+        //Expiration date
+        return sourceModel()->data(sourceModel()->index(index.row(), 7)).toDateTime().toString("dd MMMM yyyy hh:mm");
     default:
         return QVariant();
     }
 }
 
-QVariant TInviteModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TInviteProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (Qt::Horizontal != orientation || Qt::DisplayRole != role)
         return QVariant();
     switch (section) {
     case 0:
-        return tr("ID", "headerData");
-    case 1:
         return tr("Expiration date", "headerData");
     default:
         return QVariant();
     }
 }
-  */
 
 /*============================================================================
 ================================ TInviteWidgetPrivate ========================
@@ -131,6 +149,8 @@ void TInviteWidgetPrivate::init()
 {
     client = 0;
     maxInviteCount = 0;
+    proxyModel = new TInviteProxyModel(this);
+    proxyModel->setSourceModel(Model);
     //
     B_Q(TInviteWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
@@ -142,7 +162,7 @@ void TInviteWidgetPrivate::init()
         view->horizontalHeader()->setStretchLastSection(true);
         view->verticalHeader()->setVisible(false);
         view->setContextMenuPolicy(Qt::NoContextMenu);
-        view->setModel(Model);
+        view->setModel(proxyModel);
         connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(copyInvite(QModelIndex)));
         connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
@@ -176,7 +196,7 @@ void TInviteWidgetPrivate::copyInvites()
     foreach (const QModelIndex &index, sel->selectedRows()) {
         if (!index.isValid())
             continue;
-        const TInviteInfo *info = Model->inviteInfoAt(index.row());
+        const TInviteInfo *info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
         if (!info)
             continue;
         list << BeQt::pureUuidText(info->code());
@@ -198,7 +218,7 @@ void TInviteWidgetPrivate::deleteInvites()
     foreach (const QModelIndex &index, view->selectionModel()->selectedRows()) {
         if (!index.isValid())
             continue;
-        const TInviteInfo *info = Model->inviteInfoAt(index.row());
+        const TInviteInfo *info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
         if (!info)
             continue;
         list << info->id();

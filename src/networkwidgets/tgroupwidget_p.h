@@ -32,16 +32,34 @@ class QAction;
 class QItemSelection;
 class QModelIndex;
 class QTableView;
+class QVariant;
 
 #include "tgroupwidget.h"
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QSortFilterProxyModel>
+
+/*============================================================================
+================================ TGroupProxyModel ============================
+============================================================================*/
+
+class T_NETWORKWIDGETS_EXPORT TGroupProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    explicit TGroupProxyModel(QObject *parent);
+public:
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+};
+
 /*============================================================================
 ================================ TGroupWidgetPrivate =========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TGroupWidget)
@@ -52,6 +70,7 @@ public:
     QAction *actDelete;
     QAction *actEdit;
     TNetworkClient *client;
+    TGroupProxyModel *proxyModel;
     QTableView *view;
 public:
     explicit TGroupWidgetPrivate(TGroupWidget *q, TGroupModel *model);

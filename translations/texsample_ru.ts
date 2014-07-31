@@ -137,6 +137,14 @@
     </message>
 </context>
 <context>
+    <name>TGroupProxyModel</name>
+    <message>
+        <source>Name</source>
+        <comment>headerData</comment>
+        <translation>Имя</translation>
+    </message>
+</context>
+<context>
     <name>TGroupWidgetPrivate</name>
     <message>
         <source>Delete group</source>
@@ -240,6 +248,14 @@
         <source>Creation date</source>
         <comment>headerData</comment>
         <translation>Дата создания</translation>
+    </message>
+</context>
+<context>
+    <name>TInviteProxyModel</name>
+    <message>
+        <source>Expiration date</source>
+        <comment>headerData</comment>
+        <translation>Действует до</translation>
     </message>
 </context>
 <context>

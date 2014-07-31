@@ -44,7 +44,7 @@ class QVariant;
 ================================ TUserInfoWidget =============================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TUserInfoWidget : public QWidget, public BBaseObject
+class T_NETWORKWIDGETS_EXPORT TUserInfoWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TUserInfoWidget)

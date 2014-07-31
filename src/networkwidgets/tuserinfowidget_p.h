@@ -59,7 +59,7 @@ class QVBoxLayout;
 ================================ TUserInfoWidgetPrivate ======================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TUserInfoWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TUserInfoWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TUserInfoWidget)

@@ -38,7 +38,7 @@ class TNetworkClient;
 ================================ TGroupWidget ================================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TGroupWidget : public QWidget, public BBaseObject
+class T_NETWORKWIDGETS_EXPORT TGroupWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TGroupWidget)

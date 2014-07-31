@@ -32,16 +32,34 @@ class QAction;
 class QItemSelection;
 class QModelIndex;
 class QTableView;
+class QVariant;
 
 #include "tinvitewidget.h"
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QSortFilterProxyModel>
+
+/*============================================================================
+================================ TInviteProxyModel ===========================
+============================================================================*/
+
+class T_NETWORKWIDGETS_EXPORT TInviteProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    explicit TInviteProxyModel(QObject *parent);
+public:
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+};
+
 /*============================================================================
 ================================ TInviteWidgetPrivate ========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TInviteWidget)
@@ -53,6 +71,7 @@ public:
     QAction *actGenerate;
     TNetworkClient *client;
     quint16 maxInviteCount;
+    TInviteProxyModel *proxyModel;
     QTableView *view;
 public:
     explicit TInviteWidgetPrivate(TInviteWidget *q, TInviteModel *model);
