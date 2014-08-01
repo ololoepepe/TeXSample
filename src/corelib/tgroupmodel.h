@@ -54,9 +54,9 @@ public:
     virtual void addGroups(const TGroupInfoList &groupList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual TGroupInfo groupInfo(quint64 id) const;
+    virtual TGroupInfo groupInfoAt(int index) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual const TGroupInfo* groupInfo(quint64 id) const;
-    virtual const TGroupInfo* groupInfoAt(int index) const;
     virtual void removeGroup(quint64 id);
     virtual void removeGroups(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;

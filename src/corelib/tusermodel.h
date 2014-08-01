@@ -56,13 +56,14 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual const TUserInfo* userInfo(quint64 id) const;
-    virtual const TUserInfo* userInfoAt(int index) const;
     virtual void removeUser(quint64 id);
     virtual void removeUsers(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual void updateUser(quint64 userId, const TUserInfo &newInfo);
+    virtual void updateUser(quint64 userId, const TUserInfo &newInfo, bool updateAvatar);
     virtual void updateUserAvatar(quint64 userId, const QImage &avatar);
+    virtual quint64 userIdAt(int index) const;
+    virtual TUserInfo userInfo(quint64 id) const;
+    virtual TUserInfo userInfoAt(int index) const;
 protected:
     virtual bool avatarStoredSeparately() const;
     virtual QImage loadAvatar(quint64 userId) const;

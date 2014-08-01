@@ -149,25 +149,36 @@ QVariant TGroupModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.column() > 5 || Qt::DisplayRole != role)
         return QVariant();
-    const TGroupInfo *info = groupInfoAt(index.row());
-    if (!info)
+    TGroupInfo info = groupInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
     switch (index.column()) {
     case 0:
-        return info->id();
+        return info.id();
     case 1:
-        return info->name();
+        return info.name();
     case 2:
-        return info->ownerId();
+        return info.ownerId();
     case 3:
-        return info->ownerLogin();
+        return info.ownerLogin();
     case 4:
-        return info->creationDateTime();
+        return info.creationDateTime();
     case 5:
-        return info->lastModificationDateTime();
+        return info.lastModificationDateTime();
     default:
         return QVariant();
     }
+}
+
+TGroupInfo TGroupModel::groupInfo(quint64 id) const
+{
+    const TGroupInfo *info = id ? d_func()->map.value(id) : 0;
+    return info ? *info : TGroupInfo();
+}
+
+TGroupInfo TGroupModel::groupInfoAt(int index) const
+{
+    return (index >= 0 && index < d_func()->groups.size()) ? d_func()->groups.at(index) : TGroupInfo();
 }
 
 QVariant TGroupModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -190,16 +201,6 @@ QVariant TGroupModel::headerData(int section, Qt::Orientation orientation, int r
     default:
         return QVariant();
     }
-}
-
-const TGroupInfo* TGroupModel::groupInfo(quint64 id) const
-{
-    return id ? d_func()->map.value(id) : 0;
-}
-
-const TGroupInfo* TGroupModel::groupInfoAt(int index) const
-{
-    return (index >= 0 && index < d_func()->groups.size()) ? &d_func()->groups.at(index) : 0;
 }
 
 void TGroupModel::removeGroup(quint64 id)

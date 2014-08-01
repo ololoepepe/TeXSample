@@ -18,13 +18,16 @@ HEADERS += \
     trecoverywidget.h \
     trecoverywidget_p.h \
     tuserinfowidget.h \
-    tuserinfowidget_p.h
+    tuserinfowidget_p.h \
+    tuserwidget.h \
+    tuserwidget_p.h
 
 SOURCES += \
     tgroupwidget.cpp \
     tinvitewidget.cpp \
     trecoverywidget.cpp \
-    tuserinfowidget.cpp
+    tuserinfowidget.cpp \
+    tuserwidget.cpp
 
 !contains(TSMP_CONFIG, no_install) {
 

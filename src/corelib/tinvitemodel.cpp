@@ -152,26 +152,26 @@ QVariant TInviteModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.column() > 7 || Qt::DisplayRole != role)
         return QVariant();
-    const TInviteInfo *info = inviteInfoAt(index.row());
-    if (!info)
+    TInviteInfo info = inviteInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
     switch (index.column()) {
     case 0:
-        return info->id();
+        return info.id();
     case 1:
-        return QVariant::fromValue(info->code());
+        return info.code();
     case 2:
-        return info->services();
+        return info.services();
     case 3:
-        return info->groups();
+        return info.groups();
     case 4:
-        return info->ownerId();
+        return info.ownerId();
     case 5:
-        return info->ownerLogin();
+        return info.ownerLogin();
     case 6:
-        return info->creationDateTime();
+        return info.creationDateTime();
     case 7:
-        return info->expirationDateTime();
+        return info.expirationDateTime();
     default:
         return QVariant();
     }
@@ -203,14 +203,15 @@ QVariant TInviteModel::headerData(int section, Qt::Orientation orientation, int 
     }
 }
 
-const TInviteInfo* TInviteModel::inviteInfo(quint64 id) const
+TInviteInfo TInviteModel::inviteInfo(quint64 id) const
 {
-    return id ? d_func()->map.value(id) : 0;
+    const TInviteInfo *info = id ? d_func()->map.value(id) : 0;
+    return info ? *info : TInviteInfo();
 }
 
-const TInviteInfo* TInviteModel::inviteInfoAt(int index) const
+TInviteInfo TInviteModel::inviteInfoAt(int index) const
 {
-    return (index >= 0 && index < d_func()->invites.size()) ? &d_func()->invites.at(index) : 0;
+    return (index >= 0 && index < d_func()->invites.size()) ? d_func()->invites.at(index) : TInviteInfo();
 }
 
 void TInviteModel::removeInvite(quint64 id)

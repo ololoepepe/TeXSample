@@ -46,6 +46,7 @@
 #include <BApplication>
 #include <BDialog>
 #include <BeQt>
+#include <BGuiTools>
 #include <BUuid>
 
 #include <QAction>
@@ -99,10 +100,8 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
     if (Qt::ToolTipRole == role) {
-        QModelIndex ind = sourceModel()->index(index.row(), 1);
-        QString code = BeQt::pureUuidText(sourceModel()->data(ind).value<BUuid>());
-        ind = sourceModel()->index(index.row(), 5);
-        QString ownerLogin = sourceModel()->data(ind).toString();
+        QString code = BeQt::pureUuidText(sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>());
+        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
         return code + " [" + ownerLogin + "]";
     }
     switch (index.column()) {
@@ -120,7 +119,7 @@ QVariant TInviteProxyModel::headerData(int section, Qt::Orientation orientation,
         return QVariant();
     switch (section) {
     case 0:
-        return tr("Expiration date", "headerData");
+        return sourceModel()->headerData(7, Qt::Horizontal); //Expiration date
     default:
         return QVariant();
     }
@@ -196,10 +195,10 @@ void TInviteWidgetPrivate::copyInvites()
     foreach (const QModelIndex &index, sel->selectedRows()) {
         if (!index.isValid())
             continue;
-        const TInviteInfo *info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
-        if (!info)
+        TInviteInfo info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
+        if (!info.isValid())
             continue;
-        list << BeQt::pureUuidText(info->code());
+        list << BeQt::pureUuidText(info.code());
     }
     if (list.isEmpty())
         return;
@@ -218,10 +217,10 @@ void TInviteWidgetPrivate::deleteInvites()
     foreach (const QModelIndex &index, view->selectionModel()->selectedRows()) {
         if (!index.isValid())
             continue;
-        const TInviteInfo *info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
-        if (!info)
+        TInviteInfo info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
+        if (!info.isValid())
             continue;
-        list << info->id();
+        list << info.id();
     }
     if (list.isEmpty())
         return;
@@ -254,9 +253,9 @@ void TInviteWidgetPrivate::generateInvites()
           QFormLayout *flt = new QFormLayout;
             QComboBox *cmboxAccessLevel = new QComboBox;
               foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
-                  if (lvl > client->userInfo().accessLevel())
-                      break;
                   cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
+                  BGuiTools::setItemEnabled(cmboxAccessLevel, cmboxAccessLevel->count() - 1,
+                                            lvl > client->userInfo().accessLevel());
               }
               if (cmboxAccessLevel->count())
                 cmboxAccessLevel->setCurrentIndex(0);

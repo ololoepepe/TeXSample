@@ -20,55 +20,36 @@
 **
 ****************************************************************************/
 
-#ifndef TRECOVERYWIDGET_P_H
-#define TRECOVERYWIDGET_P_H
+#ifndef TUSERWIDGET_H
+#define TUSERWIDGET_H
+
+class TUserWidgetPrivate;
 
 class TNetworkClient;
-
-class BInputField;
-class BPasswordGroup;
-class BPasswordWidget;
-
-class QLineEdit;
-class QPushButton;
-
-#include "trecoverywidget.h"
+class TUserModel;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtCore/private/bbaseobject_p.h>
+#include <BBaseObject>
+
+#include <QWidget>
 
 /*============================================================================
-================================ TRecoveryWidgetPrivate ======================
+================================ TUserWidget =================================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TUserWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PUBLIC(TRecoveryWidget)
+    B_DECLARE_PRIVATE(TUserWidget)
 public:
-    TNetworkClient * const Client;
+    explicit TUserWidget(TUserModel *model, QWidget *parent = 0);
+    ~TUserWidget();
 public:
-    QPushButton *btnGet;
-    QPushButton *btnRecover;
-    BInputField *inputCode;
-    BInputField *inputEmail;
-    BInputField *inputPwd1;
-    BInputField *inputPwd2;
-    QLineEdit *ledtCode;
-    QLineEdit *ledtEmail;
-    BPasswordGroup *pwdgrp;
-    BPasswordWidget *pwdwgt1;
-    BPasswordWidget *pwdwgt2;
-public:
-    explicit TRecoveryWidgetPrivate(TRecoveryWidget *q, TNetworkClient *client);
-    ~TRecoveryWidgetPrivate();
-public:
-    void init();
-public Q_SLOTS:
-    void checkInputs();
-    void getCode();
-    void recoverAccount();
+    TNetworkClient *client() const;
+    void setClient(TNetworkClient *client);
+private:
+    Q_DISABLE_COPY(TUserWidget)
 };
 
-#endif // TRECOVERYWIDGET_P_H
+#endif // TUSERWIDGET_H

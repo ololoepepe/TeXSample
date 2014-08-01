@@ -137,7 +137,11 @@ void TUserModel::addUsers(const TUserInfoList &userList)
         return;
     int ind = d->users.size();
     beginInsertRows(QModelIndex(), ind, ind + list.size() - 1);
-    foreach (const TUserInfo &info, list) {
+    foreach (TUserInfo info, list) {
+        if (avatarStoredSeparately()) {
+            saveAvatar(info.id(), info.avatar());
+            info.setAvatar(QImage());
+        }
         d->users.append(info);
         d->map.insert(info.id(), &d->users.last());
     }
@@ -153,43 +157,43 @@ QVariant TUserModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.column() > 14 || Qt::DisplayRole != role)
         return QVariant();
-    const TUserInfo *info = userInfoAt(index.row());
-    if (!info)
+    TUserInfo info = userInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
     switch (index.column()) {
     case 0:
-        return info->id();
+        return info.id();
     case 1:
-        return info->login();
+        return info.login();
     case 2:
-        return info->email();
+        return info.email();
     case 3:
-        return info->active();
+        return info.active();
     case 4:
-        return info->accessLevel();
+        return info.accessLevel();
     case 5:
-        return info->name();
+        return info.name();
     case 6:
-        return info->patronymic();
+        return info.patronymic();
     case 7:
-        return info->surname();
+        return info.surname();
     case 8:
-        return info->availableServices();
+        return info.availableServices();
     case 9:
-        return info->groups();
+        return info.groups();
     case 10:
-        return info->availableGroups();
+        return info.availableGroups();
     case 11:
-        return info->containsAvatar();
+        return info.containsAvatar();
     case 12:
         if (avatarStoredSeparately())
-            return info->containsAvatar() ? loadAvatar(info->id()) : QImage();
+            return info.containsAvatar() ? loadAvatar(info.id()) : QImage();
         else
-            return info->avatar();
+            return info.avatar();
     case 13:
-        return info->registrationDateTime();
+        return info.registrationDateTime();
     case 14:
-        return info->lastModificationDateTime();
+        return info.lastModificationDateTime();
     default:
         return QVariant();
     }
@@ -235,16 +239,6 @@ QVariant TUserModel::headerData(int section, Qt::Orientation orientation, int ro
     }
 }
 
-const TUserInfo* TUserModel::userInfo(quint64 id) const
-{
-    return id ? d_func()->map.value(id) : 0;
-}
-
-const TUserInfo* TUserModel::userInfoAt(int index) const
-{
-    return (index >= 0 && index < d_func()->users.size()) ? &d_func()->users.at(index) : 0;
-}
-
 void TUserModel::removeUser(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
@@ -269,14 +263,17 @@ int TUserModel::rowCount(const QModelIndex &) const
     return d_func()->users.size();
 }
 
-void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo)
+void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo, bool updateAvatar)
 {
     TUserInfo *info = d_func()->map.value(userId);
     if (!info)
         return;
     int row = d_func()->indexOf(userId);
+    QImage avatar = info->avatar();
     *info = newInfo;
-    if (avatarStoredSeparately()) {
+    if (!updateAvatar)
+        info->setAvatar(avatar);
+    if (updateAvatar && avatarStoredSeparately()) {
         saveAvatar(userId, newInfo.avatar());
         info->setAvatar(QImage());
     }
@@ -296,6 +293,37 @@ void TUserModel::updateUserAvatar(quint64 userId, const QImage &avatar)
     }
     int row = d_func()->indexOf(userId);
     emit dataChanged(index(row, 11), index(row, 12));
+}
+
+quint64 TUserModel::userIdAt(int index) const
+{
+    if (index < 0 || index >= d_func()->users.size())
+        return 0;
+    return d_func()->users.at(index).id();
+}
+
+TUserInfo TUserModel::userInfo(quint64 id) const
+{
+    const TUserInfo *info = id ? d_func()->map.value(id) : 0;
+    if (!info)
+        return TUserInfo();
+    if (!avatarStoredSeparately())
+        return *info;
+    TUserInfo iinfo = *info;
+    iinfo.setAvatar(loadAvatar(info->id()));
+    return iinfo;
+}
+
+TUserInfo TUserModel::userInfoAt(int index) const
+{
+    if (index < 0 || index >= d_func()->users.size())
+        return TUserInfo();
+    TUserInfo info = d_func()->users.at(index);
+    if (!avatarStoredSeparately())
+        return info;
+    TUserInfo iinfo = info;
+    iinfo.setAvatar(loadAvatar(info.id()));
+    return iinfo;
 }
 
 /*============================== Protected methods =========================*/

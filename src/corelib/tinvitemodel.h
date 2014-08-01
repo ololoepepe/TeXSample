@@ -55,8 +55,8 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual const TInviteInfo* inviteInfo(quint64 id) const;
-    virtual const TInviteInfo* inviteInfoAt(int index) const;
+    virtual TInviteInfo inviteInfo(quint64 id) const;
+    virtual TInviteInfo inviteInfoAt(int index) const;
     virtual void removeInvite(quint64 id);
     virtual void removeInvites(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;

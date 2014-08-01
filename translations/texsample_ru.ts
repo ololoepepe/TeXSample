@@ -137,14 +137,6 @@
     </message>
 </context>
 <context>
-    <name>TGroupProxyModel</name>
-    <message>
-        <source>Name</source>
-        <comment>headerData</comment>
-        <translation>Имя</translation>
-    </message>
-</context>
-<context>
     <name>TGroupWidgetPrivate</name>
     <message>
         <source>Delete group</source>
@@ -248,14 +240,6 @@
         <source>Creation date</source>
         <comment>headerData</comment>
         <translation>Дата создания</translation>
-    </message>
-</context>
-<context>
-    <name>TInviteProxyModel</name>
-    <message>
-        <source>Expiration date</source>
-        <comment>headerData</comment>
-        <translation>Действует до</translation>
     </message>
 </context>
 <context>
@@ -652,11 +636,6 @@
         <translation>Сменить эл. почту:</translation>
     </message>
     <message>
-        <source>Old e-mail:</source>
-        <comment>lbl text</comment>
-        <translation>Старая эл. почта:</translation>
-    </message>
-    <message>
         <source>Check e-mail</source>
         <comment>tbtn toolTip</comment>
         <translation>Проверить адрес эл. почты</translation>
@@ -856,6 +835,16 @@
         <comment>lbl text</comment>
         <translation>Фамилия:</translation>
     </message>
+    <message>
+        <source>Avatar</source>
+        <comment>gbox title</comment>
+        <translation>Аватар</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>gbox title</comment>
+        <translation>Сервисы</translation>
+    </message>
 </context>
 <context>
     <name>TUserModel</name>
@@ -936,6 +925,64 @@
     </message>
 </context>
 <context>
+    <name>TUserWidgetPrivate</name>
+    <message>
+        <source>Add user...</source>
+        <comment>act text</comment>
+        <translation>Добавить пользователя...</translation>
+    </message>
+    <message>
+        <source>Delete user</source>
+        <comment>act text</comment>
+        <translation>Удалить пользователя</translation>
+    </message>
+    <message>
+        <source>Edit user...</source>
+        <comment>act text</comment>
+        <translation>Редактировать данные пользователя...</translation>
+    </message>
+    <message>
+        <source>Adding user</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Добавление пользователя</translation>
+    </message>
+    <message>
+        <source>Adding user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Добавление пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to add user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось добавить пользователя. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Deleting user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Удаление пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to delete user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось удалить пользователя. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Editing user</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Редактирование данных пользователя</translation>
+    </message>
+    <message>
+        <source>Editing user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Редактирование данных пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to edit user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось отредактировать данные пользователя. Произошла следующая ошибка:</translation>
+    </message>
+</context>
+<context>
     <name>Texsample</name>
     <message>
         <source>The image is too big</source>
@@ -1001,6 +1048,11 @@
         <source>The password is not a correct SHA1 hash</source>
         <comment>error</comment>
         <translation>Этот пароль не является правильным SHA1-хешем</translation>
+    </message>
+    <message>
+        <source>Unable to test avatar</source>
+        <comment>error</comment>
+        <translation>Невозможно проверить аватар</translation>
     </message>
 </context>
 </TS>

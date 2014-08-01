@@ -20,8 +20,8 @@
 **
 ****************************************************************************/
 
-#ifndef INVITEWIDGET_H
-#define INVITEWIDGET_H
+#ifndef TINVITEWIDGET_P_H
+#define TINVITEWIDGET_P_H
 
 class TInviteModel;
 class TNetworkClient;

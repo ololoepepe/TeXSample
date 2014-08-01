@@ -37,6 +37,7 @@ class BPasswordWidget;
 class QCheckBox;
 class QComboBox;
 class QFormLayout;
+class QHBoxLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -95,11 +96,11 @@ public:
     BInputField *inputPwd1;
     BInputField *inputPwd2;
     BInputField *inputPwdOld;
+    QLabel *lblEmailOld;
     QLabel *lblLastModificationDateTime;
     QLabel *lblRegistrationDateTime;
     QLineEdit *ledtEmail1;
     QLineEdit *ledtEmail2;
-    QLineEdit *ledtEmailOld;
     QLineEdit *ledtInvite;
     QLineEdit *ledtLogin;
     QLineEdit *ledtName;
@@ -124,7 +125,7 @@ public:
 public:
     void createAccessLevelField(QFormLayout *flt, bool readOnly = false);
     void createActiveField(QFormLayout *flt, bool readOnly = false);
-    void createAvatarButton(QVBoxLayout *vlt, bool readOnly = false);
+    void createAvatarButton(QHBoxLayout *hlt, bool readOnly = false);
     void createEmailGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createGroupsSection(QVBoxLayout *vlt, bool readOnly = false);
     void createInviteField(QFormLayout *flt);
@@ -133,7 +134,7 @@ public:
     void createNameFields(QFormLayout *flt, bool readOnly = false);
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
-    void createServicesSection(QVBoxLayout *vlt, bool readOnly = false);
+    void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
     TIdList groups() const;
     void init();
     TServiceList services() const;

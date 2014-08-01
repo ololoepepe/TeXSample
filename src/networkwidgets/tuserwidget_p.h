@@ -20,11 +20,11 @@
 **
 ****************************************************************************/
 
-#ifndef TGROUPWIDGET_P_H
-#define TGROUPWIDGET_P_H
+#ifndef TUSERWIDGET_P_H
+#define TUSERWIDGET_P_H
 
-class TGroupModel;
 class TNetworkClient;
+class TUserModel;
 
 class BPasswordWidget;
 
@@ -33,7 +33,7 @@ class QItemSelection;
 class QTableView;
 class QVariant;
 
-#include "tgroupwidget.h"
+#include "tuserwidget.h"
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
@@ -41,14 +41,14 @@ class QVariant;
 #include <QSortFilterProxyModel>
 
 /*============================================================================
-================================ TGroupProxyModel ============================
+================================ TUserProxyModel =============================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TGroupProxyModel : public QSortFilterProxyModel
+class T_NETWORKWIDGETS_EXPORT TUserProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit TGroupProxyModel(QObject *parent);
+    explicit TUserProxyModel(QObject *parent);
 public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -56,35 +56,35 @@ public:
 };
 
 /*============================================================================
-================================ TGroupWidgetPrivate =========================
+================================ TUserWidgetPrivate ==========================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TUserWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
-    B_DECLARE_PUBLIC(TGroupWidget)
+    B_DECLARE_PUBLIC(TUserWidget)
 public:
-    TGroupModel * const Model;
+    TUserModel * const Model;
 public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
     TNetworkClient *client;
-    TGroupProxyModel *proxyModel;
+    TUserProxyModel *proxyModel;
     QTableView *view;
 public:
-    explicit TGroupWidgetPrivate(TGroupWidget *q, TGroupModel *model);
-    ~TGroupWidgetPrivate();
+    explicit TUserWidgetPrivate(TUserWidget *q, TUserModel *model);
+    ~TUserWidgetPrivate();
 public:
     void init();
 public Q_SLOTS:
-    void addGroup();
+    void addUser();
     void clientAuthorizedChanged(bool authorized);
-    void deleteGroup();
-    void editGroup(QModelIndex index = QModelIndex());
+    void deleteUser();
+    void editUser(QModelIndex index = QModelIndex());
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 private:
-    Q_DISABLE_COPY(TGroupWidgetPrivate)
+    Q_DISABLE_COPY(TUserWidgetPrivate)
 };
 
-#endif // TGROUPWIDGET_H
+#endif // TUSERWIDGET_P_H
