@@ -51,18 +51,23 @@ public:
     explicit TUserModel(QObject *parent = 0);
     ~TUserModel();
 public:
-    void addUser(const TUserInfo &user);
-    void addUsers(const TUserInfoList &userList);
+    virtual void addUser(const TUserInfo &user);
+    virtual void addUsers(const TUserInfoList &userList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    const TUserInfo* userInfo(quint64 id) const;
-    const TUserInfo* userInfoAt(int index) const;
-    void removeUser(quint64 id);
-    void removeUsers(const TIdList &idList);
+    virtual const TUserInfo* userInfo(quint64 id) const;
+    virtual const TUserInfo* userInfoAt(int index) const;
+    virtual void removeUser(quint64 id);
+    virtual void removeUsers(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    void updateUser(quint64 userId, const TUserInfo &newInfo);
-    void updateUserAvatar(quint64 userId, const QImage &avatar);
+    virtual void updateUser(quint64 userId, const TUserInfo &newInfo);
+    virtual void updateUserAvatar(quint64 userId, const QImage &avatar);
+protected:
+    virtual bool avatarStoredSeparately() const;
+    virtual QImage loadAvatar(quint64 userId) const;
+    virtual void removeAvatar(quint64 userId);
+    virtual void saveAvatar(quint64 userId, const QImage &avatar);
 private:
     Q_DISABLE_COPY(TUserModel)
 };

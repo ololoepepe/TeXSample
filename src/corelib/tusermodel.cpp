@@ -182,7 +182,10 @@ QVariant TUserModel::data(const QModelIndex &index, int role) const
     case 11:
         return info->containsAvatar();
     case 12:
-        return info->avatar();
+        if (avatarStoredSeparately())
+            return info->containsAvatar() ? loadAvatar(info->id()) : QImage();
+        else
+            return info->avatar();
     case 13:
         return info->registrationDateTime();
     case 14:
@@ -250,6 +253,8 @@ void TUserModel::removeUser(quint64 id)
     int ind = d_func()->indexOf(id);
     beginRemoveRows(QModelIndex(), ind, ind);
     d_func()->users.removeAt(ind);
+    if (avatarStoredSeparately())
+        removeAvatar(id);
     endRemoveRows();
 }
 
@@ -271,6 +276,10 @@ void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo)
         return;
     int row = d_func()->indexOf(userId);
     *info = newInfo;
+    if (avatarStoredSeparately()) {
+        saveAvatar(userId, newInfo.avatar());
+        info->setAvatar(QImage());
+    }
     emit dataChanged(index(row, 0), index(row, 14));
 }
 
@@ -280,7 +289,33 @@ void TUserModel::updateUserAvatar(quint64 userId, const QImage &avatar)
     if (!info)
         return;
     info->setContainsAvatar(true);
-    info->setAvatar(avatar);
+    if (avatarStoredSeparately()) {
+        saveAvatar(userId, avatar);
+    } else {
+        info->setAvatar(avatar);
+    }
     int row = d_func()->indexOf(userId);
     emit dataChanged(index(row, 11), index(row, 12));
+}
+
+/*============================== Protected methods =========================*/
+
+bool TUserModel::avatarStoredSeparately() const
+{
+    return false;
+}
+
+QImage TUserModel::loadAvatar(quint64) const
+{
+    return QImage();
+}
+
+void TUserModel::removeAvatar(quint64)
+{
+    //
+}
+
+void TUserModel::saveAvatar(quint64, const QImage &)
+{
+    //
 }

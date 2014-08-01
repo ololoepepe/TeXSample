@@ -27,6 +27,7 @@ class TIdList;
 class TListWidget;
 class TNetworkClient;
 class TServiceList;
+class TUserModel;
 
 class BEditGroup;
 class BInputField;
@@ -105,6 +106,7 @@ public:
     QLineEdit *ledtPatronymic;
     QLineEdit *ledtSurname;
     TListWidget *lstwgtGroups;
+    TUserModel *model;
     QMap<QString, bool> occupiedEmails;
     QMap<QString, bool> occupiedLogins;
     BPasswordGroup *pwdgrp;
@@ -117,7 +119,7 @@ public:
     QToolButton *tbtnClearAvatar;
     bool valid;
 public:
-    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m = TUserInfoWidget::ShowMode);
+    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m);
     ~TUserInfoWidgetPrivate();
 public:
     void createAccessLevelField(QFormLayout *flt, bool readOnly = false);

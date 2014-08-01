@@ -48,6 +48,7 @@
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserIdentifier>
 #include <TeXSampleCore/TUserInfo>
+#include <TeXSampleCore/TUserModel>
 #include <TeXSampleNetwork/TNetworkClient>
 
 #include <BApplication>
@@ -62,6 +63,7 @@
 #include <BTextTools>
 
 #include <QCheckBox>
+#include <QColor>
 #include <QComboBox>
 #include <QDateTime>
 #include <QDebug>
@@ -78,6 +80,7 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QMetaObject>
+#include <QPalette>
 #include <QPixmap>
 #include <QPushButton>
 #include <QRegExp>
@@ -347,6 +350,7 @@ TIdList TUserInfoWidgetPrivate::groups() const
 void TUserInfoWidgetPrivate::init()
 {
     client = 0;
+    model = 0;
     editAvatar = false;
     containsAvatar = false;
     valid = false;
@@ -649,12 +653,17 @@ void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
         foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
             int ind = cmboxAccessLevel->findData(int(lvl));
             QStandardItem *item = model->item(ind);
-            Qt::ItemFlags flags = 0;
-            if (client && client->isAuthorized() && client->userInfo().accessLevel() >= lvl)
-                flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-            else if (cmboxAccessLevel->currentIndex() == ind)
+            Qt::ItemFlags flags = item->flags();
+            QVariant color;
+            if (client && client->isAuthorized() && client->userInfo().accessLevel() >= lvl) {
+                flags |= (Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+            } else if (cmboxAccessLevel->currentIndex() == ind) {
+                flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                color = cmboxAccessLevel->palette().color(QPalette::Disabled, QPalette::Text);
                 cmboxAccessLevel->setCurrentIndex((ind > 0) ? (ind - 1) : 0);
+            }
             item->setFlags(flags);
+            item->setData(color, Qt::TextColorRole);
         }
     }
     if (lstwgtGroups) {
@@ -726,6 +735,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
             }
             avatar = r.data().value<TGetUserAvatarReplyData>().avatar();
             containsAvatar = true;
+            if (model)
+                model->updateUserAvatar(id, avatar);
         }
         BDialog dlg(q_func());
           dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
@@ -770,12 +781,6 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 
 TUserInfoWidget::TUserInfoWidget(Mode mode, QWidget *parent) :
     QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this, mode))
-{
-    d_func()->init();
-}
-
-TUserInfoWidget::TUserInfoWidget(QWidget *parent) :
-    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this))
 {
     d_func()->init();
 }
@@ -873,6 +878,11 @@ TUserInfoWidget::Mode TUserInfoWidget::mode() const
     return d_func()->Mode;
 }
 
+TUserModel *TUserInfoWidget::model() const
+{
+    return d_func()->model;
+}
+
 void TUserInfoWidget::setClient(TNetworkClient *client)
 {
     B_D(TUserInfoWidget);
@@ -889,11 +899,13 @@ void TUserInfoWidget::setClient(TNetworkClient *client)
     d->clientAnonymousValidityChanged(client && client->isValid(true));
 }
 
-void TUserInfoWidget::setInfo(const TUserInfo &info)
+void TUserInfoWidget::setUser(quint64 userId)
 {
     B_D(TUserInfoWidget);
-    if (AddMode == d->Mode || RegisterMode == d->Mode)
+    if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
         return;
+    const TUserInfo *pinfo = d->model->userInfo(userId);
+    TUserInfo info = pinfo ? *pinfo : TUserInfo();
     d->id = info.id();
     if (d->ledtLogin)
         d->ledtLogin->setText(info.login());
@@ -933,4 +945,9 @@ void TUserInfoWidget::setInfo(const TUserInfo &info)
         }
         d->lstwgtGroups->setItems(list);
     }
+}
+
+void TUserInfoWidget::setModel(TUserModel *model)
+{
+    d_func()->model = model;
 }

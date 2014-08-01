@@ -26,7 +26,7 @@
 class TUserInfoWidgetPrivate;
 
 class TNetworkClient;
-class TUserInfo;
+class TUserModel;
 
 class QVariant;
 
@@ -55,15 +55,16 @@ public:
     };
 public:
     explicit TUserInfoWidget(Mode mode, QWidget *parent = 0);
-    explicit TUserInfoWidget(QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
     TNetworkClient *client() const;
     QVariant createRequestData() const;
     bool hasValidInput() const;
     Mode mode() const;
+    TUserModel *model() const;
     void setClient(TNetworkClient *client);
-    void setInfo(const TUserInfo &info);
+    void setUser(quint64 userId);
+    void setModel(TUserModel *model);
 Q_SIGNALS:
     void inputValidityChanged(bool valid);
 private:

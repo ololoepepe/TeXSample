@@ -50,17 +50,17 @@ public:
     explicit TGroupModel(QObject *parent = 0);
     ~TGroupModel();
 public:
-    void addGroup(const TGroupInfo &group);
-    void addGroups(const TGroupInfoList &groupList);
+    virtual void addGroup(const TGroupInfo &group);
+    virtual void addGroups(const TGroupInfoList &groupList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    const TGroupInfo* groupInfo(quint64 id) const;
-    const TGroupInfo* groupInfoAt(int index) const;
-    void removeGroup(quint64 id);
-    void removeGroups(const TIdList &idList);
+    virtual const TGroupInfo* groupInfo(quint64 id) const;
+    virtual const TGroupInfo* groupInfoAt(int index) const;
+    virtual void removeGroup(quint64 id);
+    virtual void removeGroups(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
+    virtual void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
 private:
     Q_DISABLE_COPY(TGroupModel)
 };
