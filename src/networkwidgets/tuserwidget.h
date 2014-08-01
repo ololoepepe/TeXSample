@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,14 +20,13 @@
 **
 ****************************************************************************/
 
-#ifndef TRECOVERYWIDGET_H
-#define TRECOVERYWIDGET_H
+#ifndef TUSERWIDGET_H
+#define TUSERWIDGET_H
 
-class TRecoveryWidgetPrivate;
+class TUserWidgetPrivate;
 
-class TRecoverAccountRequestData;
-class TReply;
-class TRequestRecoveryCodeRequestData;
+class TNetworkClient;
+class TUserModel;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
@@ -35,22 +35,21 @@ class TRequestRecoveryCodeRequestData;
 #include <QWidget>
 
 /*============================================================================
-================================ TRecoveryWidget =============================
+================================ TUserWidget =================================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TRecoveryWidget : public QWidget, public BBaseObject
+class T_NETWORKWIDGETS_EXPORT TUserWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PRIVATE(TRecoveryWidget)
+    B_DECLARE_PRIVATE(TUserWidget)
 public:
-    typedef TReply (*RecoverAccountFunction)(const TRecoverAccountRequestData &data, QWidget *parent);
-    typedef TReply (*RequestRecoveryCodeFunction)(const TRequestRecoveryCodeRequestData &data, QWidget *parent);
+    explicit TUserWidget(TUserModel *model, QWidget *parent = 0);
+    ~TUserWidget();
 public:
-    explicit TRecoveryWidget(RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                             RecoverAccountFunction recoverAccountFunction, QWidget *parent = 0);
-    ~TRecoveryWidget();
+    TNetworkClient *client() const;
+    void setClient(TNetworkClient *client);
 private:
-    Q_DISABLE_COPY(TRecoveryWidget)
+    Q_DISABLE_COPY(TUserWidget)
 };
 
-#endif // TRECOVERYWIDGET_H
+#endif // TUSERWIDGET_H

@@ -30,10 +30,22 @@
 #   define T_CORE_EXPORT Q_DECL_IMPORT
 #endif
 
+#if defined(TSMP_BUILD_NETWORK_LIB)
+#   define T_NETWORK_EXPORT Q_DECL_EXPORT
+#else
+#   define T_NETWORK_EXPORT Q_DECL_IMPORT
+#endif
+
 #if defined(TSMP_BUILD_WIDGETS_LIB)
 #   define T_WIDGETS_EXPORT Q_DECL_EXPORT
 #else
 #   define T_WIDGETS_EXPORT Q_DECL_IMPORT
+#endif
+
+#if defined(TSMP_BUILD_NETWORKWIDGETS_LIB)
+#   define T_NETWORKWIDGETS_EXPORT Q_DECL_EXPORT
+#else
+#   define T_NETWORKWIDGETS_EXPORT Q_DECL_IMPORT
 #endif
 
 T_CORE_EXPORT void tRegister();

@@ -47,6 +47,7 @@ class T_CORE_EXPORT TReply : public BBase
     B_DECLARE_PRIVATE(TReply)
 public:
     explicit TReply();
+    explicit TReply(const TMessage &message);
     TReply(const TReply &other);
     ~TReply();
 public:

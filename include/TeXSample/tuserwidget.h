@@ -1,0 +1,1 @@
+#include "../../src/networkwidgets/tuserwidget.h"

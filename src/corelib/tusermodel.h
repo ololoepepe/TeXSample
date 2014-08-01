@@ -28,6 +28,7 @@ class TIdList;
 class TUserInfo;
 class TUserInfoList;
 
+class QImage;
 class QObject;
 class QVariant;
 
@@ -35,14 +36,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TUserModel ==================================
 ============================================================================*/
 
-class T_CORE_EXPORT TUserModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TUserModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TUserModel)
@@ -50,16 +51,24 @@ public:
     explicit TUserModel(QObject *parent = 0);
     ~TUserModel();
 public:
-    void addUser(const TUserInfo &user);
-    void addUsers(const TUserInfoList &userList);
+    virtual void addUser(const TUserInfo &user);
+    virtual void addUsers(const TUserInfoList &userList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    const TUserInfo* userInfo(quint64 id) const;
-    const TUserInfo* userInfoAt(int index) const;
-    void removeUser(quint64 id);
-    void removeUsers(const TIdList &idList);
+    virtual void removeUser(quint64 id);
+    virtual void removeUsers(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual void updateUser(quint64 userId, const TUserInfo &newInfo, bool updateAvatar);
+    virtual void updateUserAvatar(quint64 userId, const QImage &avatar);
+    virtual quint64 userIdAt(int index) const;
+    virtual TUserInfo userInfo(quint64 id) const;
+    virtual TUserInfo userInfoAt(int index) const;
+protected:
+    virtual bool avatarStoredSeparately() const;
+    virtual QImage loadAvatar(quint64 userId) const;
+    virtual void removeAvatar(quint64 userId);
+    virtual void saveAvatar(quint64 userId, const QImage &avatar);
 private:
     Q_DISABLE_COPY(TUserModel)
 };

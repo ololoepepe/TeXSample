@@ -93,6 +93,13 @@ TReply::TReply() :
     d_func()->init();
 }
 
+TReply::TReply(const TMessage &message) :
+    BBase(*new TReplyPrivate(this))
+{
+    d_func()->init();
+    d_func()->message = message;
+}
+
 TReply::TReply(const TReply &other) :
     BBase(*new TReplyPrivate(this))
 {

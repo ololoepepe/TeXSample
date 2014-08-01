@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -24,9 +25,11 @@
 
 #include <TeXSampleCore/TMessage>
 #include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TRecoverAccountRequestData>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TRequestRecoveryCodeRequestData>
+#include <TeXSampleNetwork/TNetworkClient>
 
 #include <BBaseObject>
 #include <BeQtCore/private/bbaseobject_p.h>
@@ -55,10 +58,8 @@
 
 /*============================== Public constructors =======================*/
 
-TRecoveryWidgetPrivate::TRecoveryWidgetPrivate(TRecoveryWidget *q,
-                                               RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                                               RecoverAccountFunction recoverAccountFunction) :
-    BBaseObjectPrivate(q), RequestFunction(requestRecoveryCodeFunction), RecoverFunction(recoverAccountFunction)
+TRecoveryWidgetPrivate::TRecoveryWidgetPrivate(TRecoveryWidget *q, TNetworkClient *client) :
+    BBaseObjectPrivate(q), Client(client)
 {
     //
 }
@@ -72,6 +73,8 @@ TRecoveryWidgetPrivate::~TRecoveryWidgetPrivate()
 
 void TRecoveryWidgetPrivate::init()
 {
+    if (Client)
+        connect(Client, SIGNAL(anonymousValidityChanged(bool)), this, SLOT(checkInputs()));
     B_Q(TRecoveryWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
       QGroupBox *gbox = new QGroupBox(tr("Getting recovery code", "gbox title"));
@@ -110,6 +113,7 @@ void TRecoveryWidgetPrivate::init()
               pwdwgt1->setSavePasswordVisible(false);
               pwdwgt1->setShowPasswordVisible(false);
               pwdwgt1->setGeneratePasswordVisible(true);
+              pwdwgt1->setValidator(new QRegExpValidator(rx, this));
               connect(pwdwgt1, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
               inputPwd1 = new BInputField;
               inputPwd1->addWidget(pwdwgt1);
@@ -117,6 +121,7 @@ void TRecoveryWidgetPrivate::init()
             flt->addRow(tr("Password:", "lbl text"), inputPwd1);
             pwdwgt2 = new BPasswordWidget;
               pwdwgt2->setSavePasswordVisible(false);
+              pwdwgt2->setValidator(new QRegExpValidator(rx, this));
               connect(pwdwgt1, SIGNAL(showPasswordChanged(bool)), pwdwgt2, SLOT(setShowPassword(bool)));
               connect(pwdwgt2, SIGNAL(showPasswordChanged(bool)), pwdwgt1, SLOT(setShowPassword(bool)));
               connect(pwdwgt2, SIGNAL(passwordChanged()), this, SLOT(checkInputs()));
@@ -146,14 +151,14 @@ void TRecoveryWidgetPrivate::checkInputs()
     bool codeValid = ledtCode->hasAcceptableInput();
     inputEmail->setValid(emailValid);
     inputCode->setValid(codeValid);
-    btnGet->setEnabled(emailValid);
+    btnGet->setEnabled(Client && Client->isValid(true) && emailValid);
     inputPwd1->setValid(pwdwgt1->hasAcceptableInput());
-    btnRecover->setEnabled(codeValid && pwdgrp->passwordsMatchAndAcceptable());
+    btnRecover->setEnabled(Client && Client->isValid(true) && codeValid && pwdgrp->passwordsMatchAndAcceptable());
 }
 
 void TRecoveryWidgetPrivate::getCode()
 {
-    if (!RequestFunction)
+    if (!Client || !Client->isValid(true))
         return;
     static QMessageBox *msg = 0;
     if (msg)
@@ -171,7 +176,7 @@ void TRecoveryWidgetPrivate::getCode()
         return;
     TRequestRecoveryCodeRequestData data;
     data.setEmail(ledtEmail->text());
-    TReply r = RequestFunction(data, q_func());
+    TReply r = Client->performAnonymousOperation(TOperation::RequestRecoveryCode, data, q_func());
     if (r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Recovery code generated", "msgbox windowTitle"));
@@ -194,7 +199,7 @@ void TRecoveryWidgetPrivate::getCode()
 
 void TRecoveryWidgetPrivate::recoverAccount()
 {
-    if (!RecoverFunction)
+    if (!Client || !Client->isValid(true))
         return;
     static QMessageBox *msg = 0;
     if (msg)
@@ -213,7 +218,7 @@ void TRecoveryWidgetPrivate::recoverAccount()
     TRecoverAccountRequestData data;
     data.setPassword(pwdwgt1->openPassword());
     data.setRecoveryCode(ledtCode->text());
-    TReply r = RecoverFunction(data, q_func());
+    TReply r = Client->performAnonymousOperation(TOperation::RecoverAccount, data, q_func());
     if (r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Account recovered", "msgbox windowTitle"));
@@ -240,10 +245,8 @@ void TRecoveryWidgetPrivate::recoverAccount()
 
 /*============================== Public constructors =======================*/
 
-TRecoveryWidget::TRecoveryWidget(RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                                 RecoverAccountFunction recoverAccountFunction, QWidget *parent) :
-    QWidget(parent),
-    BBaseObject(*new TRecoveryWidgetPrivate(this, requestRecoveryCodeFunction, recoverAccountFunction))
+TRecoveryWidget::TRecoveryWidget(TNetworkClient *client, QWidget *parent) :
+    QWidget(parent), BBaseObject(*new TRecoveryWidgetPrivate(this, client))
 {
     d_func()->init();
 }

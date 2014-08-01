@@ -1,0 +1,1 @@
+#include "../../../src/networkwidgets/trecoverywidget_p.h"

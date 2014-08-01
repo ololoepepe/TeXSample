@@ -35,14 +35,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TInviteModel ================================
 ============================================================================*/
 
-class T_CORE_EXPORT TInviteModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TInviteModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TInviteModel)
@@ -50,15 +50,15 @@ public:
     explicit TInviteModel(QObject *parent = 0);
     ~TInviteModel();
 public:
-    void addInvite(const TInviteInfo &invite);
-    void addInvites(const TInviteInfoList &inviteList);
+    virtual void addInvite(const TInviteInfo &invite);
+    virtual void addInvites(const TInviteInfoList &inviteList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    const TInviteInfo* inviteInfo(quint64 id) const;
-    const TInviteInfo* inviteInfoAt(int index) const;
-    void removeInvite(quint64 id);
-    void removeInvites(const TIdList &idList);
+    virtual TInviteInfo inviteInfo(quint64 id) const;
+    virtual TInviteInfo inviteInfoAt(int index) const;
+    virtual void removeInvite(quint64 id);
+    virtual void removeInvites(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 private:
     Q_DISABLE_COPY(TInviteModel)

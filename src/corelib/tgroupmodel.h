@@ -35,14 +35,14 @@ class QVariant;
 
 #include <BBase>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QModelIndex>
 
 /*============================================================================
 ================================ TGroupModel =================================
 ============================================================================*/
 
-class T_CORE_EXPORT TGroupModel : public QAbstractListModel, public BBase
+class T_CORE_EXPORT TGroupModel : public QAbstractTableModel, public BBase
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TGroupModel)
@@ -50,16 +50,17 @@ public:
     explicit TGroupModel(QObject *parent = 0);
     ~TGroupModel();
 public:
-    void addGroup(const TGroupInfo &group);
-    void addGroups(const TGroupInfoList &groupList);
+    virtual void addGroup(const TGroupInfo &group);
+    virtual void addGroups(const TGroupInfoList &groupList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual TGroupInfo groupInfo(quint64 id) const;
+    virtual TGroupInfo groupInfoAt(int index) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    const TGroupInfo* groupInfo(quint64 id) const;
-    const TGroupInfo* groupInfoAt(int index) const;
-    void removeGroup(quint64 id);
-    void removeGroups(const TIdList &idList);
+    virtual void removeGroup(quint64 id);
+    virtual void removeGroups(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
 private:
     Q_DISABLE_COPY(TGroupModel)
 };

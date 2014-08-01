@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,10 +20,11 @@
 **
 ****************************************************************************/
 
-#ifndef INVITEWIDGET_H
-#define INVITEWIDGET_H
+#ifndef TINVITEWIDGET_P_H
+#define TINVITEWIDGET_P_H
 
 class TInviteModel;
+class TNetworkClient;
 
 class BPasswordWidget;
 
@@ -30,45 +32,54 @@ class QAction;
 class QItemSelection;
 class QModelIndex;
 class QTableView;
+class QVariant;
 
 #include "tinvitewidget.h"
 
-#include <TeXSampleCore/TAccessLevel>
-#include <TeXSampleCore/TGroupInfoList>
-#include <TeXSampleCore/TServiceList>
-
 #include <BeQtCore/private/bbaseobject_p.h>
+
+#include <QSortFilterProxyModel>
+
+/*============================================================================
+================================ TInviteProxyModel ===========================
+============================================================================*/
+
+class T_NETWORKWIDGETS_EXPORT TInviteProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    explicit TInviteProxyModel(QObject *parent);
+public:
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+};
 
 /*============================================================================
 ================================ TInviteWidgetPrivate ========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TInviteWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TInviteWidget)
 public:
-    typedef TInviteWidget::DeleteInvitesFunction DeleteInvitesFunction;
-    typedef TInviteWidget::GenerateInvitesFunction GenerateInvitesFunction;
-public:
-    const TAccessLevel AccessLevel;
     TInviteModel * const Model;
 public:
     QAction *actCopy;
     QAction *actDelete;
     QAction *actGenerate;
-    TServiceList availableServices;
-    TGroupInfoList availableGroups;
-    DeleteInvitesFunction deleteInvitesFunction;
-    GenerateInvitesFunction generateInvitesFunction;
+    TNetworkClient *client;
     quint16 maxInviteCount;
+    TInviteProxyModel *proxyModel;
     QTableView *view;
 public:
-    explicit TInviteWidgetPrivate(TInviteWidget *q, TInviteModel *model, const TAccessLevel &accessLevel);
+    explicit TInviteWidgetPrivate(TInviteWidget *q, TInviteModel *model);
     ~TInviteWidgetPrivate();
 public:
     void init();
 public Q_SLOTS:
+    void clientAthorizedChanged(bool authorized);
     void copyInvites();
     void deleteInvites();
     void generateInvites();

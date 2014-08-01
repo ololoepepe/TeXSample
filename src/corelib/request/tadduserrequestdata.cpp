@@ -47,6 +47,7 @@ class TAddUserRequestDataPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TAddUserRequestData)
 public:
     TAccessLevel accessLevel;
+    TServiceList availableServices;
     QImage avatar;
     QString email;
     TIdList groups;
@@ -54,7 +55,6 @@ public:
     QString name;
     QByteArray password;
     QString patronymic;
-    TServiceList services;
     QString surname;
 public:
     explicit TAddUserRequestDataPrivate(TAddUserRequestData *q);
@@ -120,6 +120,11 @@ TAccessLevel TAddUserRequestData::accessLevel() const
     return d_func()->accessLevel;
 }
 
+TServiceList TAddUserRequestData::availableServices() const
+{
+    return d_func()->availableServices;
+}
+
 QImage TAddUserRequestData::avatar() const
 {
     return d_func()->avatar;
@@ -129,6 +134,7 @@ void TAddUserRequestData::clear()
 {
     B_D(TAddUserRequestData);
     d->accessLevel = TAccessLevel();
+    d->availableServices.clear();
     d->avatar = QImage();
     d->email.clear();
     d->groups.clear();
@@ -136,7 +142,6 @@ void TAddUserRequestData::clear()
     d->name.clear();
     d->password.clear();
     d->patronymic.clear();
-    d->services.clear();
     d->surname.clear();
 }
 
@@ -176,14 +181,16 @@ QString TAddUserRequestData::patronymic() const
     return d_func()->patronymic;
 }
 
-TServiceList TAddUserRequestData::services() const
-{
-    return d_func()->services;
-}
-
 void TAddUserRequestData::setAccesslevel(const TAccessLevel &accessLevel)
 {
     d_func()->accessLevel = accessLevel;
+}
+
+void TAddUserRequestData::setAvailableServices(const TServiceList &services)
+{
+    B_D(TAddUserRequestData);
+    d->availableServices = services;
+    bRemoveDuplicates(d->availableServices);
 }
 
 void TAddUserRequestData::setAvatar(const QImage &avatar)
@@ -225,13 +232,6 @@ void TAddUserRequestData::setPatronymic(const QString &patronymic)
     d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
 }
 
-void TAddUserRequestData::setServices(const TServiceList &services)
-{
-    B_D(TAddUserRequestData);
-    d->services = services;
-    bRemoveDuplicates(d->services);
-}
-
 void TAddUserRequestData::setSurname(const QString &surname)
 {
     d_func()->surname = Texsample::testName(surname) ? surname : QString();
@@ -249,6 +249,7 @@ TAddUserRequestData &TAddUserRequestData::operator =(const TAddUserRequestData &
     B_D(TAddUserRequestData);
     const TAddUserRequestDataPrivate *dd = other.d_func();
     d->accessLevel = dd->accessLevel;
+    d->availableServices = dd->availableServices;
     d->avatar = dd->avatar;
     d->email = dd->email;
     d->groups = dd->groups;
@@ -256,7 +257,6 @@ TAddUserRequestData &TAddUserRequestData::operator =(const TAddUserRequestData &
     d->name = dd->name;
     d->password = dd->password;
     d->patronymic = dd->patronymic;
-    d->services = dd->services;
     d->surname = dd->surname;
     return *this;
 }
@@ -265,9 +265,10 @@ bool TAddUserRequestData::operator ==(const TAddUserRequestData &other) const
 {
     const B_D(TAddUserRequestData);
     const TAddUserRequestDataPrivate *dd = other.d_func();
-    return d->accessLevel == dd->accessLevel && d->avatar == dd->avatar && d->email == dd->email
-            && d->groups == dd->groups && d->login == dd->login && d->name == dd->name && d->password == dd->password
-            && d->patronymic == dd->patronymic && d->services == dd->services && d->surname == dd->surname;
+    return d->accessLevel == dd->accessLevel && d->availableServices == dd->availableServices
+            && d->avatar == dd->avatar && d->email == dd->email && d->groups == dd->groups && d->login == dd->login
+            && d->name == dd->name && d->password == dd->password && d->patronymic == dd->patronymic
+            && d->surname == dd->surname;
 }
 
 bool TAddUserRequestData::operator !=(const TAddUserRequestData &other) const
@@ -287,6 +288,7 @@ QDataStream &operator <<(QDataStream &stream, const TAddUserRequestData &data)
     const TAddUserRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("access_level", d->accessLevel);
+    m.insert("available_services", d->availableServices);
     m.insert("avatar", d->avatar);
     m.insert("email", d->email);
     m.insert("groups", d->groups);
@@ -294,7 +296,6 @@ QDataStream &operator <<(QDataStream &stream, const TAddUserRequestData &data)
     m.insert("name", d->name);
     m.insert("password", d->password);
     m.insert("patronymic", d->patronymic);
-    m.insert("services", d->services);
     m.insert("surname", d->surname);
     stream << m;
     return stream;
@@ -306,6 +307,7 @@ QDataStream &operator >>(QDataStream &stream, TAddUserRequestData &data)
     QVariantMap m;
     stream >> m;
     d->accessLevel = m.value("access_level").value<TAccessLevel>();
+    d->availableServices = m.value("available_services").value<TServiceList>();
     d->avatar = m.value("avatar").value<QImage>();
     d->email = m.value("email").toString();
     d->groups = m.value("grouos").value<TIdList>();
@@ -313,7 +315,6 @@ QDataStream &operator >>(QDataStream &stream, TAddUserRequestData &data)
     d->name = m.value("name").toString();
     d->password = m.value("password").toByteArray();
     d->patronymic = m.value("patronymic").toString();
-    d->services = m.value("services").value<TServiceList>();
     d->surname = m.value("surname").toString();
     return stream;
 }

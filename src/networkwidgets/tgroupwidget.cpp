@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -22,15 +23,24 @@
 #include "tgroupwidget.h"
 #include "tgroupwidget_p.h"
 
+#include <TeXSampleCore/TAccessLevel>
+#include <TeXSampleCore/TAddGroupReplyData>
 #include <TeXSampleCore/TAddGroupRequestData>
 #include <TeXSampleCore/TDeleteGroupRequestData>
+#include <TeXSampleCore/TEditGroupReplyData>
 #include <TeXSampleCore/TEditGroupRequestData>
+#include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TGroupInfo>
+#include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TGroupModel>
+#include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
+#include <TeXSampleCore/TUserInfo>
+#include <TeXSampleNetwork/TNetworkClient>
 
 #include <BApplication>
 #include <BDialog>
+#include <BLineEdit>
 
 #include <QAction>
 #include <QApplication>
@@ -42,10 +52,64 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QModelIndexList>
+#include <QPushButton>
+#include <QRegExp>
+#include <QRegExpValidator>
+#include <QSortFilterProxyModel>
 #include <QString>
 #include <QTableView>
 #include <QToolBar>
+#include <QVariant>
 #include <QVBoxLayout>
+
+/*============================================================================
+================================ TGroupProxyModel ============================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TGroupProxyModel::TGroupProxyModel(QObject *parent) :
+    QSortFilterProxyModel(parent)
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+int TGroupProxyModel::columnCount(const QModelIndex &) const
+{
+    return 1;
+}
+
+QVariant TGroupProxyModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
+        return QVariant();
+    if (Qt::ToolTipRole == role) {
+        QString name = sourceModel()->data(sourceModel()->index(index.row(), 1)).toString();
+        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 3)).toString();
+        return name + " [" + ownerLogin + "]";
+    }
+    switch (index.column()) {
+    case 0:
+        return sourceModel()->data(sourceModel()->index(index.row(), 0)); //Name
+    default:
+        return QVariant();
+    }
+}
+
+QVariant TGroupProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (Qt::Horizontal != orientation || Qt::DisplayRole != role)
+        return QVariant();
+    switch (section) {
+    case 0:
+        return sourceModel()->headerData(1, Qt::Horizontal); //Name
+    default:
+        return QVariant();
+    }
+}
 
 /*============================================================================
 ================================ TGroupWidgetPrivate =========================
@@ -68,6 +132,9 @@ TGroupWidgetPrivate::~TGroupWidgetPrivate()
 
 void TGroupWidgetPrivate::init()
 {
+    client = 0;
+    proxyModel = new TGroupProxyModel(this);
+    proxyModel->setSourceModel(Model);
     B_Q(TGroupWidget);
     QVBoxLayout *vlt = new QVBoxLayout(q);
       view = new QTableView;
@@ -78,7 +145,7 @@ void TGroupWidgetPrivate::init()
         view->horizontalHeader()->setStretchLastSection(true);
         view->verticalHeader()->setVisible(false);
         view->setContextMenuPolicy(Qt::NoContextMenu);
-        view->setModel(Model);
+        view->setModel(proxyModel);
         connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(editGroup(QModelIndex)));
         connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
@@ -91,7 +158,7 @@ void TGroupWidgetPrivate::init()
                                     this, SLOT(deleteGroup()));
           actDelete->setEnabled(false);
         actEdit = tbar->addAction(BApplication::icon("edit"), tr("Edit group...", "act text"),
-                                    this, SLOT(editGroup()));
+                                  this, SLOT(editGroup()));
           actEdit->setEnabled(false);
       vlt->addWidget(tbar);
 }
@@ -100,16 +167,19 @@ void TGroupWidgetPrivate::init()
 
 void TGroupWidgetPrivate::addGroup()
 {
-    if (!addGroupFunction)
+    if (!client || !client->isAuthorized())
         return;
     BDialog dlg(q_func());
     dlg.setWindowTitle(tr("Adding group", "dlg windowTitle"));
       QWidget *wgt = new QWidget;
         QFormLayout *flt = new QFormLayout(wgt);
-          QLineEdit *ledtName = new QLineEdit;
+          BLineEdit *ledtName = new BLineEdit;
+            ledtName->setValidator(new QRegExpValidator(QRegExp(".+"), ledtName));
           flt->addRow(tr("Name:", "lbl text"), ledtName);
       dlg.setWidget(wgt);
-      dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
+      dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(ledtName->hasAcceptableInput());
+        connect(ledtName, SIGNAL(inputValidityChanged(bool)),
+                dlg.button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
@@ -117,7 +187,7 @@ void TGroupWidgetPrivate::addGroup()
     data.setName(ledtName->text());
     if (!data.isValid())
         return;
-    TReply r = addGroupFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::AddGroup, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Adding group failed", "msgbox windowTitle"));
@@ -129,21 +199,29 @@ void TGroupWidgetPrivate::addGroup()
         msg.exec();
         return;
     }
+    Model->addGroup(r.data().value<TAddGroupReplyData>().groupInfo());
+}
+
+void TGroupWidgetPrivate::clientAuthorizedChanged(bool authorized)
+{
+    actAdd->setEnabled(client && authorized
+                       && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
+    selectionChanged(view->selectionModel()->selection(), QItemSelection());
 }
 
 void TGroupWidgetPrivate::deleteGroup()
 {
-    if (!deleteGroupFunction)
+    if (!client || !client->isAuthorized())
         return;
-    QModelIndex index = view->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(view->selectionModel()->currentIndex());
     if (!index.isValid())
         return;
-    const TGroupInfo *info = Model->groupInfoAt(index.row());
-    if (!info)
+    TGroupInfo info = Model->groupInfoAt(index.row());
+    if (!info.isValid())
         return;
     TDeleteGroupRequestData data;
-    data.setId(info->id());
-    TReply r = deleteGroupFunction(data, q_func());
+    data.setId(info.id());
+    TReply r = client->performOperation(TOperation::DeleteGroup, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Deleting group failed", "msgbox windowTitle"));
@@ -155,35 +233,41 @@ void TGroupWidgetPrivate::deleteGroup()
         msg.exec();
         return;
     }
+    Model->removeGroup(info.id());
 }
 
-void TGroupWidgetPrivate::editGroup(const QModelIndex &index)
+void TGroupWidgetPrivate::editGroup(QModelIndex index)
 {
-    if (!addGroupFunction)
+    if (!client || !client->isAuthorized())
         return;
+    if (!index.isValid() && !view->selectionModel()->selectedIndexes().isEmpty())
+        index = view->selectionModel()->selectedIndexes().first();
     if (!index.isValid())
         return;
-    const TGroupInfo *info = Model->groupInfoAt(index.row());
-    if (!info)
+    TGroupInfo info = Model->groupInfoAt(proxyModel->mapToSource(index).row());
+    if (!info.isValid())
         return;
     BDialog dlg(q_func());
     dlg.setWindowTitle(tr("Editing group", "dlg windowTitle"));
       QWidget *wgt = new QWidget;
         QFormLayout *flt = new QFormLayout(wgt);
-          QLineEdit *ledtName = new QLineEdit;
-            ledtName->setText(info->name());
+          BLineEdit *ledtName = new BLineEdit;
+            ledtName->setValidator(new QRegExpValidator(QRegExp(".+"), ledtName));
+            ledtName->setText(info.name());
           flt->addRow(tr("Name:", "lbl text"), ledtName);
       dlg.setWidget(wgt);
-      dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
+      dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(ledtName->hasAcceptableInput());
+        connect(ledtName, SIGNAL(inputValidityChanged(bool)),
+                dlg.button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
     TEditGroupRequestData data;
-    data.setId(info->id());
+    data.setId(info.id());
     data.setName(ledtName->text());
     if (!data.isValid())
         return;
-    TReply r = editGroupFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::EditGroup, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Editing group failed", "msgbox windowTitle"));
@@ -195,13 +279,21 @@ void TGroupWidgetPrivate::editGroup(const QModelIndex &index)
         msg.exec();
         return;
     }
+    Model->updateGroup(info.id(), r.data().value<TEditGroupReplyData>().groupInfo());
 }
 
 void TGroupWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
-    bool b = !selected.isEmpty();
-    actEdit->setEnabled(b && editGroupFunction);
-    actDelete->setEnabled(b && deleteGroupFunction);
+    bool b = !selected.isEmpty() && !selected.first().indexes().isEmpty();
+    QModelIndex ind = b ? proxyModel->mapToSource(selected.first().indexes().first()) : QModelIndex();
+    b = b && ind.isValid();
+    b = b && client && client->isAuthorized();
+    b = b && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel);
+    TGroupInfo info = Model->groupInfoAt(ind.row());
+    b = b && info.isValid();
+    b = b && client->userInfo().availableGroups().contains(info);
+    actEdit->setEnabled(b);
+    actDelete->setEnabled(b);
 }
 
 /*============================================================================
@@ -223,35 +315,20 @@ TGroupWidget::~TGroupWidget()
 
 /*============================== Public methods ============================*/
 
-TGroupWidget::AddGroupFunction TGroupWidget::addGroupFunction() const
+TNetworkClient *TGroupWidget::client() const
 {
-    return d_func()->addGroupFunction;
+    return d_func()->client;
 }
 
-TGroupWidget::DeleteGroupFunction TGroupWidget::deleteGroupFunction() const
+void TGroupWidget::setClient(TNetworkClient *client)
 {
-    return d_func()->deleteGroupFunction;
-}
-
-TGroupWidget::EditGroupFunction TGroupWidget::editGroupFunction() const
-{
-    return d_func()->editGroupFunction;
-}
-
-void TGroupWidget::setAddGroupFunction(AddGroupFunction addGroupFunction)
-{
-    d_func()->addGroupFunction = addGroupFunction;
-    d_func()->actAdd->setEnabled(addGroupFunction);
-}
-
-void TGroupWidget::setDeleteGroupFunction(DeleteGroupFunction deleteGroupFunction)
-{
-    d_func()->deleteGroupFunction = deleteGroupFunction;
-    d_func()->actDelete->setEnabled(deleteGroupFunction && d_func()->view->selectionModel()->hasSelection());
-}
-
-void TGroupWidget::setEditGroupFunction(EditGroupFunction editGroupFunction)
-{
-    d_func()->editGroupFunction = editGroupFunction;
-    d_func()->actEdit->setEnabled(editGroupFunction && d_func()->view->selectionModel()->hasSelection());
+    B_D(TGroupWidget);
+    if (d->client)
+        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+    d->client = client;
+    if (client)
+        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+    d->actAdd->setEnabled(client && client->isAuthorized()
+                          && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
+    d->selectionChanged(d->view->selectionModel()->selection(), QItemSelection());
 }

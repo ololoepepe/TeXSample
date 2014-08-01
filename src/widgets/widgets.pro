@@ -12,27 +12,15 @@ DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
     tapplication.h \
-    tgroupwidget.h \
-    tgroupwidget_p.h \
-    tinvitewidget.h \
-    tinvitewidget_p.h \
     tlistwidget_p.h \
     tlistwidget.h \
-    trecoverywidget.h \
-    trecoverywidget_p.h \
     ttagswidget.h \
-    ttagswidget_p.h \
-    tuserinfowidget.h \
-    tuserinfowidget_p.h
+    ttagswidget_p.h
 
 SOURCES += \
     tapplication.cpp \
-    tgroupwidget.cpp \
-    tinvitewidget.cpp \
     tlistwidget.cpp \
-    trecoverywidget.cpp \
-    ttagswidget.cpp \
-    tuserinfowidget.cpp
+    ttagswidget.cpp
 
 contains(TSMP_CONFIG, builtin_resources) {
     DEFINES += TSMP_BUILTIN_RESOURCES

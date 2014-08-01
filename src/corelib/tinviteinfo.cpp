@@ -21,7 +21,7 @@
 
 #include "tinviteinfo.h"
 
-#include "tidlist.h"
+#include "tgroupinfolist.h"
 #include "tnamespace.h"
 #include "tservicelist.h"
 
@@ -47,7 +47,7 @@ public:
     BUuid code;
     QDateTime creationDT;
     QDateTime expirationDT;
-    TIdList groups;
+    TGroupInfoList groups;
     quint64 id;
     quint64 ownerId;
     QString ownerLogin;
@@ -142,7 +142,7 @@ QDateTime TInviteInfo::expirationDateTime() const
     return d_func()->expirationDT;
 }
 
-TIdList TInviteInfo::groups() const
+TGroupInfoList TInviteInfo::groups() const
 {
     return d_func()->groups;
 }
@@ -189,11 +189,10 @@ void TInviteInfo::setExpirationDateTime(const QDateTime &dt)
     d_func()->expirationDT = dt.toUTC();
 }
 
-void TInviteInfo::setGroups(const TIdList &groups)
+void TInviteInfo::setGroups(const TGroupInfoList &groups)
 {
     B_D(TInviteInfo);
     d->groups = groups;
-    d->groups.removeAll(0);
     bRemoveDuplicates(d->groups);
 }
 
@@ -276,7 +275,7 @@ QDataStream &operator >>(QDataStream &stream, TInviteInfo &info)
     d->code = m.value("code").value<BUuid>();
     d->creationDT = m.value("creation_date_time").toDateTime().toUTC();
     d->expirationDT = m.value("expiration_date_time").toDateTime().toUTC();
-    d->groups = m.value("groups").value<TIdList>();
+    d->groups = m.value("groups").value<TGroupInfoList>();
     d->id = m.value("id").toULongLong();
     d->ownerId = m.value("owner_id").toULongLong();
     d->ownerLogin = m.value("owner_login").toString();

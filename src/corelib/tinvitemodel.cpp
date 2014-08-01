@@ -21,16 +21,18 @@
 
 #include "tinvitemodel.h"
 
+#include "tgroupinfolist.h"
 #include "tidlist.h"
 #include "tinviteinfo.h"
 #include "tinviteinfolist.h"
+#include "tservicelist.h"
 
 #include <BBase>
 #include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
 #include <BUuid>
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QDateTime>
 #include <QMap>
 #include <QModelIndex>
@@ -52,6 +54,7 @@ public:
     explicit TInviteModelPrivate(TInviteModel *q);
     ~TInviteModelPrivate();
 public:
+    int indexOf(quint64 id) const;
     void init();
 private:
     Q_DISABLE_COPY(TInviteModelPrivate)
@@ -76,6 +79,17 @@ TInviteModelPrivate::~TInviteModelPrivate()
 
 /*============================== Public methods ============================*/
 
+int TInviteModelPrivate::indexOf(quint64 id) const
+{
+    if (!id)
+        return -1;
+    foreach (int i, bRangeD(0, invites.size() - 1)) {
+        if (invites.at(i).id() == id)
+            return i;
+    }
+    return -1;
+}
+
 void TInviteModelPrivate::init()
 {
     //
@@ -88,7 +102,7 @@ void TInviteModelPrivate::init()
 /*============================== Public constructors =======================*/
 
 TInviteModel::TInviteModel(QObject *parent) :
-    QAbstractListModel(parent), BBase(*new TInviteModelPrivate(this))
+    QAbstractTableModel(parent), BBase(*new TInviteModelPrivate(this))
 {
     d_func()->init();
 }
@@ -131,23 +145,33 @@ void TInviteModel::addInvites(const TInviteInfoList &inviteList)
 
 int TInviteModel::columnCount(const QModelIndex &) const
 {
-    return 2;
+    return 8;
 }
 
 QVariant TInviteModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
+    if (!index.isValid() || index.column() > 7 || Qt::DisplayRole != role)
         return QVariant();
-    const TInviteInfo *info = inviteInfoAt(index.row());
-    if (!info)
+    TInviteInfo info = inviteInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
-    if (Qt::ToolTipRole == role)
-        return BeQt::pureUuidText(info->code()) + " [" + info->ownerLogin() + "]";
     switch (index.column()) {
     case 0:
-        return info->id();
+        return info.id();
     case 1:
-        return info->expirationDateTime().toString("dd MMMM yyyy hh:mm");
+        return info.code();
+    case 2:
+        return info.services();
+    case 3:
+        return info.groups();
+    case 4:
+        return info.ownerId();
+    case 5:
+        return info.ownerLogin();
+    case 6:
+        return info.creationDateTime();
+    case 7:
+        return info.expirationDateTime();
     default:
         return QVariant();
     }
@@ -161,28 +185,41 @@ QVariant TInviteModel::headerData(int section, Qt::Orientation orientation, int 
     case 0:
         return tr("ID", "headerData");
     case 1:
+        return tr("Code", "headerData");
+    case 2:
+        return tr("Services", "headerData");
+    case 3:
+        return tr("Groups", "headerData");
+    case 4:
+        return tr("Owner ID", "headerData");
+    case 5:
+        return tr("Owner login", "headerData");
+    case 6:
+        return tr("Creation date", "headerData");
+    case 7:
         return tr("Expiration date", "headerData");
     default:
         return QVariant();
     }
 }
 
-const TInviteInfo* TInviteModel::inviteInfo(quint64 id) const
+TInviteInfo TInviteModel::inviteInfo(quint64 id) const
 {
-    return id ? d_func()->map.value(id) : 0;
+    const TInviteInfo *info = id ? d_func()->map.value(id) : 0;
+    return info ? *info : TInviteInfo();
 }
 
-const TInviteInfo* TInviteModel::inviteInfoAt(int index) const
+TInviteInfo TInviteModel::inviteInfoAt(int index) const
 {
-    return (index >= 0 && index < d_func()->invites.size()) ? &d_func()->invites.at(index) : 0;
+    return (index >= 0 && index < d_func()->invites.size()) ? d_func()->invites.at(index) : TInviteInfo();
 }
 
 void TInviteModel::removeInvite(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
         return;
-    TInviteInfo *info = d_func()->map.take(id);
-    int ind = d_func()->invites.indexOf(*info);
+    d_func()->map.remove(id);
+    int ind = d_func()->indexOf(id);
     beginRemoveRows(QModelIndex(), ind, ind);
     d_func()->invites.removeAt(ind);
     endRemoveRows();

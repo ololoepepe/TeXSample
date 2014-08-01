@@ -21,6 +21,8 @@
 
 #include "tdeleteinvitesreplydata.h"
 
+#include "tidlist.h"
+
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 
@@ -37,7 +39,7 @@ class TDeleteInvitesReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TDeleteInvitesReplyData)
 public:
-    quint32 count;
+    TIdList identifiers;
 public:
     explicit TDeleteInvitesReplyDataPrivate(TDeleteInvitesReplyData *q);
     ~TDeleteInvitesReplyDataPrivate();
@@ -68,7 +70,7 @@ TDeleteInvitesReplyDataPrivate::~TDeleteInvitesReplyDataPrivate()
 
 void TDeleteInvitesReplyDataPrivate::init()
 {
-    count = 0;
+    //
 }
 
 /*============================================================================
@@ -97,14 +99,16 @@ TDeleteInvitesReplyData::~TDeleteInvitesReplyData()
 
 /*============================== Public methods ============================*/
 
-quint32 TDeleteInvitesReplyData::count() const
+TIdList TDeleteInvitesReplyData::identifiers() const
 {
-    return d_func()->count;
+    return d_func()->identifiers;
 }
 
-void TDeleteInvitesReplyData::setCount(quint32 count)
+void TDeleteInvitesReplyData::setIdentifiers(const TIdList &identifiers)
 {
-    d_func()->count = count;
+    d_func()->identifiers = identifiers;
+    bRemoveDuplicates(d_func()->identifiers);
+    d_func()->identifiers.removeAll(0);
 }
 
 /*============================== Public operators ==========================*/
@@ -113,7 +117,7 @@ TDeleteInvitesReplyData &TDeleteInvitesReplyData::operator =(const TDeleteInvite
 {
     B_D(TDeleteInvitesReplyData);
     const TDeleteInvitesReplyDataPrivate *dd = other.d_func();
-    d->count = dd->count;
+    d->identifiers = dd->identifiers;
     return *this;
 }
 
@@ -121,7 +125,7 @@ bool TDeleteInvitesReplyData::operator ==(const TDeleteInvitesReplyData &other) 
 {
     const B_D(TDeleteInvitesReplyData);
     const TDeleteInvitesReplyDataPrivate *dd = other.d_func();
-    return d->count == dd->count;
+    return d->identifiers == dd->identifiers;
 }
 
 bool TDeleteInvitesReplyData::operator !=(const TDeleteInvitesReplyData &other) const
@@ -140,7 +144,7 @@ QDataStream &operator <<(QDataStream &stream, const TDeleteInvitesReplyData &dat
 {
     const TDeleteInvitesReplyDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("count", d->count);
+    m.insert("identifiers", d->identifiers);
     stream << m;
     return stream;
 }
@@ -150,7 +154,7 @@ QDataStream &operator >>(QDataStream &stream, TDeleteInvitesReplyData &data)
     TDeleteInvitesReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->count = m.value("count").toUInt();
+    d->identifiers = m.value("identifiers").value<TIdList>();
     return stream;
 }
 

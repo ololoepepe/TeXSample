@@ -51,6 +51,7 @@ public:
         AlreadyAuthorizedMessage,
         AlreadyDeletedMessage,
         AlreadyExistsMessage,
+        ConnectionTimeoutMessage,
         InternalErrorMessage,
         InvalidCommandMessage,
         InvalidDataMessage,
@@ -60,6 +61,9 @@ public:
         NotAuthorizedMessage,
         NotEnoughRightsMessage,
         NotModifiableMessage,
+        OperationCanceledMessage,
+        OperationErrorMessage,
+        OperationTimeoutMessage,
         UnknownErrorMessage
     };
 public:

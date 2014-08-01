@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -40,12 +41,15 @@
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TMessage>
+#include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TRegisterRequestData>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TService>
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserIdentifier>
 #include <TeXSampleCore/TUserInfo>
+#include <TeXSampleCore/TUserModel>
+#include <TeXSampleNetwork/TNetworkClient>
 
 #include <BApplication>
 #include <BBaseObject>
@@ -99,9 +103,8 @@ const QString TUserInfoWidgetPrivate::DateTimeFormat = "dd MMMM yyyy hh:mm";
 
 /*============================== Public constructors =======================*/
 
-TUserInfoWidgetPrivate::TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m,
-                                               const TAccessLevel &accessLevel) :
-    BBaseObjectPrivate(q), Accesslevel(accessLevel), Mode(m)
+TUserInfoWidgetPrivate::TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m) :
+    BBaseObjectPrivate(q), Mode(m)
 {
     //
 }
@@ -117,11 +120,8 @@ void TUserInfoWidgetPrivate::createAccessLevelField(QFormLayout *flt, bool readO
 {
     cmboxAccessLevel = new QComboBox;
       cmboxAccessLevel->setEnabled(!readOnly);
-      foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
-          if (TUserInfoWidget::ShowMode != Mode && lvl > Accesslevel)
-              break;
+      foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels())
           cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
-      }
       if (cmboxAccessLevel->count())
         cmboxAccessLevel->setCurrentIndex(0);
     flt->addRow(tr("Access level:", "lbl text"), cmboxAccessLevel);
@@ -134,39 +134,42 @@ void TUserInfoWidgetPrivate::createActiveField(QFormLayout *flt, bool readOnly)
     flt->addRow(tr("Active:", "lbl text"), cboxActive);
 }
 
-void TUserInfoWidgetPrivate::createAvatarButton(QVBoxLayout *vlt, bool readOnly)
+void TUserInfoWidgetPrivate::createAvatarButton(QHBoxLayout *hlt, bool readOnly)
 {
-    tbtnAvatar = new QToolButton;
-      tbtnAvatar->setIconSize(QSize(128, 128));
-      if (!readOnly) {
-          tbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
-          QVBoxLayout *vltww = new QVBoxLayout(tbtnAvatar);
-            vltww->addStretch();
-            tbtnClearAvatar = new QToolButton;
-              tbtnClearAvatar->setIconSize(QSize(16, 16));
-              tbtnClearAvatar->setIcon(BApplication::icon("editdelete"));
-              tbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
-              connect(tbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
-            vltww->addWidget(tbtnClearAvatar);
-      }
-      connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
-      resetAvatar();
-      editAvatar = false;
-    vlt->addWidget(tbtnAvatar);
+    QGroupBox *gbox = new QGroupBox(tr("Avatar", "gbox title"));
+      QHBoxLayout *vlt = new QHBoxLayout(gbox);
+        tbtnAvatar = new QToolButton;
+          tbtnAvatar->setIconSize(QSize(128, 128));
+          if (!readOnly) {
+              tbtnAvatar->setToolTip(tr("Click to select a new picture", "tbtn toolTip"));
+              QVBoxLayout *vltww = new QVBoxLayout(tbtnAvatar);
+                vltww->addStretch();
+                tbtnClearAvatar = new QToolButton;
+                  tbtnClearAvatar->setIconSize(QSize(16, 16));
+                  tbtnClearAvatar->setIcon(BApplication::icon("editdelete"));
+                  tbtnClearAvatar->setToolTip(tr("Clear avatar", "tbtn toolTip"));
+                  connect(tbtnClearAvatar, SIGNAL(clicked()), this, SLOT(resetAvatar()));
+                vltww->addWidget(tbtnClearAvatar);
+          }
+          connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
+          resetAvatar();
+          editAvatar = false;
+        vlt->addWidget(tbtnAvatar);
+    hlt->addWidget(gbox);
+
 }
 
 void TUserInfoWidgetPrivate::createEmailGroup(QFormLayout *flt, EditGroupMode mode)
 {
     edtgrpEmail = new BEditGroup(this);
+    if (OptionalMode == mode || SeparateMode == mode) {
+        lblEmailOld = new QLabel;
+        flt->addRow(tr("E-mail:", "lbl text"), lblEmailOld);
+    }
     if (OptionalMode == mode) {
         cboxChangeEmail = new QCheckBox;
           connect(cboxChangeEmail, SIGNAL(toggled(bool)), this, SLOT(checkInputs()));
         flt->addRow(tr("Change e-mail:", "lbl text"), cboxChangeEmail);
-    }
-    if (OptionalMode == mode || SeparateMode == mode) {
-        ledtEmailOld = new QLineEdit;
-          ledtEmailOld->setEnabled(false);
-        flt->addRow(tr("Old e-mail:", "lbl text"), ledtEmailOld);
     }
     ledtEmail1 = new QLineEdit;
       ledtEmail1->setMaxLength(Texsample::MaximumEmailLength);
@@ -175,12 +178,17 @@ void TUserInfoWidgetPrivate::createEmailGroup(QFormLayout *flt, EditGroupMode mo
       inputEmail1 = new BInputField;
       inputEmail1->addWidget(ledtEmail1);
       edtgrpEmail->addEdit(ledtEmail1);
+      QHBoxLayout *hlt = new QHBoxLayout;
+      hlt->addWidget(inputEmail1);
       tbtnCheckEmail = new QToolButton;
+        QSize sz = QSize(ledtEmail1->sizeHint().height(), ledtEmail1->sizeHint().height());
+        tbtnCheckEmail->setIconSize(sz - (tbtnCheckEmail->sizeHint() - tbtnCheckEmail->iconSize()));
         tbtnCheckEmail->setToolTip(tr("Check e-mail", "tbtn toolTip"));
         tbtnCheckEmail->setIcon(BApplication::icon("network"));
+        tbtnCheckEmail->setFixedSize(sz);
         connect(tbtnCheckEmail, SIGNAL(clicked()), this, SLOT(checkEmail()));
-      inputEmail1->addWidget(tbtnCheckEmail);
-    flt->addRow(tr("E-mail:", "lbl text"), inputEmail1);
+      hlt->addWidget(tbtnCheckEmail);
+    flt->addRow(tr("E-mail:", "lbl text"), hlt);
     ledtEmail2 = new QLineEdit;
       ledtEmail1->setMaxLength(Texsample::MaximumEmailLength);
       ledtEmail2->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
@@ -188,7 +196,7 @@ void TUserInfoWidgetPrivate::createEmailGroup(QFormLayout *flt, EditGroupMode mo
       inputEmail2 = new BInputField;
       inputEmail2->addWidget(ledtEmail2);
       edtgrpEmail->addEdit(ledtEmail2);
-      connect(edtgrpEmail, SIGNAL(textsMatchAndValidChanged(bool)), inputEmail2, SLOT(setValid(bool)));
+      connect(edtgrpEmail, SIGNAL(textsMatchAndAcceptableChanged(bool)), inputEmail2, SLOT(setValid(bool)));
     flt->addRow(tr("E-mail confirmation:", "lbl text"), inputEmail2);
     if (SeparateMode == mode) {
         btnChangeEmail = new QPushButton(tr("Change e-mail", "btn text"));
@@ -239,14 +247,19 @@ void TUserInfoWidgetPrivate::createLoginFiled(QFormLayout *flt, bool readOnly)
       connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
       inputLogin = new BInputField;
       inputLogin->addWidget(ledtLogin);
+      QHBoxLayout *hlt = new QHBoxLayout;
+      hlt->addWidget(inputLogin);
       if (!readOnly) {
           tbtnCheckLogin = new QToolButton;
+            QSize sz = QSize(ledtLogin->sizeHint().height(), ledtLogin->sizeHint().height());
+            tbtnCheckLogin->setIconSize(sz - (tbtnCheckLogin->sizeHint() - tbtnCheckLogin->iconSize()));
             tbtnCheckLogin->setToolTip(tr("Check login", "tbtn toolTip"));
             tbtnCheckLogin->setIcon(BApplication::icon("network"));
+            tbtnCheckLogin->setFixedSize(sz);
             connect(tbtnCheckLogin, SIGNAL(clicked()), this, SLOT(checkLogin()));
-          inputLogin->addWidget(tbtnCheckLogin);
+          hlt->addWidget(tbtnCheckLogin);
       }
-    flt->addRow(tr("Login:", "lbl text"), inputLogin);
+    flt->addRow(tr("Login:", "lbl text"), hlt);
 }
 
 void TUserInfoWidgetPrivate::createNameFields(QFormLayout *flt, bool readOnly)
@@ -303,7 +316,7 @@ void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode
       inputPwd2 = new BInputField;
       inputPwd2->addWidget(pwdwgt2);
       pwdgrp->addPasswordWidget(pwdwgt2);
-      connect(pwdgrp, SIGNAL(passwordsMatchAndValidChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+      connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), inputPwd2, SLOT(setValid(bool)));
     flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
     if (SeparateMode == mode) {
         btnChangePassword = new QPushButton(tr("Change password", "btn text"));
@@ -321,16 +334,17 @@ void TUserInfoWidgetPrivate::createRegistrationDateTimeField(QFormLayout *flt)
     flt->addRow(tr("Registration date:", "lbl text"), lblRegistrationDateTime);
 }
 
-void TUserInfoWidgetPrivate::createServicesSection(QVBoxLayout *vlt, bool readOnly)
+void TUserInfoWidgetPrivate::createServicesSection(QHBoxLayout *hlt, bool readOnly)
 {
-    QFormLayout *flt = new QFormLayout;
-    foreach (const TService &s, TServiceList::allServices()) {
-        QCheckBox *cbox = new QCheckBox;
-          cbox->setEnabled(!readOnly);
-        flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
-        cboxServiceMap.insert(s, cbox);
-    }
-    vlt->addLayout(flt);
+    QGroupBox *gbox = new QGroupBox(tr("Services", "gbox title"));
+      QFormLayout *flt = new QFormLayout(gbox);
+      foreach (const TService &s, TServiceList::allServices()) {
+          QCheckBox *cbox = new QCheckBox;
+            cbox->setEnabled(!readOnly);
+          flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
+          cboxServiceMap.insert(s, cbox);
+      }
+    hlt->addWidget(gbox);
 }
 
 TIdList TUserInfoWidgetPrivate::groups() const
@@ -345,11 +359,8 @@ TIdList TUserInfoWidgetPrivate::groups() const
 
 void TUserInfoWidgetPrivate::init()
 {
-    changeEmailFunction = 0;
-    changePasswordFunction = 0;
-    checkEmailFunction = 0;
-    checkLoginFunction = 0;
-    getUserAvatarFunction = 0;
+    client = 0;
+    model = 0;
     editAvatar = false;
     containsAvatar = false;
     valid = false;
@@ -369,7 +380,7 @@ void TUserInfoWidgetPrivate::init()
     lblRegistrationDateTime = 0;
     ledtEmail1 = 0;
     ledtEmail2 = 0;
-    ledtEmailOld = 0;
+    lblEmailOld = 0;
     ledtInvite = 0;
     ledtLogin = 0;
     ledtName = 0;
@@ -384,6 +395,8 @@ void TUserInfoWidgetPrivate::init()
     tbtnCheckEmail = 0;
     tbtnCheckLogin = 0;
     tbtnClearAvatar = 0;
+    btnChangeEmail = 0;
+    btnChangePassword = 0;
     QHBoxLayout *hlt = new QHBoxLayout(q_func());
     switch (Mode) {
     case TUserInfoWidget::AddMode: {
@@ -452,12 +465,15 @@ void TUserInfoWidgetPrivate::init()
         break;
     }
     }
+    hlt->addWidget(BGuiTools::createFrame(QFrame::VLine));
     QVBoxLayout *vlt = new QVBoxLayout;
-      createAvatarButton(vlt, TUserInfoWidget::ShowMode == Mode);
-      if (TUserInfoWidget::RegisterMode != Mode){
-          createServicesSection(vlt, TUserInfoWidget::EditSelfMode == Mode || TUserInfoWidget::ShowMode == Mode);
-          createGroupsSection(vlt, TUserInfoWidget::EditSelfMode == Mode || TUserInfoWidget::ShowMode == Mode);
-      }
+      QHBoxLayout *hltww = new QHBoxLayout;
+        createAvatarButton(hltww, TUserInfoWidget::ShowMode == Mode);
+        if (TUserInfoWidget::RegisterMode != Mode)
+            createServicesSection(hltww, TUserInfoWidget::EditSelfMode == Mode || TUserInfoWidget::ShowMode == Mode);
+      vlt->addLayout(hltww);
+      if (TUserInfoWidget::RegisterMode != Mode)
+        createGroupsSection(vlt, TUserInfoWidget::EditSelfMode == Mode || TUserInfoWidget::ShowMode == Mode);
     hlt->addLayout(vlt);
     //
     checkInputs();
@@ -477,17 +493,17 @@ TServiceList TUserInfoWidgetPrivate::services() const
     return list;
 }
 
-/*============================== Private slots =============================*/
+/*============================== Public slots ==============================*/
 
 void TUserInfoWidgetPrivate::changeEmail()
 {
-    if (!changeEmailFunction)
+    if (!client)
         return;
     QString email = ledtEmail1->text();
     TChangeEmailRequestData data;
     data.setEmail(email);
     data.setPassword(pwdwgtOld->openPassword());
-    TReply r = changeEmailFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::ChangeEmail, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Changing e-mail failed", "msgbox windowTitle"));
@@ -506,12 +522,12 @@ void TUserInfoWidgetPrivate::changeEmail()
 
 void TUserInfoWidgetPrivate::changePassword()
 {
-    if (!changePasswordFunction)
+    if (!client)
         return;
     TChangePasswordRequestData data;
     data.setOldPassword(pwdwgtOld->openPassword());
     data.setNewPassword(pwdwgt1->openPassword());
-    TReply r = changePasswordFunction(data, q_func());
+    TReply r = client->performOperation(TOperation::ChangePassword, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Changing password failed", "msgbox windowTitle"));
@@ -529,7 +545,8 @@ void TUserInfoWidgetPrivate::checkChangeEmailInputs()
 {
     if (!btnChangeEmail)
         return;
-    btnChangeEmail->setEnabled(pwdwgtOld->hasAcceptableInput() && edtgrpEmail->textsMatchAndAcceptable());
+    btnChangeEmail->setEnabled(client && client->isAuthorized() && pwdwgtOld->hasAcceptableInput()
+                               && edtgrpEmail->textsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkChangePasswordInputs()
@@ -537,17 +554,18 @@ void TUserInfoWidgetPrivate::checkChangePasswordInputs()
     if (!btnChangePassword)
         return;
     inputPwdOld->setValid(pwdwgtOld->hasAcceptableInput());
-    btnChangePassword->setEnabled(pwdwgtOld->hasAcceptableInput() && pwdgrp->passwordsMatchAndAcceptable());
+    btnChangePassword->setEnabled(client && client->isAuthorized() && pwdwgtOld->hasAcceptableInput()
+                                  && pwdgrp->passwordsMatchAndAcceptable());
 }
 
 void TUserInfoWidgetPrivate::checkEmail()
 {
-    if (!checkEmailFunction)
+    if (!client)
         return;
     QString email = ledtEmail1->text();
     TCheckEmailAvailabilityRequestData data;
     data.setEmail(email);
-    TReply r = checkEmailFunction(data, q_func());
+    TReply r = client->performAnonymousOperation(TOperation::CheckEmailAvailability, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Checking e-mail failed", "msgbox windowTitle"));
@@ -578,37 +596,44 @@ void TUserInfoWidgetPrivate::checkInputs()
     bool emailValid = !edtgrpEmail || (edtgrpEmail->textsMatchAndAcceptable()
                                        && !occupiedEmails.contains(ledtEmail1->text()));
     bool passwordValid = !pwdgrp || pwdgrp->passwordsMatchAndAcceptable();
+    if (cboxChangeEmail) {
+        inputEmail1->setEnabled(cboxChangeEmail->isChecked());
+        inputEmail2->setEnabled(cboxChangeEmail->isChecked());
+    }
+    if (cboxChangePassword) {
+        inputPwd1->setEnabled(cboxChangePassword->isChecked());
+        inputPwd2->setEnabled(cboxChangePassword->isChecked());
+    }
     if (inputInvite)
         inputInvite->setValid(inviteValid);
     if (inputLogin)
         inputLogin->setValid(loginValid);
     if (tbtnCheckLogin)
-        tbtnCheckLogin->setEnabled(checkLoginFunction && ledtLogin->hasAcceptableInput());
+        tbtnCheckLogin->setEnabled(client && client->isValid(true) && ledtLogin->hasAcceptableInput());
     if (inputEmail1)
         inputEmail1->setValid(ledtEmail1->hasAcceptableInput());
-    if (tbtnCheckEmail)
-        tbtnCheckEmail->setEnabled(changeEmailFunction && ledtEmail1->hasAcceptableInput());
-    if (inputEmail2)
-        inputEmail2->setValid(emailValid);
+    if (tbtnCheckEmail) {
+        tbtnCheckEmail->setEnabled((!cboxChangeEmail || cboxChangeEmail->isChecked())
+                                   && client && client->isValid(true) && ledtEmail1->hasAcceptableInput());
+    }
     if (inputPwd1)
         inputPwd1->setValid(pwdwgt1->hasAcceptableInput());
-    if (inputPwd2)
-        inputPwd2->setValid(passwordValid);
-    bool v = idValid && inviteValid && loginValid && emailValid && passwordValid;
+    bool v = idValid && inviteValid && loginValid && ((cboxChangeEmail && !cboxChangeEmail->isChecked()) || emailValid)
+            && ((cboxChangePassword && !cboxChangePassword->isChecked()) || passwordValid);
     if (v != valid) {
         valid = v;
-        QMetaObject::invokeMethod(q_func(), "validityChanged", Q_ARG(bool, v));
+        QMetaObject::invokeMethod(q_func(), "inputValidityChanged", Q_ARG(bool, v));
     }
 }
 
 void TUserInfoWidgetPrivate::checkLogin()
 {
-    if (!checkLoginFunction)
+    if (!client)
         return;
     QString login = ledtLogin->text();
     TCheckLoginAvailabilityRequestData data;
     data.setLogin(login);
-    TReply r = checkLoginFunction(data, q_func());
+    TReply r = client->performAnonymousOperation(TOperation::CheckLoginAvailability, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Checking login failed", "msgbox windowTitle"));
@@ -629,6 +654,50 @@ void TUserInfoWidgetPrivate::checkLogin()
         QToolTip::showText(p, tr("The login is occupied", "toolTip"), tbtnCheckLogin);
     }
     checkInputs();
+}
+
+void TUserInfoWidgetPrivate::clientAnonymousValidityChanged(bool valid)
+{
+    if (tbtnCheckLogin)
+        tbtnCheckLogin->setEnabled(client && valid && ledtLogin->hasAcceptableInput());
+    if (tbtnCheckEmail)
+        tbtnCheckEmail->setEnabled(client && valid && ledtEmail1->hasAcceptableInput());
+}
+
+void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
+{
+    checkChangeEmailInputs();
+    checkChangePasswordInputs();
+    if (TUserInfoWidget::ShowMode == Mode && !containsAvatar)
+        tbtnAvatar->setEnabled(client && authorized);
+    if (cmboxAccessLevel && TUserInfoWidget::ShowMode != Mode) {
+        foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
+            int ind = cmboxAccessLevel->findData(int(lvl));
+            bool enabled = client && client->isAuthorized() && client->userInfo().accessLevel() >= lvl;
+            BGuiTools::setItemEnabled(cmboxAccessLevel, ind, enabled);
+            if (!enabled && cmboxAccessLevel->currentIndex() == ind && ind > 0)
+                cmboxAccessLevel->setCurrentIndex(ind - 1);
+        }
+    }
+    if (lstwgtGroups) {
+        lstwgtGroups->clear();
+        QList<TListWidget::Item> list;
+        if (client && client->isAuthorized()) {
+            foreach (const TGroupInfo &group, client->userInfo().availableGroups()) {
+                TListWidget::Item item;
+                item.text = group.name();
+                item.data = group.id();
+                list << item;
+            }
+        }
+        lstwgtGroups->setAvailableItems(list);
+    }
+    if (!cboxServiceMap.isEmpty() && (TUserInfoWidget::AddMode == Mode || TUserInfoWidget::EditMode == Mode)) {
+        foreach (const TService &service, TServiceList::allServices()) {
+            cboxServiceMap.value(service)->setEnabled(client && client->isAuthorized()
+                                                      && client->userInfo().availableServices().contains(service));
+        }
+    }
 }
 
 void TUserInfoWidgetPrivate::resetAvatar(const QImage &image)
@@ -652,7 +721,7 @@ void TUserInfoWidgetPrivate::resetAvatar(const QImage &image)
             tbtnAvatar->setEnabled(!avatar.isNull());
         } else {
             tbtnAvatar->setToolTip(!avatar.isNull() ? tr("Click to see the avatar", "tbtn toolTip") : QString());
-            tbtnAvatar->setEnabled(getUserAvatarFunction);
+            tbtnAvatar->setEnabled(client);
         }
     }
     editAvatar = true;
@@ -662,11 +731,11 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 {
     if (TUserInfoWidget::ShowMode == Mode) {
         if (!containsAvatar) {
-            if (!getUserAvatarFunction)
+            if (!client)
                 return;
             TGetUserAvatarRequestData data;
             data.setIdentifier(id);
-            TReply r = getUserAvatarFunction(data, q_func());
+            TReply r = client->performOperation(TOperation::GetUserAvatar, data, q_func());
             if (!r) {
                 QMessageBox msg(q_func());
                 msg.setWindowTitle(tr("Failed to get avatar", "msgbox windowTitle"));
@@ -679,6 +748,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
             }
             avatar = r.data().value<TGetUserAvatarReplyData>().avatar();
             containsAvatar = true;
+            if (model)
+                model->updateUserAvatar(id, avatar);
         }
         BDialog dlg(q_func());
           dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
@@ -721,14 +792,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 
 /*============================== Public constructors =======================*/
 
-TUserInfoWidget::TUserInfoWidget(Mode mode, const TAccessLevel &accessLevel, QWidget *parent) :
-    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this, mode, accessLevel))
-{
-    d_func()->init();
-}
-
-TUserInfoWidget::TUserInfoWidget(QWidget *parent) :
-    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this))
+TUserInfoWidget::TUserInfoWidget(Mode mode, QWidget *parent) :
+    QWidget(parent), BBaseObject(*new TUserInfoWidgetPrivate(this, mode))
 {
     d_func()->init();
 }
@@ -740,34 +805,9 @@ TUserInfoWidget::~TUserInfoWidget()
 
 /*============================== Public methods ============================*/
 
-TGroupInfoList TUserInfoWidget::availableGroups() const
+TNetworkClient *TUserInfoWidget::client() const
 {
-    return d_func()->availableGroups;
-}
-
-TServiceList TUserInfoWidget::availableServices() const
-{
-    return d_func()->availableServices;
-}
-
-TUserInfoWidget::ChangeEmailFunction TUserInfoWidget::changeEmailFunction() const
-{
-    return d_func()->changeEmailFunction;
-}
-
-TUserInfoWidget::ChangePasswordFunction TUserInfoWidget::changePasswordFunction() const
-{
-    return d_func()->changePasswordFunction;
-}
-
-TUserInfoWidget::CheckEmailFunction TUserInfoWidget::checkEmailFunction() const
-{
-    return d_func()->checkEmailFunction;
-}
-
-TUserInfoWidget::CheckLoginFunction TUserInfoWidget::checkLoginFunction() const
-{
-    return d_func()->checkLoginFunction;
+    return d_func()->client;
 }
 
 QVariant TUserInfoWidget::createRequestData() const
@@ -786,7 +826,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setName(d->ledtName->text());
         data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setServices(d->services());
+        data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -807,7 +847,7 @@ QVariant TUserInfoWidget::createRequestData() const
         if (d->cboxChangePassword->isChecked())
             data.setPassword(d->pwdwgt1->openPassword());
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setServices(d->services());
+        data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -841,11 +881,6 @@ QVariant TUserInfoWidget::createRequestData() const
     return QVariant();
 }
 
-TUserInfoWidget::GetUserAvatarFunction TUserInfoWidget::getUserAvatarFunction() const
-{
-    return d_func()->getUserAvatarFunction;
-}
-
 bool TUserInfoWidget::hasValidInput() const
 {
     return d_func()->valid;
@@ -856,77 +891,40 @@ TUserInfoWidget::Mode TUserInfoWidget::mode() const
     return d_func()->Mode;
 }
 
-void TUserInfoWidget::setAvailableGroups(const TGroupInfoList &groups)
+TUserModel *TUserInfoWidget::model() const
+{
+    return d_func()->model;
+}
+
+void TUserInfoWidget::setClient(TNetworkClient *client)
 {
     B_D(TUserInfoWidget);
-    d->availableGroups = groups;
-    bRemoveDuplicates(d->availableGroups);
-    if (d->lstwgtGroups) {
-        QList<TListWidget::Item> list;
-        foreach (const TGroupInfo &group, d->availableGroups) {
-            TListWidget::Item item;
-            item.text = group.name();
-            item.data = group.id();
-            list << item;
-        }
-        d->lstwgtGroups->setAvailableItems(list);
+    if (d->client) {
+        disconnect(d->client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+        disconnect(d->client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(clientAnonymousValidityChanged(bool)));
     }
-}
-
-void TUserInfoWidget::setAvailableServices(const TServiceList &services)
-{
-    B_D(TUserInfoWidget);
-    d->availableServices = services;
-    bRemoveDuplicates(d->availableServices);
-    if (!d->cboxServiceMap.isEmpty() && (AddMode == d->Mode || EditMode == d->Mode)) {
-        foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setEnabled(d->availableServices.contains(service));
+    d->client = client;
+    if (client) {
+        connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAuthorizedChanged(bool)));
+        connect(client, SIGNAL(anonymousValidityChanged(bool)), d, SLOT(clientAnonymousValidityChanged(bool)));
     }
+    d->clientAuthorizedChanged(client && client->isAuthorized());
+    d->clientAnonymousValidityChanged(client && client->isValid(true));
+    if (EditSelfMode == d->Mode)
+        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
 
-void TUserInfoWidget::setChangeEmailFunction(ChangeEmailFunction function)
-{
-    d_func()->changeEmailFunction = function;
-    d_func()->checkChangeEmailInputs();
-}
-
-void TUserInfoWidget::setChangePasswordFunction(ChangePasswordFunction function)
-{
-    d_func()->changePasswordFunction = function;
-    d_func()->checkChangePasswordInputs();
-}
-
-void TUserInfoWidget::setCheckEmailFunction(CheckEmailFunction function)
-{
-    d_func()->checkEmailFunction = function;
-    if (d_func()->tbtnCheckEmail)
-        d_func()->tbtnCheckEmail->setEnabled(function);
-}
-
-void TUserInfoWidget::setCheckLoginFunction(CheckLoginFunction function)
-{
-    d_func()->checkLoginFunction = function;
-    if (d_func()->tbtnCheckLogin)
-        d_func()->tbtnCheckLogin->setEnabled(function);
-}
-
-void TUserInfoWidget::setGetUserAvatarFunction(GetUserAvatarFunction function)
-{
-    d_func()->getUserAvatarFunction = function;
-    if (ShowMode == d_func()->Mode && !d_func()->containsAvatar)
-        d_func()->tbtnAvatar->setEnabled(function);
-}
-
-void TUserInfoWidget::setInfo(const TUserInfo &info)
+void TUserInfoWidget::setUser(quint64 userId)
 {
     B_D(TUserInfoWidget);
-    if (AddMode == d->Mode || RegisterMode == d->Mode)
+    if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
         return;
+    TUserInfo info = d->model->userInfo(userId);
     d->id = info.id();
     if (d->ledtLogin)
         d->ledtLogin->setText(info.login());
-    if (d->ledtEmailOld)
-        d->ledtEmailOld->setText(info.email());
+    if (d->lblEmailOld)
+        d->lblEmailOld->setText(info.email());
     if (d->cmboxAccessLevel)
         d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData(int(info.accessLevel())));
     if (d->cboxActive)
@@ -949,21 +947,25 @@ void TUserInfoWidget::setInfo(const TUserInfo &info)
     d->resetAvatar(info.avatar());
     if (!d->cboxServiceMap.isEmpty()) {
         foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setChecked(info.services().contains(service));
+            d->cboxServiceMap.value(service)->setChecked(info.availableServices().contains(service));
     }
     if (d->lstwgtGroups) {
         QList<TListWidget::Item> list;
-        foreach (quint64 groupId, info.groups()) {
-            foreach (const TGroupInfo &groupInfo, d->availableGroups) {
-                if (groupInfo.id() == groupId) {
-                    TListWidget::Item item;
-                    item.text = groupInfo.name();
-                    item.data = groupId;
-                    list << item;
-                    break;
-                }
-            }
+        foreach (const TGroupInfo &groupInfo, info.groups()) {
+            TListWidget::Item item;
+            item.text = groupInfo.name();
+            item.data = groupInfo.id();
+            list << item;
         }
         d->lstwgtGroups->setItems(list);
     }
+    d->checkInputs();
+}
+
+void TUserInfoWidget::setModel(TUserModel *model)
+{
+    B_D(TUserInfoWidget);
+    d->model = model;
+    if (EditSelfMode == d->Mode)
+        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }

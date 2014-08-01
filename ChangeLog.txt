@@ -11,6 +11,8 @@
     * Add access level info to invites generation dialog
     * Rename requests into operations
     * Change main port to 9045
+    * Add network and networkwidgets modules
+    * Add TNetworkClient class
     * Get rid of native Mac OS library format (Frameworks) - use UNIX-style libs
     * Use Qt coding style, sort includes, class members, etc.
     * Fix warnings for Qt4 when adding "concurrent" and "widgets" modules

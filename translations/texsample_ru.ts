@@ -115,6 +115,26 @@
         <comment>headerData</comment>
         <translation>Имя</translation>
     </message>
+    <message>
+        <source>Owner ID</source>
+        <comment>headerData</comment>
+        <translation>ID владельца</translation>
+    </message>
+    <message>
+        <source>Owner login</source>
+        <comment>headerData</comment>
+        <translation>Логин владельца</translation>
+    </message>
+    <message>
+        <source>Creation date</source>
+        <comment>headerData</comment>
+        <translation>Дата создания</translation>
+    </message>
+    <message>
+        <source>Last modified</source>
+        <comment>headerData</comment>
+        <translation>Последнее изменение</translation>
+    </message>
 </context>
 <context>
     <name>TGroupWidgetPrivate</name>
@@ -190,6 +210,36 @@
         <source>Expiration date</source>
         <comment>headerData</comment>
         <translation>Действует до</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <comment>headerData</comment>
+        <translation>Код</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>headerData</comment>
+        <translation>Сервисы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>headerData</comment>
+        <translation>Группы</translation>
+    </message>
+    <message>
+        <source>Owner ID</source>
+        <comment>headerData</comment>
+        <translation>ID владельца</translation>
+    </message>
+    <message>
+        <source>Owner login</source>
+        <comment>headerData</comment>
+        <translation>Логин владельца</translation>
+    </message>
+    <message>
+        <source>Creation date</source>
+        <comment>headerData</comment>
+        <translation>Дата создания</translation>
     </message>
 </context>
 <context>
@@ -377,6 +427,30 @@
         <source>Not enough rights for this operation</source>
         <translation>Недостаточно прав для данной операции</translation>
     </message>
+    <message>
+        <source>The connection timed out</source>
+        <translation>Время ожидания соединения истекло</translation>
+    </message>
+    <message>
+        <source>The operation was canceled</source>
+        <translation>Операция была отменена</translation>
+    </message>
+    <message>
+        <source>An operation error occured</source>
+        <translation>Произошла ошибка операции</translation>
+    </message>
+    <message>
+        <source>The operation timed out</source>
+        <translation>Время ожидания завершения операции истекло</translation>
+    </message>
+</context>
+<context>
+    <name>TNetworkClientPrivate</name>
+    <message>
+        <source>An error occured</source>
+        <comment>message text</comment>
+        <translation>Произошла ошибка</translation>
+    </message>
 </context>
 <context>
     <name>TRecoveryWidgetPrivate</name>
@@ -560,11 +634,6 @@
         <source>Change e-mail:</source>
         <comment>lbl text</comment>
         <translation>Сменить эл. почту:</translation>
-    </message>
-    <message>
-        <source>Old e-mail:</source>
-        <comment>lbl text</comment>
-        <translation>Старая эл. почта:</translation>
     </message>
     <message>
         <source>Check e-mail</source>
@@ -766,19 +835,19 @@
         <comment>lbl text</comment>
         <translation>Фамилия:</translation>
     </message>
+    <message>
+        <source>Avatar</source>
+        <comment>gbox title</comment>
+        <translation>Аватар</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>gbox title</comment>
+        <translation>Сервисы</translation>
+    </message>
 </context>
 <context>
     <name>TUserModel</name>
-    <message>
-        <source>active</source>
-        <comment>data</comment>
-        <translation>активен</translation>
-    </message>
-    <message>
-        <source>inactive</source>
-        <comment>data</comment>
-        <translation>неактивен</translation>
-    </message>
     <message>
         <source>ID</source>
         <comment>headerData</comment>
@@ -793,6 +862,124 @@
         <source>Name</source>
         <comment>headerData</comment>
         <translation>Имя</translation>
+    </message>
+    <message>
+        <source>E-mail</source>
+        <comment>headerData</comment>
+        <translation>Эл. почта</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <comment>headerData</comment>
+        <translation>Активен</translation>
+    </message>
+    <message>
+        <source>Access level</source>
+        <comment>headerData</comment>
+        <translation>Уровень доступа</translation>
+    </message>
+    <message>
+        <source>Patronymic</source>
+        <comment>headerData</comment>
+        <translation>Отчество</translation>
+    </message>
+    <message>
+        <source>Surname</source>
+        <comment>headerData</comment>
+        <translation>Фамилия</translation>
+    </message>
+    <message>
+        <source>Available services</source>
+        <comment>headerData</comment>
+        <translation>Доступные сервисы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>headerData</comment>
+        <translation>Группы</translation>
+    </message>
+    <message>
+        <source>Available groups</source>
+        <comment>headerData</comment>
+        <translation>Доступные группы</translation>
+    </message>
+    <message>
+        <source>Avatar</source>
+        <comment>headerData</comment>
+        <translation>Аватар</translation>
+    </message>
+    <message>
+        <source>Registration date</source>
+        <comment>headerData</comment>
+        <translation>Дата регистрации</translation>
+    </message>
+    <message>
+        <source>Last modified</source>
+        <comment>headerData</comment>
+        <translation>Последнее изменение</translation>
+    </message>
+    <message>
+        <source>Avatar present</source>
+        <comment>headerData</comment>
+        <translation>Аватар присутствует</translation>
+    </message>
+</context>
+<context>
+    <name>TUserWidgetPrivate</name>
+    <message>
+        <source>Add user...</source>
+        <comment>act text</comment>
+        <translation>Добавить пользователя...</translation>
+    </message>
+    <message>
+        <source>Delete user</source>
+        <comment>act text</comment>
+        <translation>Удалить пользователя</translation>
+    </message>
+    <message>
+        <source>Edit user...</source>
+        <comment>act text</comment>
+        <translation>Редактировать данные пользователя...</translation>
+    </message>
+    <message>
+        <source>Adding user</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Добавление пользователя</translation>
+    </message>
+    <message>
+        <source>Adding user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Добавление пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to add user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось добавить пользователя. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Deleting user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Удаление пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to delete user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось удалить пользователя. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Editing user</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Редактирование данных пользователя</translation>
+    </message>
+    <message>
+        <source>Editing user failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Редактирование данных пользователя не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to edit user. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось отредактировать данные пользователя. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
@@ -861,6 +1048,11 @@
         <source>The password is not a correct SHA1 hash</source>
         <comment>error</comment>
         <translation>Этот пароль не является правильным SHA1-хешем</translation>
+    </message>
+    <message>
+        <source>Unable to test avatar</source>
+        <comment>error</comment>
+        <translation>Невозможно проверить аватар</translation>
     </message>
 </context>
 </TS>

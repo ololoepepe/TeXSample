@@ -55,6 +55,7 @@ public:
     ~TEditUserRequestData();
 public:
     TAccessLevel accessLevel() const;
+    TServiceList availableServices() const;
     QImage avatar() const;
     void clear();
     bool editAvatar() const;
@@ -68,9 +69,9 @@ public:
     bool isValid() const;
     QString name() const;
     QString patronymic() const;
-    TServiceList services() const;
     void setAccesslevel(const TAccessLevel &accessLevel);
     void setActive(bool active);
+    void setAvailableServices(const TServiceList &services);
     void setAvatar(const QImage &avatar);
     void setEditAvatar(bool edit);
     void setEditEmail(bool edit);
@@ -81,7 +82,6 @@ public:
     void setName(const QString &name);
     void setPassword(const QString &password);
     void setPatronymic(const QString &patronymic);
-    void setServices(const TServiceList &services);
     void setSurname(const QString &surname);
     QString surname() const;
 public:

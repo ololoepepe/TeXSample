@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -22,6 +23,8 @@
 #ifndef TRECOVERYWIDGET_P_H
 #define TRECOVERYWIDGET_P_H
 
+class TNetworkClient;
+
 class BInputField;
 class BPasswordGroup;
 class BPasswordWidget;
@@ -39,16 +42,12 @@ class QPushButton;
 ================================ TRecoveryWidgetPrivate ======================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TRecoveryWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TRecoveryWidget)
 public:
-    typedef TRecoveryWidget::RequestRecoveryCodeFunction RequestRecoveryCodeFunction;
-    typedef TRecoveryWidget::RecoverAccountFunction RecoverAccountFunction;
-public:
-    const RequestRecoveryCodeFunction RequestFunction;
-    const RecoverAccountFunction RecoverFunction;
+    TNetworkClient * const Client;
 public:
     QPushButton *btnGet;
     QPushButton *btnRecover;
@@ -62,8 +61,7 @@ public:
     BPasswordWidget *pwdwgt1;
     BPasswordWidget *pwdwgt2;
 public:
-    explicit TRecoveryWidgetPrivate(TRecoveryWidget *q, RequestRecoveryCodeFunction requestRecoveryCodeFunction,
-                                    RecoverAccountFunction recoverAccountFunction);
+    explicit TRecoveryWidgetPrivate(TRecoveryWidget *q, TNetworkClient *client);
     ~TRecoveryWidgetPrivate();
 public:
     void init();

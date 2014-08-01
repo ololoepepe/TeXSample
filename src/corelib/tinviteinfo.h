@@ -24,7 +24,7 @@
 
 class TInviteInfoPrivate;
 
-class TIdList;
+class TGroupInfoList;
 class TServiceList;
 
 class BUuid;
@@ -57,7 +57,7 @@ public:
     BUuid code() const;
     QDateTime creationDateTime() const;
     QDateTime expirationDateTime() const;
-    TIdList groups() const;
+    TGroupInfoList groups() const;
     quint64 id() const;
     bool isValid() const;
     quint64 ownerId() const;
@@ -66,7 +66,7 @@ public:
     void setCode(const BUuid &code);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);
-    void setGroups(const TIdList &groups);
+    void setGroups(const TGroupInfoList &groups);
     void setId(quint64 id);
     void setOwnerId(quint64 id);
     void setOwnerLogin(const QString &login);

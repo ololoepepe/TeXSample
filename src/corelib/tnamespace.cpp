@@ -25,6 +25,7 @@
 #include <BTextTools>
 
 #include <QByteArray>
+#include <QBuffer>
 #include <QFileInfo>
 #include <QImage>
 #include <QString>
@@ -50,10 +51,6 @@ bool testAvatar(const QImage &avatar, QString *error, bool tr)
     if (avatar.isNull())
         return bRet(error, tr ? translate("Texsample", "The image is invalid", "error") :
                                 QString("The image is invalid"), false);
-    if (avatar.byteCount() > Texsample::MaximumAvatarSize) {
-        return bRet(error, tr ? translate("Texsample", "The image is too big", "error") :
-                                QString("The image is too big"), false);
-    }
     if (avatar.height() > Texsample::MaximumAvatarExtent) {
         return bRet(error, tr ? translate("Texsample", "The image\'s height is too big", "error") :
                                 QString("The image\'s height is too big"), false);
@@ -61,6 +58,17 @@ bool testAvatar(const QImage &avatar, QString *error, bool tr)
     if (avatar.width() > Texsample::MaximumAvatarExtent) {
         return bRet(error, tr ? translate("Texsample", "The image\'s hwidth is too big", "error") :
                                 QString("The image\'s hwidth is too big"), false);
+    }
+    QByteArray ba;
+    QBuffer buff(&ba);
+    buff.open(QBuffer::WriteOnly);
+    if (!avatar.save(&buff, "png")) {
+        return bRet(error, tr ? translate("Texsample", "Unable to test avatar", "error") :
+                                QString("Unable to test avatar"), false);
+    }
+    if (ba.size() > Texsample::MaximumAvatarSize) {
+        return bRet(error, tr ? translate("Texsample", "The image is too big", "error") :
+                                QString("The image is too big"), false);
     }
     return bRet(error, QString(), true);
 }

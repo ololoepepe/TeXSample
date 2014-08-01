@@ -141,6 +141,8 @@ QString TMessage::textNoTr() const
         return QT_TRANSLATE_NOOP("TMessage", "The resource is already deleted");
     case AlreadyExistsMessage:
         return QT_TRANSLATE_NOOP("TMessage", "The resource already exists");
+    case ConnectionTimeoutMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "The connection timed out");
     case InternalErrorMessage:
         return QT_TRANSLATE_NOOP("TMessage", "Some internal error");
     case InvalidCommandMessage:
@@ -159,6 +161,12 @@ QString TMessage::textNoTr() const
         return QT_TRANSLATE_NOOP("TMessage", "Not enough rights for this operation");
     case NotModifiableMessage:
         return QT_TRANSLATE_NOOP("TMessage", "Unable to edit non-modifiable resource");
+    case OperationCanceledMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "The operation was canceled");
+    case OperationErrorMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "An operation error occured");
+    case OperationTimeoutMessage:
+        return QT_TRANSLATE_NOOP("TMessage", "The operation timed out");
     case UnknownErrorMessage:
         return QT_TRANSLATE_NOOP("TMessage", "Some mysterious error");
     case NoMessage:

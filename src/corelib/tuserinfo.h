@@ -25,7 +25,7 @@
 class TUserInfoPrivate;
 
 class TAccessLevel;
-class TIdList;
+class TGroupInfoList;
 class TServiceList;
 
 class QDataStream;
@@ -55,11 +55,13 @@ public:
 public:
     TAccessLevel accessLevel() const;
     bool active() const;
+    TGroupInfoList availableGroups() const;
+    TServiceList availableServices() const;
     QImage avatar() const;
     void clear();
     bool containsAvatar() const;
     QString email() const;
-    TIdList groups() const;
+    TGroupInfoList groups() const;
     quint64 id() const;
     bool isValid() const;
     QDateTime lastModificationDateTime() const;
@@ -67,20 +69,20 @@ public:
     QString name() const;
     QString patronymic() const;
     QDateTime registrationDateTime() const;
-    TServiceList services() const;
     void setAccessLevel(const TAccessLevel &accessLevel);
     void setActive(bool active);
+    void setAvailableGroups(const TGroupInfoList &groups);
+    void setAvailableServices(const TServiceList &services);
     void setAvatar(const QImage &avatar);
     void setContainsAvatar(bool contains);
     void setEmail(const QString &email);
-    void setGroups(const TIdList &groups);
+    void setGroups(const TGroupInfoList &groups);
     void setId(quint64 id);
     void setLastModificationDateTime(const QDateTime &dt);
     void setLogin(const QString &login);
     void setName(const QString &name);
     void setPatronymic(const QString &partonymic);
     void setRegistrationDateTime(const QDateTime &dt);
-    void setServices(const TServiceList &services);
     void setSurname(const QString &surname);
     QString surname() const;
 public:

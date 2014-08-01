@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -22,7 +23,11 @@
 #ifndef TUSERINFOWIDGET_P_H
 #define TUSERINFOWIDGET_P_H
 
+class TIdList;
 class TListWidget;
+class TNetworkClient;
+class TServiceList;
+class TUserModel;
 
 class BEditGroup;
 class BInputField;
@@ -32,6 +37,7 @@ class BPasswordWidget;
 class QCheckBox;
 class QComboBox;
 class QFormLayout;
+class QHBoxLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -40,11 +46,7 @@ class QVBoxLayout;
 
 #include "tuserinfowidget.h"
 
-#include <TeXSampleCore/TAccessLevel>
-#include <TeXSampleCore/TGroupInfoList>
-#include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TService>
-#include <TeXSampleCore/TServiceList>
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
@@ -57,7 +59,7 @@ class QVBoxLayout;
 ================================ TUserInfoWidgetPrivate ======================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TUserInfoWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TUserInfoWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TUserInfoWidget)
@@ -71,11 +73,8 @@ public:
 public:
     static const QString DateTimeFormat;
 public:
-    const TAccessLevel Accesslevel;
     const TUserInfoWidget::Mode Mode;
 public:
-    TServiceList availableServices;
-    TGroupInfoList availableGroups;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
@@ -84,15 +83,11 @@ public:
     QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
-    TUserInfoWidget::ChangeEmailFunction changeEmailFunction;
-    TUserInfoWidget::ChangePasswordFunction changePasswordFunction;
-    TUserInfoWidget::CheckEmailFunction checkEmailFunction;
-    TUserInfoWidget::CheckLoginFunction checkLoginFunction;
+    TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
     bool containsAvatar;
     bool editAvatar;
     BEditGroup *edtgrpEmail;
-    TUserInfoWidget::GetUserAvatarFunction getUserAvatarFunction;
     quint64 id;
     BInputField *inputEmail1;
     BInputField *inputEmail2;
@@ -101,17 +96,18 @@ public:
     BInputField *inputPwd1;
     BInputField *inputPwd2;
     BInputField *inputPwdOld;
+    QLabel *lblEmailOld;
     QLabel *lblLastModificationDateTime;
     QLabel *lblRegistrationDateTime;
     QLineEdit *ledtEmail1;
     QLineEdit *ledtEmail2;
-    QLineEdit *ledtEmailOld;
     QLineEdit *ledtInvite;
     QLineEdit *ledtLogin;
     QLineEdit *ledtName;
     QLineEdit *ledtPatronymic;
     QLineEdit *ledtSurname;
     TListWidget *lstwgtGroups;
+    TUserModel *model;
     QMap<QString, bool> occupiedEmails;
     QMap<QString, bool> occupiedLogins;
     BPasswordGroup *pwdgrp;
@@ -124,13 +120,12 @@ public:
     QToolButton *tbtnClearAvatar;
     bool valid;
 public:
-    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m = TUserInfoWidget::ShowMode,
-                                    const TAccessLevel &accessLevel = TAccessLevel());
+    explicit TUserInfoWidgetPrivate(TUserInfoWidget *q, TUserInfoWidget::Mode m);
     ~TUserInfoWidgetPrivate();
 public:
     void createAccessLevelField(QFormLayout *flt, bool readOnly = false);
     void createActiveField(QFormLayout *flt, bool readOnly = false);
-    void createAvatarButton(QVBoxLayout *vlt, bool readOnly = false);
+    void createAvatarButton(QHBoxLayout *hlt, bool readOnly = false);
     void createEmailGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createGroupsSection(QVBoxLayout *vlt, bool readOnly = false);
     void createInviteField(QFormLayout *flt);
@@ -139,11 +134,11 @@ public:
     void createNameFields(QFormLayout *flt, bool readOnly = false);
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
-    void createServicesSection(QVBoxLayout *vlt, bool readOnly = false);
+    void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
     TIdList groups() const;
     void init();
     TServiceList services() const;
-private Q_SLOTS:
+public Q_SLOTS:
     void changeEmail();
     void changePassword();
     void checkChangeEmailInputs();
@@ -151,6 +146,8 @@ private Q_SLOTS:
     void checkEmail();
     void checkInputs();
     void checkLogin();
+    void clientAnonymousValidityChanged(bool valid);
+    void clientAuthorizedChanged(bool);
     void resetAvatar(const QImage &image = QImage());
     void tbtnAvatarClicked();
 private:

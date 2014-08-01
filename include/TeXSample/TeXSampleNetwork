@@ -1,0 +1,6 @@
+#ifndef TSMP_TEXSAMPLENETWORK_MODULE_H
+#define TSMP_TEXSAMPLENETWORK_MODULE_H
+
+#include "tnetworkclient.h"
+
+#endif //TSMP_TEXSAMPLENETWORK_MODULE_H

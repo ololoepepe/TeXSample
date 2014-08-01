@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,43 +20,57 @@
 **
 ****************************************************************************/
 
-#ifndef IGROUPWIDGET_H
-#define IGROUPWIDGET_H
+#ifndef TGROUPWIDGET_P_H
+#define TGROUPWIDGET_P_H
 
 class TGroupModel;
+class TNetworkClient;
 
 class BPasswordWidget;
 
 class QAction;
 class QItemSelection;
-class QModelIndex;
 class QTableView;
+class QVariant;
 
 #include "tgroupwidget.h"
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QModelIndex>
+#include <QSortFilterProxyModel>
+
+/*============================================================================
+================================ TGroupProxyModel ============================
+============================================================================*/
+
+class T_NETWORKWIDGETS_EXPORT TGroupProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    explicit TGroupProxyModel(QObject *parent);
+public:
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+};
+
 /*============================================================================
 ================================ TGroupWidgetPrivate =========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
+class T_NETWORKWIDGETS_EXPORT TGroupWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
     B_DECLARE_PUBLIC(TGroupWidget)
-public:
-    typedef TGroupWidget::AddGroupFunction AddGroupFunction;
-    typedef TGroupWidget::DeleteGroupFunction DeleteGroupFunction;
-    typedef TGroupWidget::EditGroupFunction EditGroupFunction;
 public:
     TGroupModel * const Model;
 public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
-    AddGroupFunction addGroupFunction;
-    DeleteGroupFunction deleteGroupFunction;
-    EditGroupFunction editGroupFunction;
+    TNetworkClient *client;
+    TGroupProxyModel *proxyModel;
     QTableView *view;
 public:
     explicit TGroupWidgetPrivate(TGroupWidget *q, TGroupModel *model);
@@ -64,8 +79,9 @@ public:
     void init();
 public Q_SLOTS:
     void addGroup();
+    void clientAuthorizedChanged(bool authorized);
     void deleteGroup();
-    void editGroup(const QModelIndex &index);
+    void editGroup(QModelIndex index = QModelIndex());
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 private:
     Q_DISABLE_COPY(TGroupWidgetPrivate)

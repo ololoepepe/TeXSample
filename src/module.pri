@@ -9,7 +9,9 @@ defineReplace(fullTexsampleModuleName) {
     shortName=$${1}
     fullName=
     equals(shortName, core):fullName=TeXSampleCore
+    equals(shortName, network):fullName=TeXSampleNetwork
     equals(shortName, widgets):fullName=TeXSampleWidgets
+    equals(shortName, networkwidgets):fullName=TeXSampleNetworkWidgets
     return($${fullName})
 }
 
@@ -19,7 +21,9 @@ defineReplace(texsampleModuleSubdir) {
     fullName=$${1}
     moduleSubdir=
     equals(fullName, core):moduleSubdir=corelib
-    else:equals(fullName, widgets):moduleSubdir=widgets
+    equals(fullName, network):moduleSubdir=network
+    equals(fullName, widgets):moduleSubdir=widgets
+    equals(fullName, networkwidgets):moduleSubdir=networkwidgets
     return($${moduleSubdir})
 }
 
@@ -57,14 +61,21 @@ DEPENDPATH *= $${texsampleHeadersPath}
 contains(TSMP, all) {
     TSMP *= \
         core \
-        widgets
+        network \
+        widgets \
+        networkwidgets
 }
 
 #Adds required Qt, BeQt and TeXSample modules (on which other included modules depend)
-contains(TSMP,core) {
+contains(TSMP, core) {
     QT *= core gui
     greaterThan(QT_MAJOR_VERSION, 4):QT *= concurrent
     BEQT *= core
+}
+contains(TSMP, network) {
+    QT *= core gui network
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= concurrent
+    BEQT *= core network
 }
 contains(TSMP, widgets) {
     QT *= core gui
@@ -72,9 +83,17 @@ contains(TSMP, widgets) {
     BEQT *= core widgets
     TSMP *= core
 }
+contains(TSMP, networkwidgets) {
+    QT *= core gui network
+    greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets concurrent
+    BEQT *= core network widgets networkwidgets
+    TSMP *= core network widgets
+}
 
 #Workaround for proper linking when building statically
+contains(TSMP, networkwidgets):TSMP_ORDERED += networkwidgets
 contains(TSMP, widgets):TSMP_ORDERED += widgets
+contains(TSMP, network):TSMP_ORDERED += network
 contains(TSMP, core):TSMP_ORDERED += core
 
 #Adds corresponding headers' and libs' paths for each valid TeXSample module contained in TSMP variable
