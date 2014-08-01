@@ -910,6 +910,8 @@ void TUserInfoWidget::setClient(TNetworkClient *client)
     }
     d->clientAuthorizedChanged(client && client->isAuthorized());
     d->clientAnonymousValidityChanged(client && client->isValid(true));
+    if (EditSelfMode == d->Mode)
+        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
 
 void TUserInfoWidget::setUser(quint64 userId)
@@ -962,5 +964,8 @@ void TUserInfoWidget::setUser(quint64 userId)
 
 void TUserInfoWidget::setModel(TUserModel *model)
 {
-    d_func()->model = model;
+    B_D(TUserInfoWidget);
+    d->model = model;
+    if (EditSelfMode == d->Mode)
+        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
