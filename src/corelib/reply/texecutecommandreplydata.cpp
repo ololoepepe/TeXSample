@@ -40,8 +40,9 @@ class TExecuteCommandReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TExecuteCommandReplyData)
 public:
-    TCommandMessage message;
     QStringList arguments;
+    TCommandMessage message;
+    bool success;
 public:
     explicit TExecuteCommandReplyDataPrivate(TExecuteCommandReplyData *q);
     ~TExecuteCommandReplyDataPrivate();
@@ -72,7 +73,7 @@ TExecuteCommandReplyDataPrivate::~TExecuteCommandReplyDataPrivate()
 
 void TExecuteCommandReplyDataPrivate::init()
 {
-    //
+    success = false;
 }
 
 /*============================================================================
@@ -121,6 +122,16 @@ void TExecuteCommandReplyData::setMessage(const TCommandMessage &message)
     d_func()->message = message;
 }
 
+void TExecuteCommandReplyData::setSuccess(bool success)
+{
+    d_func()->success = success;
+}
+
+bool TExecuteCommandReplyData::success() const
+{
+    return d_func()->success;
+}
+
 /*============================== Public operators ==========================*/
 
 TExecuteCommandReplyData &TExecuteCommandReplyData::operator =(const TExecuteCommandReplyData &other)
@@ -129,6 +140,7 @@ TExecuteCommandReplyData &TExecuteCommandReplyData::operator =(const TExecuteCom
     const TExecuteCommandReplyDataPrivate *dd = other.d_func();
     d->arguments = dd->arguments;
     d->message = dd->message;
+    d->success = dd->success;
     return *this;
 }
 
@@ -136,7 +148,7 @@ bool TExecuteCommandReplyData::operator ==(const TExecuteCommandReplyData &other
 {
     const B_D(TExecuteCommandReplyData);
     const TExecuteCommandReplyDataPrivate *dd = other.d_func();
-    return d->arguments == dd->arguments && d->message == dd->message;
+    return d->arguments == dd->arguments && d->message == dd->message && d->success == dd->success;
 }
 
 bool TExecuteCommandReplyData::operator !=(const TExecuteCommandReplyData &other) const
@@ -157,6 +169,7 @@ QDataStream &operator <<(QDataStream &stream, const TExecuteCommandReplyData &da
     QVariantMap m;
     m.insert("arguments", d->arguments);
     m.insert("message", d->message);
+    m.insert("success", d->success);
     stream << m;
     return stream;
 }
@@ -168,6 +181,7 @@ QDataStream &operator >>(QDataStream &stream, TExecuteCommandReplyData &data)
     stream >> m;
     d->arguments = m.value("arguments").toStringList();
     d->message = m.value("message").value<TCommandMessage>();
+    d->success = m.value("success").toBool();
     return stream;
 }
 

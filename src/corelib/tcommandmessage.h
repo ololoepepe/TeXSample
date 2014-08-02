@@ -35,6 +35,7 @@ class QVariant;
 
 #include <QCoreApplication>
 #include <QMetaType>
+#include <QStringList>
 
 /*============================================================================
 ================================ TCommandMessage =============================
@@ -49,19 +50,20 @@ public:
     {
         NoMessage = 0,
         FailedToStartServerMessage,
+        InternalErrorMessage,
         InvalidArgumentCountMessage,
         InvalidArgumentsMessage,
         NoSuchUserError,
         OkMessage,
-        ServerAlreadyRunningMessage,
-        ServerNotRunningMessage,
-        ServerStartedMessage,
-        ServerStoppedMessage,
+        ServerAlreadyListeningMessage,
+        ServerNotListeningMessage,
         UptimeMessage,
         UserCountMessage,
         UserInfoListMessage,
         UserInfoMessage,
         UserKickedMessage,
+        UsersConnectedAtMessage,
+        UsersUptimeMessage,
         UnknownErrorMessage
     };
 public:
@@ -74,8 +76,9 @@ protected:
 public:
     QString extraText() const;
     void setExtraText(const QString &extraText);
-    QString text() const;
+    QString text(const QStringList &args = QStringList()) const;
     QString textNoTr() const;
+    QString textNoTr(const QStringList &args) const;
 public:
     TCommandMessage &operator =(const TCommandMessage &other);
     TCommandMessage &operator =(int msg);

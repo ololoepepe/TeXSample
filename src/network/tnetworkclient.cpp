@@ -332,12 +332,13 @@ void TNetworkClient::setLogin(const QString &login)
 
 void TNetworkClient::setPassword(const QByteArray &password)
 {
+    QByteArray pwd = Texsample::testPassword(password) ? pwd : QByteArray();
     B_D(TNetworkClient);
-    bool b = password != d->password;
+    bool b = pwd != d->password;
     bool bvalid = isValid();
-    d->password = password;
+    d->password = pwd;
     if (b)
-        Q_EMIT passwordChanged(password);
+        Q_EMIT passwordChanged(pwd);
     if (bvalid != isValid())
         Q_EMIT validityChanged(!bvalid);
 }

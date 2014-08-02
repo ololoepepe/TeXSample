@@ -29,7 +29,6 @@ class BUuid;
 class QByteArray;
 class QDataStream;
 class QDebug;
-class QString;
 class QVariant;
 
 #include "tglobal.h"
@@ -54,8 +53,8 @@ public:
     bool isValid() const;
     QByteArray password() const;
     BUuid recoveryCode() const;
-    void setPassword(const QString &password);
-    void setRecoveryCode(const QString &code);
+    void setPassword(const QByteArray &password);
+    void setRecoveryCode(const BUuid &code);
 public:
     TRecoverAccountRequestData &operator =(const TRecoverAccountRequestData &other);
     bool operator ==(const TRecoverAccountRequestData &other) const;

@@ -30,6 +30,8 @@ class QString;
 
 #include <BeQt>
 
+#include <QCryptographicHash>
+
 namespace Texsample
 {
 
@@ -55,8 +57,10 @@ const int MaximumSampleDescriptionLength = 1000;
 const int MaximumSampleTitleLength = 100;
 const int MinimumLoginLength = 2;
 const int MinimumPasswordLength = 8;
+const QCryptographicHash::Algorithm PasswordEncryptionAlgorythm = QCryptographicHash::Sha1;
 const int RawPasswordSize = 20;
 
+T_CORE_EXPORT QByteArray encryptPassword(const QString &password);
 T_CORE_EXPORT bool testAdminRemark(const QString &remark, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QImage &avatar, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QString &avatarFileName, QImage *image, QString *error = 0, bool translate = true);

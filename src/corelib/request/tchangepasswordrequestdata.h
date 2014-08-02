@@ -27,7 +27,6 @@ class TChangePasswordRequestDataPrivate;
 class QByteArray;
 class QDataStream;
 class QDebug;
-class QString;
 class QVariant;
 
 #include "tglobal.h"
@@ -52,8 +51,8 @@ public:
     bool isValid() const;
     QByteArray newPassword() const;
     QByteArray oldPassword() const;
-    void setNewPassword(const QString &password);
-    void setOldPassword(const QString &password);
+    void setNewPassword(const QByteArray &password);
+    void setOldPassword(const QByteArray &password);
 public:
     TChangePasswordRequestData &operator =(const TChangePasswordRequestData &other);
     bool operator ==(const TChangePasswordRequestData &other) const;

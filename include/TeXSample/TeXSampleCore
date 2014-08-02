@@ -28,6 +28,8 @@
 #include "tcommandmessage.h"
 #include "tcompiletexprojectreplydata.h"
 #include "tcompiletexprojectrequestdata.h"
+#include "tconfirmregistrationreplydata.h"
+#include "tconfirmregistrationrequestdata.h"
 #include "tcoreapplication.h"
 #include "tdeletegroupreplydata.h"
 #include "tdeletegrouprequestdata.h"

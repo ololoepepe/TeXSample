@@ -58,11 +58,11 @@ public:
     QImage avatar() const;
     void clear();
     QString email() const;
-    QByteArray encryptedPassword() const;
     TIdList groups() const;
     bool isValid() const;
     QString login() const;
     QString name() const;
+    QByteArray password() const;
     QString patronymic() const;
     void setAccesslevel(const TAccessLevel &accessLevel);
     void setAvailableServices(const TServiceList &services);
@@ -71,7 +71,7 @@ public:
     void setGroups(const TIdList &groups);
     void setLogin(const QString &login);
     void setName(const QString &name);
-    void setPassword(const QString &password);
+    void setPassword(const QByteArray &password);
     void setPatronymic(const QString &patronymic);
     void setSurname(const QString &surname);
     QString surname() const;

@@ -67,26 +67,12 @@
         <translation>Сервер не запущен</translation>
     </message>
     <message>
-        <source>The server was successfully started</source>
-        <translation>Сервер был успешно запущен</translation>
-    </message>
-    <message>
-        <source>The server was successfully stopped</source>
-        <translation>Сервер был успешно остановлен</translation>
-    </message>
-    <message>
         <source>Uptime: %1</source>
         <translation>Аптайм: %1</translation>
     </message>
     <message>
         <source>User count: %1</source>
         <translation>Количество пользователей: %1</translation>
-    </message>
-    <message>
-        <source>Users:
-%1</source>
-        <translation>Пользователи:
-%1</translation>
     </message>
     <message>
         <source>User info: %1
@@ -101,6 +87,32 @@
     <message>
         <source>Some mysterious error</source>
         <translation>Некая таинственная ошибка</translation>
+    </message>
+    <message>
+        <source>Some internal error</source>
+        <translation>Некая внутренняя ошибка</translation>
+    </message>
+    <message>
+        <source>Users (%1):
+%2</source>
+        <translation>Пользователи (%1):
+%2</translation>
+    </message>
+    <message>
+        <source>Users connected at (%1):
+%2</source>
+        <translation>Пользователи подключились в (%1):
+%2</translation>
+    </message>
+    <message>
+        <source>Users uptime (%1):
+%2</source>
+        <translation>Аптайм пользователей (%1):
+%2</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>ОК</translation>
     </message>
 </context>
 <context>

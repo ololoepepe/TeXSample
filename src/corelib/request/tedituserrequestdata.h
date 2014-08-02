@@ -62,12 +62,12 @@ public:
     bool editEmail() const;
     bool editPassword() const;
     QString email() const;
-    QByteArray encryptedPassword() const;
     TIdList groups() const;
     TUserIdentifier identifier() const;
     bool active() const;
     bool isValid() const;
     QString name() const;
+    QByteArray password() const;
     QString patronymic() const;
     void setAccesslevel(const TAccessLevel &accessLevel);
     void setActive(bool active);
@@ -80,7 +80,7 @@ public:
     void setGroups(const TIdList &groups);
     void setIdentifier(const TUserIdentifier &identifier);
     void setName(const QString &name);
-    void setPassword(const QString &password);
+    void setPassword(const QByteArray &password);
     void setPatronymic(const QString &patronymic);
     void setSurname(const QString &surname);
     QString surname() const;

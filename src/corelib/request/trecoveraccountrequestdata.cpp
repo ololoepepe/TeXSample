@@ -23,16 +23,13 @@
 
 #include "tnamespace.h"
 
-#include <BeQt>
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 #include <BUuid>
 
 #include <QByteArray>
-#include <QCryptographicHash>
 #include <QDataStream>
 #include <QDebug>
-#include <QString>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -126,15 +123,14 @@ BUuid TRecoverAccountRequestData::recoveryCode() const
     return d_func()->recoveryCode;
 }
 
-void TRecoverAccountRequestData::setPassword(const QString &password)
+void TRecoverAccountRequestData::setPassword(const QByteArray &password)
 {
-    d_func()->password = Texsample::testPassword(password) ?
-                QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha1) : QByteArray();
+    d_func()->password = Texsample::testPassword(password) ? password : QByteArray();
 }
 
-void TRecoverAccountRequestData::setRecoveryCode(const QString &code)
+void TRecoverAccountRequestData::setRecoveryCode(const BUuid &code)
 {
-    d_func()->recoveryCode = BeQt::uuidFromText(code);
+    d_func()->recoveryCode = code;
 }
 
 /*============================== Public operators ==========================*/
@@ -172,7 +168,7 @@ QDataStream &operator <<(QDataStream &stream, const TRecoverAccountRequestData &
     const TRecoverAccountRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("password", d->password);
-    m.insert("recovery_code", QVariant::fromValue(d->recoveryCode));
+    m.insert("recovery_code", d->recoveryCode);
     stream << m;
     return stream;
 }

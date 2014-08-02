@@ -60,9 +60,10 @@ public:
     QString os() const;                                     //%o
     BeQt::OSType osType() const;
     BeQt::ProcessorArchitecture processorArchitecture() const;
+    QString processorArchitectureString() const;            //%a
     BVersion qtVersion() const;                             //%q
     BVersion texsampleVersion() const;                      //%t
-    QString toString(const QString &format = "%n v%v (%p)\nTeXSample v%t; BeQt v%b; Qt v%q\nOS: %o") const;
+    QString toString(const QString &format = "%n v%v (%p)\nTeXSample v%t; BeQt v%b; Qt v%q\nOS: %o; Arch: %a") const;
 public:
     TClientInfo &operator =(const TClientInfo &other);
     bool operator ==(const TClientInfo &other) const;

@@ -19,16 +19,15 @@
 **
 ****************************************************************************/
 
-#ifndef TEXECUTECOMMANDREPLYDATA_H
-#define TEXECUTECOMMANDREPLYDATA_H
+#ifndef TCONFIRMREGISTRATIONREQUESTDATA_H
+#define TCONFIRMREGISTRATIONREQUESTDATA_H
 
-class TExecuteCommandReplyDataPrivate;
+class TConfirmRegistrationRequestDataPrivate;
 
-class TCommandMessage;
+class BUuid;
 
 class QDataStream;
 class QDebug;
-class QStringList;
 class QVariant;
 
 #include "tglobal.h"
@@ -38,34 +37,32 @@ class QVariant;
 #include <QMetaType>
 
 /*============================================================================
-================================ TExecuteCommandReplyData ====================
+================================ TConfirmRegistrationRequestData =============
 ============================================================================*/
 
-class T_CORE_EXPORT TExecuteCommandReplyData : public BBase
+class T_CORE_EXPORT TConfirmRegistrationRequestData : public BBase
 {
-    B_DECLARE_PRIVATE(TExecuteCommandReplyData)
+    B_DECLARE_PRIVATE(TConfirmRegistrationRequestData)
 public:
-    explicit TExecuteCommandReplyData();
-    TExecuteCommandReplyData(const TExecuteCommandReplyData &other);
-    ~TExecuteCommandReplyData();
+    explicit TConfirmRegistrationRequestData();
+    TConfirmRegistrationRequestData(const TConfirmRegistrationRequestData &other);
+    ~TConfirmRegistrationRequestData();
 public:
-    QStringList arguments() const;
-    TCommandMessage message() const;
-    void setArguments(const QStringList &arguments);
-    void setMessage(const TCommandMessage &message);
-    void setSuccess(bool success);
-    bool success() const;
+    void clear();
+    BUuid confirmationCode() const;
+    bool isValid() const;
+    void setConfirmationCode(const BUuid &code);
 public:
-    TExecuteCommandReplyData &operator =(const TExecuteCommandReplyData &other);
-    bool operator ==(const TExecuteCommandReplyData &other) const;
-    bool operator !=(const TExecuteCommandReplyData &other) const;
+    TConfirmRegistrationRequestData &operator =(const TConfirmRegistrationRequestData &other);
+    bool operator ==(const TConfirmRegistrationRequestData &other) const;
+    bool operator !=(const TConfirmRegistrationRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TExecuteCommandReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TExecuteCommandReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TExecuteCommandReplyData &data);
+    friend QDataStream &operator <<(QDataStream &stream, const TConfirmRegistrationRequestData &data);
+    friend QDataStream &operator >>(QDataStream &stream, TConfirmRegistrationRequestData &data);
+    friend QDebug operator <<(QDebug dbg, const TConfirmRegistrationRequestData &data);
 };
 
-Q_DECLARE_METATYPE(TExecuteCommandReplyData)
+Q_DECLARE_METATYPE(TConfirmRegistrationRequestData)
 
-#endif // TEXECUTECOMMANDREPLYDATA_H
+#endif // TCONFIRMREGISTRATIONREQUESTDATA_H

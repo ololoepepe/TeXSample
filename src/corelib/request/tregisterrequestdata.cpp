@@ -24,7 +24,6 @@
 #include "tnamespace.h"
 
 #include <BBase>
-#include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
 #include <BUuid>
 
@@ -178,7 +177,7 @@ void TRegisterRequestData::setEmail(const QString &email)
 
 void TRegisterRequestData::setInviteCode(const QString &inviteCode)
 {
-    d_func()->inviteCode = BeQt::uuidFromText(inviteCode);
+    d_func()->inviteCode = BUuid(inviteCode);
 }
 
 void TRegisterRequestData::setLogin(const QString &login)

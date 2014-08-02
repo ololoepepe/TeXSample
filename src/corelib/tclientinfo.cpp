@@ -174,6 +174,11 @@ BeQt::ProcessorArchitecture TClientInfo::processorArchitecture() const
     return d_func()->processorArchitecture;
 }
 
+QString TClientInfo::processorArchitectureString() const
+{
+    return BeQt::processorArchitectureToString(d_func()->processorArchitecture);
+}
+
 BVersion TClientInfo::qtVersion() const
 {
     return d_func()->qtVersion;
@@ -191,6 +196,7 @@ QString TClientInfo::toString(const QString &format) const
     //%b - beqtVersion
     //%p - isPortable
     //%o - os
+    //%a - processorArchitecture
     //%q - qtVersion
     //%t - texsampleVersion
     const B_D(TClientInfo);
@@ -202,6 +208,7 @@ QString TClientInfo::toString(const QString &format) const
     f.replace("%b", d->beqtVersion);
     f.replace("%p", d->portable ? "portable" : "non-portable");
     f.replace("%o", d->os);
+    f.replace("%a", processorArchitectureString());
     f.replace("%q", d->qtVersion);
     f.replace("%t", d->texsampleVersion);
     return f;

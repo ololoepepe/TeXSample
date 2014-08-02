@@ -19,7 +19,7 @@
 **
 ****************************************************************************/
 
-#include "trecoveraccountreplydata.h"
+#include "tconfirmregistrationreplydata.h"
 
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
@@ -30,133 +30,133 @@
 #include <QVariantMap>
 
 /*============================================================================
-================================ TRecoverAccountReplyDataPrivate =============
+================================ TConfirmRegistrationReplyDataPrivate ========
 ============================================================================*/
 
-class TRecoverAccountReplyDataPrivate : public BBasePrivate
+class TConfirmRegistrationReplyDataPrivate : public BBasePrivate
 {
-    B_DECLARE_PUBLIC(TRecoverAccountReplyData)
+    B_DECLARE_PUBLIC(TConfirmRegistrationReplyData)
 public:
     bool success;
 public:
-    explicit TRecoverAccountReplyDataPrivate(TRecoverAccountReplyData *q);
-    ~TRecoverAccountReplyDataPrivate();
+    explicit TConfirmRegistrationReplyDataPrivate(TConfirmRegistrationReplyData *q);
+    ~TConfirmRegistrationReplyDataPrivate();
 public:
     void init();
 private:
-    Q_DISABLE_COPY(TRecoverAccountReplyDataPrivate)
+    Q_DISABLE_COPY(TConfirmRegistrationReplyDataPrivate)
 };
 
 /*============================================================================
-================================ TRecoverAccountReplyDataPrivate =============
+================================ TConfirmRegistrationReplyDataPrivate ========
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TRecoverAccountReplyDataPrivate::TRecoverAccountReplyDataPrivate(TRecoverAccountReplyData *q) :
+TConfirmRegistrationReplyDataPrivate::TConfirmRegistrationReplyDataPrivate(TConfirmRegistrationReplyData *q) :
     BBasePrivate(q)
 {
     //
 }
 
-TRecoverAccountReplyDataPrivate::~TRecoverAccountReplyDataPrivate()
+TConfirmRegistrationReplyDataPrivate::~TConfirmRegistrationReplyDataPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TRecoverAccountReplyDataPrivate::init()
+void TConfirmRegistrationReplyDataPrivate::init()
 {
     success = false;
 }
 
 /*============================================================================
-================================ TRecoverAccountReplyData ====================
+================================ TConfirmRegistrationReplyData ===============
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TRecoverAccountReplyData::TRecoverAccountReplyData() :
-    BBase(*new TRecoverAccountReplyDataPrivate(this))
+TConfirmRegistrationReplyData::TConfirmRegistrationReplyData() :
+    BBase(*new TConfirmRegistrationReplyDataPrivate(this))
 {
     d_func()->init();
 }
 
-TRecoverAccountReplyData::TRecoverAccountReplyData(const TRecoverAccountReplyData &other) :
-    BBase(*new TRecoverAccountReplyDataPrivate(this))
+TConfirmRegistrationReplyData::TConfirmRegistrationReplyData(const TConfirmRegistrationReplyData &other) :
+    BBase(*new TConfirmRegistrationReplyDataPrivate(this))
 {
     d_func()->init();
     *this = other;
 }
 
-TRecoverAccountReplyData::~TRecoverAccountReplyData()
+TConfirmRegistrationReplyData::~TConfirmRegistrationReplyData()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TRecoverAccountReplyData::setSuccess(bool success)
+void TConfirmRegistrationReplyData::setSuccess(bool success)
 {
     d_func()->success = success;
 }
 
-bool TRecoverAccountReplyData::success() const
+bool TConfirmRegistrationReplyData::success() const
 {
     return d_func()->success;
 }
 
 /*============================== Public operators ==========================*/
 
-TRecoverAccountReplyData &TRecoverAccountReplyData::operator =(const TRecoverAccountReplyData &other)
+TConfirmRegistrationReplyData &TConfirmRegistrationReplyData::operator =(const TConfirmRegistrationReplyData &other)
 {
-    B_D(TRecoverAccountReplyData);
-    const TRecoverAccountReplyDataPrivate *dd = other.d_func();
+    B_D(TConfirmRegistrationReplyData);
+    const TConfirmRegistrationReplyDataPrivate *dd = other.d_func();
     d->success = dd->success;
     return *this;
 }
 
-bool TRecoverAccountReplyData::operator ==(const TRecoverAccountReplyData &other) const
+bool TConfirmRegistrationReplyData::operator ==(const TConfirmRegistrationReplyData &other) const
 {
-    const B_D(TRecoverAccountReplyData);
-    const TRecoverAccountReplyDataPrivate *dd = other.d_func();
+    const B_D(TConfirmRegistrationReplyData);
+    const TConfirmRegistrationReplyDataPrivate *dd = other.d_func();
     return d->success == dd->success;
 }
 
-bool TRecoverAccountReplyData::operator !=(const TRecoverAccountReplyData &other) const
+bool TConfirmRegistrationReplyData::operator !=(const TConfirmRegistrationReplyData &other) const
 {
     return !(*this == other);
 }
 
-TRecoverAccountReplyData::operator QVariant() const
+TConfirmRegistrationReplyData::operator QVariant() const
 {
     return QVariant::fromValue(*this);
 }
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TRecoverAccountReplyData &data)
+QDataStream &operator <<(QDataStream &stream, const TConfirmRegistrationReplyData &data)
 {
-    const TRecoverAccountReplyDataPrivate *d = data.d_func();
+    const TConfirmRegistrationReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("success", d->success);
     stream << m;
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TRecoverAccountReplyData &data)
+QDataStream &operator >>(QDataStream &stream, TConfirmRegistrationReplyData &data)
 {
-    TRecoverAccountReplyDataPrivate *d = data.d_func();
+    TConfirmRegistrationReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
     d->success = m.value("success").toBool();
     return stream;
 }
 
-QDebug operator <<(QDebug dbg, const TRecoverAccountReplyData &/*data*/)
+QDebug operator <<(QDebug dbg, const TConfirmRegistrationReplyData &/*data*/)
 {
-    //const TRecoverAccountReplyDataPrivate *d = data.d_func();
-    dbg.nospace() << "TRecoverAccountReplyData(" << ")";
+    //const TConfirmRegistrationReplyDataPrivate *d = data.d_func();
+    dbg.nospace() << "TConfirmRegistrationReplyData(" << ")";
     return dbg.space();
 }

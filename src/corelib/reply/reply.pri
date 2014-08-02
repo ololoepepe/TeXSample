@@ -9,6 +9,7 @@ HEADERS += \
     $${PWD}/tcheckemailavailabilityreplydata.h \
     $${PWD}/tcheckloginavailabilityreplydata.h \
     $${PWD}/tcompiletexprojectreplydata.h \
+    $${PWD}/tconfirmregistrationreplydata.h \
     $${PWD}/tdeletegroupreplydata.h \
     $${PWD}/tdeleteinvitesreplydata.h \
     $${PWD}/tdeletelabreplydata.h \
@@ -54,6 +55,7 @@ SOURCES += \
     $${PWD}/tcheckemailavailabilityreplydata.cpp \
     $${PWD}/tcheckloginavailabilityreplydata.cpp \
     $${PWD}/tcompiletexprojectreplydata.cpp \
+    $${PWD}/tconfirmregistrationreplydata.cpp \
     $${PWD}/tdeletegroupreplydata.cpp \
     $${PWD}/tdeleteinvitesreplydata.cpp \
     $${PWD}/tdeletelabreplydata.cpp \

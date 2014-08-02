@@ -27,6 +27,7 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QString>
+#include <QStringList>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -127,9 +128,14 @@ void TCommandMessage::setExtraText(const QString &extraText)
     d_func()->extraText = extraText;
 }
 
-QString TCommandMessage::text() const
+QString TCommandMessage::text(const QStringList &args) const
 {
-    return tr(textNoTr().toUtf8().constData());
+    if (args.isEmpty())
+        return tr(textNoTr().toUtf8().constData());
+    QString s = tr(textNoTr().toUtf8().constData());
+    foreach (const QString &a, args)
+        s = s.arg(a);
+    return s;
 }
 
 QString TCommandMessage::textNoTr() const
@@ -137,36 +143,48 @@ QString TCommandMessage::textNoTr() const
     switch (d_func()->message) {
     case FailedToStartServerMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "Failed to start server");
+    case InternalErrorMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Some internal error");
     case InvalidArgumentCountMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "Invalid argument count");
     case InvalidArgumentsMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "Invalid arguments");
     case NoSuchUserError:
         return QT_TRANSLATE_NOOP("TCommandMessage", "No such user");
-    case ServerAlreadyRunningMessage:
+    case OkMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "OK");
+    case ServerAlreadyListeningMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "The server is already started");
-    case ServerNotRunningMessage:
+    case ServerNotListeningMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "The server is not started");
-    case ServerStartedMessage:
-        return QT_TRANSLATE_NOOP("TCommandMessage", "The server was successfully started");
-    case ServerStoppedMessage:
-        return QT_TRANSLATE_NOOP("TCommandMessage", "The server was successfully stopped");
     case UptimeMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "Uptime: %1");
     case UserCountMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "User count: %1");
     case UserInfoListMessage:
-        return QT_TRANSLATE_NOOP("TCommandMessage", "Users:\n%1");
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Users (%1):\n%2");
     case UserInfoMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "User info: %1\n%2");
     case UserKickedMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "User %1 was successfully kicked. Connections closed: %2");
+    case UsersConnectedAtMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Users connected at (%1):\n%2");
+    case UsersUptimeMessage:
+        return QT_TRANSLATE_NOOP("TCommandMessage", "Users uptime (%1):\n%2");
     case UnknownErrorMessage:
         return QT_TRANSLATE_NOOP("TCommandMessage", "Some mysterious error");
     case NoMessage:
     default:
         return "";
     }
+}
+
+QString TCommandMessage::textNoTr(const QStringList &args) const
+{
+    QString s = textNoTr();
+    foreach (const QString &a, args)
+        s = s.arg(a);
+    return s;
 }
 
 /*============================== Public operators ==========================*/

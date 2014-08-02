@@ -38,7 +38,9 @@
 #include <BPasswordGroup>
 #include <BPasswordWidget>
 #include <BTextTools>
+#include <BUuid>
 
+#include <QByteArray>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -216,8 +218,8 @@ void TRecoveryWidgetPrivate::recoverAccount()
     if (!b)
         return;
     TRecoverAccountRequestData data;
-    data.setPassword(pwdwgt1->openPassword());
-    data.setRecoveryCode(ledtCode->text());
+    data.setPassword(Texsample::encryptPassword(pwdwgt1->openPassword()));
+    data.setRecoveryCode(BUuid(ledtCode->text()));
     TReply r = Client->performAnonymousOperation(TOperation::RecoverAccount, data, q_func());
     if (r) {
         QMessageBox msg(q_func());

@@ -100,7 +100,7 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
     if (Qt::ToolTipRole == role) {
-        QString code = BeQt::pureUuidText(sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>());
+        QString code = sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>().toString(true);
         QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
         return code + " [" + ownerLogin + "]";
     }
@@ -198,7 +198,7 @@ void TInviteWidgetPrivate::copyInvites()
         TInviteInfo info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
         if (!info.isValid())
             continue;
-        list << BeQt::pureUuidText(info.code());
+        list << info.code().toString(true);
     }
     if (list.isEmpty())
         return;

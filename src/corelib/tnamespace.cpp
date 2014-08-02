@@ -26,6 +26,7 @@
 
 #include <QByteArray>
 #include <QBuffer>
+#include <QCryptographicHash>
 #include <QFileInfo>
 #include <QImage>
 #include <QString>
@@ -36,6 +37,12 @@ B_DECLARE_TRANSLATE_FUNCTION
 
 namespace Texsample
 {
+
+QByteArray encryptPassword(const QString &password)
+{
+    return testPassword(password) ? QCryptographicHash::hash(password.toUtf8(), PasswordEncryptionAlgorythm) :
+                                    QByteArray();
+}
 
 bool testAdminRemark(const QString &remark, QString *error, bool tr)
 {

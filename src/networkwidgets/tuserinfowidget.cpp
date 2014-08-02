@@ -525,8 +525,8 @@ void TUserInfoWidgetPrivate::changePassword()
     if (!client)
         return;
     TChangePasswordRequestData data;
-    data.setOldPassword(pwdwgtOld->openPassword());
-    data.setNewPassword(pwdwgt1->openPassword());
+    data.setOldPassword(Texsample::encryptPassword(pwdwgtOld->openPassword()));
+    data.setNewPassword(Texsample::encryptPassword(pwdwgt1->openPassword()));
     TReply r = client->performOperation(TOperation::ChangePassword, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
@@ -824,7 +824,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setGroups(d->groups());
         data.setLogin(d->ledtLogin->text());
         data.setName(d->ledtName->text());
-        data.setPassword(d->pwdwgt1->openPassword());
+        data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
         data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
@@ -845,7 +845,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setIdentifier(d->id);
         data.setName(d->ledtName->text());
         if (d->cboxChangePassword->isChecked())
-            data.setPassword(d->pwdwgt1->openPassword());
+            data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
         data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
