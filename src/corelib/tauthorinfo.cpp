@@ -159,7 +159,7 @@ void TAuthorInfo::setOrganization(const QString &organization)
 
 void TAuthorInfo::setPatronymic(const QString &patronymic)
 {
-    d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
+    d_func()->patronymic = Texsample::testPatronymic(patronymic) ? patronymic : QString();
 }
 
 void TAuthorInfo::setPost(const QString &post)
@@ -174,7 +174,7 @@ void TAuthorInfo::setRole(const QString &role)
 
 void TAuthorInfo::setSurname(const QString &surname)
 {
-    d_func()->surname = Texsample::testName(surname) ? surname : QString();
+    d_func()->surname = Texsample::testSurname(surname) ? surname : QString();
 }
 
 QString TAuthorInfo::surname() const

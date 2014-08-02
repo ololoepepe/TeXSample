@@ -157,12 +157,12 @@ void TEditSelfRequestData::setName(const QString &name)
 
 void TEditSelfRequestData::setPatronymic(const QString &patronymic)
 {
-    d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
+    d_func()->patronymic = Texsample::testPatronymic(patronymic) ? patronymic : QString();
 }
 
 void TEditSelfRequestData::setSurname(const QString &surname)
 {
-    d_func()->surname = Texsample::testName(surname) ? surname : QString();
+    d_func()->surname = Texsample::testSurname(surname) ? surname : QString();
 }
 
 QString TEditSelfRequestData::surname() const

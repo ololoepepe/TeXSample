@@ -280,12 +280,12 @@ void TEditUserRequestData::setPassword(const QByteArray &password)
 
 void TEditUserRequestData::setPatronymic(const QString &patronymic)
 {
-    d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
+    d_func()->patronymic = Texsample::testPatronymic(patronymic) ? patronymic : QString();
 }
 
 void TEditUserRequestData::setSurname(const QString &surname)
 {
-    d_func()->surname = Texsample::testName(surname) ? surname : QString();
+    d_func()->surname = Texsample::testSurname(surname) ? surname : QString();
 }
 
 QString TEditUserRequestData::surname() const

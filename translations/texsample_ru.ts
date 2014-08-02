@@ -997,74 +997,179 @@
 <context>
     <name>Texsample</name>
     <message>
-        <source>The image is too big</source>
-        <comment>error</comment>
-        <translation>Изображение слишком большое</translation>
-    </message>
-    <message>
-        <source>The image&apos;s height is too big</source>
-        <comment>error</comment>
-        <translation>Высота изображения слишком велика</translation>
-    </message>
-    <message>
-        <source>The image&apos;s hwidth is too big</source>
-        <comment>error</comment>
-        <translation>Ширина изображения слишком велика</translation>
-    </message>
-    <message>
-        <source>The file name is empty</source>
-        <comment>error</comment>
-        <translation>Это имя файло является пустым</translation>
-    </message>
-    <message>
-        <source>The file does not exist</source>
-        <comment>error</comment>
-        <translation>Этот файл не существует</translation>
-    </message>
-    <message>
-        <source>Failed to read file</source>
-        <comment>error</comment>
-        <translation>Не удалось прочитать файл</translation>
-    </message>
-    <message>
-        <source>The string is empty</source>
-        <comment>error</comment>
-        <translation>Эта строка пуста</translation>
-    </message>
-    <message>
-        <source>The string is too long</source>
-        <comment>error</comment>
-        <translation>Эта строка слишком длинная</translation>
-    </message>
-    <message>
         <source>The string is not an e-mail</source>
         <comment>error</comment>
         <translation>Эта строка не является адресом эл. почты</translation>
     </message>
     <message>
-        <source>The string is too short</source>
-        <comment>error</comment>
-        <translation>Эта строка слишком короткая</translation>
-    </message>
-    <message>
-        <source>The image is invalid</source>
-        <comment>error</comment>
-        <translation>Это изображение не является корректным</translation>
-    </message>
-    <message>
-        <source>The URL is invalid</source>
-        <comment>error</comment>
-        <translation>Эта ссылка является некорректной</translation>
-    </message>
-    <message>
-        <source>The password is not a correct SHA1 hash</source>
-        <comment>error</comment>
-        <translation>Этот пароль не является правильным SHA1-хешем</translation>
-    </message>
-    <message>
         <source>Unable to test avatar</source>
         <comment>error</comment>
         <translation>Невозможно проверить аватар</translation>
+    </message>
+    <message>
+        <source>Admin remark is too long</source>
+        <comment>error</comment>
+        <translation>Примечание администратора слишком длинное</translation>
+    </message>
+    <message>
+        <source>Avatar is invalid</source>
+        <comment>error</comment>
+        <translation>Аватар не является корректным</translation>
+    </message>
+    <message>
+        <source>Avatar&apos;s height is too big</source>
+        <comment>error</comment>
+        <translation>Высота аватара слишком велика</translation>
+    </message>
+    <message>
+        <source>Avatar file name is empty</source>
+        <comment>error</comment>
+        <translation>Имя файла аватара является пустым</translation>
+    </message>
+    <message>
+        <source>Avatar file does not exist</source>
+        <comment>error</comment>
+        <translation>Файл аватара не существует</translation>
+    </message>
+    <message>
+        <source>Failed to read avatar file</source>
+        <comment>error</comment>
+        <translation>Не удалось прочесть файл аватара</translation>
+    </message>
+    <message>
+        <source>Command is empty</source>
+        <comment>error</comment>
+        <translation>Команда является пустой</translation>
+    </message>
+    <message>
+        <source>Command is too long</source>
+        <comment>error</comment>
+        <translation>Команда слишком длинная</translation>
+    </message>
+    <message>
+        <source>E-mail is empty</source>
+        <comment>error</comment>
+        <translation>Адрес эл. почты является пустым</translation>
+    </message>
+    <message>
+        <source>E-mail is too long</source>
+        <comment>error</comment>
+        <translation>Адрес эл. почты слишком длинный</translation>
+    </message>
+    <message>
+        <source>File description is too long</source>
+        <comment>error</comment>
+        <translation>Описание файла слишком длинное</translation>
+    </message>
+    <message>
+        <source>Group name is too long</source>
+        <comment>error</comment>
+        <translation>Имя группы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Lab description is too long</source>
+        <comment>error</comment>
+        <translation>Описание лаб. работы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Lab title is too long</source>
+        <comment>error</comment>
+        <translation>Название лаб. работы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Login is empty</source>
+        <comment>error</comment>
+        <translation>Логин является пустым</translation>
+    </message>
+    <message>
+        <source>Login is too short</source>
+        <comment>error</comment>
+        <translation>Логин слишком короткий</translation>
+    </message>
+    <message>
+        <source>Login is too long</source>
+        <comment>error</comment>
+        <translation>Логин слишком длинный</translation>
+    </message>
+    <message>
+        <source>Name is too long</source>
+        <comment>error</comment>
+        <translation>имя слишком длинное</translation>
+    </message>
+    <message>
+        <source>Organization name is too long</source>
+        <comment>error</comment>
+        <translation>Название организации слишком длинное</translation>
+    </message>
+    <message>
+        <source>Password is empty</source>
+        <comment>error</comment>
+        <translation>Пароль является пустым</translation>
+    </message>
+    <message>
+        <source>Password is too short</source>
+        <comment>error</comment>
+        <translation>Пароль слишком короткий</translation>
+    </message>
+    <message>
+        <source>Password is too long</source>
+        <comment>error</comment>
+        <translation>Пароль слишком длинный</translation>
+    </message>
+    <message>
+        <source>Password is not a correct SHA1 hash</source>
+        <comment>error</comment>
+        <translation>Пароль не является правильным SHA-1 хешем</translation>
+    </message>
+    <message>
+        <source>Post name is too long</source>
+        <comment>error</comment>
+        <translation>Название должности слишком длинное</translation>
+    </message>
+    <message>
+        <source>Role description is too long</source>
+        <comment>error</comment>
+        <translation>Описание роли слишком длинное</translation>
+    </message>
+    <message>
+        <source>Sample description is too long</source>
+        <comment>error</comment>
+        <translation>Описание сэмпла слишком длинное</translation>
+    </message>
+    <message>
+        <source>Sample title is too long</source>
+        <comment>error</comment>
+        <translation>Название сэмпла слишком длинное</translation>
+    </message>
+    <message>
+        <source>URL is too long</source>
+        <comment>error</comment>
+        <translation>Ссылка слишком длинная</translation>
+    </message>
+    <message>
+        <source>URL is invalid</source>
+        <comment>error</comment>
+        <translation>Ссылка не является корректной</translation>
+    </message>
+    <message>
+        <source>Patronymic is too long</source>
+        <comment>error</comment>
+        <translation>Отчество слишком длинное</translation>
+    </message>
+    <message>
+        <source>Surname is too long</source>
+        <comment>error</comment>
+        <translation>Фамилия слишком длинная</translation>
+    </message>
+    <message>
+        <source>Avatar&apos;s width is too big</source>
+        <comment>error</comment>
+        <translation>Ширина аватара слишком велика</translation>
+    </message>
+    <message>
+        <source>Avatar is too big</source>
+        <comment>error</comment>
+        <translation>Аватар слишком велик</translation>
     </message>
 </context>
 </TS>
