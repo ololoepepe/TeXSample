@@ -31,6 +31,7 @@
 #include "reply/tcheckemailavailabilityreplydata.h"
 #include "reply/tcheckloginavailabilityreplydata.h"
 #include "reply/tcompiletexprojectreplydata.h"
+#include "reply/tconfirmregistrationreplydata.h"
 #include "reply/tdeletegroupreplydata.h"
 #include "reply/tdeleteinvitesreplydata.h"
 #include "reply/tdeletelabreplydata.h"
@@ -42,7 +43,6 @@
 #include "reply/teditsamplereplydata.h"
 #include "reply/teditselfreplydata.h"
 #include "reply/tedituserreplydata.h"
-#include "reply/texecutecommandreplydata.h"
 #include "reply/tgenerateinvitesreplydata.h"
 #include "reply/tgetgroupinfolistreplydata.h"
 #include "reply/tgetinviteinfolistreplydata.h"
@@ -74,6 +74,7 @@
 #include "request/tcheckemailavailabilityrequestdata.h"
 #include "request/tcheckloginavailabilityrequestdata.h"
 #include "request/tcompiletexprojectrequestdata.h"
+#include "request/tconfirmregistrationrequestdata.h"
 #include "request/tdeletegrouprequestdata.h"
 #include "request/tdeleteinvitesrequestdata.h"
 #include "request/tdeletelabrequestdata.h"
@@ -85,7 +86,6 @@
 #include "request/teditsamplerequestdata.h"
 #include "request/teditselfrequestdata.h"
 #include "request/tedituserrequestdata.h"
-#include "request/texecutecommandrequestdata.h"
 #include "request/tgenerateinvitesrequestdata.h"
 #include "request/tgetgroupinfolistrequestdata.h"
 #include "request/tgetinviteinfolistrequestdata.h"
@@ -120,9 +120,11 @@
 #include "tidlist.h"
 #include "tinviteinfo.h"
 #include "tinviteinfolist.h"
+#include "tlabapplication.h"
 #include "tlabdata.h"
 #include "tlabdatainfo.h"
 #include "tlabdatainfolist.h"
+#include "tlabdatalist.h"
 #include "tlabinfo.h"
 #include "tlabinfolist.h"
 #include "tlabtype.h"
@@ -171,6 +173,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityReplyData>();
     qRegisterMetaType<TCompileTexProjectReplyData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectReplyData>();
+    qRegisterMetaType<TConfirmRegistrationReplyData>();
+    qRegisterMetaTypeStreamOperators<TConfirmRegistrationReplyData>();
     qRegisterMetaType<TDeleteGroupReplyData>();
     qRegisterMetaTypeStreamOperators<TDeleteGroupReplyData>();
     qRegisterMetaType<TDeleteInvitesReplyData>();
@@ -193,8 +197,6 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TEditSelfReplyData>();
     qRegisterMetaType<TEditUserReplyData>();
     qRegisterMetaTypeStreamOperators<TEditUserReplyData>();
-    qRegisterMetaType<TExecuteCommandReplyData>();
-    qRegisterMetaTypeStreamOperators<TExecuteCommandReplyData>();
     qRegisterMetaType<TGenerateInvitesReplyData>();
     qRegisterMetaTypeStreamOperators<TGenerateInvitesReplyData>();
     qRegisterMetaType<TGetGroupInfoListReplyData>();
@@ -258,6 +260,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityRequestData>();
     qRegisterMetaType<TCompileTexProjectRequestData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectRequestData>();
+    qRegisterMetaType<TConfirmRegistrationRequestData>();
+    qRegisterMetaTypeStreamOperators<TConfirmRegistrationRequestData>();
     qRegisterMetaType<TDeleteGroupRequestData>();
     qRegisterMetaTypeStreamOperators<TDeleteGroupRequestData>();
     qRegisterMetaType<TDeleteInvitesRequestData>();
@@ -280,8 +284,6 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TEditSelfRequestData>();
     qRegisterMetaType<TEditUserRequestData>();
     qRegisterMetaTypeStreamOperators<TEditUserRequestData>();
-    qRegisterMetaType<TExecuteCommandRequestData>();
-    qRegisterMetaTypeStreamOperators<TExecuteCommandRequestData>();
     qRegisterMetaType<TGenerateInvitesRequestData>();
     qRegisterMetaTypeStreamOperators<TGenerateInvitesRequestData>();
     qRegisterMetaType<TGetGroupInfoListRequestData>();
@@ -351,6 +353,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TInviteInfo>();
     qRegisterMetaType<TInviteInfoList>();
     qRegisterMetaTypeStreamOperators<TInviteInfoList>();
+    qRegisterMetaType<TLabApplication>();
+    qRegisterMetaTypeStreamOperators<TLabApplication>();
     qRegisterMetaType<TLabInfo>();
     qRegisterMetaTypeStreamOperators<TLabInfo>();
     qRegisterMetaType<TLabInfoList>();
@@ -365,6 +369,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TLabDataInfo>();
     qRegisterMetaType<TLabDataInfoList>();
     qRegisterMetaTypeStreamOperators<TLabDataInfoList>();
+    qRegisterMetaType<TLabDataList>();
+    qRegisterMetaTypeStreamOperators<TLabDataList>();
     qRegisterMetaType<TSampleInfo>();
     qRegisterMetaTypeStreamOperators<TSampleInfo>();
     qRegisterMetaType<TSampleInfoList>();

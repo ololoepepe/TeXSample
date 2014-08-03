@@ -49,7 +49,6 @@ const QString EditSample = "edit_sample";
 const QString EditSampleAdmin = "edit_sample_admin";
 const QString EditSelf = "edit_self";
 const QString EditUser = "edit_user";
-const QString ExecuteCommand = "execute_command";
 const QString GenerateInvites = "generate_invites";
 const QString GetGroupInfoList = "get_group_info_list";
 const QString GetInviteInfoList = "get_invite_info_list";

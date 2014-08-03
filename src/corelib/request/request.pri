@@ -21,7 +21,6 @@ HEADERS += \
     $${PWD}/teditsamplerequestdata.h \
     $${PWD}/teditselfrequestdata.h \
     $${PWD}/tedituserrequestdata.h \
-    $${PWD}/texecutecommandrequestdata.h \
     $${PWD}/tgenerateinvitesrequestdata.h \
     $${PWD}/tgetgroupinfolistrequestdata.h \
     $${PWD}/tgetinviteinfolistrequestdata.h \
@@ -67,7 +66,6 @@ SOURCES += \
     $${PWD}/teditsamplerequestdata.cpp \
     $${PWD}/teditselfrequestdata.cpp \
     $${PWD}/tedituserrequestdata.cpp \
-    $${PWD}/texecutecommandrequestdata.cpp \
     $${PWD}/tgenerateinvitesrequestdata.cpp \
     $${PWD}/tgetgroupinfolistrequestdata.cpp \
     $${PWD}/tgetinviteinfolistrequestdata.cpp \

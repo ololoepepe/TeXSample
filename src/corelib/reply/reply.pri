@@ -21,7 +21,6 @@ HEADERS += \
     $${PWD}/teditsamplereplydata.h \
     $${PWD}/teditselfreplydata.h \
     $${PWD}/tedituserreplydata.h \
-    $${PWD}/texecutecommandreplydata.h \
     $${PWD}/tgenerateinvitesreplydata.h \
     $${PWD}/tgetgroupinfolistreplydata.h \
     $${PWD}/tgetinviteinfolistreplydata.h \
@@ -67,7 +66,6 @@ SOURCES += \
     $${PWD}/teditsamplereplydata.cpp \
     $${PWD}/teditselfreplydata.cpp \
     $${PWD}/tedituserreplydata.cpp \
-    $${PWD}/texecutecommandreplydata.cpp \
     $${PWD}/tgenerateinvitesreplydata.cpp \
     $${PWD}/tgetgroupinfolistreplydata.cpp \
     $${PWD}/tgetinviteinfolistreplydata.cpp \
