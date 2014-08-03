@@ -253,6 +253,11 @@
         <comment>headerData</comment>
         <translation>Дата создания</translation>
     </message>
+    <message>
+        <source>Access level</source>
+        <comment>headerData</comment>
+        <translation>Уровень доступа</translation>
+    </message>
 </context>
 <context>
     <name>TInviteWidgetPrivate</name>

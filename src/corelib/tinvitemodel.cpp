@@ -21,6 +21,7 @@
 
 #include "tinvitemodel.h"
 
+#include "taccesslevel.h"
 #include "tgroupinfolist.h"
 #include "tidlist.h"
 #include "tinviteinfo.h"
@@ -145,12 +146,12 @@ void TInviteModel::addInvites(const TInviteInfoList &inviteList)
 
 int TInviteModel::columnCount(const QModelIndex &) const
 {
-    return 8;
+    return 9;
 }
 
 QVariant TInviteModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.column() > 7 || Qt::DisplayRole != role)
+    if (!index.isValid() || index.column() > 8 || Qt::DisplayRole != role)
         return QVariant();
     TInviteInfo info = inviteInfoAt(index.row());
     if (!info.isValid())
@@ -161,16 +162,18 @@ QVariant TInviteModel::data(const QModelIndex &index, int role) const
     case 1:
         return info.code();
     case 2:
-        return info.services();
+        return info.accessLevel();
     case 3:
-        return info.groups();
+        return info.services();
     case 4:
-        return info.ownerId();
+        return info.groups();
     case 5:
-        return info.ownerLogin();
+        return info.ownerId();
     case 6:
-        return info.creationDateTime();
+        return info.ownerLogin();
     case 7:
+        return info.creationDateTime();
+    case 8:
         return info.expirationDateTime();
     default:
         return QVariant();
@@ -187,16 +190,18 @@ QVariant TInviteModel::headerData(int section, Qt::Orientation orientation, int 
     case 1:
         return tr("Code", "headerData");
     case 2:
-        return tr("Services", "headerData");
+        return tr("Access level", "headerData");
     case 3:
-        return tr("Groups", "headerData");
+        return tr("Services", "headerData");
     case 4:
-        return tr("Owner ID", "headerData");
+        return tr("Groups", "headerData");
     case 5:
-        return tr("Owner login", "headerData");
+        return tr("Owner ID", "headerData");
     case 6:
-        return tr("Creation date", "headerData");
+        return tr("Owner login", "headerData");
     case 7:
+        return tr("Creation date", "headerData");
+    case 8:
         return tr("Expiration date", "headerData");
     default:
         return QVariant();
