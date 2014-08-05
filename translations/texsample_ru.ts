@@ -316,74 +316,11 @@
     </message>
 </context>
 <context>
-    <name>TMessage</name>
-    <message>
-        <source>Already authorized</source>
-        <translation>Уже авторизован</translation>
-    </message>
-    <message>
-        <source>The resource is already deleted</source>
-        <translation>Этот ресурс уже удален</translation>
-    </message>
-    <message>
-        <source>Some internal error</source>
-        <translation>Некая внутренняя ошибка</translation>
-    </message>
-    <message>
-        <source>Either the username or the password is invalid</source>
-        <translation>Либо имя пользователя, либо пароль является некорректным</translation>
-    </message>
-    <message>
-        <source>No access to this service</source>
-        <translation>Нет доступа к этой службе</translation>
-    </message>
+    <name>TNetworkClient</name>
     <message>
         <source>Not authorized</source>
+        <comment>error</comment>
         <translation>Не авторизован</translation>
-    </message>
-    <message>
-        <source>Unable to edit non-modifiable resource</source>
-        <translation>Нельзя изменить неизменяемый ресурс</translation>
-    </message>
-    <message>
-        <source>Some mysterious error</source>
-        <translation>Некая таинственная ошибка</translation>
-    </message>
-    <message>
-        <source>The resource already exists</source>
-        <translation>Этот ресурс уже существует</translation>
-    </message>
-    <message>
-        <source>The command is invalid</source>
-        <translation>Команда не является корректной</translation>
-    </message>
-    <message>
-        <source>The data is invalid</source>
-        <translation>Данные не являются корректными</translation>
-    </message>
-    <message>
-        <source>The identifier is invalid</source>
-        <translation>Идентификатор не является корректным</translation>
-    </message>
-    <message>
-        <source>Not enough rights for this operation</source>
-        <translation>Недостаточно прав для данной операции</translation>
-    </message>
-    <message>
-        <source>The connection timed out</source>
-        <translation>Время ожидания соединения истекло</translation>
-    </message>
-    <message>
-        <source>The operation was canceled</source>
-        <translation>Операция была отменена</translation>
-    </message>
-    <message>
-        <source>An operation error occured</source>
-        <translation>Произошла ошибка операции</translation>
-    </message>
-    <message>
-        <source>The operation timed out</source>
-        <translation>Время ожидания завершения операции истекло</translation>
     </message>
 </context>
 <context>
@@ -392,6 +329,31 @@
         <source>An error occured</source>
         <comment>message text</comment>
         <translation>Произошла ошибка</translation>
+    </message>
+    <message>
+        <source>Invalid TNetworkClient instance (no host name)</source>
+        <comment>error</comment>
+        <translation>Недействительный экземпляр TNetworkClient (отсутствует имя хоста)</translation>
+    </message>
+    <message>
+        <source>Operation error</source>
+        <comment>error</comment>
+        <translation>Ошибка операции</translation>
+    </message>
+    <message>
+        <source>Null connection pointer</source>
+        <comment>error</comment>
+        <translation>Нулевой указатель на соединение</translation>
+    </message>
+    <message>
+        <source>Operation timed out</source>
+        <comment>error</comment>
+        <translation>Время ожидания завершения операции истекло</translation>
+    </message>
+    <message>
+        <source>Invalid parameter (internal error)</source>
+        <comment>error</comment>
+        <translation>Недействительный параметр (внутренняя ошибка)</translation>
     </message>
 </context>
 <context>

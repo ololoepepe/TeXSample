@@ -221,7 +221,7 @@ void TUserWidgetPrivate::addUser()
         msg.setWindowTitle(tr("Adding user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to add user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -256,7 +256,7 @@ void TUserWidgetPrivate::deleteUser()
         msg.setWindowTitle(tr("Deleting user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to delete user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -299,7 +299,7 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         msg.setWindowTitle(tr("Editing user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to edit user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();

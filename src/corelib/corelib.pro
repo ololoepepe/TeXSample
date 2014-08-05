@@ -37,7 +37,6 @@ HEADERS += \
     tlabinfo.h \
     tlabinfolist.h \
     tlabtype.h \
-    tmessage.h \
     tnamespace.h \
     toperation.h \
     tsampleinfo.h \
@@ -80,7 +79,6 @@ SOURCES += \
     tlabinfo.cpp \
     tlabinfolist.cpp \
     tlabtype.cpp \
-    tmessage.cpp \
     tnamespace.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \

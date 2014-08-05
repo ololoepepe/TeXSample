@@ -22,12 +22,12 @@
 #ifndef TNETWORKCLIENT_P_H
 #define TNETWORKCLIENT_P_H
 
-class TMessage;
 class TReply;
 
 class BNetworkConnection;
 class BNetworkOperation;
 
+class QDateTime;
 class QVariant;
 class QWidget;
 
@@ -51,6 +51,7 @@ class TNetworkClientPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TNetworkClient)
 public:
+    bool caching;
     BNetworkConnection *connection;
     QString hostName;
     QString login;
@@ -69,14 +70,13 @@ public:
     explicit TNetworkClientPrivate(TNetworkClient *q);
     ~TNetworkClientPrivate();
 public:
-    TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
     TReply performOperation(BNetworkConnection *connection, const QString &operation, const QVariant &data,
-                            QWidget *parentWidget = 0);
+                            const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
     void init();
     void setState(TNetworkClient::State s, TUserInfo info = TUserInfo());
     void showMessage(const QString &text, const QString &informativeText = QString());
-    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget = 0, TMessage *message = 0);
-    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget = 0, TMessage *message = 0);
+    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget = 0, QString *msg = 0);
+    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget = 0, QString *msg = 0);
 public Q_SLOTS:
     void connected();
     void disconnected();

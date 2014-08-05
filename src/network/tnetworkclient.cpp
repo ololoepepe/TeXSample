@@ -28,7 +28,6 @@ class QWidget;
 #include <TeXSampleCore/TAuthorizeRequestData>
 #include <TeXSampleCore/TClientInfo>
 #include <TeXSampleCore/TeXSample>
-#include <TeXSampleCore/TMessage>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TRequest>
@@ -43,6 +42,7 @@ class QWidget;
 #include <BNetworkOperation>
 
 #include <QAbstractSocket>
+#include <QDateTime>
 #include <QList>
 #include <QMetaObject>
 #include <QObject>
@@ -68,30 +68,30 @@ TNetworkClientPrivate::~TNetworkClientPrivate()
 
 /*============================== Public methods ============================*/
 
-TReply TNetworkClientPrivate::performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget)
-{
-    return performOperation(0, operation, data, parentWidget);
-}
-
 TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, const QString &operation,
-                                               const QVariant &data, QWidget *parentWidget)
+                                               const QVariant &data, const QDateTime &lastRequestDateTime,
+                                               QWidget *parentWidget)
 {
     if (operation.isEmpty())
-        return TReply(TMessage(TMessage::InternalErrorMessage, "Invalid parameter (operation)"));
+        return TReply(tr("Invalid parameter (internal error)", "error"));
     if (hostName.isEmpty())
-        return TReply(TMessage(TMessage::InternalErrorMessage, "Invalid TNetworkClient instance (no host name)"));
+        return TReply(tr("Invalid TNetworkClient instance (no host name)", "error"));
     bool scopedConnection = !connection;
     if (scopedConnection) {
         connection = new BNetworkConnection(BGenericSocket::TcpSocket);
         connection->connectToHost(hostName, Texsample::MainPort);
-        TMessage msg;
+        QString msg;
         if (!waitForConnected(connection, parentWidget, &msg)) {
             delete connection;
             return TReply(msg);
         }
     }
-    QScopedPointer<BNetworkOperation> op(connection->sendRequest(operation, TRequest(data)));
-    TMessage msg;
+    TRequest request(data);
+    request.setLocale(BApplicationBase::locale());
+    request.setCachingEnabled(caching);
+    request.setLastRequestDateTime(lastRequestDateTime);
+    QScopedPointer<BNetworkOperation> op(connection->sendRequest(operation, request));
+    QString msg;
     if (!waitForFinished(op.data(), parentWidget, &msg)) {
         if (scopedConnection)
             delete connection;
@@ -104,12 +104,13 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     else
         connection->close();
     if (op->isError())
-        return TReply(TMessage::OperationErrorMessage);
+        return TReply(tr("Operation error", "error"));
     return op->variantData().value<TReply>();
 }
 
 void TNetworkClientPrivate::init()
 {
+    caching = false;
     connection = new BNetworkConnection(BGenericSocket::TcpSocket, this);
     connect(connection, SIGNAL(connected()), this, SLOT(connected()));
     connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
@@ -155,34 +156,34 @@ void TNetworkClientPrivate::showMessage(const QString &text, const QString &info
         showMessageFunction(text, informativeText, 0);
 }
 
-bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWidget *parentWidget, TMessage *message)
+bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWidget *parentWidget, QString *msg)
 {
     if (!connection)
-        return bRet(message, TMessage(TMessage::InternalErrorMessage, "Null connection pointer"), false);
+        return bRet(msg, tr("Null connection pointer", "error"), false);
     if (connection->isConnected())
-        return bRet(message, TMessage(), true);
+        return bRet(msg, QString(), true);
     BeQt::waitNonBlocking(connection, SIGNAL(connected()), waitForConnectedDelay);
     if (connection->isConnected())
-        return bRet(message, TMessage(), true);
+        return bRet(msg, QString(), true);
     if (waitForConnectedFunction)
-        return waitForConnectedFunction(connection, waitForConnectedTimeout, parentWidget, message);
+        return waitForConnectedFunction(connection, waitForConnectedTimeout, parentWidget, msg);
     BeQt::waitNonBlocking(connection, SIGNAL(connected()), waitForConnectedTimeout);
     if (connection->isConnected())
-        return bRet(message, TMessage(), true);
-    return bRet(message, TMessage(TMessage::ConnectionTimeoutMessage, connection->errorString()), false);
+        return bRet(msg, QString(), true);
+    return bRet(msg, connection->errorString(), false);
 }
 
-bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidget *parentWidget, TMessage *message)
+bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidget *parentWidget, QString *msg)
 {
     if (!operation)
-        return bRet(message, TMessage(TMessage::InternalErrorMessage, "Null operation pointer"), false);
+        return bRet(msg, tr("Null connection pointer", "error"), false);
     if (operation->isFinished() || operation->waitForFinished(waitForFinishedDelay))
-        return bRet(message, TMessage(), true);
+        return bRet(msg, QString(), true);
     if (waitForFinishedFunction)
-        return waitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, message);
+        return waitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, msg);
     if (operation->waitForFinished(waitForFinishedTimeout))
-        return bRet(message, TMessage(), true);
-    return bRet(message, TMessage(TMessage::OperationTimeoutMessage), false);
+        return bRet(msg, QString(), true);
+    return bRet(msg, tr("Operation timed out", "error"), false);
 }
 
 /*============================== Public slots ==============================*/
@@ -194,13 +195,13 @@ void TNetworkClientPrivate::connected()
     requestData.setIdentifier(login);
     requestData.setPassword(password);
     requestData.setClientInfo(TClientInfo::create());
-    TReply reply = performOperation(connection, TOperation::Authorize, requestData);
+    TReply reply = q_func()->performOperation(TOperation::Authorize, requestData);
     if (reply.success()) {
         TAuthorizeReplyData replyData = reply.data().value<TAuthorizeReplyData>();
         setState(TNetworkClient::AuthorizedState, replyData.userInfo());
     } else {
         q_func()->disconnectFromServer();
-        showMessage(reply.message().text(), reply.message().extraText());
+        showMessage(reply.message());
     }
 }
 
@@ -249,6 +250,11 @@ TNetworkClient::TNetworkClient(TNetworkClientPrivate &d, QObject *parent) :
 
 /*============================== Public methods ============================*/
 
+bool TNetworkClient::cachingEnabled() const
+{
+    return d_func()->caching;
+}
+
 bool TNetworkClient::canConnect() const
 {
     return (DisconnectedState == d_func()->state) && isValid();
@@ -293,14 +299,31 @@ QByteArray TNetworkClient::password() const
 
 TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data, QWidget *parentWidget)
 {
-    return d_func()->performOperation(operation, data, parentWidget);
+    return performOperation(operation, data, QDateTime(), parentWidget);
+}
+
+TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data,
+                                                 const QDateTime &lastRequestDateTime, QWidget *parentWidget)
+{
+    return d_func()->performOperation(0, operation, data, lastRequestDateTime, parentWidget);
 }
 
 TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget)
 {
+    return performOperation(operation, data, QDateTime(), parentWidget);
+}
+
+TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data,
+                                        const QDateTime &lastRequestDateTime, QWidget *parentWidget)
+{
     if (!isAuthorized())
-        return TReply(TMessage(TMessage::InternalErrorMessage, "Not authorized"));
-    return d_func()->performOperation(d_func()->connection, operation, data, parentWidget);
+        return TReply(tr("Not authorized", "error"));
+    return d_func()->performOperation(d_func()->connection, operation, data, lastRequestDateTime, parentWidget);
+}
+
+void TNetworkClient::setCachingEnabled(bool enabled)
+{
+    d_func()->caching = enabled;
 }
 
 void TNetworkClient::setHostName(const QString &hostName)
