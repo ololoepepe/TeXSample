@@ -128,7 +128,6 @@
 #include "tlabinfo.h"
 #include "tlabinfolist.h"
 #include "tlabtype.h"
-#include "tmessage.h"
 #include "tsampleinfo.h"
 #include "tsampleinfolist.h"
 #include "tsampletype.h"
@@ -361,8 +360,6 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TLabInfoList>();
     qRegisterMetaType<TLabType>();
     qRegisterMetaTypeStreamOperators<TLabType>();
-    qRegisterMetaType<TMessage>();
-    qRegisterMetaTypeStreamOperators<TMessage>();
     qRegisterMetaType<TLabData>();
     qRegisterMetaTypeStreamOperators<TLabData>();
     qRegisterMetaType<TLabDataInfo>();
