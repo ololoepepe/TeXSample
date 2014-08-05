@@ -42,12 +42,15 @@ HEADERS += \
     tsampleinfo.h \
     tsampleinfolist.h \
     tsampletype.h \
+    tserverstate.h \
     tservice.h \
     tservicelist.h \
     ttexcompiler.h \
     ttexfile.h \
     ttexfilelist.h \
     ttexproject.h \
+    tuserconnectioninfo.h \
+    tuserconnectioninfolist.h \
     tuseridentifier.h \
     tuserinfo.h \
     tuserinfolist.h \
@@ -83,12 +86,15 @@ SOURCES += \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
     tsampletype.cpp \
+    tserverstate.cpp \
     tservice.cpp \
     tservicelist.cpp \
     ttexcompiler.cpp \
     ttexfile.cpp \
     ttexfilelist.cpp \
     ttexproject.cpp \
+    tuserconnectioninfo.cpp \
+    tuserconnectioninfolist.cpp \
     tuseridentifier.cpp \
     tuserinfo.cpp \
     tuserinfolist.cpp \

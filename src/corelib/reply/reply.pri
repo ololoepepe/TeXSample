@@ -32,7 +32,9 @@ HEADERS += \
     $${PWD}/tgetsamplepreviewreplydata.h \
     $${PWD}/tgetsamplesourcereplydata.h \
     $${PWD}/tgetselfinforeplydata.h \
+    $${PWD}/tgetserverstatereplydata.h \
     $${PWD}/tgetuseravatarreplydata.h \
+    $${PWD}/tgetuserconnectioninfolistreplydata.h \
     $${PWD}/tgetuserinfoadminreplydata.h \
     $${PWD}/tgetuserinfolistadminreplydata.h \
     $${PWD}/tgetuserinforeplydata.h \
@@ -41,6 +43,8 @@ HEADERS += \
     $${PWD}/tregisterreplydata.h \
     $${PWD}/treply.h \
     $${PWD}/trequestrecoverycodereplydata.h \
+    $${PWD}/tsetlatestappversionreplydata.h \
+    $${PWD}/tsetserverstatereplydata.h \
     $${PWD}/tsubscribereplydata.h
 
 SOURCES += \
@@ -77,7 +81,9 @@ SOURCES += \
     $${PWD}/tgetsamplepreviewreplydata.cpp \
     $${PWD}/tgetsamplesourcereplydata.cpp \
     $${PWD}/tgetselfinforeplydata.cpp \
+    $${PWD}/tgetserverstatereplydata.cpp \
     $${PWD}/tgetuseravatarreplydata.cpp \
+    $${PWD}/tgetuserconnectioninfolistreplydata.cpp \
     $${PWD}/tgetuserinfoadminreplydata.cpp \
     $${PWD}/tgetuserinfolistadminreplydata.cpp \
     $${PWD}/tgetuserinforeplydata.cpp \
@@ -86,4 +92,6 @@ SOURCES += \
     $${PWD}/tregisterreplydata.cpp \
     $${PWD}/treply.cpp \
     $${PWD}/trequestrecoverycodereplydata.cpp \
+    $${PWD}/tsetlatestappversionreplydata.cpp \
+    $${PWD}/tsetserverstatereplydata.cpp \
     $${PWD}/tsubscribereplydata.cpp

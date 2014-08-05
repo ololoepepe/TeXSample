@@ -54,7 +54,9 @@
 #include "reply/tgetsamplepreviewreplydata.h"
 #include "reply/tgetsamplesourcereplydata.h"
 #include "reply/tgetselfinforeplydata.h"
+#include "reply/tgetserverstatereplydata.h"
 #include "reply/tgetuseravatarreplydata.h"
+#include "reply/tgetuserconnectioninfolistreplydata.h"
 #include "reply/tgetuserinfoadminreplydata.h"
 #include "reply/tgetuserinfolistadminreplydata.h"
 #include "reply/tgetuserinforeplydata.h"
@@ -63,6 +65,8 @@
 #include "reply/tregisterreplydata.h"
 #include "reply/treply.h"
 #include "reply/trequestrecoverycodereplydata.h"
+#include "reply/tsetlatestappversionreplydata.h"
+#include "reply/tsetserverstatereplydata.h"
 #include "reply/tsubscribereplydata.h"
 #include "request/taddgrouprequestdata.h"
 #include "request/taddlabrequestdata.h"
@@ -97,7 +101,9 @@
 #include "request/tgetsamplepreviewrequestdata.h"
 #include "request/tgetsamplesourcerequestdata.h"
 #include "request/tgetselfinforequestdata.h"
+#include "request/tgetserverstaterequestdata.h"
 #include "request/tgetuseravatarrequestdata.h"
+#include "request/tgetuserconnectioninfolistrequestdata.h"
 #include "request/tgetuserinfoadminrequestdata.h"
 #include "request/tgetuserinfolistadminrequestdata.h"
 #include "request/tgetuserinforequestdata.h"
@@ -106,6 +112,8 @@
 #include "request/tregisterrequestdata.h"
 #include "request/trequest.h"
 #include "request/trequestrecoverycoderequestdata.h"
+#include "request/tsetlatestappversionrequestdata.h"
+#include "request/tsetserverstaterequestdata.h"
 #include "request/tsubscriberequestdata.h"
 #include "taccesslevel.h"
 #include "tauthorinfo.h"
@@ -131,12 +139,15 @@
 #include "tsampleinfo.h"
 #include "tsampleinfolist.h"
 #include "tsampletype.h"
+#include "tserverstate.h"
 #include "tservice.h"
 #include "tservicelist.h"
 #include "ttexcompiler.h"
 #include "ttexfile.h"
 #include "ttexfilelist.h"
 #include "ttexproject.h"
+#include "tuserconnectioninfo.h"
+#include "tuserconnectioninfolist.h"
 #include "tuseridentifier.h"
 #include "tuserinfo.h"
 #include "tuserinfolist.h"
@@ -218,8 +229,12 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetSampleSourceReplyData>();
     qRegisterMetaType<TGetSelfInfoRequestData>();
     qRegisterMetaTypeStreamOperators<TGetSelfInfoRequestData>();
+    qRegisterMetaType<TGetServerStateReplyData>();
+    qRegisterMetaTypeStreamOperators<TGetServerStateReplyData>();
     qRegisterMetaType<TGetUserAvatarReplyData>();
     qRegisterMetaTypeStreamOperators<TGetUserAvatarReplyData>();
+    qRegisterMetaType<TGetUserConnectionInfoListReplyData>();
+    qRegisterMetaTypeStreamOperators<TGetUserConnectionInfoListReplyData>();
     qRegisterMetaType<TGetUserInfoAdminReplyData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoAdminReplyData>();
     qRegisterMetaType<TGetUserInfoListAdminReplyData>();
@@ -236,6 +251,10 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TReply>();
     qRegisterMetaType<TRequestRecoveryCodeReplyData>();
     qRegisterMetaTypeStreamOperators<TRequestRecoveryCodeReplyData>();
+    qRegisterMetaType<TSetLatestAppVersionReplyData>();
+    qRegisterMetaTypeStreamOperators<TSetLatestAppVersionReplyData>();
+    qRegisterMetaType<TSetServerStateReplyData>();
+    qRegisterMetaTypeStreamOperators<TSetServerStateReplyData>();
     qRegisterMetaType<TSubscribeReplyData>();
     qRegisterMetaTypeStreamOperators<TSubscribeReplyData>();
     //Requests
@@ -305,8 +324,12 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetSampleSourceRequestData>();
     qRegisterMetaType<TGetSelfInfoRequestData>();
     qRegisterMetaTypeStreamOperators<TGetSelfInfoRequestData>();
+    qRegisterMetaType<TGetServerStateRequestData>();
+    qRegisterMetaTypeStreamOperators<TGetServerStateRequestData>();
     qRegisterMetaType<TGetUserAvatarRequestData>();
     qRegisterMetaTypeStreamOperators<TGetUserAvatarRequestData>();
+    qRegisterMetaType<TGetUserConnectionInfoListRequestData>();
+    qRegisterMetaTypeStreamOperators<TGetUserConnectionInfoListRequestData>();
     qRegisterMetaType<TGetUserInfoAdminRequestData>();
     qRegisterMetaTypeStreamOperators<TGetUserInfoAdminRequestData>();
     qRegisterMetaType<TGetUserInfoListAdminRequestData>();
@@ -323,6 +346,10 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TRequest>();
     qRegisterMetaType<TRequestRecoveryCodeRequestData>();
     qRegisterMetaTypeStreamOperators<TRequestRecoveryCodeRequestData>();
+    qRegisterMetaType<TSetLatestAppVersionRequestData>();
+    qRegisterMetaTypeStreamOperators<TSetLatestAppVersionRequestData>();
+    qRegisterMetaType<TSetServerStateRequestData>();
+    qRegisterMetaTypeStreamOperators<TSetServerStateRequestData>();
     qRegisterMetaType<TSubscribeRequestData>();
     qRegisterMetaTypeStreamOperators<TSubscribeRequestData>();
     //Global
@@ -374,6 +401,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TSampleInfoList>();
     qRegisterMetaType<TSampleType>();
     qRegisterMetaTypeStreamOperators<TSampleType>();
+    qRegisterMetaType<TServerState>();
+    qRegisterMetaTypeStreamOperators<TServerState>();
     qRegisterMetaType<TService>();
     qRegisterMetaTypeStreamOperators<TService>();
     qRegisterMetaType<TServiceList>();
@@ -386,6 +415,10 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TTexFileList>();
     qRegisterMetaType<TTexProject>();
     qRegisterMetaTypeStreamOperators<TTexProject>();
+    qRegisterMetaType<TUserConnectionInfo>();
+    qRegisterMetaTypeStreamOperators<TUserConnectionInfo>();
+    qRegisterMetaType<TUserConnectionInfoList>();
+    qRegisterMetaTypeStreamOperators<TUserConnectionInfoList>();
     qRegisterMetaType<TUserIdentifier>();
     qRegisterMetaTypeStreamOperators<TUserIdentifier>();
     qRegisterMetaType<TUserInfo>();

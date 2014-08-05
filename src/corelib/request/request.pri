@@ -32,7 +32,9 @@ HEADERS += \
     $${PWD}/tgetsamplepreviewrequestdata.h \
     $${PWD}/tgetsamplesourcerequestdata.h \
     $${PWD}/tgetselfinforequestdata.h \
+    $${PWD}/tgetserverstaterequestdata.h \
     $${PWD}/tgetuseravatarrequestdata.h \
+    $${PWD}/tgetuserconnectioninfolistrequestdata.h \
     $${PWD}/tgetuserinfoadminrequestdata.h \
     $${PWD}/tgetuserinfolistadminrequestdata.h \
     $${PWD}/tgetuserinforequestdata.h \
@@ -41,6 +43,8 @@ HEADERS += \
     $${PWD}/tregisterrequestdata.h \
     $${PWD}/trequest.h \
     $${PWD}/trequestrecoverycoderequestdata.h \
+    $${PWD}/tsetlatestappversionrequestdata.h \
+    $${PWD}/tsetserverstaterequestdata.h \
     $${PWD}/tsubscriberequestdata.h
 
 SOURCES += \
@@ -77,7 +81,9 @@ SOURCES += \
     $${PWD}/tgetsamplepreviewrequestdata.cpp \
     $${PWD}/tgetsamplesourcerequestdata.cpp \
     $${PWD}/tgetselfinforequestdata.cpp \
+    $${PWD}/tgetserverstaterequestdata.cpp \
     $${PWD}/tgetuseravatarrequestdata.cpp \
+    $${PWD}/tgetuserconnectioninfolistrequestdata.cpp \
     $${PWD}/tgetuserinfoadminrequestdata.cpp \
     $${PWD}/tgetuserinfolistadminrequestdata.cpp \
     $${PWD}/tgetuserinforequestdata.cpp \
@@ -86,4 +92,6 @@ SOURCES += \
     $${PWD}/tregisterrequestdata.cpp \
     $${PWD}/trequest.cpp \
     $${PWD}/trequestrecoverycoderequestdata.cpp \
+    $${PWD}/tsetlatestappversionrequestdata.cpp \
+    $${PWD}/tsetserverstaterequestdata.cpp \
     $${PWD}/tsubscriberequestdata.cpp
