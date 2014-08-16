@@ -34,6 +34,7 @@ class QVariant;
 #include <BBase>
 
 #include <QCoreApplication>
+#include <QList>
 #include <QMetaType>
 
 /*============================================================================
@@ -52,8 +53,9 @@ public:
          Rejected = 100
     };
 public:
-    static QString sampleTypeToString(SampleType type, bool singular = true);
-    static QString sampleTypeToStringNoTr(SampleType type, bool singular = true);
+    static QList<TSampleType> allTypes();
+    static QString sampleTypeToString(TSampleType type, bool singular = true);
+    static QString sampleTypeToStringNoTr(TSampleType type, bool singular = true);
 public:
     TSampleType(int type = Unverified);
     TSampleType(const TSampleType &other);
@@ -61,6 +63,7 @@ public:
 public:
     QString toString() const;
     QString toStringNoTr() const;
+    SampleType type() const;
 public:
     TSampleType &operator =(const TSampleType &other);
     TSampleType &operator =(int type);

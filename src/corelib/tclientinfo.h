@@ -30,7 +30,7 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
-#include "tglobal.h"
+#include "tnamespace.h"
 
 #include <BBase>
 #include <BeQt>
@@ -52,7 +52,7 @@ public:
 public:
     static TClientInfo create();
 public:
-    QString applicationName() const;                        //%n
+    Texsample::ClientType applicationType() const;          //%n
     BVersion applicationVersion() const;                    //%v
     BVersion beqtVersion() const;                           //%b
     bool isPortable() const;                                //%p

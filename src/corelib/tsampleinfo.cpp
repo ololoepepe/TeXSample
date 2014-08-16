@@ -51,7 +51,6 @@ public:
     TAuthorInfoList authors;
     QDateTime creationDateTime;
     QString description;
-    TFileInfoList extraPreviewFiles;
     TFileInfoList extraSourceFiles;
     quint64 id;
     QDateTime lastModificationDateTime;
@@ -151,7 +150,6 @@ void TSampleInfo::clear()
     d->authors.clear();
     d->creationDateTime = QDateTime().toUTC();
     d->description.clear();
-    d->extraPreviewFiles.clear();
     d->extraSourceFiles.clear();
     d->id = 0;
     d->lastModificationDateTime = QDateTime().toUTC();
@@ -176,11 +174,6 @@ QString TSampleInfo::description() const
     return d_func()->description;
 }
 
-TFileInfoList TSampleInfo::extraPreviewFiles() const
-{
-    return d_func()->extraPreviewFiles;
-}
-
 TFileInfoList TSampleInfo::extraSourceFiles() const
 {
     return d_func()->extraSourceFiles;
@@ -194,8 +187,9 @@ quint64 TSampleInfo::id() const
 bool TSampleInfo::isValid() const
 {
     const B_D(TSampleInfo);
-    return d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid() && d->mainPreviewFile.isValid()
-            && d->mainSourceFile.isValid() && d->senderId && !d->senderLogin.isEmpty() && !d->title.isEmpty();
+    return d->creationDateTime.isValid() && d->id && d->lastModificationDateTime.isValid()
+            && d->mainPreviewFile.isValid() && d->mainSourceFile.isValid() && d->senderId && !d->senderLogin.isEmpty()
+            && !d->title.isEmpty();
 }
 
 QDateTime TSampleInfo::lastModificationDateTime() const
@@ -215,11 +209,7 @@ TFileInfo TSampleInfo::mainSourceFile() const
 
 int TSampleInfo::previewSize() const
 {
-    const B_D(TSampleInfo);
-    int sz = d->mainPreviewFile.fileSize();
-    foreach (const TFileInfo &f, d->extraPreviewFiles)
-        sz += f.fileSize();
-    return sz;
+    return d_func()->mainPreviewFile.fileSize();
 }
 
 quint8 TSampleInfo::rating() const
@@ -255,11 +245,6 @@ void TSampleInfo::setCreationDateTime(const QDateTime &dt)
 void TSampleInfo::setDescription(const QString &description)
 {
     d_func()->description = Texsample::testSampleDescription(description) ? description : QString();
-}
-
-void TSampleInfo::setExtraPreviewFiles(const TFileInfoList &files)
-{
-    d_func()->extraPreviewFiles = files;
 }
 
 void TSampleInfo::setExtraSourceFiles(const TFileInfoList &files)
@@ -352,7 +337,6 @@ TSampleInfo &TSampleInfo::operator =(const TSampleInfo &other)
     d->authors = dd->authors;
     d->creationDateTime = dd->creationDateTime;
     d->description = dd->description;
-    d->extraPreviewFiles = dd->extraPreviewFiles;
     d->extraSourceFiles = dd->extraSourceFiles;
     d->id = dd->id;
     d->lastModificationDateTime = dd->lastModificationDateTime;
@@ -373,8 +357,7 @@ bool TSampleInfo::operator ==(const TSampleInfo &other) const
     const B_D(TSampleInfo);
     const TSampleInfoPrivate *dd = other.d_func();
     return d->authors == dd->authors && d->creationDateTime == dd->creationDateTime
-            && d->description == dd->description && d->extraPreviewFiles == dd->extraPreviewFiles
-            && d->extraSourceFiles == dd->extraSourceFiles && d->id == dd->id
+            && d->description == dd->description && d->extraSourceFiles == dd->extraSourceFiles && d->id == dd->id
             && d->lastModificationDateTime == dd->lastModificationDateTime
             && d->mainPreviewFile == dd->mainPreviewFile && d->mainSourceFile == dd->mainSourceFile
             && d->rating == dd->rating && d->remark == dd->remark && d->senderId == dd->senderId
@@ -401,7 +384,6 @@ QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info)
     m.insert("authors", d->authors);
     m.insert("creation_date_time", d->creationDateTime);
     m.insert("description", d->description);
-    m.insert("extra_preview_files", d->extraPreviewFiles);
     m.insert("extra_source_files", d->extraSourceFiles);
     m.insert("id", d->id);
     m.insert("last_modification_date_time", d->lastModificationDateTime);
@@ -426,7 +408,6 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->creationDateTime = m.value("creation_date_time").toDateTime().toUTC();
     d->description = m.value("descrtiption").toString();
-    d->extraPreviewFiles = m.value("extra_preview_files").value<TFileInfoList>();
     d->extraSourceFiles = m.value("extra_source_files").value<TFileInfoList>();
     d->id = m.value("id").toULongLong();
     d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();

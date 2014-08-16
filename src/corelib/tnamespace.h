@@ -35,6 +35,14 @@ class QString;
 namespace Texsample
 {
 
+enum ClientType
+{
+    UnknownClient = 0,
+    CloudlabClient,
+    TexCreator,
+    TexsampleConsole
+};
+
 const quint16 MainPort = 9045;
 
 const int MaximumAdminRemarkLength = 1000;
@@ -62,6 +70,8 @@ const int MinimumPasswordLength = 8;
 const QCryptographicHash::Algorithm PasswordEncryptionAlgorythm = QCryptographicHash::Sha1;
 const int RawPasswordSize = 20;
 
+T_CORE_EXPORT ClientType clientType();
+T_CORE_EXPORT QString clientTypeToString(ClientType t);
 T_CORE_EXPORT QByteArray encryptPassword(const QString &password);
 T_CORE_EXPORT bool testAdminRemark(const QString &remark, QString *error = 0, bool translate = true);
 T_CORE_EXPORT bool testAvatar(const QImage &avatar, QString *error = 0, bool translate = true);

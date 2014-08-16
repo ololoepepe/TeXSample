@@ -61,7 +61,6 @@ public:
     void clear();
     QDateTime creationDateTime() const;
     QString description() const;
-    TFileInfoList extraPreviewFiles() const;
     TFileInfoList extraSourceFiles() const;
     quint64 id() const;
     bool isValid() const;
@@ -76,7 +75,6 @@ public:
     void setAuthors(const TAuthorInfoList &authors);
     void setCreationDateTime(const QDateTime &dt);
     void setDescription(const QString &description);
-    void setExtraPreviewFiles(const TFileInfoList &files);
     void setExtraSourceFiles(const TFileInfoList &files);
     void setId(quint64 id);
     void setLastModificationDateTime(const QDateTime &dt);

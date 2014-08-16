@@ -26,6 +26,7 @@
 
 #include <QByteArray>
 #include <QBuffer>
+#include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QFileInfo>
 #include <QImage>
@@ -37,6 +38,33 @@ B_DECLARE_TRANSLATE_FUNCTION
 
 namespace Texsample
 {
+
+ClientType clientType()
+{
+    QString name = QCoreApplication::applicationName();
+    if ("CloudLab Client" == name)
+        return CloudlabClient;
+    else if ("TeX Creator" == name)
+        return TexCreator;
+    else if ("TeXSample Console" == name)
+        return TexsampleConsole;
+    else
+        return Texsample::UnknownClient;
+}
+
+QString clientTypeToString(ClientType t)
+{
+    switch (t) {
+    case CloudlabClient:
+        return "CloudLab Client";
+    case TexCreator:
+        return "TeX Creator";
+    case TexsampleConsole:
+        return "TeXSample Console";
+    default:
+        return "";
+    }
+}
 
 QByteArray encryptPassword(const QString &password)
 {
