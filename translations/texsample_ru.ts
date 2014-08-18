@@ -138,12 +138,12 @@
     <message>
         <source>Updating group list failed</source>
         <comment>msgbox windowTitle</comment>
-        <translation type="unfinished"></translation>
+        <translation>Обновление списка групп не удалось</translation>
     </message>
     <message>
         <source>Failed to update group list. The following error occured:</source>
         <comment>msgbox text</comment>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось обновить список групп. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
@@ -269,12 +269,12 @@
     <message>
         <source>Updating invite list failed</source>
         <comment>msgbox windowTitle</comment>
-        <translation type="unfinished"></translation>
+        <translation>Обновление списка инвайтов не удалось</translation>
     </message>
     <message>
         <source>Failed to update invite list. The following error occured:</source>
         <comment>msgbox text</comment>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
@@ -537,12 +537,12 @@
     <message>
         <source>Getting user info failed</source>
         <comment>msgbox windowTitle</comment>
-        <translation type="unfinished"></translation>
+        <translation>Получение информации о пользователе не удалось</translation>
     </message>
     <message>
         <source>Failed to get user info. The following error occured:</source>
         <comment>msgbox text</comment>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось получить информацию о пользователе. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
@@ -921,12 +921,12 @@
     <message>
         <source>Updating user list failed</source>
         <comment>msgbox windowTitle</comment>
-        <translation type="unfinished"></translation>
+        <translation>Обновление списка пользователей не удалось</translation>
     </message>
     <message>
         <source>Failed to update user list. The following error occured:</source>
         <comment>msgbox text</comment>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось обновить список пользователей. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
