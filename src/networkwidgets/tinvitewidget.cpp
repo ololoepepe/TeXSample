@@ -166,7 +166,6 @@ void TInviteWidgetPrivate::init()
         view->verticalHeader()->setVisible(false);
         view->setContextMenuPolicy(Qt::NoContextMenu);
         view->setModel(proxyModel);
-        connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(copyInvite(QModelIndex)));
         connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
       vlt->addWidget(view);
@@ -286,7 +285,7 @@ void TInviteWidgetPrivate::generateInvites()
               foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
                   cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
                   BGuiTools::setItemEnabled(cmboxAccessLevel, cmboxAccessLevel->count() - 1,
-                                            lvl > client->userInfo().accessLevel());
+                                            lvl <= client->userInfo().accessLevel());
               }
               if (cmboxAccessLevel->count())
                 cmboxAccessLevel->setCurrentIndex(0);

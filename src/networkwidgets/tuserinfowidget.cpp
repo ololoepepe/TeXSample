@@ -793,6 +793,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
             containsAvatar = true;
             if (model)
                 model->updateUserAvatar(id, avatar);
+            if (cache)
+                cache->setData(TOperation::GetUserAvatar, r.requestDateTime(), r.data(), id);
         }
         BDialog dlg(q_func());
           dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
