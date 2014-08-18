@@ -266,6 +266,16 @@
         <comment>toolTip</comment>
         <translation>Инвайты были скопированы в буфер обмена</translation>
     </message>
+    <message>
+        <source>Updating invite list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to update invite list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TLabType plural</name>
@@ -520,6 +530,19 @@
         <source>Add tag...</source>
         <comment>tbtn toolTip</comment>
         <translation>Добавить тэг...</translation>
+    </message>
+</context>
+<context>
+    <name>TUserInfoWidget</name>
+    <message>
+        <source>Getting user info failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get user info. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

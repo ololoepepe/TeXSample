@@ -172,6 +172,7 @@ TUserWidgetPrivate::~TUserWidgetPrivate()
 
 void TUserWidgetPrivate::init()
 {
+    alwaysRequestAvatar = false;
     cache = 0;
     client = 0;
     proxyModel = new TUserProxyModel(this);
@@ -323,6 +324,7 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
       TUserInfoWidget *wgt = new TUserInfoWidget(TUserInfoWidget::EditMode);
         wgt->setModel(Model);
         wgt->setClient(client);
+        wgt->setAlwaysRequestAvatar(alwaysRequestAvatar);
         wgt->setUser(userId);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(wgt->hasValidInput());
@@ -383,6 +385,11 @@ TUserWidget::~TUserWidget()
 
 /*============================== Public methods ============================*/
 
+bool TUserWidget::alwaysRequestAvatar() const
+{
+    return d_func()->alwaysRequestAvatar;
+}
+
 TAbstractCache *TUserWidget::cache() const
 {
     return d_func()->cache;
@@ -391,6 +398,11 @@ TAbstractCache *TUserWidget::cache() const
 TNetworkClient *TUserWidget::client() const
 {
     return d_func()->client;
+}
+
+void TUserWidget::setAlwaysRequestAvatar(bool enabled)
+{
+    d_func()->alwaysRequestAvatar = enabled;
 }
 
 void TUserWidget::setCache(TAbstractCache *cache)

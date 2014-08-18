@@ -25,6 +25,7 @@
 
 #include "tlistwidget.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserRequestData>
 #include <TeXSampleCore/TChangeEmailRequestData>
@@ -38,6 +39,10 @@
 #include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TGetUserAvatarReplyData>
 #include <TeXSampleCore/TGetUserAvatarRequestData>
+#include <TeXSampleCore/TGetUserInfoAdminReplyData>
+#include <TeXSampleCore/TGetUserInfoAdminRequestData>
+#include <TeXSampleCore/TGetUserInfoReplyData>
+#include <TeXSampleCore/TGetUserInfoRequestData>
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TOperation>
@@ -373,6 +378,8 @@ TIdList TUserInfoWidgetPrivate::groups() const
 
 void TUserInfoWidgetPrivate::init()
 {
+    alwaysRequestAvatar = false;
+    cache = 0;
     client = 0;
     model = 0;
     editAvatar = false;
@@ -841,6 +848,16 @@ TUserInfoWidget::~TUserInfoWidget()
 
 /*============================== Public methods ============================*/
 
+bool TUserInfoWidget::alwaysRequestAvatar() const
+{
+    return d_func()->alwaysRequestAvatar;
+}
+
+TAbstractCache *TUserInfoWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TUserInfoWidget::client() const
 {
     return d_func()->client;
@@ -1011,6 +1028,16 @@ QByteArray TUserInfoWidget::saveState() const
     return BeQt::serialize(m);
 }
 
+void TUserInfoWidget::setAlwaysRequestAvatar(bool enabled)
+{
+    d_func()->alwaysRequestAvatar = enabled;
+}
+
+void TUserInfoWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
+}
+
 void TUserInfoWidget::setClient(TNetworkClient *client)
 {
     B_D(TUserInfoWidget);
@@ -1034,6 +1061,42 @@ void TUserInfoWidget::setUser(quint64 userId)
     B_D(TUserInfoWidget);
     if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
         return;
+    if (d->client && d->client->isAuthorized()) {
+        QVariant requestData;
+        QString op;
+        bool admin = d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
+        if (admin) {
+            TGetUserInfoAdminRequestData request;
+            request.setIdentifier(userId);
+            request.setIncludeAvatar(d->alwaysRequestAvatar);
+            op = TOperation::GetUserInfoAdmin;
+            requestData = request;
+        } else {
+            TGetUserInfoRequestData request;
+            request.setIdentifier(userId);
+            request.setIncludeAvatar(d->alwaysRequestAvatar);
+            op = TOperation::GetUserInfo;
+            requestData = request;
+        }
+        QDateTime dt = d->cache ? d->cache->lastRequestDateTime(op) : QDateTime();
+        TReply reply = d->client->performOperation(op, requestData, dt);
+        if (!reply.success()) {
+            QMessageBox msg(this);
+            msg.setWindowTitle(tr("Getting user info failed", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(tr("Failed to get user info. The following error occured:", "msgbox text"));
+            msg.setInformativeText(reply.message());
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.setDefaultButton(QMessageBox::Ok);
+            msg.exec();
+            return;
+        }
+        TUserInfo info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
+                                 reply.data().value<TGetUserInfoReplyData>().userInfo();
+        d->model->updateUser(userId, info, !d->alwaysRequestAvatar);
+        if (d->cache)
+            d->cache->setData(op, reply.requestDateTime(), reply.data());
+    }
     TUserInfo info = d->model->userInfo(userId);
     d->id = info.id();
     if (d->ledtLogin)

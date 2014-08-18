@@ -23,6 +23,7 @@
 #ifndef TUSERINFOWIDGET_P_H
 #define TUSERINFOWIDGET_P_H
 
+class TAbstractCache;
 class TGroupInfoList;
 class TIdList;
 class TListWidget;
@@ -76,6 +77,7 @@ public:
 public:
     const TUserInfoWidget::Mode Mode;
 public:
+    bool alwaysRequestAvatar;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
@@ -84,6 +86,7 @@ public:
     QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
+    TAbstractCache *cache;
     TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
     bool containsAvatar;

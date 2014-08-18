@@ -23,6 +23,7 @@
 #ifndef TINVITEWIDGET_P_H
 #define TINVITEWIDGET_P_H
 
+class TAbstractCache;
 class TInviteModel;
 class TNetworkClient;
 
@@ -69,6 +70,7 @@ public:
     QAction *actCopy;
     QAction *actDelete;
     QAction *actGenerate;
+    TAbstractCache *cache;
     TNetworkClient *client;
     quint16 maxInviteCount;
     TInviteProxyModel *proxyModel;
@@ -78,6 +80,7 @@ public:
     ~TInviteWidgetPrivate();
 public:
     void init();
+    void updateInviteList();
 public Q_SLOTS:
     void clientAthorizedChanged(bool authorized);
     void copyInvites();
