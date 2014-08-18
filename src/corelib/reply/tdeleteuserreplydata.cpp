@@ -37,6 +37,8 @@ class TDeleteUserReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TDeleteUserReplyData)
 public:
+    quint64 userId;
+public:
     explicit TDeleteUserReplyDataPrivate(TDeleteUserReplyData *q);
     ~TDeleteUserReplyDataPrivate();
 public:
@@ -66,7 +68,7 @@ TDeleteUserReplyDataPrivate::~TDeleteUserReplyDataPrivate()
 
 void TDeleteUserReplyDataPrivate::init()
 {
-    //
+    userId = 0;
 }
 
 /*============================================================================
@@ -93,20 +95,33 @@ TDeleteUserReplyData::~TDeleteUserReplyData()
     //
 }
 
+/*============================== Public methods ============================*/
+
+void TDeleteUserReplyData::setUserId(quint64 userId)
+{
+    d_func()->userId = userId;
+}
+
+quint64 TDeleteUserReplyData::userId() const
+{
+    return d_func()->userId;
+}
+
 /*============================== Public operators ==========================*/
 
-TDeleteUserReplyData &TDeleteUserReplyData::operator =(const TDeleteUserReplyData &/*other*/)
+TDeleteUserReplyData &TDeleteUserReplyData::operator =(const TDeleteUserReplyData &other)
 {
-    //B_D(TDeleteUserReplyData);
-    //const TDeleteUserReplyDataPrivate *dd = other.d_func();
+    B_D(TDeleteUserReplyData);
+    const TDeleteUserReplyDataPrivate *dd = other.d_func();
+    d->userId = dd->userId;
     return *this;
 }
 
-bool TDeleteUserReplyData::operator ==(const TDeleteUserReplyData &/*other*/) const
+bool TDeleteUserReplyData::operator ==(const TDeleteUserReplyData &other) const
 {
-    //const B_D(TDeleteUserReplyData);
-    //const TDeleteUserReplyDataPrivate *dd = other.d_func();
-    return true;
+    const B_D(TDeleteUserReplyData);
+    const TDeleteUserReplyDataPrivate *dd = other.d_func();
+    return d->userId == dd->userId;
 }
 
 bool TDeleteUserReplyData::operator !=(const TDeleteUserReplyData &other) const
@@ -121,19 +136,21 @@ TDeleteUserReplyData::operator QVariant() const
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TDeleteUserReplyData &/*data*/)
+QDataStream &operator <<(QDataStream &stream, const TDeleteUserReplyData &data)
 {
-    //const TDeleteUserReplyDataPrivate *d = data.d_func();
+    const TDeleteUserReplyDataPrivate *d = data.d_func();
     QVariantMap m;
+    m.insert("user_id", d->userId);
     stream << m;
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TDeleteUserReplyData &/*data*/)
+QDataStream &operator >>(QDataStream &stream, TDeleteUserReplyData &data)
 {
-    //TDeleteUserReplyDataPrivate *d = data.d_func();
+    TDeleteUserReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
+    d->userId = m.value("user_id").toULongLong();
     return stream;
 }
 

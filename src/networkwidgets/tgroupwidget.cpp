@@ -23,6 +23,7 @@
 #include "tgroupwidget.h"
 #include "tgroupwidget_p.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddGroupReplyData>
 #include <TeXSampleCore/TAddGroupRequestData>
@@ -30,9 +31,12 @@
 #include <TeXSampleCore/TEditGroupReplyData>
 #include <TeXSampleCore/TEditGroupRequestData>
 #include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TGetGroupInfoListReplyData>
+#include <TeXSampleCore/TGetGroupInfoListRequestData>
 #include <TeXSampleCore/TGroupInfo>
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TGroupModel>
+#include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TUserInfo>
@@ -44,6 +48,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDateTime>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHeaderView>
@@ -132,6 +137,7 @@ TGroupWidgetPrivate::~TGroupWidgetPrivate()
 
 void TGroupWidgetPrivate::init()
 {
+    cache = 0;
     client = 0;
     proxyModel = new TGroupProxyModel(this);
     proxyModel->setSourceModel(Model);
@@ -161,6 +167,31 @@ void TGroupWidgetPrivate::init()
                                   this, SLOT(editGroup()));
           actEdit->setEnabled(false);
       vlt->addWidget(tbar);
+}
+
+void TGroupWidgetPrivate::updateGroupList()
+{
+    if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::ModeratorLevel))
+        return;
+    TGetGroupInfoListRequestData request;
+    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetGroupInfoList) : QDateTime();
+    TReply reply = client->performOperation(TOperation::GetGroupInfoList, request, dt);
+    if (!reply.success()) {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Updating group list failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to update group list. The following error occured:", "msgbox text"));
+        msg.setInformativeText(reply.message());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
+    Model->removeGroups(data.deletedGroups());
+    Model->addGroups(data.newGroups());
+    if (cache)
+        cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);
 }
 
 /*============================== Public slots ==============================*/
@@ -207,6 +238,8 @@ void TGroupWidgetPrivate::clientAuthorizedChanged(bool authorized)
     actAdd->setEnabled(client && authorized
                        && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
     selectionChanged(view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        updateGroupList();
 }
 
 void TGroupWidgetPrivate::deleteGroup()
@@ -315,9 +348,19 @@ TGroupWidget::~TGroupWidget()
 
 /*============================== Public methods ============================*/
 
+TAbstractCache *TGroupWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TGroupWidget::client() const
 {
     return d_func()->client;
+}
+
+void TGroupWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
 }
 
 void TGroupWidget::setClient(TNetworkClient *client)
@@ -331,4 +374,6 @@ void TGroupWidget::setClient(TNetworkClient *client)
     d->actAdd->setEnabled(client && client->isAuthorized()
                           && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
     d->selectionChanged(d->view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel))
+        d->updateGroupList();
 }

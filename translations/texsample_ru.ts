@@ -135,6 +135,16 @@
         <comment>act text</comment>
         <translation>Добавить группу...</translation>
     </message>
+    <message>
+        <source>Updating group list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to update group list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TInviteModel</name>

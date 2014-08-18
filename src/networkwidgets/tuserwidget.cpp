@@ -29,6 +29,7 @@
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserReplyData>
 #include <TeXSampleCore/TAddUserRequestData>
+#include <TeXSampleCore/TDeleteUserReplyData>
 #include <TeXSampleCore/TDeleteUserRequestData>
 #include <TeXSampleCore/TEditUserReplyData>
 #include <TeXSampleCore/TEditUserRequestData>
@@ -223,7 +224,7 @@ void TUserWidgetPrivate::updateUserList()
     Model->removeUsers(data.deletedUsers());
     Model->addUsers(data.newUsers());
     if (cache)
-        cache->setData(TOperation::GetUserInfoListAdmin, reply.requestDateTime());
+        cache->setData(TOperation::GetUserInfoListAdmin, reply.requestDateTime(), data);
 }
 
 /*============================== Public slots ==============================*/
@@ -260,10 +261,9 @@ void TUserWidgetPrivate::addUser()
         msg.exec();
         return;
     }
-    TUserInfo info = r.data().value<TAddUserReplyData>().userInfo();
-    Model->addUser(info);
+    Model->addUser(r.data().value<TAddUserReplyData>().userInfo());
     if (cache)
-        cache->setData(TOperation::AddUser, r.requestDateTime(), info, info.id());
+        cache->setData(TOperation::AddUser, r.requestDateTime(), r.data());
 }
 
 void TUserWidgetPrivate::clientAuthorizedChanged(bool authorized)
@@ -300,6 +300,7 @@ void TUserWidgetPrivate::deleteUser()
         msg.exec();
         return;
     }
+
     Model->removeUser(userId);
     if (cache)
         cache->removeData(TOperation::DeleteUser, userId);
@@ -333,8 +334,7 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
     TEditUserRequestData data = wgt->createRequestData().value<TEditUserRequestData>();
     if (!data.isValid())
         return;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::EditUser) : QDateTime();
-    TReply r = client->performOperation(TOperation::EditUser, data, dt, q_func());
+    TReply r = client->performOperation(TOperation::EditUser, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Editing user failed", "msgbox windowTitle"));
@@ -346,10 +346,9 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         msg.exec();
         return;
     }
-    TUserInfo info = r.data().value<TEditUserReplyData>().userInfo();
-    Model->updateUser(userId, info, data.editAvatar());
+    Model->updateUser(userId, r.data().value<TEditUserReplyData>().userInfo(), data.editAvatar());
     if (cache)
-        cache->setData(TOperation::EditUser, r.requestDateTime(), info, info.id());
+        cache->setData(TOperation::EditUser, r.requestDateTime(), r.data());
 }
 
 void TUserWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)

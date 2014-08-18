@@ -46,6 +46,9 @@ public:
     TDeleteUserReplyData(const TDeleteUserReplyData &other);
     ~TDeleteUserReplyData();
 public:
+    void setUserId(quint64 userId);
+    quint64 userId() const;
+public:
     TDeleteUserReplyData &operator =(const TDeleteUserReplyData &other);
     bool operator ==(const TDeleteUserReplyData &other) const;
     bool operator !=(const TDeleteUserReplyData &other) const;
