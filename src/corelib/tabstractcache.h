@@ -2,8 +2,7 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleNetworkWidgets module
-** of the TeXSample library.
+** This file is part of the TeXSampleCore module of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -20,39 +19,33 @@
 **
 ****************************************************************************/
 
-#ifndef TUSERWIDGET_H
-#define TUSERWIDGET_H
+#ifndef TABSTRACTCACHE_H
+#define TABSTRACTCACHE_H
 
-class TUserWidgetPrivate;
+class QDateTime;
+class QString;
 
-class TAbstractCache;
-class TNetworkClient;
-class TUserModel;
+#include "tglobal.h"
 
-#include <TeXSampleCore/TeXSampleGlobal>
-
-#include <BBaseObject>
-
-#include <QWidget>
+#include <QVariant>
 
 /*============================================================================
-================================ TUserWidget =================================
+================================ TAbstractCache ==============================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TUserWidget : public QWidget, public BBaseObject
+class T_CORE_EXPORT TAbstractCache
 {
-    Q_OBJECT
-    B_DECLARE_PRIVATE(TUserWidget)
 public:
-    explicit TUserWidget(TUserModel *model, QWidget *parent = 0);
-    ~TUserWidget();
+    explicit TAbstractCache();
+    virtual ~TAbstractCache();
 public:
-    TAbstractCache *cache() const;
-    TNetworkClient *client() const;
-    void setCache(TAbstractCache *cache);
-    void setClient(TNetworkClient *client);
+    virtual QVariant data(const QString &operation, const QVariant &id = QVariant()) const = 0;
+    virtual QDateTime lastRequestDateTime(const QString &operation, const QVariant &id = QVariant()) const = 0;
+    virtual void removeData(const QString &operation, const QVariant &id = QVariant()) = 0;
+    virtual void setData(const QString &operation, const QDateTime &requestDateTime, const QVariant &data = QVariant(),
+                         const QVariant &id = QVariant()) = 0;
 private:
-    Q_DISABLE_COPY(TUserWidget)
+    Q_DISABLE_COPY(TAbstractCache)
 };
 
-#endif // TUSERWIDGET_H
+#endif // TABSTRACTCACHE_H

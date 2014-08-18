@@ -28,6 +28,10 @@ class TUserInfoWidgetPrivate;
 class TNetworkClient;
 class TUserModel;
 
+class BPassword;
+
+class QByteArray;
+class QString;
 class QVariant;
 
 #include <TeXSampleCore/TeXSampleGlobal>
@@ -60,8 +64,14 @@ public:
     TNetworkClient *client() const;
     QVariant createRequestData() const;
     bool hasValidInput() const;
+    QString login() const;
     Mode mode() const;
     TUserModel *model() const;
+    BPassword password() const;
+    void restorePasswordWidgetState(const QByteArray &state);
+    void restoreState(const QByteArray &state);
+    QByteArray savePasswordWidgetState() const;
+    QByteArray saveState() const;
     void setClient(TNetworkClient *client);
     void setUser(quint64 userId);
     void setModel(TUserModel *model);

@@ -316,6 +316,7 @@ void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode
       inputPwd2->addWidget(pwdwgt2);
       pwdgrp->addPasswordWidget(pwdwgt2);
       connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+      connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), this, SLOT(checkInputs()));
     flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
     if (SeparateMode == mode) {
         btnChangePassword = new QPushButton(tr("Change password", "btn text"));
@@ -344,6 +345,20 @@ void TUserInfoWidgetPrivate::createServicesSection(QHBoxLayout *hlt, bool readOn
           cboxServiceMap.insert(s, cbox);
       }
     hlt->addWidget(gbox);
+}
+
+TGroupInfoList TUserInfoWidgetPrivate::groupInfos() const
+{
+    TGroupInfoList list;
+    if (!lstwgtGroups)
+        return list;
+    foreach (int i, bRangeD(0, lstwgtGroups->itemCount() - 1)) {
+        TGroupInfo info;
+        info.setId(lstwgtGroups->itemData(i).toULongLong());
+        info.setName(lstwgtGroups->itemText(i));
+        list << info;
+    }
+    return list;
 }
 
 TIdList TUserInfoWidgetPrivate::groups() const
@@ -490,6 +505,28 @@ TServiceList TUserInfoWidgetPrivate::services() const
             list << service;
     }
     return list;
+}
+
+void TUserInfoWidgetPrivate::setGroups(const TGroupInfoList &list)
+{
+    if (!lstwgtGroups)
+        return;
+    QList<TListWidget::Item> ilist;
+    foreach (const TGroupInfo &groupInfo, list) {
+        TListWidget::Item item;
+        item.text = groupInfo.name();
+        item.data = groupInfo.id();
+        ilist << item;
+    }
+    lstwgtGroups->setItems(ilist);
+}
+
+void TUserInfoWidgetPrivate::setServices(const TServiceList &list)
+{
+    if (cboxServiceMap.isEmpty())
+        return;
+    foreach (const TService &service, TServiceList::allServices())
+        cboxServiceMap.value(service)->setChecked(list.contains(service));
 }
 
 /*============================== Public slots ==============================*/
@@ -885,6 +922,12 @@ bool TUserInfoWidget::hasValidInput() const
     return d_func()->valid;
 }
 
+QString TUserInfoWidget::login() const
+{
+    const B_D(TUserInfoWidget);
+    return (d->ledtLogin && d->ledtLogin->hasAcceptableInput()) ? d->ledtLogin->text() : QString();
+}
+
 TUserInfoWidget::Mode TUserInfoWidget::mode() const
 {
     return d_func()->Mode;
@@ -893,6 +936,79 @@ TUserInfoWidget::Mode TUserInfoWidget::mode() const
 TUserModel *TUserInfoWidget::model() const
 {
     return d_func()->model;
+}
+
+BPassword TUserInfoWidget::password() const
+{
+    const B_D(TUserInfoWidget);
+    return (d->pwdgrp && d->pwdgrp->passwordsMatchAndAcceptable()) ? d->pwdgrp->password() : BPassword();
+}
+
+void TUserInfoWidget::restorePasswordWidgetState(const QByteArray &state)
+{
+    B_D(TUserInfoWidget);
+    if (d->pwdwgt1)
+        d->pwdwgt1->restoreWidgetState(state);
+}
+
+void TUserInfoWidget::restoreState(const QByteArray &state)
+{
+    B_D(TUserInfoWidget);
+    if (RegisterMode != d->Mode && AddMode != d->Mode)
+        return;
+    QVariantMap m = BeQt::deserialize(state).toMap();
+    if (AddMode == d->Mode) {
+        d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData(m.value("access_level").toInt()));
+        d->setGroups(m.value("groups").value<TGroupInfoList>());
+        d->setServices(m.value("available_services").value<TServiceList>());
+    }
+    if (RegisterMode == d->Mode)
+        d->ledtInvite->setText(m.value("invite_code").toString());
+    d->avatarFileName = m.value("avatar_file_name").toString();
+    d->containsAvatar = m.value("contains_avatar").toBool();
+    if (d->containsAvatar)
+        d->resetAvatar(m.value("avatar").value<QImage>());
+    d->ledtEmail1->setText(m.value("email").toString());
+    d->ledtEmail2->clear();
+    d->ledtLogin->setText(m.value("login").toString());
+    d->ledtName->setText(m.value("name").toString());
+    d->ledtPatronymic->setText(m.value("patronymic").toString());
+    d->ledtSurname->setText(m.value("surname").toString());
+    QByteArray pwdwgtState = d->pwdwgt1->saveWidgetState();
+    d->pwdwgt1->restoreState(m.value("password_state").toByteArray());
+    d->pwdwgt1->restoreWidgetState(pwdwgtState);
+}
+
+QByteArray TUserInfoWidget::savePasswordWidgetState() const
+{
+    const B_D(TUserInfoWidget);
+    return d->pwdwgt1 ? d->pwdwgt1->saveWidgetState() : QByteArray();
+}
+
+QByteArray TUserInfoWidget::saveState() const
+{
+    const B_D(TUserInfoWidget);
+    if (RegisterMode != d->Mode && AddMode != d->Mode)
+        return QByteArray();
+    QVariantMap m;
+    if (AddMode == d->Mode) {
+        m.insert("access_level", d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
+        m.insert("groups", d->groupInfos());
+        m.insert("available_services", d->services());
+    }
+    if (RegisterMode == d->Mode)
+        m.insert("invite_code", d->ledtInvite->text());
+    m.insert("contains_avatar", d->containsAvatar);
+    m.insert("avatar_file_name", d->avatarFileName);
+    if (d->containsAvatar)
+        m.insert("avatar", d->avatar);
+    m.insert("email", d->ledtEmail1->text());
+    m.insert("login", d->ledtLogin->text());
+    m.insert("name", d->ledtName->text());
+    m.insert("password_state", d->pwdwgt1->saveState());
+    m.insert("patronymic", d->ledtPatronymic->text());
+    m.insert("surname", d->ledtSurname->text());
+    return BeQt::serialize(m);
 }
 
 void TUserInfoWidget::setClient(TNetworkClient *client)
@@ -943,21 +1059,10 @@ void TUserInfoWidget::setUser(quint64 userId)
                     info.lastModificationDateTime().toLocalTime().toString(TUserInfoWidgetPrivate::DateTimeFormat));
     }
     d->containsAvatar = info.containsAvatar();
+    d->avatarFileName.clear();
     d->resetAvatar(info.avatar());
-    if (!d->cboxServiceMap.isEmpty()) {
-        foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setChecked(info.availableServices().contains(service));
-    }
-    if (d->lstwgtGroups) {
-        QList<TListWidget::Item> list;
-        foreach (const TGroupInfo &groupInfo, info.groups()) {
-            TListWidget::Item item;
-            item.text = groupInfo.name();
-            item.data = groupInfo.id();
-            list << item;
-        }
-        d->lstwgtGroups->setItems(list);
-    }
+    d->setGroups(info.groups());
+    d->setServices(info.availableServices());
     d->checkInputs();
 }
 

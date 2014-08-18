@@ -280,6 +280,13 @@ QStringList TListWidget::items() const
     return list;
 }
 
+QString TListWidget::itemText(int index) const
+{
+    if (index < 0 || index >= d_func()->lstwgt->count())
+        return QString();
+    return d_func()->lstwgt->item(index)->text();
+}
+
 int TListWidget::maxAvailableItems() const
 {
     return d_func()->maxCount;

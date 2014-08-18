@@ -64,6 +64,7 @@ public:
     int itemCount() const;
     QVariant itemData(int index) const;
     QStringList items() const;
+    QString itemText(int index) const;
     int maxAvailableItems() const;
     void setAvailableItemData(int index, const QVariant &data);
     void setAvailableItems(QList<Item> list);

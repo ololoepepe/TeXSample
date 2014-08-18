@@ -129,7 +129,8 @@ void TRecoveryWidgetPrivate::init()
               inputPwd2 = new BInputField;
               inputPwd2->addWidget(pwdwgt2);
               pwdgrp->addPasswordWidget(pwdwgt2);
-              connect(pwdgrp, SIGNAL(passwordsMatchAndValidChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+              connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+              connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), this, SLOT(checkInputs()));
             flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
           vlt1->addLayout(flt);
         gbox->setLayout(vlt1);

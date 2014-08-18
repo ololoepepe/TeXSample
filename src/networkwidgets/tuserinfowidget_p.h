@@ -23,6 +23,7 @@
 #ifndef TUSERINFOWIDGET_P_H
 #define TUSERINFOWIDGET_P_H
 
+class TGroupInfoList;
 class TIdList;
 class TListWidget;
 class TNetworkClient;
@@ -135,9 +136,12 @@ public:
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
     void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
+    TGroupInfoList groupInfos() const;
     TIdList groups() const;
     void init();
     TServiceList services() const;
+    void setGroups(const TGroupInfoList &list);
+    void setServices(const TServiceList &list);
 public Q_SLOTS:
     void changeEmail();
     void changePassword();

@@ -25,12 +25,16 @@
 
 #include "tuserinfowidget.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserReplyData>
 #include <TeXSampleCore/TAddUserRequestData>
 #include <TeXSampleCore/TDeleteUserRequestData>
 #include <TeXSampleCore/TEditUserReplyData>
 #include <TeXSampleCore/TEditUserRequestData>
+#include <TeXSampleCore/TGetUserInfoListAdminReplyData>
+#include <TeXSampleCore/TGetUserInfoListAdminRequestData>
+#include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleCore/TUserInfoList>
 #include <TeXSampleCore/TUserModel>
@@ -45,6 +49,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -96,6 +101,8 @@ QVariant TUserProxyModel::data(const QModelIndex &index, int role) const
     case Qt::DecorationRole: {
         //Avatar
         QPixmap p = QPixmap::fromImage(sourceModel()->data(sourceModel()->index(index.row(), 12)).value<QImage>());
+        if (p.isNull())
+            return QVariant();
         return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     case Qt::CheckStateRole: {
@@ -164,6 +171,7 @@ TUserWidgetPrivate::~TUserWidgetPrivate()
 
 void TUserWidgetPrivate::init()
 {
+    cache = 0;
     client = 0;
     proxyModel = new TUserProxyModel(this);
     proxyModel->setSourceModel(Model);
@@ -191,6 +199,31 @@ void TUserWidgetPrivate::init()
         actEdit = tbar->addAction(BApplication::icon("edit"), tr("Edit user...", "act text"), this, SLOT(editUser()));
           actEdit->setEnabled(false);
       vlt->addWidget(tbar);
+}
+
+void TUserWidgetPrivate::updateUserList()
+{
+    if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
+        return;
+    TGetUserInfoListAdminRequestData request;
+    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetUserInfoListAdmin) : QDateTime();
+    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, dt);
+    if (!reply.success()) {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Updating user list failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to update user list. The following error occured:", "msgbox text"));
+        msg.setInformativeText(reply.message());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    TGetUserInfoListAdminReplyData data = reply.data().value<TGetUserInfoListAdminReplyData>();
+    Model->removeUsers(data.deletedUsers());
+    Model->addUsers(data.newUsers());
+    if (cache)
+        cache->setData(TOperation::GetUserInfoListAdmin, reply.requestDateTime());
 }
 
 /*============================== Public slots ==============================*/
@@ -227,7 +260,10 @@ void TUserWidgetPrivate::addUser()
         msg.exec();
         return;
     }
-    Model->addUser(r.data().value<TAddUserReplyData>().userInfo());
+    TUserInfo info = r.data().value<TAddUserReplyData>().userInfo();
+    Model->addUser(info);
+    if (cache)
+        cache->setData(TOperation::AddUser, r.requestDateTime(), info, info.id());
 }
 
 void TUserWidgetPrivate::clientAuthorizedChanged(bool authorized)
@@ -235,6 +271,8 @@ void TUserWidgetPrivate::clientAuthorizedChanged(bool authorized)
     actAdd->setEnabled(client && authorized
                        && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
     selectionChanged(view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        updateUserList();
 }
 
 void TUserWidgetPrivate::deleteUser()
@@ -263,6 +301,8 @@ void TUserWidgetPrivate::deleteUser()
         return;
     }
     Model->removeUser(userId);
+    if (cache)
+        cache->removeData(TOperation::DeleteUser, userId);
 }
 
 void TUserWidgetPrivate::editUser(QModelIndex index)
@@ -293,7 +333,8 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
     TEditUserRequestData data = wgt->createRequestData().value<TEditUserRequestData>();
     if (!data.isValid())
         return;
-    TReply r = client->performOperation(TOperation::EditUser, data, q_func());
+    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::EditUser) : QDateTime();
+    TReply r = client->performOperation(TOperation::EditUser, data, dt, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Editing user failed", "msgbox windowTitle"));
@@ -305,7 +346,10 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         msg.exec();
         return;
     }
-    Model->updateUser(userId, r.data().value<TEditUserReplyData>().userInfo(), data.editAvatar());
+    TUserInfo info = r.data().value<TEditUserReplyData>().userInfo();
+    Model->updateUser(userId, info, data.editAvatar());
+    if (cache)
+        cache->setData(TOperation::EditUser, r.requestDateTime(), info, info.id());
 }
 
 void TUserWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
@@ -340,9 +384,19 @@ TUserWidget::~TUserWidget()
 
 /*============================== Public methods ============================*/
 
+TAbstractCache *TUserWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TUserWidget::client() const
 {
     return d_func()->client;
+}
+
+void TUserWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
 }
 
 void TUserWidget::setClient(TNetworkClient *client)
@@ -356,4 +410,6 @@ void TUserWidget::setClient(TNetworkClient *client)
     d->actAdd->setEnabled(client && client->isAuthorized()
                           && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
     d->selectionChanged(d->view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        d->updateUserList();
 }

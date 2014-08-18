@@ -65,6 +65,7 @@ const QString GetUserAvatar = "get_user_avatar";
 const QString GetUserConnectionInfoList = "get_user_connection_info_list";
 const QString GetUserInfo = "get_user_info";
 const QString GetUserInfoAdmin = "get_user_info_admin";
+const QString GetUserInfoListAdmin = "get_user_info_list_admin";
 const QString Log = "log";
 const QString RecoverAccount = "recover_account";
 const QString Register = "register";

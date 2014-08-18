@@ -885,6 +885,16 @@
         <comment>msgbox text</comment>
         <translation>Не удалось отредактировать данные пользователя. Произошла следующая ошибка:</translation>
     </message>
+    <message>
+        <source>Updating user list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to update user list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Texsample</name>

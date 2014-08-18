@@ -12,6 +12,7 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_CORE_LIB
 
 HEADERS += \
+    tabstractcache.h \
     taccesslevel.h \
     tauthorinfo.h \
     tauthorinfolist.h \
@@ -57,6 +58,7 @@ HEADERS += \
     tusermodel.h
 
 SOURCES += \
+    tabstractcache.cpp \
     taccesslevel.cpp \
     tauthorinfo.cpp \
     tauthorinfolist.cpp \

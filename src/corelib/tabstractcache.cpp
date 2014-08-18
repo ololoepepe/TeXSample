@@ -2,8 +2,7 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleNetworkWidgets module
-** of the TeXSample library.
+** This file is part of the TeXSampleCore module of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -20,39 +19,20 @@
 **
 ****************************************************************************/
 
-#ifndef TUSERWIDGET_H
-#define TUSERWIDGET_H
-
-class TUserWidgetPrivate;
-
-class TAbstractCache;
-class TNetworkClient;
-class TUserModel;
-
-#include <TeXSampleCore/TeXSampleGlobal>
-
-#include <BBaseObject>
-
-#include <QWidget>
+#include "tabstractcache.h"
 
 /*============================================================================
-================================ TUserWidget =================================
+================================ TAbstractCache ==============================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TUserWidget : public QWidget, public BBaseObject
-{
-    Q_OBJECT
-    B_DECLARE_PRIVATE(TUserWidget)
-public:
-    explicit TUserWidget(TUserModel *model, QWidget *parent = 0);
-    ~TUserWidget();
-public:
-    TAbstractCache *cache() const;
-    TNetworkClient *client() const;
-    void setCache(TAbstractCache *cache);
-    void setClient(TNetworkClient *client);
-private:
-    Q_DISABLE_COPY(TUserWidget)
-};
+/*============================== Public constructors =======================*/
 
-#endif // TUSERWIDGET_H
+TAbstractCache::TAbstractCache()
+{
+    //
+}
+
+TAbstractCache::~TAbstractCache()
+{
+    //
+}

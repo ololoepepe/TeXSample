@@ -1,6 +1,7 @@
 #ifndef TSMP_TEXSAMPLECORE_MODULE_H
 #define TSMP_TEXSAMPLECORE_MODULE_H
 
+#include "tabstractcache.h"
 #include "taccesslevel.h"
 #include "taddgroupreplydata.h"
 #include "taddgrouprequestdata.h"

@@ -71,13 +71,13 @@ public:
     ~TNetworkClientPrivate();
 public:
     TReply performOperation(BNetworkConnection *connection, const QString &operation, const QVariant &data,
-                            const QDateTime &lastRequestDateTime, bool gui = false, QWidget *parentWidget = 0);
+                            const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
     void init();
     void setState(TNetworkClient::State s, TUserInfo info = TUserInfo());
-    void showMessage(const QString &text, const QString &informativeText = QString());
-    bool waitForConnected(BNetworkConnection *connection, bool gui = false, QWidget *parentWidget = 0,
-                          QString *msg = 0);
-    bool waitForFinished(BNetworkOperation *operation, bool gui = false, QWidget *parentWidget = 0, QString *msg = 0);
+    void showMessage(const QString &text, const QString &informativeText = QString(), bool error = true,
+                     QWidget *parentWidget = 0);
+    bool waitForConnected(BNetworkConnection *connection, QWidget *parentWidget = 0, QString *msg = 0);
+    bool waitForFinished(BNetworkOperation *operation, QWidget *parentWidget = 0, QString *msg = 0);
 public Q_SLOTS:
     void connected();
     void disconnected();
