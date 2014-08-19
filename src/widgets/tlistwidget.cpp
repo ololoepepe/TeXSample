@@ -22,21 +22,82 @@
 #include "tlistwidget.h"
 #include "tlistwidget_p.h"
 
+#include "tabstractlistwidgetitemdelegate.h"
+
 #include <BApplication>
 #include <BBaseObject>
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QAbstractItemDelegate>
 #include <QAction>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMenu>
+#include <QModelIndex>
 #include <QString>
 #include <QStringList>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include <QToolButton>
 #include <QVariant>
+#include <QVariantList>
 #include <QWidget>
+
+/*============================================================================
+================================ TListWidgetProxyItemDelegate ================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TListWidgetProxyItemDelegate::TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate,
+                                                           QObject *parent) :
+    QStyledItemDelegate(parent), ItemDelegate(delegate)
+{
+    if (!delegate)
+        return;
+    if (!delegate->parent())
+        delegate->setParent(this);
+    connect(delegate, SIGNAL(closeEditor(QWidget *)), this, SIGNAL(closeEditor(QWidget *)));
+    connect(delegate, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
+            this, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)));
+    connect(delegate, SIGNAL(commitData(QWidget *)), this, SIGNAL(commitData(QWidget *)));
+}
+
+TListWidgetProxyItemDelegate::~TListWidgetProxyItemDelegate()
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+QWidget *TListWidgetProxyItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                                    const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid())
+        return QStyledItemDelegate::createEditor(parent, option, index);
+    return ItemDelegate->createEditor(parent, option);
+}
+
+void TListWidgetProxyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid())
+        return QStyledItemDelegate::setEditorData(editor, index);
+    ItemDelegate->setEditorData(editor, index.data().toString(), index.data(Qt::UserRole));
+}
+
+void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                                const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid() || !model)
+        return QStyledItemDelegate::setModelData(editor, model, index);
+    QString text;
+    QVariant data;
+    ItemDelegate->setModelData(editor, text, data);
+    model->setData(index, text);
+    model->setData(index, data, Qt::UserRole);
+}
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
@@ -66,6 +127,7 @@ bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListW
 
 void TListWidgetPrivate::init()
 {
+    itemDelegate = 0;
     readOnly = false;
     maxCount = 0;
     //
@@ -128,7 +190,7 @@ void TListWidgetPrivate::addItem(QString text, QVariant data)
         if (lwi && lwi->text().isEmpty())
             return;
     }
-    if (!text.isEmpty() && q_func()->items().contains(text))
+    if (!text.isEmpty() && q_func()->itemTexts().contains(text))
         return;
     QListWidgetItem *lwi = new QListWidgetItem(text);
     if (!readOnly)
@@ -231,9 +293,43 @@ QVariant TListWidget::availableItemData(int index) const
     return list.at(index)->data();
 }
 
-QStringList TListWidget::availableItems() const
+QVariantList TListWidget::availableItemDataList() const
 {
-    QStringList list = items();
+    QVariantList list;
+    foreach (QAction *act, d_func()->tbtnAdd->menu()->actions())
+        list << act->data();
+    return list;
+}
+
+QList<TListWidget::Item> TListWidget::availableItems() const
+{
+    QList<Item> list = items();
+    foreach (QAction *act, d_func()->tbtnAdd->menu()->actions()) {
+        Item it;
+        it.data = act->data();
+        it.text = act->text();
+        list << it;
+    }
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+        foreach (int j, bRangeD(0, list.size() - 1)) {
+            if (j == i)
+                continue;
+            if (list.at(i).text == list.at(j).text) {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+        list.removeFirst();
+    return list;
+}
+
+QStringList TListWidget::availableItemTexts() const
+{
+    QStringList list = itemTexts();
     foreach (QAction *act, d_func()->tbtnAdd->menu()->actions())
         list << act->text();
     list.removeAll("");
@@ -270,13 +366,42 @@ QVariant TListWidget::itemData(int index) const
     return d_func()->lstwgt->item(index)->data(Qt::UserRole);
 }
 
-QStringList TListWidget::items() const
+QVariantList TListWidget::itemDataList() const
 {
-    QStringList list;
+    QVariantList list;
     foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1))
-        list << d_func()->lstwgt->item(i)->text();
-    list.removeAll("");
-    list.removeDuplicates();
+        list << d_func()->lstwgt->item(i)->data(Qt::UserRole);
+    return list;
+}
+
+TAbstractListWidgetItemDelegate *TListWidget::itemDelegate() const
+{
+    return d_func()->itemDelegate ? d_func()->itemDelegate->ItemDelegate : 0;
+}
+
+QList<TListWidget::Item> TListWidget::items() const
+{
+    QList<Item> list;
+    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1)) {
+        Item it;
+        it.text = d_func()->lstwgt->item(i)->text();
+        it.data = d_func()->lstwgt->item(i)->data(Qt::UserRole);
+        list << it;
+    }
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+        foreach (int j, bRangeD(0, list.size() - 1)) {
+            if (j == i)
+                continue;
+            if (list.at(i).text == list.at(j).text) {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+        list.removeFirst();
     return list;
 }
 
@@ -285,6 +410,16 @@ QString TListWidget::itemText(int index) const
     if (index < 0 || index >= d_func()->lstwgt->count())
         return QString();
     return d_func()->lstwgt->item(index)->text();
+}
+
+QStringList TListWidget::itemTexts() const
+{
+    QStringList list;
+    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1))
+        list << d_func()->lstwgt->item(i)->text();
+    list.removeAll("");
+    list.removeDuplicates();
+    return list;
 }
 
 int TListWidget::maxAvailableItems() const
@@ -345,6 +480,19 @@ void TListWidget::setItemData(int index, const QVariant &data)
     if (index < 0 || index >= d_func()->lstwgt->count())
         return;
     d_func()->lstwgt->item(index)->setData(Qt::UserRole, data);
+}
+
+void TListWidget::setItemDelegate(TAbstractListWidgetItemDelegate *delegate)
+{
+    B_D(TListWidget);
+    if (d->itemDelegate)
+        d->lstwgt->setItemDelegate(0);
+    delete d->itemDelegate;
+    d->itemDelegate = 0;
+    if (delegate) {
+        d->itemDelegate = new TListWidgetProxyItemDelegate(delegate);
+        d->lstwgt->setItemDelegate(d->itemDelegate);
+    }
 }
 
 void TListWidget::setItems(QList<Item> list)

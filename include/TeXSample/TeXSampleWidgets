@@ -1,6 +1,7 @@
 #ifndef TSMP_TEXSAMPLEWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
+#include "tabstractlistwidgetitemdelegate.h"
 #include "tapplication.h"
 #include "tlistwidget.h"
 #include "ttagwidget.h"

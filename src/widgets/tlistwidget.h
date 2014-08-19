@@ -24,6 +24,8 @@
 
 class TListWidgetPrivate;
 
+class TAbstractListWidgetItemDelegate;
+
 class QStringList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
@@ -33,6 +35,7 @@ class QStringList;
 #include <QList>
 #include <QString>
 #include <QVariant>
+#include <QVariantList>
 #include <QWidget>
 
 /*============================================================================
@@ -57,20 +60,26 @@ protected:
 public:
     int availableItemCount() const;
     QVariant availableItemData(int index) const;
-    QStringList availableItems() const;
+    QVariantList availableItemDataList() const;
+    QList<Item> availableItems() const;
+    QStringList availableItemTexts() const;
     bool buttonsVisible() const;
     void clear();
     bool isReadOnly() const;
     int itemCount() const;
     QVariant itemData(int index) const;
-    QStringList items() const;
+    QVariantList itemDataList() const;
+    TAbstractListWidgetItemDelegate *itemDelegate() const;
+    QList<Item> items() const;
     QString itemText(int index) const;
+    QStringList itemTexts() const;
     int maxAvailableItems() const;
     void setAvailableItemData(int index, const QVariant &data);
     void setAvailableItems(QList<Item> list);
     void setAvailableItems(const QStringList &list);
     void setButtonsVisible(bool b);
     void setItemData(int index, const QVariant &data);
+    void setItemDelegate(TAbstractListWidgetItemDelegate *delegate);
     void setItems(QList<Item> list);
     void setItems(const QStringList &list);
     void setMaxAvailableItems(int count);

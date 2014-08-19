@@ -22,8 +22,12 @@
 #ifndef TLISTWIDGET_P_H
 #define TLISTWIDGET_P_H
 
+class TAbstractListWidgetItemDelegate;
+
 class QListWidget;
 class QListWidgetItem;
+class QModelIndex;
+class QStyleOptionViewItem;
 class QToolButton;
 
 #include "tlistwidget.h"
@@ -34,7 +38,26 @@ class QToolButton;
 
 #include <QObject>
 #include <QString>
+#include <QStyledItemDelegate>
 #include <QVariant>
+
+/*============================================================================
+================================ TListWidgetProxyItemDelegate ================
+============================================================================*/
+
+class T_WIDGETS_EXPORT TListWidgetProxyItemDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    TAbstractListWidgetItemDelegate * const ItemDelegate;
+public:
+    explicit TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate, QObject *parent = 0);
+    ~TListWidgetProxyItemDelegate();
+public:
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+};
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
@@ -45,6 +68,7 @@ class T_WIDGETS_EXPORT TListWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TListWidget)
 public:
+    TListWidgetProxyItemDelegate *itemDelegate;
     QListWidget *lstwgt;
     int maxCount;
     bool readOnly;

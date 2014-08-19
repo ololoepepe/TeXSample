@@ -11,6 +11,7 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
+    tabstractlistwidgetitemdelegate.h \
     tapplication.h \
     tlistwidget_p.h \
     tlistwidget.h \
@@ -18,6 +19,7 @@ HEADERS += \
     ttagwidget_p.h
 
 SOURCES += \
+    tabstractlistwidgetitemdelegate.cpp \
     tapplication.cpp \
     tlistwidget.cpp \
     ttagwidget.cpp
