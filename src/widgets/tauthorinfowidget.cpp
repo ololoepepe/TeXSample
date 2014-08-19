@@ -32,6 +32,7 @@
 #include <BInputField>
 #include <BLineEdit>
 
+#include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
 #include <QMetaObject>
@@ -74,12 +75,13 @@ void TAuthorInfoWidgetPrivate::init()
     connect(bApp, SIGNAL(languageChanged()), this, SLOT(retranslateUi()));
 }
 
-void TAuthorInfoWidgetPrivate::initLineEdit(BLineEdit *ledt, int maximimTextLength, bool required)
+void TAuthorInfoWidgetPrivate::initLineEdit(BLineEdit *&ledt, int maximimTextLength, bool required)
 {
     ledt = new BLineEdit;
     QString s = ".{" + QString::number(required ? 1 : 0) + ","
             + ((maximimTextLength > 0) ? QString::number(maximimTextLength) : QString()) + "}";
     ledt->setValidator(new QRegExpValidator(QRegExp(s), this));
+    ledt->checkValidity();
     connect(ledt, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
     BInputField *input = new BInputField;
     input->setValid(ledt->hasAcceptableInput());
@@ -95,20 +97,20 @@ void TAuthorInfoWidgetPrivate::checkInputs()
     bool bvalid = ledtName->hasAcceptableInput() && ledtOrganization->hasAcceptableInput()
             && ledtPatronymic->hasAcceptableInput() && ledtPost->hasAcceptableInput() && ledtRole->hasAcceptableInput()
             && ledtSurname->hasAcceptableInput();
-    bool b = bvalid != valid;
+    if (bvalid == valid)
+        return;
     valid = bvalid;
-    if (b)
-        QMetaObject::invokeMethod(q_func(), "inputValidityChanged", Q_ARG(bool, valid));
+    QMetaObject::invokeMethod(q_func(), "inputValidityChanged", Q_ARG(bool, valid));
 }
 
 void TAuthorInfoWidgetPrivate::retranslateUi()
 {
-    BGuiTools::labelForField<QLabel>(ledtName)->setText(tr("Name:", "lbl text"));
-    BGuiTools::labelForField<QLabel>(ledtPatronymic)->setText(tr("Patronymic:", "lbl text"));
-    BGuiTools::labelForField<QLabel>(ledtSurname)->setText(tr("Surname:", "lbl text"));
-    BGuiTools::labelForField<QLabel>(ledtOrganization)->setText(tr("Organization:", "lbl text"));
-    BGuiTools::labelForField<QLabel>(ledtPost)->setText(tr("Post:", "lbl text"));
-    BGuiTools::labelForField<QLabel>(ledtRole)->setText(tr("Role:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtName->parentWidget())->setText(tr("Name:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtPatronymic->parentWidget())->setText(tr("Patronymic:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtSurname->parentWidget())->setText(tr("Surname:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtOrganization->parentWidget())->setText(tr("Organization:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtPost->parentWidget())->setText(tr("Post:", "lbl text"));
+    BGuiTools::labelForField<QLabel>(ledtRole->parentWidget())->setText(tr("Role:", "lbl text"));
 }
 
 /*============================================================================

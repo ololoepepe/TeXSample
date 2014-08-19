@@ -55,7 +55,7 @@ public:
     ~TAuthorInfoWidgetPrivate();
 public:
     void init();
-    void initLineEdit(BLineEdit *ledt, int maximimTextLength, bool required = false);
+    void initLineEdit(BLineEdit *&ledt, int maximimTextLength, bool required = false);
 public Q_SLOTS:
     void checkInputs();
     void retranslateUi();
