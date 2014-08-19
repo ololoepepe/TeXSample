@@ -307,7 +307,7 @@ bool testSampleTitle(const QString &title, QString *error, bool tr)
 
 bool testSurname(const QString &name, QString *error, bool tr)
 {
-    if (name.length() > Texsample::MaximumSurameLength) {
+    if (name.length() > Texsample::MaximumSurnameLength) {
         return bRet(error, tr ? translate("Texsample", "Surname is too long", "error") :
                                 QString("Surname is too long"), false);
     }

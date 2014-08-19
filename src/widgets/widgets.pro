@@ -13,6 +13,10 @@ DEFINES += TSMP_BUILD_WIDGETS_LIB
 HEADERS += \
     tabstractlistwidgetitemdelegate.h \
     tapplication.h \
+    tauthorinfolistwidgetitemdelegate.h \
+    tauthorinfolistwidgetitemdelegate_p.h \
+    tauthorinfowidget.h \
+    tauthorinfowidget_p.h \
     tlistwidget_p.h \
     tlistwidget.h \
     ttagwidget.h \
@@ -21,6 +25,8 @@ HEADERS += \
 SOURCES += \
     tabstractlistwidgetitemdelegate.cpp \
     tapplication.cpp \
+    tauthorinfolistwidgetitemdelegate.cpp \
+    tauthorinfowidget.cpp \
     tlistwidget.cpp \
     ttagwidget.cpp
 

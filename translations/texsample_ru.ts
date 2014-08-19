@@ -41,6 +41,39 @@
     </message>
 </context>
 <context>
+    <name>TAuthorInfoWidgetPrivate</name>
+    <message>
+        <source>Name:</source>
+        <comment>lbl text</comment>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <source>Patronymic:</source>
+        <comment>lbl text</comment>
+        <translation>Отчество:</translation>
+    </message>
+    <message>
+        <source>Surname:</source>
+        <comment>lbl text</comment>
+        <translation>Фамилия:</translation>
+    </message>
+    <message>
+        <source>Organization:</source>
+        <comment>lbl text</comment>
+        <translation>Организация:</translation>
+    </message>
+    <message>
+        <source>Post:</source>
+        <comment>lbl text</comment>
+        <translation>Должность:</translation>
+    </message>
+    <message>
+        <source>Role:</source>
+        <comment>lbl text</comment>
+        <translation>Роль:</translation>
+    </message>
+</context>
+<context>
     <name>TGroupModel</name>
     <message>
         <source>ID</source>
@@ -529,15 +562,7 @@
     <message>
         <source>Add tag...</source>
         <comment>tbtn toolTip</comment>
-        <translation type="unfinished">Добавить тэг...</translation>
-    </message>
-</context>
-<context>
-    <name>TTagsWidgetPrivate</name>
-    <message>
-        <source>Add tag...</source>
-        <comment>tbtn toolTip</comment>
-        <translation type="obsolete">Добавить тэг...</translation>
+        <translation>Добавить тэг...</translation>
     </message>
 </context>
 <context>

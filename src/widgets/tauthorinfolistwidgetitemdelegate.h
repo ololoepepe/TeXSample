@@ -19,23 +19,43 @@
 **
 ****************************************************************************/
 
+#ifndef TAUTHORINFOLISTWIDGETITEMDELEGATE_H
+#define TAUTHORINFOLISTWIDGETITEMDELEGATE_H
+
+class TAuthorInfoListWidgetItemDelegatePrivate;
+
+class QString;
+class QStyleOptionViewItem;
+class QVariant;
+class QWidget;
+
 #include "tabstractlistwidgetitemdelegate.h"
+#include "tlistwidget.h"
+
+#include <BBaseObject>
 
 #include <QObject>
 
 /*============================================================================
-================================ TAbstractListWidgetItemDelegate =============
+================================ TAuthorInfoListWidgetItemDelegate ===========
 ============================================================================*/
 
-/*============================== Public constructors =======================*/
-
-TAbstractListWidgetItemDelegate::TAbstractListWidgetItemDelegate(QObject *parent) :
-    QObject(parent)
+class T_WIDGETS_EXPORT TAuthorInfoListWidgetItemDelegate : public TAbstractListWidgetItemDelegate, public BBaseObject
 {
-    //
-}
+    Q_OBJECT
+    B_DECLARE_PRIVATE(TAuthorInfoListWidgetItemDelegate)
+public:
+    explicit TAuthorInfoListWidgetItemDelegate(QObject *parent = 0);
+    virtual ~TAuthorInfoListWidgetItemDelegate();
+public:
+    static bool testItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2);
+public:
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option) const;
+    void setEditorData(QWidget *editor, const QString &text, const QVariant &data) const;
+    void setModelData(QWidget *editor, QString &text, QVariant &data) const;
+private:
+    Q_DISABLE_COPY(TAuthorInfoListWidgetItemDelegate)
+};
 
-TAbstractListWidgetItemDelegate::~TAbstractListWidgetItemDelegate()
-{
-    //
-}
+#endif // TAUTHORINFOLISTWIDGETITEMDELEGATE_H
+

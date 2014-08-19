@@ -19,23 +19,41 @@
 **
 ****************************************************************************/
 
-#include "tabstractlistwidgetitemdelegate.h"
+#ifndef TAUTHORINFOWIDGET_H
+#define TAUTHORINFOWIDGET_H
 
-#include <QObject>
+class TAuthorInfoWidgetPrivate;
+
+class TAuthorInfo;
+
+#include <TeXSampleCore/TeXSampleGlobal>
+
+#include <BBaseObject>
+
+#include <QWidget>
 
 /*============================================================================
-================================ TAbstractListWidgetItemDelegate =============
+================================ TAuthorInfoWidget ===========================
 ============================================================================*/
 
-/*============================== Public constructors =======================*/
-
-TAbstractListWidgetItemDelegate::TAbstractListWidgetItemDelegate(QObject *parent) :
-    QObject(parent)
+class T_WIDGETS_EXPORT TAuthorInfoWidget : public QWidget, public BBaseObject
 {
-    //
-}
+    Q_OBJECT
+    B_DECLARE_PRIVATE(TAuthorInfoWidget)
+public:
+    explicit TAuthorInfoWidget(QWidget *parent = 0);
+    ~TAuthorInfoWidget();
+protected:
+    explicit TAuthorInfoWidget(TAuthorInfoWidgetPrivate &d, QWidget *parent = 0);
+public:
+    bool hasValidInput() const;
+    TAuthorInfo info() const;
+    void setInfo(const TAuthorInfo &info);
+Q_SIGNALS:
+    void inputValidityChanged(bool valid);
+private:
+    Q_DISABLE_COPY(TAuthorInfoWidget)
+};
 
-TAbstractListWidgetItemDelegate::~TAbstractListWidgetItemDelegate()
-{
-    //
-}
+#endif // TAUTHORINFOWIDGET_H
+

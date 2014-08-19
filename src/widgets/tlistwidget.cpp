@@ -63,6 +63,9 @@ TListWidgetProxyItemDelegate::TListWidgetProxyItemDelegate(TAbstractListWidgetIt
     connect(delegate, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
             this, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)));
     connect(delegate, SIGNAL(commitData(QWidget *)), this, SIGNAL(commitData(QWidget *)));
+    connect(delegate, SIGNAL(commitDataAndCloseEditor(QWidget *)), this, SLOT(commitDataAndCloseEditor(QWidget *)));
+    connect(delegate, SIGNAL(commitDataAndCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
+            this, SLOT(commitDataAndCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint)));
 }
 
 TListWidgetProxyItemDelegate::~TListWidgetProxyItemDelegate()
@@ -99,6 +102,14 @@ void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemMo
     model->setData(index, data, Qt::UserRole);
 }
 
+/*============================== Public slots ==============================*/
+
+void TListWidgetProxyItemDelegate::commitDataAndCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    Q_EMIT commitData(editor);
+    Q_EMIT closeEditor(editor, hint);
+}
+
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
 ============================================================================*/
@@ -118,7 +129,7 @@ TListWidgetPrivate::~TListWidgetPrivate()
 
 /*============================== Static public methods =====================*/
 
-bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2)
+bool TListWidgetPrivate::defaultTestItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2)
 {
     return item1.text == item2.text;
 }
@@ -127,6 +138,7 @@ bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListW
 
 void TListWidgetPrivate::init()
 {
+    testItemEqualityFunction = &defaultTestItemEquality;
     itemDelegate = 0;
     readOnly = false;
     maxCount = 0;
@@ -185,18 +197,26 @@ void TListWidgetPrivate::addItem(QString text, QVariant data)
     QAction *act = qobject_cast<QAction *>(sender());
     if (act)
         text = act->text();
+    if (act)
+        data = act->data();
     if (text.isEmpty()) {
         QListWidgetItem *lwi = lstwgt->item(lstwgt->count() - 1);
         if (lwi && lwi->text().isEmpty())
             return;
     }
-    if (!text.isEmpty() && q_func()->itemTexts().contains(text))
+    if (!text.isEmpty()) {
+        TListWidget::Item it;
+        it.text = text;
+        it.data = data;
+        foreach (const TListWidget::Item &itt, q_func()->items()) {
+            if (testItemEqualityFunction(itt, it))
+                return;
+        }
         return;
+    }
     QListWidgetItem *lwi = new QListWidgetItem(text);
     if (!readOnly)
         lwi->setFlags(lwi->flags () | Qt::ItemIsEditable);
-    if (act)
-        data = act->data();
     lwi->setData(Qt::UserRole, data);
     int ind = lstwgt->count();
     if (!text.isEmpty() && ind && lstwgt->item(ind - 1)->text().isEmpty())
@@ -316,7 +336,7 @@ QList<TListWidget::Item> TListWidget::availableItems() const
         foreach (int j, bRangeD(0, list.size() - 1)) {
             if (j == i)
                 continue;
-            if (list.at(i).text == list.at(j).text) {
+            if (d_func()->testItemEqualityFunction(list.at(i), list.at(j))) {
                 list.removeAt(i);
                 break;
             }
@@ -394,7 +414,7 @@ QList<TListWidget::Item> TListWidget::items() const
         foreach (int j, bRangeD(0, list.size() - 1)) {
             if (j == i)
                 continue;
-            if (list.at(i).text == list.at(j).text) {
+            if (d_func()->testItemEqualityFunction(list.at(i), list.at(j))) {
                 list.removeAt(i);
                 break;
             }
@@ -439,20 +459,21 @@ void TListWidget::setAvailableItemData(int index, const QVariant &data)
 
 void TListWidget::setAvailableItems(QList<Item> list)
 {
-    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    B_D(TListWidget);
+    bRemoveDuplicates(list, d->testItemEqualityFunction);
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         if (list.at(i).text.isEmpty())
             list.removeAt(i);
     }
-    d_func()->tbtnAdd->menu()->clear();
-    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+    d->tbtnAdd->menu()->clear();
+    while (d->maxCount && list.size() > d->maxCount)
         list.removeFirst();
     foreach (const Item &item, list) {
-        QAction *act = d_func()->tbtnAdd->menu()->addAction(item.text);
+        QAction *act = d->tbtnAdd->menu()->addAction(item.text);
         act->setData(item.data);
-        connect(act, SIGNAL(triggered()), d_func(), SLOT(addItem()));
+        connect(act, SIGNAL(triggered()), d, SLOT(addItem()));
     }
-    d_func()->tbtnAdd->setEnabled(!d_func()->tbtnAdd->menu()->isEmpty());
+    d->tbtnAdd->setEnabled(!d->tbtnAdd->menu()->isEmpty());
 }
 
 void TListWidget::setAvailableItems(const QStringList &list)
@@ -497,17 +518,18 @@ void TListWidget::setItemDelegate(TAbstractListWidgetItemDelegate *delegate)
 
 void TListWidget::setItems(QList<Item> list)
 {
-    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    B_D(TListWidget);
+    bRemoveDuplicates(list, d->testItemEqualityFunction);
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         if (list.at(i).text.isEmpty())
             list.removeAt(i);
     }
-    d_func()->lstwgt->clear();
-    d_func()->lstwgtCurrentItemChanged(d_func()->lstwgt->currentItem());
+    d->lstwgt->clear();
+    d->lstwgtCurrentItemChanged(d->lstwgt->currentItem());
     foreach (const Item &item, list)
-        d_func()->addItem(item.text, item.data);
+        d->addItem(item.text, item.data);
     if (!isReadOnly())
-        d_func()->addItem();
+        d->addItem();
 }
 
 void TListWidget::setItems(const QStringList &list)
@@ -539,4 +561,14 @@ void TListWidget::setMaxAvailableItems(int count)
         return;
     d_func()->maxCount = count;
     setAvailableItems(availableItems());
+}
+
+void TListWidget::setTestItemEqualityFunction(TestItemEqualityFunction f)
+{
+    d_func()->testItemEqualityFunction = f ? f : &TListWidgetPrivate::defaultTestItemEquality;
+}
+
+TListWidget::TestItemEqualityFunction TListWidget::testItemEqualityFunction() const
+{
+    return d_func()->testItemEqualityFunction;
 }

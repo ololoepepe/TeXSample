@@ -49,6 +49,8 @@ public:
 signals:
     void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
     void commitData(QWidget *editor);
+    void commitDataAndCloseEditor(QWidget *editor,
+                                  QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 private:
     Q_DISABLE_COPY(TAbstractListWidgetItemDelegate)
 };

@@ -19,23 +19,49 @@
 **
 ****************************************************************************/
 
-#include "tabstractlistwidgetitemdelegate.h"
+#ifndef TAUTHORINFOWIDGET_P_H
+#define TAUTHORINFOWIDGET_P_H
+
+class QFormLayout;
+class BLineEdit;
+
+#include "tauthorinfowidget.h"
+
+#include <TeXSampleCore/TeXSampleGlobal>
+
+#include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
 
 /*============================================================================
-================================ TAbstractListWidgetItemDelegate =============
+================================ TAuthorInfoWidgetPrivate ====================
 ============================================================================*/
 
-/*============================== Public constructors =======================*/
-
-TAbstractListWidgetItemDelegate::TAbstractListWidgetItemDelegate(QObject *parent) :
-    QObject(parent)
+class T_WIDGETS_EXPORT TAuthorInfoWidgetPrivate : public BBaseObjectPrivate
 {
-    //
-}
+    Q_OBJECT
+    B_DECLARE_PUBLIC(TAuthorInfoWidget)
+public:
+    QFormLayout *flt;
+    BLineEdit *ledtName;
+    BLineEdit *ledtOrganization;
+    BLineEdit *ledtPatronymic;
+    BLineEdit *ledtPost;
+    BLineEdit *ledtRole;
+    BLineEdit *ledtSurname;
+    bool valid;
+public:
+    explicit TAuthorInfoWidgetPrivate(TAuthorInfoWidget *q);
+    ~TAuthorInfoWidgetPrivate();
+public:
+    void init();
+    void initLineEdit(BLineEdit *ledt, int maximimTextLength, bool required = false);
+public Q_SLOTS:
+    void checkInputs();
+    void retranslateUi();
+private:
+    Q_DISABLE_COPY(TAuthorInfoWidgetPrivate)
+};
 
-TAbstractListWidgetItemDelegate::~TAbstractListWidgetItemDelegate()
-{
-    //
-}
+#endif // TAUTHORINFOWIDGET_P_H
+

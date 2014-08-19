@@ -53,6 +53,8 @@ public:
         QString text;
     };
 public:
+    typedef bool (*TestItemEqualityFunction)(const Item &, const Item &);
+public:
     explicit TListWidget(QWidget *parent = 0);
     ~TListWidget();
 protected:
@@ -84,6 +86,8 @@ public:
     void setItems(const QStringList &list);
     void setMaxAvailableItems(int count);
     void setReadOnly(bool ro);
+    void setTestItemEqualityFunction(TestItemEqualityFunction f);
+    TestItemEqualityFunction testItemEqualityFunction() const;
 private:
     Q_DISABLE_COPY(TListWidget)
 };

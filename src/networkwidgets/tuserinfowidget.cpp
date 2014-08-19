@@ -273,11 +273,11 @@ void TUserInfoWidgetPrivate::createNameFields(QFormLayout *flt, bool readOnly)
       ledtName->setReadOnly(readOnly);
     flt->addRow(tr("Name:", "lbl text"), ledtName);
     ledtPatronymic = new QLineEdit;
-      ledtPatronymic->setMaxLength(Texsample::MaximumNameLength);
+      ledtPatronymic->setMaxLength(Texsample::MaximumPatronymicLength);
       ledtPatronymic->setReadOnly(readOnly);
     flt->addRow(tr("Patronymic:", "lbl text"), ledtPatronymic);
     ledtSurname = new QLineEdit;
-      ledtSurname->setMaxLength(Texsample::MaximumNameLength);
+      ledtSurname->setMaxLength(Texsample::MaximumSurnameLength);
       ledtSurname->setReadOnly(readOnly);
     flt->addRow(tr("Surname:", "lbl text"), ledtSurname);
 }

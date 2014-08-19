@@ -57,6 +57,9 @@ public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+public Q_SLOTS:
+    void commitDataAndCloseEditor(QWidget *editor,
+                                  QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 };
 
 /*============================================================================
@@ -77,11 +80,12 @@ public:
     QToolButton *tbtnDown;
     QToolButton *tbtnRemove;
     QToolButton *tbtnUp;
+    TListWidget::TestItemEqualityFunction testItemEqualityFunction;
 public:
     explicit TListWidgetPrivate(TListWidget *q);
     ~TListWidgetPrivate();
 public:
-    static bool itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2);
+    static bool defaultTestItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2);
 public:
     void init();
 public Q_SLOTS:

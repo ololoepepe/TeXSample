@@ -1,0 +1,1 @@
+#include "../../../src/widgets/tauthorinfowidget_p.h"
