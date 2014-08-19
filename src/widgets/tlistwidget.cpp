@@ -36,6 +36,9 @@
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QModelIndex>
+#include <QObject>
+#include <QPointer>
+#include <QSize>
 #include <QString>
 #include <QStringList>
 #include <QStyledItemDelegate>
@@ -52,9 +55,11 @@
 /*============================== Public constructors =======================*/
 
 TListWidgetProxyItemDelegate::TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate,
-                                                           QObject *parent) :
+                                                           TListWidgetPrivate *parent) :
     QStyledItemDelegate(parent), ItemDelegate(delegate)
 {
+    currentEditor = 0;
+    currentRow = -1;
     if (!delegate)
         return;
     if (!delegate->parent())
@@ -80,12 +85,30 @@ QWidget *TListWidgetProxyItemDelegate::createEditor(QWidget *parent, const QStyl
 {
     if (!ItemDelegate || !index.isValid())
         return QStyledItemDelegate::createEditor(parent, option, index);
-    return ItemDelegate->createEditor(parent, option);
+    *const_cast<int *>(&currentRow) = index.row();
+    *const_cast<QPointer<QWidget> *>(&currentEditor) = ItemDelegate->createEditor(parent, option);
+    connect(currentEditor, SIGNAL(destroyed()), this, SLOT(clearCurrent()));
+    return currentEditor;
+}
+
+bool TListWidgetProxyItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                               const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (!ItemDelegate || !index.isValid() || index.row() != currentRow)
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
+    return ItemDelegate->editorEvent(currentEditor, event, option);
+}
+
+QSize TListWidgetProxyItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid() || currentEditor.isNull() || index.row() != currentRow)
+        return QStyledItemDelegate::sizeHint(option, index);
+    return ItemDelegate->sizeHint(currentEditor, option);
 }
 
 void TListWidgetProxyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    if (!ItemDelegate || !index.isValid())
+    if (!ItemDelegate || !index.isValid() || index.row() != currentRow)
         return QStyledItemDelegate::setEditorData(editor, index);
     ItemDelegate->setEditorData(editor, index.data().toString(), index.data(Qt::UserRole));
 }
@@ -93,16 +116,22 @@ void TListWidgetProxyItemDelegate::setEditorData(QWidget *editor, const QModelIn
 void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                                 const QModelIndex &index) const
 {
-    if (!ItemDelegate || !index.isValid() || !model)
+    if (!ItemDelegate || !index.isValid() || !model || index.row() != currentRow)
         return QStyledItemDelegate::setModelData(editor, model, index);
     QString text;
     QVariant data;
-    ItemDelegate->setModelData(editor, text, data);
+    if (!ItemDelegate->setModelData(editor, text, data))
+        return;
     model->setData(index, text);
     model->setData(index, data, Qt::UserRole);
 }
 
 /*============================== Public slots ==============================*/
+
+void TListWidgetProxyItemDelegate::clearCurrent()
+{
+    currentRow = -1;
+}
 
 void TListWidgetProxyItemDelegate::commitDataAndCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
 {
@@ -389,8 +418,11 @@ QVariant TListWidget::itemData(int index) const
 QVariantList TListWidget::itemDataList() const
 {
     QVariantList list;
-    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1))
+    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1)) {
+        if (d_func()->lstwgt->item(i)->text().isEmpty())
+            continue;
         list << d_func()->lstwgt->item(i)->data(Qt::UserRole);
+    }
     return list;
 }
 
@@ -511,7 +543,7 @@ void TListWidget::setItemDelegate(TAbstractListWidgetItemDelegate *delegate)
     delete d->itemDelegate;
     d->itemDelegate = 0;
     if (delegate) {
-        d->itemDelegate = new TListWidgetProxyItemDelegate(delegate);
+        d->itemDelegate = new TListWidgetProxyItemDelegate(delegate, d);
         d->lstwgt->setItemDelegate(d->itemDelegate);
     }
 }

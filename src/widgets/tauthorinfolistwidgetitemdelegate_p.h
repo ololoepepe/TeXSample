@@ -24,6 +24,7 @@
 
 class TAuthorInfoWidget;
 
+class QEvent;
 class QPushButton;
 
 #include "tauthorinfolistwidgetitemdelegate.h"
@@ -49,7 +50,8 @@ public:
     explicit TAuthorInfoDelegateWidget(QWidget *parent = 0);
 public:
     TAuthorInfoWidget *authorInfoWidget();
-public slots:
+    bool eventFilter(QObject *object, QEvent *event);
+public Q_SLOTS:
     void accepted();
     void rejected();
 Q_SIGNALS:
@@ -66,10 +68,15 @@ class T_WIDGETS_EXPORT TAuthorInfoListWidgetItemDelegatePrivate : public BBaseOb
     Q_OBJECT
     B_DECLARE_PUBLIC(TAuthorInfoListWidgetItemDelegate)
 public:
+    bool isAccepted;
+public:
     explicit TAuthorInfoListWidgetItemDelegatePrivate(TAuthorInfoListWidgetItemDelegate *q);
     ~TAuthorInfoListWidgetItemDelegatePrivate();
 public:
     void init();
+public Q_SLOTS:
+    void clearCurrent();
+    void commitDataAndCloseEditor(QWidget *editor);
 private:
     Q_DISABLE_COPY(TAuthorInfoListWidgetItemDelegatePrivate)
 };

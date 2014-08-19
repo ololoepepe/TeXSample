@@ -24,9 +24,12 @@
 
 class TAbstractListWidgetItemDelegate;
 
+class QAbstractItemModel;
+class QEvent;
 class QListWidget;
 class QListWidgetItem;
 class QModelIndex;
+class QSize;
 class QStyleOptionViewItem;
 class QToolButton;
 
@@ -37,9 +40,11 @@ class QToolButton;
 #include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QVariant>
+#include <QWidget>
 
 /*============================================================================
 ================================ TListWidgetProxyItemDelegate ================
@@ -51,13 +56,20 @@ class T_WIDGETS_EXPORT TListWidgetProxyItemDelegate : public QStyledItemDelegate
 public:
     TAbstractListWidgetItemDelegate * const ItemDelegate;
 public:
-    explicit TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate, QObject *parent = 0);
+    QPointer<QWidget> currentEditor;
+    int currentRow;
+public:
+    explicit TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate, TListWidgetPrivate *parent);
     ~TListWidgetProxyItemDelegate();
 public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                     const QModelIndex &index);
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 public Q_SLOTS:
+    void clearCurrent();
     void commitDataAndCloseEditor(QWidget *editor,
                                   QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 };

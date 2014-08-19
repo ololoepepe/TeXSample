@@ -19,9 +19,14 @@
 **
 ****************************************************************************/
 
+class QEvent;
+class QStyleOptionViewItem;
+class QWidget;
+
 #include "tabstractlistwidgetitemdelegate.h"
 
 #include <QObject>
+#include <QSize>
 
 /*============================================================================
 ================================ TAbstractListWidgetItemDelegate =============
@@ -38,4 +43,16 @@ TAbstractListWidgetItemDelegate::TAbstractListWidgetItemDelegate(QObject *parent
 TAbstractListWidgetItemDelegate::~TAbstractListWidgetItemDelegate()
 {
     //
+}
+
+/*============================== Public methods ============================*/
+
+bool TAbstractListWidgetItemDelegate::editorEvent(QWidget *, QEvent *, const QStyleOptionViewItem &)
+{
+    return false;
+}
+
+QSize TAbstractListWidgetItemDelegate::sizeHint(QWidget *, const QStyleOptionViewItem &) const
+{
+    return QSize(-1, -1);
 }
