@@ -19,8 +19,8 @@
 **
 ****************************************************************************/
 
-#include "ttagswidget.h"
-#include "ttagswidget_p.h"
+#include "ttagwidget.h"
+#include "ttagwidget_p.h"
 
 #include <BApplication>
 #include <BBaseObject>
@@ -40,25 +40,25 @@
 #include <QWidget>
 
 /*============================================================================
-================================ TTagsWidgetPrivate ==========================
+================================ TTagWidgetPrivate ===========================
 ============================================================================*/
 
 /*============================== Public constructors =======================*/
 
-TTagsWidgetPrivate::TTagsWidgetPrivate(TTagsWidget *q) :
+TTagWidgetPrivate::TTagWidgetPrivate(TTagWidget *q) :
     BBaseObjectPrivate(q)
 {
     //
 }
 
-TTagsWidgetPrivate::~TTagsWidgetPrivate()
+TTagWidgetPrivate::~TTagWidgetPrivate()
 {
     //
 }
 
 /*============================== Public methods ============================*/
 
-void TTagsWidgetPrivate::init()
+void TTagWidgetPrivate::init()
 {
     mpr = new QSignalMapper(this);
     connect(mpr, SIGNAL(mapped(QString)), this, SLOT(addTag(QString)));
@@ -78,7 +78,7 @@ void TTagsWidgetPrivate::init()
 
 /*============================== Public slots ==============================*/
 
-void TTagsWidgetPrivate::addTag(const QString &tag)
+void TTagWidgetPrivate::addTag(const QString &tag)
 {
     q_func()->setTags(q_func()->tags() << tag);
 }
@@ -89,20 +89,20 @@ void TTagsWidgetPrivate::addTag(const QString &tag)
 
 /*============================== Public constructors =======================*/
 
-TTagsWidget::TTagsWidget(QWidget *parent) :
-    QWidget(parent), BBaseObject(*new TTagsWidgetPrivate(this))
+TTagWidget::TTagWidget(QWidget *parent) :
+    QWidget(parent), BBaseObject(*new TTagWidgetPrivate(this))
 {
     d_func()->init();
 }
 
-TTagsWidget::~TTagsWidget()
+TTagWidget::~TTagWidget()
 {
     //
 }
 
 /*============================== Protected constructors ====================*/
 
-TTagsWidget::TTagsWidget(TTagsWidgetPrivate &d, QWidget *parent) :
+TTagWidget::TTagWidget(TTagWidgetPrivate &d, QWidget *parent) :
     QWidget(parent), BBaseObject(d)
 {
     d_func()->init();
@@ -110,7 +110,7 @@ TTagsWidget::TTagsWidget(TTagsWidgetPrivate &d, QWidget *parent) :
 
 /*============================== Public methods ============================*/
 
-QStringList TTagsWidget::availableTags() const
+QStringList TTagWidget::availableTags() const
 {
     QStringList list = tags();
     foreach (QAction *act, d_func()->tbtn->menu()->actions())
@@ -120,12 +120,12 @@ QStringList TTagsWidget::availableTags() const
     return list;
 }
 
-bool TTagsWidget::isReadOnly() const
+bool TTagWidget::isReadOnly() const
 {
     return d_func()->ledt->isReadOnly();
 }
 
-void TTagsWidget::setAvailableTags(const QStringList &list)
+void TTagWidget::setAvailableTags(const QStringList &list)
 {
     d_func()->tbtn->menu()->clear();
     QStringList nlist = list;
@@ -140,18 +140,18 @@ void TTagsWidget::setAvailableTags(const QStringList &list)
     d_func()->tbtn->setEnabled(!isReadOnly() && !d_func()->tbtn->menu()->isEmpty());
 }
 
-void TTagsWidget::setReadOnly(bool ro)
+void TTagWidget::setReadOnly(bool ro)
 {
     d_func()->ledt->setReadOnly(ro);
     d_func()->tbtn->setEnabled(!ro);
 }
 
-void TTagsWidget::setTags(const QStringList &list)
+void TTagWidget::setTags(const QStringList &list)
 {
     d_func()->ledt->setText(list.join(", "));
 }
 
-QStringList TTagsWidget::tags() const
+QStringList TTagWidget::tags() const
 {
     return d_func()->ledt->text().split(QRegExp("\\,\\s*"), QString::SkipEmptyParts);
 }

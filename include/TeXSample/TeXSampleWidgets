@@ -3,6 +3,6 @@
 
 #include "tapplication.h"
 #include "tlistwidget.h"
-#include "ttagswidget.h"
+#include "ttagwidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

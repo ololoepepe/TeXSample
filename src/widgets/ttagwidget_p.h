@@ -19,15 +19,15 @@
 **
 ****************************************************************************/
 
-#ifndef TTAGSWIDGET_P_H
-#define TTAGSWIDGET_P_H
+#ifndef TTAGWIDGET_P_H
+#define TTAGWIDGET_P_H
 
 class QLineEdit;
 class QSignalMapper;
 class QString;
 class QToolButton;
 
-#include "ttagswidget.h"
+#include "ttagwidget.h"
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
@@ -36,27 +36,27 @@ class QToolButton;
 #include <QObject>
 
 /*============================================================================
-================================ TTagsWidgetPrivate ==========================
+================================ TTagWidgetPrivate ===========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TTagsWidgetPrivate : public BBaseObjectPrivate
+class T_WIDGETS_EXPORT TTagWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
-    B_DECLARE_PUBLIC(TTagsWidget)
+    B_DECLARE_PUBLIC(TTagWidget)
 public:
     QToolButton *tbtn;
     QLineEdit *ledt;
     QSignalMapper *mpr;
 public:
-    explicit TTagsWidgetPrivate(TTagsWidget *q);
-    ~TTagsWidgetPrivate();
+    explicit TTagWidgetPrivate(TTagWidget *q);
+    ~TTagWidgetPrivate();
 public:
     void init();
 public Q_SLOTS:
     void addTag(const QString &tag);
 private:
-    Q_DISABLE_COPY(TTagsWidgetPrivate)
+    Q_DISABLE_COPY(TTagWidgetPrivate)
 };
 
-#endif // TTAGSWIDGET_P_H
+#endif // TTAGWIDGET_P_H
 

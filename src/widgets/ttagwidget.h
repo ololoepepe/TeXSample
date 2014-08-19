@@ -19,10 +19,10 @@
 **
 ****************************************************************************/
 
-#ifndef TTAGSWIDGET_H
-#define TTAGSWIDGET_H
+#ifndef TTAGWIDGET_H
+#define TTAGWIDGET_H
 
-class TTagsWidgetPrivate;
+class TTagWidgetPrivate;
 
 class QStringList;
 
@@ -33,18 +33,18 @@ class QStringList;
 #include <QWidget>
 
 /*============================================================================
-================================ TTagsWidget =================================
+================================ TTagWidget ==================================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TTagsWidget : public QWidget, public BBaseObject
+class T_WIDGETS_EXPORT TTagWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PRIVATE(TTagsWidget)
+    B_DECLARE_PRIVATE(TTagWidget)
 public:
-    explicit TTagsWidget(QWidget *parent = 0);
-    ~TTagsWidget();
+    explicit TTagWidget(QWidget *parent = 0);
+    ~TTagWidget();
 protected:
-    explicit TTagsWidget(TTagsWidgetPrivate &d, QWidget *parent = 0);
+    explicit TTagWidget(TTagWidgetPrivate &d, QWidget *parent = 0);
 public:
     QStringList availableTags() const;
     bool isReadOnly() const;
@@ -53,8 +53,8 @@ public:
     void setTags(const QStringList &list);
     QStringList tags() const;
 private:
-    Q_DISABLE_COPY(TTagsWidget)
+    Q_DISABLE_COPY(TTagWidget)
 };
 
-#endif // TTAGSWIDGET_H
+#endif // TTAGWIDGET_H
 

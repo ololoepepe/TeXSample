@@ -14,13 +14,13 @@ HEADERS += \
     tapplication.h \
     tlistwidget_p.h \
     tlistwidget.h \
-    ttagswidget.h \
-    ttagswidget_p.h
+    ttagwidget.h \
+    ttagwidget_p.h
 
 SOURCES += \
     tapplication.cpp \
     tlistwidget.cpp \
-    ttagswidget.cpp
+    ttagwidget.cpp
 
 contains(TSMP_CONFIG, builtin_resources) {
     DEFINES += TSMP_BUILTIN_RESOURCES

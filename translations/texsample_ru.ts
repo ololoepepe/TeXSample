@@ -525,11 +525,19 @@
     </message>
 </context>
 <context>
+    <name>TTagWidgetPrivate</name>
+    <message>
+        <source>Add tag...</source>
+        <comment>tbtn toolTip</comment>
+        <translation type="unfinished">Добавить тэг...</translation>
+    </message>
+</context>
+<context>
     <name>TTagsWidgetPrivate</name>
     <message>
         <source>Add tag...</source>
         <comment>tbtn toolTip</comment>
-        <translation>Добавить тэг...</translation>
+        <translation type="obsolete">Добавить тэг...</translation>
     </message>
 </context>
 <context>
