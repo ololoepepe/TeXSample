@@ -1067,16 +1067,17 @@ void TUserInfoWidget::setUser(quint64 userId)
         QVariant requestData;
         QString op;
         bool admin = d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
+        bool avatar = (EditMode == d->Mode || EditSelfMode == d->Mode || d->alwaysRequestAvatar);
         if (admin) {
             TGetUserInfoAdminRequestData request;
             request.setIdentifier(userId);
-            request.setIncludeAvatar(d->alwaysRequestAvatar);
+            request.setIncludeAvatar(avatar);
             op = TOperation::GetUserInfoAdmin;
             requestData = request;
         } else {
             TGetUserInfoRequestData request;
             request.setIdentifier(userId);
-            request.setIncludeAvatar(d->alwaysRequestAvatar);
+            request.setIncludeAvatar(avatar);
             op = TOperation::GetUserInfo;
             requestData = request;
         }
@@ -1095,7 +1096,7 @@ void TUserInfoWidget::setUser(quint64 userId)
         }
         TUserInfo info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
                                  reply.data().value<TGetUserInfoReplyData>().userInfo();
-        d->model->updateUser(userId, info, !d->alwaysRequestAvatar);
+        d->model->updateUser(userId, info, !avatar);
         if (d->cache)
             d->cache->setData(op, reply.requestDateTime(), reply.data());
     }
