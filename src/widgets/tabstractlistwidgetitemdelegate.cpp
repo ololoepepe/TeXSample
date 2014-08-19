@@ -52,6 +52,11 @@ bool TAbstractListWidgetItemDelegate::editorEvent(QWidget *, QEvent *, const QSt
     return false;
 }
 
+bool TAbstractListWidgetItemDelegate::hideRowsWhenEditing() const
+{
+    return false;
+}
+
 QSize TAbstractListWidgetItemDelegate::sizeHint(QWidget *, const QStyleOptionViewItem &) const
 {
     return QSize(-1, -1);

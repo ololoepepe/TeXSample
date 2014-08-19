@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QEvent>
+#include <QKeyEvent>
 #include <QMetaObject>
 #include <QObject>
 #include <QPushButton>
@@ -45,6 +46,60 @@
 #include <QVariant>
 #include <QVBoxLayout>
 #include <QWidget>
+
+/*============================================================================
+================================ TAuthorInfoDelegateWidget ===================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TAuthorInfoDelegateWidget::TAuthorInfoDelegateWidget(QWidget *parent) :
+    QWidget(parent)
+{
+    QVBoxLayout *vlt = new QVBoxLayout(this);
+    mauthorInfoWidget = new TAuthorInfoWidget;
+    vlt->addWidget(mauthorInfoWidget);
+    QDialogButtonBox *dlgbbox = new QDialogButtonBox;
+    btnAccept = dlgbbox->addButton(QDialogButtonBox::Ok);
+    btnAccept->setEnabled(mauthorInfoWidget->hasValidInput());
+    btnAccept->setDefault(true);
+    connect(mauthorInfoWidget, SIGNAL(inputValidityChanged(bool)), btnAccept, SLOT(setEnabled(bool)));
+    connect(btnAccept, SIGNAL(clicked()), this, SLOT(accepted()));
+    btnReject = dlgbbox->addButton(QDialogButtonBox::Cancel);
+    connect(btnReject, SIGNAL(clicked()), this, SLOT(rejected()));
+    vlt->addWidget(dlgbbox);
+    if (parent)
+        parent->installEventFilter(this);
+}
+
+/*============================== Public methods ============================*/
+
+TAuthorInfoWidget *TAuthorInfoDelegateWidget::authorInfoWidget()
+{
+    return mauthorInfoWidget;
+}
+
+bool TAuthorInfoDelegateWidget::eventFilter(QObject *, QEvent *event)
+{
+    if (event->type() == QEvent::Resize && parentWidget()) {
+        QResizeEvent *re = static_cast<QResizeEvent *>(event);
+        setFixedWidth(qMax(re->size().width() - 4, sizeHint().width()));
+        setFixedHeight(qMin(re->size().height() - 4, sizeHint().height()));
+    }
+    return false;
+}
+
+/*============================== Private slots =============================*/
+
+void TAuthorInfoDelegateWidget::accepted()
+{
+    Q_EMIT commitDataAndCloseEditor(this);
+}
+
+void TAuthorInfoDelegateWidget::rejected()
+{
+    Q_EMIT closeEditor(this);
+}
 
 /*============================================================================
 ================================ TAuthorInfoListWidgetItemDelegatePrivate ====
@@ -82,59 +137,6 @@ void TAuthorInfoListWidgetItemDelegatePrivate::commitDataAndCloseEditor(QWidget 
 {
     isAccepted = true;
     QMetaObject::invokeMethod(q_func(), "commitDataAndCloseEditor", Q_ARG(QWidget *, editor));
-}
-
-/*============================================================================
-================================ TAuthorInfoDelegateWidget ===================
-============================================================================*/
-
-/*============================== Public constructors =======================*/
-
-TAuthorInfoDelegateWidget::TAuthorInfoDelegateWidget(QWidget *parent) :
-    QWidget(parent)
-{
-    QVBoxLayout *vlt = new QVBoxLayout(this);
-    mauthorInfoWidget = new TAuthorInfoWidget;
-    vlt->addWidget(mauthorInfoWidget);
-    QDialogButtonBox *dlgbbox = new QDialogButtonBox;
-    btnAccept = dlgbbox->addButton(QDialogButtonBox::Ok);
-    btnAccept->setEnabled(mauthorInfoWidget->hasValidInput());
-    connect(mauthorInfoWidget, SIGNAL(inputValidityChanged(bool)), btnAccept, SLOT(setEnabled(bool)));
-    connect(btnAccept, SIGNAL(clicked()), this, SLOT(accepted()));
-    btnReject = dlgbbox->addButton(QDialogButtonBox::Cancel);
-    connect(btnReject, SIGNAL(clicked()), this, SLOT(rejected()));
-    vlt->addWidget(dlgbbox);
-    if (parent)
-        parent->installEventFilter(this);
-}
-
-/*============================== Public methods ============================*/
-
-TAuthorInfoWidget *TAuthorInfoDelegateWidget::authorInfoWidget()
-{
-    return mauthorInfoWidget;
-}
-
-bool TAuthorInfoDelegateWidget::eventFilter(QObject *, QEvent *event)
-{
-    if (event->type() == QEvent::Resize && parentWidget()) {
-        QResizeEvent *re = static_cast<QResizeEvent *>(event);
-        setFixedWidth(qMax(re->size().width() - 4, sizeHint().width()));
-        setFixedHeight(qMin(re->size().height() - 4, sizeHint().height()));
-    }
-    return false;
-}
-
-/*============================== Private slots =============================*/
-
-void TAuthorInfoDelegateWidget::accepted()
-{
-    Q_EMIT commitDataAndCloseEditor(this);
-}
-
-void TAuthorInfoDelegateWidget::rejected()
-{
-    Q_EMIT closeEditor(this);
 }
 
 /*============================================================================
@@ -182,7 +184,28 @@ QWidget *TAuthorInfoListWidgetItemDelegate::createEditor(QWidget *parent, const 
         wgt->setFixedHeight(qMin(parent->height() - 4, wgt->sizeHint().height()));
     }
     connect(wgt, SIGNAL(destroyed()), d, SLOT(clearCurrent()));
+    const_cast<TAuthorInfoListWidgetItemDelegate *>(this)->d_func()->currentEditor = wgt;
     return wgt;
+}
+
+bool TAuthorInfoListWidgetItemDelegate::eventFilter(QObject *, QEvent *event)
+{
+    if (d_func()->currentEditor.isNull())
+        return false;
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+        if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return) {
+            if (d_func()->currentEditor->authorInfoWidget()->hasValidInput())
+                d_func()->commitDataAndCloseEditor(d_func()->currentEditor);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TAuthorInfoListWidgetItemDelegate::hideRowsWhenEditing() const
+{
+    return true;
 }
 
 QSize TAuthorInfoListWidgetItemDelegate::sizeHint(QWidget *editor, const QStyleOptionViewItem &option) const

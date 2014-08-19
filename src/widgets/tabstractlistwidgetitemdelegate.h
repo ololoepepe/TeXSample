@@ -47,6 +47,7 @@ public:
 public:
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option) const = 0;
     virtual bool editorEvent(QWidget *editor, QEvent *event, const QStyleOptionViewItem &option);
+    virtual bool hideRowsWhenEditing() const;
     virtual QSize sizeHint(QWidget *editor, const QStyleOptionViewItem &option) const;
     virtual void setEditorData(QWidget *editor, const QString &text, const QVariant &data) const = 0;
     virtual bool setModelData(QWidget *editor, QString &text, QVariant &data) const = 0;

@@ -32,6 +32,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMenu>
@@ -85,9 +86,20 @@ QWidget *TListWidgetProxyItemDelegate::createEditor(QWidget *parent, const QStyl
 {
     if (!ItemDelegate || !index.isValid())
         return QStyledItemDelegate::createEditor(parent, option, index);
-    *const_cast<int *>(&currentRow) = index.row();
-    *const_cast<QPointer<QWidget> *>(&currentEditor) = ItemDelegate->createEditor(parent, option);
+    TListWidgetProxyItemDelegate *self = getSelf();
+    self->currentRow = index.row();
+    self->currentEditor = ItemDelegate->createEditor(parent, option);
     connect(currentEditor, SIGNAL(destroyed()), this, SLOT(clearCurrent()));
+    if (ItemDelegate->hideRowsWhenEditing()) {
+        TListWidgetPrivate *lwp = qobject_cast<TListWidgetPrivate *>(self->parent());
+        self->currentText = lwp->lstwgt->item(currentRow)->text();
+        lwp->lstwgt->item(currentRow)->setText(""); //NOTE: Hack to hide the item
+        foreach (int i, bRangeD(0, lwp->lstwgt->count() - 1)) {
+            if (i == currentRow)
+                continue;
+            lwp->lstwgt->setRowHidden(i, true);
+        }
+    }
     return currentEditor;
 }
 
@@ -97,6 +109,18 @@ bool TListWidgetProxyItemDelegate::editorEvent(QEvent *event, QAbstractItemModel
     if (!ItemDelegate || !index.isValid() || index.row() != currentRow)
         return QStyledItemDelegate::editorEvent(event, model, option, index);
     return ItemDelegate->editorEvent(currentEditor, event, option);
+}
+
+bool TListWidgetProxyItemDelegate::eventFilter(QObject *object, QEvent *event)
+{
+    if (ItemDelegate && ItemDelegate->eventFilter(object, event))
+        return true;
+    return QStyledItemDelegate::eventFilter(object, event);
+}
+
+TListWidgetProxyItemDelegate *TListWidgetProxyItemDelegate::getSelf() const
+{
+    return const_cast<TListWidgetProxyItemDelegate *>(this);
 }
 
 QSize TListWidgetProxyItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -120,8 +144,12 @@ void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemMo
         return QStyledItemDelegate::setModelData(editor, model, index);
     QString text;
     QVariant data;
-    if (!ItemDelegate->setModelData(editor, text, data))
+    TListWidgetProxyItemDelegate *self = getSelf();
+    if (!ItemDelegate->setModelData(editor, text, data)) {
+        self->confirmed = false;
         return;
+    }
+    self->confirmed = true;
     model->setData(index, text);
     model->setData(index, data, Qt::UserRole);
 }
@@ -130,6 +158,16 @@ void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemMo
 
 void TListWidgetProxyItemDelegate::clearCurrent()
 {
+    if (ItemDelegate && ItemDelegate->hideRowsWhenEditing()) {
+        TListWidgetPrivate *lwp = qobject_cast<TListWidgetPrivate *>(parent());
+        if (!confirmed)
+            lwp->lstwgt->item(currentRow)->setText(currentText);
+        foreach (int i, bRangeD(0, lwp->lstwgt->count() - 1)) {
+            if (i == currentRow)
+                continue;
+            lwp->lstwgt->setRowHidden(i, false);
+        }
+    }
     currentRow = -1;
 }
 

@@ -63,6 +63,7 @@ TAuthorInfoWidgetPrivate::~TAuthorInfoWidgetPrivate()
 
 void TAuthorInfoWidgetPrivate::init()
 {
+    valid = false;
     flt = new QFormLayout(q_func());
     initLineEdit(ledtName, Texsample::MaximumNameLength, true);
     initLineEdit(ledtPatronymic, Texsample::MaximumPatronymicLength);

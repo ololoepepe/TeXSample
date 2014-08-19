@@ -24,6 +24,7 @@
 
 class TAuthorInfoListWidgetItemDelegatePrivate;
 
+class QEvent;
 class QSize;
 class QString;
 class QStyleOptionViewItem;
@@ -52,6 +53,8 @@ public:
     static bool testItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2);
 public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option) const;
+    bool eventFilter(QObject *object, QEvent *event);
+    bool hideRowsWhenEditing() const;
     QSize sizeHint(QWidget *editor, const QStyleOptionViewItem &option) const;
     void setEditorData(QWidget *editor, const QString &text, const QVariant &data) const;
     bool setModelData(QWidget *editor, QString &text, QVariant &data) const;

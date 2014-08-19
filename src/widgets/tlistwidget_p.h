@@ -58,6 +58,8 @@ public:
 public:
     QPointer<QWidget> currentEditor;
     int currentRow;
+    QString currentText;
+    bool confirmed;
 public:
     explicit TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate, TListWidgetPrivate *parent);
     ~TListWidgetProxyItemDelegate();
@@ -65,7 +67,9 @@ public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
                      const QModelIndex &index);
+    bool eventFilter(QObject *object, QEvent *event);
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    TListWidgetProxyItemDelegate *getSelf() const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 public Q_SLOTS:

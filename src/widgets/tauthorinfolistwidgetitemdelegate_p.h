@@ -34,6 +34,7 @@ class QPushButton;
 #include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
+#include <QPointer>
 
 /*============================================================================
 ================================ TAuthorInfoDelegateWidget ===================
@@ -68,6 +69,7 @@ class T_WIDGETS_EXPORT TAuthorInfoListWidgetItemDelegatePrivate : public BBaseOb
     Q_OBJECT
     B_DECLARE_PUBLIC(TAuthorInfoListWidgetItemDelegate)
 public:
+    QPointer<TAuthorInfoDelegateWidget> currentEditor;
     bool isAccepted;
 public:
     explicit TAuthorInfoListWidgetItemDelegatePrivate(TAuthorInfoListWidgetItemDelegate *q);
