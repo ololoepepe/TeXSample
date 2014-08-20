@@ -145,7 +145,7 @@ QStringList TTexFile::externalFileNames(bool *ok) const
     post.setPattern("((\\\\)?\\#.+)?\\}\\{.+\\}");
     list << BTextTools::match(d->text, what, pref, post); // \href{run:...}{...}
     foreach (int i, bRangeR(list.size() - 1, 0)) {
-        list[i] = BTextTools::unwrapped(list.at(i));
+        list[i] = BTextTools::unwrapped(list.at(i), "\"");
         if (QFileInfo(list.at(i)).isAbsolute())
             return bRet(ok, false, list);
         foreach (const QString &s, schemes) {

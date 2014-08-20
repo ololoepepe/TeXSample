@@ -25,6 +25,7 @@
 
 class TGroupWidgetPrivate;
 
+class TAbstractCache;
 class TGroupModel;
 class TNetworkClient;
 
@@ -46,7 +47,9 @@ public:
     explicit TGroupWidget(TGroupModel *model, QWidget *parent = 0);
     ~TGroupWidget();
 public:
+    TAbstractCache *cache() const;
     TNetworkClient *client() const;
+    void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
 private:
     Q_DISABLE_COPY(TGroupWidget)

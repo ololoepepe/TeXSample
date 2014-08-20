@@ -28,6 +28,7 @@ class BVersion;
 
 class QDataStream;
 class QDebug;
+class QUrl;
 class QVariant;
 
 #include "tglobal.h"
@@ -48,6 +49,8 @@ public:
     TGetLatestAppVersionReplyData(const TGetLatestAppVersionReplyData &other);
     ~TGetLatestAppVersionReplyData();
 public:
+    QUrl downloadUrl() const;
+    void setDownloadUrl(const QUrl &url);
     void setVersion(const BVersion &version);
     BVersion version() const;
 public:

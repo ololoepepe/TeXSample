@@ -50,7 +50,7 @@ public:
     ~TCompileTexProjectReplyData();
 public:
     int exitCode() const;
-    TBinaryFileList files() const;
+    const TBinaryFileList &files() const;
     QString output() const;
     void setExitCode(int code);
     void setFiles(const TBinaryFileList &files);

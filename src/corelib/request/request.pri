@@ -9,6 +9,7 @@ HEADERS += \
     $${PWD}/tcheckemailavailabilityrequestdata.h \
     $${PWD}/tcheckloginavailabilityrequestdata.h \
     $${PWD}/tcompiletexprojectrequestdata.h \
+    $${PWD}/tconfirmregistrationrequestdata.h \
     $${PWD}/tdeletegrouprequestdata.h \
     $${PWD}/tdeleteinvitesrequestdata.h \
     $${PWD}/tdeletelabrequestdata.h \
@@ -20,7 +21,6 @@ HEADERS += \
     $${PWD}/teditsamplerequestdata.h \
     $${PWD}/teditselfrequestdata.h \
     $${PWD}/tedituserrequestdata.h \
-    $${PWD}/texecutecommandrequestdata.h \
     $${PWD}/tgenerateinvitesrequestdata.h \
     $${PWD}/tgetgroupinfolistrequestdata.h \
     $${PWD}/tgetinviteinfolistrequestdata.h \
@@ -32,7 +32,9 @@ HEADERS += \
     $${PWD}/tgetsamplepreviewrequestdata.h \
     $${PWD}/tgetsamplesourcerequestdata.h \
     $${PWD}/tgetselfinforequestdata.h \
+    $${PWD}/tgetserverstaterequestdata.h \
     $${PWD}/tgetuseravatarrequestdata.h \
+    $${PWD}/tgetuserconnectioninfolistrequestdata.h \
     $${PWD}/tgetuserinfoadminrequestdata.h \
     $${PWD}/tgetuserinfolistadminrequestdata.h \
     $${PWD}/tgetuserinforequestdata.h \
@@ -41,6 +43,8 @@ HEADERS += \
     $${PWD}/tregisterrequestdata.h \
     $${PWD}/trequest.h \
     $${PWD}/trequestrecoverycoderequestdata.h \
+    $${PWD}/tsetlatestappversionrequestdata.h \
+    $${PWD}/tsetserverstaterequestdata.h \
     $${PWD}/tsubscriberequestdata.h
 
 SOURCES += \
@@ -54,6 +58,7 @@ SOURCES += \
     $${PWD}/tcheckemailavailabilityrequestdata.cpp \
     $${PWD}/tcheckloginavailabilityrequestdata.cpp \
     $${PWD}/tcompiletexprojectrequestdata.cpp \
+    $${PWD}/tconfirmregistrationrequestdata.cpp \
     $${PWD}/tdeletegrouprequestdata.cpp \
     $${PWD}/tdeleteinvitesrequestdata.cpp \
     $${PWD}/tdeletelabrequestdata.cpp \
@@ -65,7 +70,6 @@ SOURCES += \
     $${PWD}/teditsamplerequestdata.cpp \
     $${PWD}/teditselfrequestdata.cpp \
     $${PWD}/tedituserrequestdata.cpp \
-    $${PWD}/texecutecommandrequestdata.cpp \
     $${PWD}/tgenerateinvitesrequestdata.cpp \
     $${PWD}/tgetgroupinfolistrequestdata.cpp \
     $${PWD}/tgetinviteinfolistrequestdata.cpp \
@@ -77,7 +81,9 @@ SOURCES += \
     $${PWD}/tgetsamplepreviewrequestdata.cpp \
     $${PWD}/tgetsamplesourcerequestdata.cpp \
     $${PWD}/tgetselfinforequestdata.cpp \
+    $${PWD}/tgetserverstaterequestdata.cpp \
     $${PWD}/tgetuseravatarrequestdata.cpp \
+    $${PWD}/tgetuserconnectioninfolistrequestdata.cpp \
     $${PWD}/tgetuserinfoadminrequestdata.cpp \
     $${PWD}/tgetuserinfolistadminrequestdata.cpp \
     $${PWD}/tgetuserinforequestdata.cpp \
@@ -86,4 +92,6 @@ SOURCES += \
     $${PWD}/tregisterrequestdata.cpp \
     $${PWD}/trequest.cpp \
     $${PWD}/trequestrecoverycoderequestdata.cpp \
+    $${PWD}/tsetlatestappversionrequestdata.cpp \
+    $${PWD}/tsetserverstaterequestdata.cpp \
     $${PWD}/tsubscriberequestdata.cpp

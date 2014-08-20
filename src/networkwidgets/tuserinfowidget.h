@@ -25,9 +25,14 @@
 
 class TUserInfoWidgetPrivate;
 
+class TAbstractCache;
 class TNetworkClient;
 class TUserModel;
 
+class BPassword;
+
+class QByteArray;
+class QString;
 class QVariant;
 
 #include <TeXSampleCore/TeXSampleGlobal>
@@ -57,11 +62,21 @@ public:
     explicit TUserInfoWidget(Mode mode, QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
+    bool alwaysRequestAvatar() const;
+    TAbstractCache *cache() const;
     TNetworkClient *client() const;
     QVariant createRequestData() const;
     bool hasValidInput() const;
+    QString login() const;
     Mode mode() const;
     TUserModel *model() const;
+    BPassword password() const;
+    void restorePasswordWidgetState(const QByteArray &state);
+    void restoreState(const QByteArray &state);
+    QByteArray savePasswordWidgetState() const;
+    QByteArray saveState() const;
+    void setAlwaysRequestAvatar(bool enabled);
+    void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
     void setUser(quint64 userId);
     void setModel(TUserModel *model);

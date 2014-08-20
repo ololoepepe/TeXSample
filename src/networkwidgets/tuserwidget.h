@@ -25,6 +25,7 @@
 
 class TUserWidgetPrivate;
 
+class TAbstractCache;
 class TNetworkClient;
 class TUserModel;
 
@@ -46,7 +47,11 @@ public:
     explicit TUserWidget(TUserModel *model, QWidget *parent = 0);
     ~TUserWidget();
 public:
+    bool alwaysRequestAvatar() const;
+    TAbstractCache *cache() const;
     TNetworkClient *client() const;
+    void setAlwaysRequestAvatar(bool enabled);
+    void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
 private:
     Q_DISABLE_COPY(TUserWidget)

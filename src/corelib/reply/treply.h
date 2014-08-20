@@ -24,8 +24,6 @@
 
 class TReplyPrivate;
 
-class TMessage;
-
 class QDataStream;
 class QDateTime;
 class QDebug;
@@ -47,7 +45,7 @@ class T_CORE_EXPORT TReply : public BBase
     B_DECLARE_PRIVATE(TReply)
 public:
     explicit TReply();
-    explicit TReply(const TMessage &message);
+    explicit TReply(const QString &message);
     TReply(const TReply &other);
     ~TReply();
 public:
@@ -55,13 +53,11 @@ public:
     void clear();
     QVariant data() const;
     bool isValid() const;
-    TMessage message() const;
-    QString messageText() const;
-    QString messageTextNoTr() const;
+    QString message() const;
     QDateTime requestDateTime() const;
     void setCacheUpToDate(bool upToDate);
     void setData(const QVariant &data);
-    void setMessage(const TMessage &message);
+    void setMessage(const QString &message);
     void setRequestDateTime(const QDateTime &dt);
     void setSuccess(bool success);
     bool success() const;

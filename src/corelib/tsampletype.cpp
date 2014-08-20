@@ -26,6 +26,7 @@
 
 #include <QDataStream>
 #include <QDebug>
+#include <QList>
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
@@ -78,12 +79,21 @@ void TSampleTypePrivate::init()
 
 /*============================== Static public methods =====================*/
 
-QString TSampleType::sampleTypeToString(SampleType type, bool singular)
+QList<TSampleType> TSampleType::allTypes()
+{
+    QList<TSampleType> list;
+    list << Unverified;
+    list << Approved;
+    list << Rejected;
+    return list;
+}
+
+QString TSampleType::sampleTypeToString(TSampleType type, bool singular)
 {
     return tr(sampleTypeToStringNoTr(type, singular).toUtf8().constData());
 }
 
-QString TSampleType::sampleTypeToStringNoTr(SampleType type, bool singular)
+QString TSampleType::sampleTypeToStringNoTr(TSampleType type, bool singular)
 {
     switch (type)
     {
@@ -132,6 +142,11 @@ QString TSampleType::toString() const
 QString TSampleType::toStringNoTr() const
 {
     return sampleTypeToStringNoTr(d_func()->type);
+}
+
+TSampleType::SampleType TSampleType::type() const
+{
+    return d_func()->type;
 }
 
 /*============================== Public operators ==========================*/

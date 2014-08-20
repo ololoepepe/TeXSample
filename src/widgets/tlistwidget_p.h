@@ -22,8 +22,15 @@
 #ifndef TLISTWIDGET_P_H
 #define TLISTWIDGET_P_H
 
+class TAbstractListWidgetItemDelegate;
+
+class QAbstractItemModel;
+class QEvent;
 class QListWidget;
 class QListWidgetItem;
+class QModelIndex;
+class QSize;
+class QStyleOptionViewItem;
 class QToolButton;
 
 #include "tlistwidget.h"
@@ -33,8 +40,43 @@ class QToolButton;
 #include <BeQtCore/private/bbaseobject_p.h>
 
 #include <QObject>
+#include <QPointer>
 #include <QString>
+#include <QStyledItemDelegate>
 #include <QVariant>
+#include <QWidget>
+
+/*============================================================================
+================================ TListWidgetProxyItemDelegate ================
+============================================================================*/
+
+class T_WIDGETS_EXPORT TListWidgetProxyItemDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    TAbstractListWidgetItemDelegate * const ItemDelegate;
+public:
+    QPointer<QWidget> currentEditor;
+    int currentRow;
+    QString currentText;
+    bool confirmed;
+public:
+    explicit TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate, TListWidgetPrivate *parent);
+    ~TListWidgetProxyItemDelegate();
+public:
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                     const QModelIndex &index);
+    bool eventFilter(QObject *object, QEvent *event);
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    TListWidgetProxyItemDelegate *getSelf() const;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+public Q_SLOTS:
+    void clearCurrent();
+    void commitDataAndCloseEditor(QWidget *editor,
+                                  QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+};
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
@@ -45,6 +87,7 @@ class T_WIDGETS_EXPORT TListWidgetPrivate : public BBaseObjectPrivate
     Q_OBJECT
     B_DECLARE_PUBLIC(TListWidget)
 public:
+    TListWidgetProxyItemDelegate *itemDelegate;
     QListWidget *lstwgt;
     int maxCount;
     bool readOnly;
@@ -53,11 +96,12 @@ public:
     QToolButton *tbtnDown;
     QToolButton *tbtnRemove;
     QToolButton *tbtnUp;
+    TListWidget::TestItemEqualityFunction testItemEqualityFunction;
 public:
     explicit TListWidgetPrivate(TListWidget *q);
     ~TListWidgetPrivate();
 public:
-    static bool itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2);
+    static bool defaultTestItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2);
 public:
     void init();
 public Q_SLOTS:

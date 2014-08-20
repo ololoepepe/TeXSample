@@ -27,10 +27,8 @@
 #include <BeQtCore/private/bbase_p.h>
 
 #include <QByteArray>
-#include <QCryptographicHash>
 #include <QDataStream>
 #include <QDebug>
-#include <QString>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -124,16 +122,14 @@ QByteArray TChangePasswordRequestData::oldPassword() const
     return d_func()->oldPassword;
 }
 
-void TChangePasswordRequestData::setNewPassword(const QString &password)
+void TChangePasswordRequestData::setNewPassword(const QByteArray &password)
 {
-    d_func()->newPassword = Texsample::testPassword(password) ?
-                QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha1) : QByteArray();
+    d_func()->newPassword = Texsample::testPassword(password) ? password : QByteArray();
 }
 
-void TChangePasswordRequestData::setOldPassword(const QString &password)
+void TChangePasswordRequestData::setOldPassword(const QByteArray &password)
 {
-    d_func()->oldPassword = Texsample::testPassword(password) ?
-                QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha1) : QByteArray();
+    d_func()->oldPassword = Texsample::testPassword(password) ? password : QByteArray();
 }
 
 /*============================== Public operators ==========================*/

@@ -23,6 +23,8 @@
 #ifndef TUSERINFOWIDGET_P_H
 #define TUSERINFOWIDGET_P_H
 
+class TAbstractCache;
+class TGroupInfoList;
 class TIdList;
 class TListWidget;
 class TNetworkClient;
@@ -75,6 +77,7 @@ public:
 public:
     const TUserInfoWidget::Mode Mode;
 public:
+    bool alwaysRequestAvatar;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
@@ -83,6 +86,7 @@ public:
     QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
+    TAbstractCache *cache;
     TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
     bool containsAvatar;
@@ -135,9 +139,12 @@ public:
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
     void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
+    TGroupInfoList groupInfos() const;
     TIdList groups() const;
     void init();
     TServiceList services() const;
+    void setGroups(const TGroupInfoList &list);
+    void setServices(const TServiceList &list);
 public Q_SLOTS:
     void changeEmail();
     void changePassword();

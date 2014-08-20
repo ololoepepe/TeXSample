@@ -2,7 +2,7 @@
  TeXSample
 ==============================================================================
 
-Homepage: https://github.com/the-dark-angel/TeXSample
+Homepage: https://github.com/ololoepepe/TeXSample
 
 Author: Andrey Bogdanov (ololoepepe@gmail.com)
 
@@ -11,8 +11,8 @@ License: GNU LGPL (see COPYING.txt)
 TeXSample is a library developed as a client-server bridge between
 TeXSample Server and TeX Creator.
 
-For details, see: https://github.com/TeXSample-Team/TeXSample-Server
-and https://github.com/TeXSample-Team/TeX-Creator
+For details, see: https://github.com/ololoepepe/TeXSample-Server
+and https://github.com/ololoepepe/TeX-Creator
 
 ==============================================================================
  Dependencies
@@ -30,7 +30,7 @@ Support of Qt libraries' versions lower than 4.8.0 is not guaranteed.
 
 You will also need BeQt libraries version 3.1.0 or higher.
 
-See: https://github.com/the-dark-angel/BeQt for details.
+See: https://github.com/ololoepepe/BeQt for details.
 
 ==============================================================================
  Building and installing (briefly)

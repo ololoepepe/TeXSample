@@ -46,6 +46,9 @@ public:
     TRecoverAccountReplyData(const TRecoverAccountReplyData &other);
     ~TRecoverAccountReplyData();
 public:
+    void setSuccess(bool success);
+    bool success() const;
+public:
     TRecoverAccountReplyData &operator =(const TRecoverAccountReplyData &other);
     bool operator ==(const TRecoverAccountReplyData &other) const;
     bool operator !=(const TRecoverAccountReplyData &other) const;

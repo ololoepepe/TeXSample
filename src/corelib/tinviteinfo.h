@@ -24,6 +24,7 @@
 
 class TInviteInfoPrivate;
 
+class TAccessLevel;
 class TGroupInfoList;
 class TServiceList;
 
@@ -53,6 +54,7 @@ public:
     TInviteInfo(const TInviteInfo &other);
     ~TInviteInfo();
 public:
+    TAccessLevel accessLevel() const;
     void clear();
     BUuid code() const;
     QDateTime creationDateTime() const;
@@ -63,6 +65,7 @@ public:
     quint64 ownerId() const;
     QString ownerLogin() const;
     TServiceList services() const;
+    void setAccessLevel(const TAccessLevel &accessLevel);
     void setCode(const BUuid &code);
     void setCreationDateTime(const QDateTime &dt);
     void setExpirationDateTime(const QDateTime &dt);

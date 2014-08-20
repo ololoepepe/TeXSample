@@ -21,6 +21,8 @@
 
 #include "tclientinfo.h"
 
+#include "tnamespace.h"
+
 #include <BApplicationBase>
 #include <BBase>
 #include <BeQt>
@@ -44,7 +46,7 @@ class TClientInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TClientInfo)
 public:
-    QString applicationName;
+    Texsample::ClientType applicationType;
     BVersion applicationVersion;
     BVersion beqtVersion;
     QString os;
@@ -83,6 +85,7 @@ TClientInfoPrivate::~TClientInfoPrivate()
 
 void TClientInfoPrivate::init()
 {
+    applicationType = Texsample::UnknownClient;
     osType = BeQt::UnknownOS;
     portable = false;
     processorArchitecture = BeQt::UnknownArchitecture;
@@ -98,7 +101,7 @@ TClientInfo TClientInfo::create()
 {
     TClientInfo info;
     TClientInfoPrivate *d = info.d_func();
-    d->applicationName = QCoreApplication::applicationName();
+    d->applicationType = Texsample::clientType();
     d->applicationVersion = BVersion(QCoreApplication::applicationVersion());
     d->beqtVersion = BVersion(bVersion());
     d->os = BeQt::osVersion();
@@ -132,9 +135,9 @@ TClientInfo::~TClientInfo()
 
 /*============================== Public methods ============================*/
 
-QString TClientInfo::applicationName() const
+Texsample::ClientType TClientInfo::applicationType() const
 {
-    return d_func()->applicationName;
+    return d_func()->applicationType;
 }
 
 BVersion TClientInfo::applicationVersion() const
@@ -155,8 +158,8 @@ bool TClientInfo::isPortable() const
 bool TClientInfo::isValid() const
 {
     const B_D(TClientInfo);
-    return !d->applicationName.isEmpty() && d->applicationVersion.isValid() && d->beqtVersion.isValid()
-            && d->qtVersion.isValid() && d->texsampleVersion.isValid();
+    return Texsample::UnknownClient != d->applicationType && d->applicationVersion.isValid()
+            && d->beqtVersion.isValid() && d->qtVersion.isValid() && d->texsampleVersion.isValid();
 }
 
 QString TClientInfo::os() const
@@ -174,6 +177,11 @@ BeQt::ProcessorArchitecture TClientInfo::processorArchitecture() const
     return d_func()->processorArchitecture;
 }
 
+QString TClientInfo::processorArchitectureString() const
+{
+    return BeQt::processorArchitectureToString(d_func()->processorArchitecture);
+}
+
 BVersion TClientInfo::qtVersion() const
 {
     return d_func()->qtVersion;
@@ -186,22 +194,24 @@ BVersion TClientInfo::texsampleVersion() const
 
 QString TClientInfo::toString(const QString &format) const
 {
-    //%n - applicationName
+    //%n - applicationType
     //%v - applicationVersion
     //%b - beqtVersion
     //%p - isPortable
     //%o - os
+    //%a - processorArchitecture
     //%q - qtVersion
     //%t - texsampleVersion
     const B_D(TClientInfo);
     QString f = format;
     if (f.isEmpty())
         f = "%n v%v (%p)\nTeXSample v%t; BeQt v%b; Qt v%q\nOS: %o";
-    f.replace("%n", d->applicationName);
+    f.replace("%n", Texsample::clientTypeToString(d->applicationType));
     f.replace("%v", d->applicationVersion);
     f.replace("%b", d->beqtVersion);
     f.replace("%p", d->portable ? "portable" : "non-portable");
     f.replace("%o", d->os);
+    f.replace("%a", processorArchitectureString());
     f.replace("%q", d->qtVersion);
     f.replace("%t", d->texsampleVersion);
     return f;
@@ -213,7 +223,7 @@ TClientInfo &TClientInfo::operator =(const TClientInfo &other)
 {
     B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
-    d->applicationName = dd->applicationName;
+    d->applicationType = dd->applicationType;
     d->applicationVersion = dd->applicationVersion;
     d->beqtVersion = dd->beqtVersion;
     d->os = dd->os;
@@ -229,7 +239,7 @@ bool TClientInfo::operator ==(const TClientInfo &other) const
 {
     const B_D(TClientInfo);
     const TClientInfoPrivate *dd = other.d_func();
-    return d->applicationName == dd->applicationName && d->applicationVersion == dd->applicationVersion
+    return d->applicationType == dd->applicationType && d->applicationVersion == dd->applicationVersion
             && d->beqtVersion == dd->beqtVersion && d->os == dd->os && d->osType == dd->osType
             && d->portable == dd->portable && d->processorArchitecture == dd->processorArchitecture
             && d->qtVersion == dd->qtVersion && d->texsampleVersion == dd->texsampleVersion;
@@ -246,7 +256,7 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
 {
     const TClientInfoPrivate *d = info.d_func();
     QVariantMap m;
-    m.insert("application_name", d->applicationName);
+    m.insert("application_name", int(d->applicationType));
     m.insert("application_version", d->applicationVersion);
     m.insert("beqt_version", d->beqtVersion);
     m.insert("os", d->os);
@@ -265,7 +275,8 @@ QDataStream &operator >>(QDataStream &stream, TClientInfo &info)
     TClientInfoPrivate *d = info.d_func();
     QVariantMap m;
     stream >> m;
-    d->applicationName = m.value("application_name").toString();
+    d->applicationType = enum_cast<Texsample::ClientType>(m.value("application_name"), Texsample::UnknownClient,
+                                                          Texsample::TexsampleConsole);
     d->applicationVersion = m.value("application_version").value<BVersion>();
     d->beqtVersion = m.value("beqt_version").value<BVersion>();
     d->os = m.value("os").toString();

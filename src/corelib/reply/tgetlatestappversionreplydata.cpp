@@ -27,6 +27,7 @@
 
 #include <QDataStream>
 #include <QDebug>
+#include <QUrl>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -38,6 +39,7 @@ class TGetLatestAppVersionReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TGetLatestAppVersionReplyData)
 public:
+    QUrl downloadUrl;
     BVersion version;
 public:
     explicit TGetLatestAppVersionReplyDataPrivate(TGetLatestAppVersionReplyData *q);
@@ -98,6 +100,16 @@ TGetLatestAppVersionReplyData::~TGetLatestAppVersionReplyData()
 
 /*============================== Public methods ============================*/
 
+QUrl TGetLatestAppVersionReplyData::downloadUrl() const
+{
+    return d_func()->downloadUrl;
+}
+
+void TGetLatestAppVersionReplyData::setDownloadUrl(const QUrl &url)
+{
+    d_func()->downloadUrl = url;
+}
+
 void TGetLatestAppVersionReplyData::setVersion(const BVersion &version)
 {
     d_func()->version = version;
@@ -114,6 +126,7 @@ TGetLatestAppVersionReplyData &TGetLatestAppVersionReplyData::operator =(const T
 {
     B_D(TGetLatestAppVersionReplyData);
     const TGetLatestAppVersionReplyDataPrivate *dd = other.d_func();
+    d->downloadUrl = dd->downloadUrl;
     d->version = dd->version;
     return *this;
 }
@@ -122,7 +135,7 @@ bool TGetLatestAppVersionReplyData::operator ==(const TGetLatestAppVersionReplyD
 {
     const B_D(TGetLatestAppVersionReplyData);
     const TGetLatestAppVersionReplyDataPrivate *dd = other.d_func();
-    return d->version == dd->version;
+    return d->downloadUrl == dd->downloadUrl && d->version == dd->version;
 }
 
 bool TGetLatestAppVersionReplyData::operator !=(const TGetLatestAppVersionReplyData &other) const
@@ -141,6 +154,7 @@ QDataStream &operator <<(QDataStream &stream, const TGetLatestAppVersionReplyDat
 {
     const TGetLatestAppVersionReplyDataPrivate *d = data.d_func();
     QVariantMap m;
+    m.insert("download_url", d->downloadUrl);
     m.insert("version", d->version);
     stream << m;
     return stream;
@@ -151,6 +165,7 @@ QDataStream &operator >>(QDataStream &stream, TGetLatestAppVersionReplyData &dat
     TGetLatestAppVersionReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
+    d->downloadUrl = m.value("download_url").toUrl();
     d->version = m.value("version").value<BVersion>();
     return stream;
 }

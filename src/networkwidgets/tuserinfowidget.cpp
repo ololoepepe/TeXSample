@@ -25,6 +25,7 @@
 
 #include "tlistwidget.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserRequestData>
 #include <TeXSampleCore/TChangeEmailRequestData>
@@ -38,9 +39,12 @@
 #include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TGetUserAvatarReplyData>
 #include <TeXSampleCore/TGetUserAvatarRequestData>
+#include <TeXSampleCore/TGetUserInfoAdminReplyData>
+#include <TeXSampleCore/TGetUserInfoAdminRequestData>
+#include <TeXSampleCore/TGetUserInfoReplyData>
+#include <TeXSampleCore/TGetUserInfoRequestData>
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
-#include <TeXSampleCore/TMessage>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TRegisterRequestData>
 #include <TeXSampleCore/TReply>
@@ -269,11 +273,11 @@ void TUserInfoWidgetPrivate::createNameFields(QFormLayout *flt, bool readOnly)
       ledtName->setReadOnly(readOnly);
     flt->addRow(tr("Name:", "lbl text"), ledtName);
     ledtPatronymic = new QLineEdit;
-      ledtPatronymic->setMaxLength(Texsample::MaximumNameLength);
+      ledtPatronymic->setMaxLength(Texsample::MaximumPatronymicLength);
       ledtPatronymic->setReadOnly(readOnly);
     flt->addRow(tr("Patronymic:", "lbl text"), ledtPatronymic);
     ledtSurname = new QLineEdit;
-      ledtSurname->setMaxLength(Texsample::MaximumNameLength);
+      ledtSurname->setMaxLength(Texsample::MaximumSurnameLength);
       ledtSurname->setReadOnly(readOnly);
     flt->addRow(tr("Surname:", "lbl text"), ledtSurname);
 }
@@ -317,6 +321,7 @@ void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode
       inputPwd2->addWidget(pwdwgt2);
       pwdgrp->addPasswordWidget(pwdwgt2);
       connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+      connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), this, SLOT(checkInputs()));
     flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
     if (SeparateMode == mode) {
         btnChangePassword = new QPushButton(tr("Change password", "btn text"));
@@ -347,6 +352,20 @@ void TUserInfoWidgetPrivate::createServicesSection(QHBoxLayout *hlt, bool readOn
     hlt->addWidget(gbox);
 }
 
+TGroupInfoList TUserInfoWidgetPrivate::groupInfos() const
+{
+    TGroupInfoList list;
+    if (!lstwgtGroups)
+        return list;
+    foreach (int i, bRangeD(0, lstwgtGroups->itemCount() - 1)) {
+        TGroupInfo info;
+        info.setId(lstwgtGroups->itemData(i).toULongLong());
+        info.setName(lstwgtGroups->itemText(i));
+        list << info;
+    }
+    return list;
+}
+
 TIdList TUserInfoWidgetPrivate::groups() const
 {
     TIdList list;
@@ -359,6 +378,8 @@ TIdList TUserInfoWidgetPrivate::groups() const
 
 void TUserInfoWidgetPrivate::init()
 {
+    alwaysRequestAvatar = false;
+    cache = 0;
     client = 0;
     model = 0;
     editAvatar = false;
@@ -493,6 +514,28 @@ TServiceList TUserInfoWidgetPrivate::services() const
     return list;
 }
 
+void TUserInfoWidgetPrivate::setGroups(const TGroupInfoList &list)
+{
+    if (!lstwgtGroups)
+        return;
+    QList<TListWidget::Item> ilist;
+    foreach (const TGroupInfo &groupInfo, list) {
+        TListWidget::Item item;
+        item.text = groupInfo.name();
+        item.data = groupInfo.id();
+        ilist << item;
+    }
+    lstwgtGroups->setItems(ilist);
+}
+
+void TUserInfoWidgetPrivate::setServices(const TServiceList &list)
+{
+    if (cboxServiceMap.isEmpty())
+        return;
+    foreach (const TService &service, TServiceList::allServices())
+        cboxServiceMap.value(service)->setChecked(list.contains(service));
+}
+
 /*============================== Public slots ==============================*/
 
 void TUserInfoWidgetPrivate::changeEmail()
@@ -509,7 +552,7 @@ void TUserInfoWidgetPrivate::changeEmail()
         msg.setWindowTitle(tr("Changing e-mail failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to change e-mail. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -525,15 +568,15 @@ void TUserInfoWidgetPrivate::changePassword()
     if (!client)
         return;
     TChangePasswordRequestData data;
-    data.setOldPassword(pwdwgtOld->openPassword());
-    data.setNewPassword(pwdwgt1->openPassword());
+    data.setOldPassword(Texsample::encryptPassword(pwdwgtOld->openPassword()));
+    data.setNewPassword(Texsample::encryptPassword(pwdwgt1->openPassword()));
     TReply r = client->performOperation(TOperation::ChangePassword, data, q_func());
     if (!r) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Changing password failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to change password. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -571,7 +614,7 @@ void TUserInfoWidgetPrivate::checkEmail()
         msg.setWindowTitle(tr("Checking e-mail failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to check e-mail. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -639,7 +682,7 @@ void TUserInfoWidgetPrivate::checkLogin()
         msg.setWindowTitle(tr("Checking login failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to check login. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -741,7 +784,7 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
                 msg.setWindowTitle(tr("Failed to get avatar", "msgbox windowTitle"));
                 msg.setIcon(QMessageBox::Critical);
                 msg.setText(tr("Failed to get user avatar from server. The following error occured:", "msgbox text"));
-                msg.setInformativeText(r.messageText());
+                msg.setInformativeText(r.message());
                 msg.setStandardButtons(QMessageBox::Ok);
                 msg.exec();
                 return;
@@ -750,6 +793,8 @@ void TUserInfoWidgetPrivate::tbtnAvatarClicked()
             containsAvatar = true;
             if (model)
                 model->updateUserAvatar(id, avatar);
+            if (cache)
+                cache->setData(TOperation::GetUserAvatar, r.requestDateTime(), r.data(), id);
         }
         BDialog dlg(q_func());
           dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
@@ -805,6 +850,16 @@ TUserInfoWidget::~TUserInfoWidget()
 
 /*============================== Public methods ============================*/
 
+bool TUserInfoWidget::alwaysRequestAvatar() const
+{
+    return d_func()->alwaysRequestAvatar;
+}
+
+TAbstractCache *TUserInfoWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TUserInfoWidget::client() const
 {
     return d_func()->client;
@@ -824,7 +879,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setGroups(d->groups());
         data.setLogin(d->ledtLogin->text());
         data.setName(d->ledtName->text());
-        data.setPassword(d->pwdwgt1->openPassword());
+        data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
         data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
@@ -845,7 +900,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setIdentifier(d->id);
         data.setName(d->ledtName->text());
         if (d->cboxChangePassword->isChecked())
-            data.setPassword(d->pwdwgt1->openPassword());
+            data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
         data.setAvailableServices(d->services());
         data.setSurname(d->ledtSurname->text());
@@ -886,6 +941,12 @@ bool TUserInfoWidget::hasValidInput() const
     return d_func()->valid;
 }
 
+QString TUserInfoWidget::login() const
+{
+    const B_D(TUserInfoWidget);
+    return (d->ledtLogin && d->ledtLogin->hasAcceptableInput()) ? d->ledtLogin->text() : QString();
+}
+
 TUserInfoWidget::Mode TUserInfoWidget::mode() const
 {
     return d_func()->Mode;
@@ -894,6 +955,89 @@ TUserInfoWidget::Mode TUserInfoWidget::mode() const
 TUserModel *TUserInfoWidget::model() const
 {
     return d_func()->model;
+}
+
+BPassword TUserInfoWidget::password() const
+{
+    const B_D(TUserInfoWidget);
+    return (d->pwdgrp && d->pwdgrp->passwordsMatchAndAcceptable()) ? d->pwdgrp->password() : BPassword();
+}
+
+void TUserInfoWidget::restorePasswordWidgetState(const QByteArray &state)
+{
+    B_D(TUserInfoWidget);
+    if (d->pwdwgt1)
+        d->pwdwgt1->restoreWidgetState(state);
+}
+
+void TUserInfoWidget::restoreState(const QByteArray &state)
+{
+    B_D(TUserInfoWidget);
+    if (RegisterMode != d->Mode && AddMode != d->Mode)
+        return;
+    QVariantMap m = BeQt::deserialize(state).toMap();
+    if (AddMode == d->Mode) {
+        d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData(m.value("access_level").toInt()));
+        d->setGroups(m.value("groups").value<TGroupInfoList>());
+        d->setServices(m.value("available_services").value<TServiceList>());
+    }
+    if (RegisterMode == d->Mode)
+        d->ledtInvite->setText(m.value("invite_code").toString());
+    d->avatarFileName = m.value("avatar_file_name").toString();
+    d->containsAvatar = m.value("contains_avatar").toBool();
+    if (d->containsAvatar)
+        d->resetAvatar(m.value("avatar").value<QImage>());
+    d->ledtEmail1->setText(m.value("email").toString());
+    d->ledtEmail2->clear();
+    d->ledtLogin->setText(m.value("login").toString());
+    d->ledtName->setText(m.value("name").toString());
+    d->ledtPatronymic->setText(m.value("patronymic").toString());
+    d->ledtSurname->setText(m.value("surname").toString());
+    QByteArray pwdwgtState = d->pwdwgt1->saveWidgetState();
+    d->pwdwgt1->restoreState(m.value("password_state").toByteArray());
+    d->pwdwgt1->restoreWidgetState(pwdwgtState);
+}
+
+QByteArray TUserInfoWidget::savePasswordWidgetState() const
+{
+    const B_D(TUserInfoWidget);
+    return d->pwdwgt1 ? d->pwdwgt1->saveWidgetState() : QByteArray();
+}
+
+QByteArray TUserInfoWidget::saveState() const
+{
+    const B_D(TUserInfoWidget);
+    if (RegisterMode != d->Mode && AddMode != d->Mode)
+        return QByteArray();
+    QVariantMap m;
+    if (AddMode == d->Mode) {
+        m.insert("access_level", d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
+        m.insert("groups", d->groupInfos());
+        m.insert("available_services", d->services());
+    }
+    if (RegisterMode == d->Mode)
+        m.insert("invite_code", d->ledtInvite->text());
+    m.insert("contains_avatar", d->containsAvatar);
+    m.insert("avatar_file_name", d->avatarFileName);
+    if (d->containsAvatar)
+        m.insert("avatar", d->avatar);
+    m.insert("email", d->ledtEmail1->text());
+    m.insert("login", d->ledtLogin->text());
+    m.insert("name", d->ledtName->text());
+    m.insert("password_state", d->pwdwgt1->saveState());
+    m.insert("patronymic", d->ledtPatronymic->text());
+    m.insert("surname", d->ledtSurname->text());
+    return BeQt::serialize(m);
+}
+
+void TUserInfoWidget::setAlwaysRequestAvatar(bool enabled)
+{
+    d_func()->alwaysRequestAvatar = enabled;
+}
+
+void TUserInfoWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
 }
 
 void TUserInfoWidget::setClient(TNetworkClient *client)
@@ -919,6 +1063,43 @@ void TUserInfoWidget::setUser(quint64 userId)
     B_D(TUserInfoWidget);
     if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
         return;
+    if (d->client && d->client->isAuthorized()) {
+        QVariant requestData;
+        QString op;
+        bool admin = d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
+        bool avatar = (EditMode == d->Mode || EditSelfMode == d->Mode || d->alwaysRequestAvatar);
+        if (admin) {
+            TGetUserInfoAdminRequestData request;
+            request.setIdentifier(userId);
+            request.setIncludeAvatar(avatar);
+            op = TOperation::GetUserInfoAdmin;
+            requestData = request;
+        } else {
+            TGetUserInfoRequestData request;
+            request.setIdentifier(userId);
+            request.setIncludeAvatar(avatar);
+            op = TOperation::GetUserInfo;
+            requestData = request;
+        }
+        QDateTime dt = d->cache ? d->cache->lastRequestDateTime(op) : QDateTime();
+        TReply reply = d->client->performOperation(op, requestData, dt);
+        if (!reply.success()) {
+            QMessageBox msg(this);
+            msg.setWindowTitle(tr("Getting user info failed", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(tr("Failed to get user info. The following error occured:", "msgbox text"));
+            msg.setInformativeText(reply.message());
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.setDefaultButton(QMessageBox::Ok);
+            msg.exec();
+            return;
+        }
+        TUserInfo info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
+                                 reply.data().value<TGetUserInfoReplyData>().userInfo();
+        d->model->updateUser(userId, info, !avatar);
+        if (d->cache)
+            d->cache->setData(op, reply.requestDateTime(), reply.data());
+    }
     TUserInfo info = d->model->userInfo(userId);
     d->id = info.id();
     if (d->ledtLogin)
@@ -944,21 +1125,10 @@ void TUserInfoWidget::setUser(quint64 userId)
                     info.lastModificationDateTime().toLocalTime().toString(TUserInfoWidgetPrivate::DateTimeFormat));
     }
     d->containsAvatar = info.containsAvatar();
+    d->avatarFileName.clear();
     d->resetAvatar(info.avatar());
-    if (!d->cboxServiceMap.isEmpty()) {
-        foreach (const TService &service, TServiceList::allServices())
-            d->cboxServiceMap.value(service)->setChecked(info.availableServices().contains(service));
-    }
-    if (d->lstwgtGroups) {
-        QList<TListWidget::Item> list;
-        foreach (const TGroupInfo &groupInfo, info.groups()) {
-            TListWidget::Item item;
-            item.text = groupInfo.name();
-            item.data = groupInfo.id();
-            list << item;
-        }
-        d->lstwgtGroups->setItems(list);
-    }
+    d->setGroups(info.groups());
+    d->setServices(info.availableServices());
     d->checkInputs();
 }
 

@@ -184,7 +184,7 @@ QDataStream &operator <<(QDataStream &stream, const TAuthorizeRequestData &data)
 {
     const TAuthorizeRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("clien_info", d->clientInfo);
+    m.insert("client_info", d->clientInfo);
     m.insert("identifier", d->identifier);
     m.insert("password", d->password);
     stream << m;

@@ -41,66 +41,36 @@
     </message>
 </context>
 <context>
-    <name>TCommandMessage</name>
+    <name>TAuthorInfoWidgetPrivate</name>
     <message>
-        <source>Failed to start server</source>
-        <translation>Не удалось запустить сервер</translation>
+        <source>Name:</source>
+        <comment>lbl text</comment>
+        <translation>Имя:</translation>
     </message>
     <message>
-        <source>Invalid argument count</source>
-        <translation>Неправильное количество параметров</translation>
+        <source>Patronymic:</source>
+        <comment>lbl text</comment>
+        <translation>Отчество:</translation>
     </message>
     <message>
-        <source>Invalid arguments</source>
-        <translation>Недействительные параметры</translation>
+        <source>Surname:</source>
+        <comment>lbl text</comment>
+        <translation>Фамилия:</translation>
     </message>
     <message>
-        <source>No such user</source>
-        <translation>Нет такого пользователя</translation>
+        <source>Organization:</source>
+        <comment>lbl text</comment>
+        <translation>Организация:</translation>
     </message>
     <message>
-        <source>The server is already started</source>
-        <translation>Сервер уже запущен</translation>
+        <source>Post:</source>
+        <comment>lbl text</comment>
+        <translation>Должность:</translation>
     </message>
     <message>
-        <source>The server is not started</source>
-        <translation>Сервер не запущен</translation>
-    </message>
-    <message>
-        <source>The server was successfully started</source>
-        <translation>Сервер был успешно запущен</translation>
-    </message>
-    <message>
-        <source>The server was successfully stopped</source>
-        <translation>Сервер был успешно остановлен</translation>
-    </message>
-    <message>
-        <source>Uptime: %1</source>
-        <translation>Аптайм: %1</translation>
-    </message>
-    <message>
-        <source>User count: %1</source>
-        <translation>Количество пользователей: %1</translation>
-    </message>
-    <message>
-        <source>Users:
-%1</source>
-        <translation>Пользователи:
-%1</translation>
-    </message>
-    <message>
-        <source>User info: %1
-%2</source>
-        <translation>Информация о пользователе: %1
-%2</translation>
-    </message>
-    <message>
-        <source>User %1 was successfully kicked. Connections closed: %2</source>
-        <translation>Пользователь %1 был успешно отключен. Закрыто соединений: %2</translation>
-    </message>
-    <message>
-        <source>Some mysterious error</source>
-        <translation>Некая таинственная ошибка</translation>
+        <source>Role:</source>
+        <comment>lbl text</comment>
+        <translation>Роль:</translation>
     </message>
 </context>
 <context>
@@ -198,6 +168,16 @@
         <comment>act text</comment>
         <translation>Добавить группу...</translation>
     </message>
+    <message>
+        <source>Updating group list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Обновление списка групп не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to update group list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось обновить список групп. Произошла следующая ошибка:</translation>
+    </message>
 </context>
 <context>
     <name>TInviteModel</name>
@@ -240,6 +220,11 @@
         <source>Creation date</source>
         <comment>headerData</comment>
         <translation>Дата создания</translation>
+    </message>
+    <message>
+        <source>Access level</source>
+        <comment>headerData</comment>
+        <translation>Уровень доступа</translation>
     </message>
 </context>
 <context>
@@ -314,6 +299,16 @@
         <comment>toolTip</comment>
         <translation>Инвайты были скопированы в буфер обмена</translation>
     </message>
+    <message>
+        <source>Updating invite list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Обновление списка инвайтов не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to update invite list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
+    </message>
 </context>
 <context>
     <name>TLabType plural</name>
@@ -374,74 +369,11 @@
     </message>
 </context>
 <context>
-    <name>TMessage</name>
-    <message>
-        <source>Already authorized</source>
-        <translation>Уже авторизован</translation>
-    </message>
-    <message>
-        <source>The resource is already deleted</source>
-        <translation>Этот ресурс уже удален</translation>
-    </message>
-    <message>
-        <source>Some internal error</source>
-        <translation>Некая внутренняя ошибка</translation>
-    </message>
-    <message>
-        <source>Either the username or the password is invalid</source>
-        <translation>Либо имя пользователя, либо пароль является некорректным</translation>
-    </message>
-    <message>
-        <source>No access to this service</source>
-        <translation>Нет доступа к этой службе</translation>
-    </message>
+    <name>TNetworkClient</name>
     <message>
         <source>Not authorized</source>
+        <comment>error</comment>
         <translation>Не авторизован</translation>
-    </message>
-    <message>
-        <source>Unable to edit non-modifiable resource</source>
-        <translation>Нельзя изменить неизменяемый ресурс</translation>
-    </message>
-    <message>
-        <source>Some mysterious error</source>
-        <translation>Некая таинственная ошибка</translation>
-    </message>
-    <message>
-        <source>The resource already exists</source>
-        <translation>Этот ресурс уже существует</translation>
-    </message>
-    <message>
-        <source>The command is invalid</source>
-        <translation>Команда не является корректной</translation>
-    </message>
-    <message>
-        <source>The data is invalid</source>
-        <translation>Данные не являются корректными</translation>
-    </message>
-    <message>
-        <source>The identifier is invalid</source>
-        <translation>Идентификатор не является корректным</translation>
-    </message>
-    <message>
-        <source>Not enough rights for this operation</source>
-        <translation>Недостаточно прав для данной операции</translation>
-    </message>
-    <message>
-        <source>The connection timed out</source>
-        <translation>Время ожидания соединения истекло</translation>
-    </message>
-    <message>
-        <source>The operation was canceled</source>
-        <translation>Операция была отменена</translation>
-    </message>
-    <message>
-        <source>An operation error occured</source>
-        <translation>Произошла ошибка операции</translation>
-    </message>
-    <message>
-        <source>The operation timed out</source>
-        <translation>Время ожидания завершения операции истекло</translation>
     </message>
 </context>
 <context>
@@ -450,6 +382,31 @@
         <source>An error occured</source>
         <comment>message text</comment>
         <translation>Произошла ошибка</translation>
+    </message>
+    <message>
+        <source>Invalid TNetworkClient instance (no host name)</source>
+        <comment>error</comment>
+        <translation>Недействительный экземпляр TNetworkClient (отсутствует имя хоста)</translation>
+    </message>
+    <message>
+        <source>Operation error</source>
+        <comment>error</comment>
+        <translation>Ошибка операции</translation>
+    </message>
+    <message>
+        <source>Null connection pointer</source>
+        <comment>error</comment>
+        <translation>Нулевой указатель на соединение</translation>
+    </message>
+    <message>
+        <source>Operation timed out</source>
+        <comment>error</comment>
+        <translation>Время ожидания завершения операции истекло</translation>
+    </message>
+    <message>
+        <source>Invalid parameter (internal error)</source>
+        <comment>error</comment>
+        <translation>Недействительный параметр (внутренняя ошибка)</translation>
     </message>
 </context>
 <context>
@@ -601,11 +558,24 @@
     </message>
 </context>
 <context>
-    <name>TTagsWidgetPrivate</name>
+    <name>TTagWidgetPrivate</name>
     <message>
         <source>Add tag...</source>
         <comment>tbtn toolTip</comment>
         <translation>Добавить тэг...</translation>
+    </message>
+</context>
+<context>
+    <name>TUserInfoWidget</name>
+    <message>
+        <source>Getting user info failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Получение информации о пользователе не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to get user info. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось получить информацию о пользователе. Произошла следующая ошибка:</translation>
     </message>
 </context>
 <context>
@@ -981,78 +951,193 @@
         <comment>msgbox text</comment>
         <translation>Не удалось отредактировать данные пользователя. Произошла следующая ошибка:</translation>
     </message>
+    <message>
+        <source>Updating user list failed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Обновление списка пользователей не удалось</translation>
+    </message>
+    <message>
+        <source>Failed to update user list. The following error occured:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось обновить список пользователей. Произошла следующая ошибка:</translation>
+    </message>
 </context>
 <context>
     <name>Texsample</name>
-    <message>
-        <source>The image is too big</source>
-        <comment>error</comment>
-        <translation>Изображение слишком большое</translation>
-    </message>
-    <message>
-        <source>The image&apos;s height is too big</source>
-        <comment>error</comment>
-        <translation>Высота изображения слишком велика</translation>
-    </message>
-    <message>
-        <source>The image&apos;s hwidth is too big</source>
-        <comment>error</comment>
-        <translation>Ширина изображения слишком велика</translation>
-    </message>
-    <message>
-        <source>The file name is empty</source>
-        <comment>error</comment>
-        <translation>Это имя файло является пустым</translation>
-    </message>
-    <message>
-        <source>The file does not exist</source>
-        <comment>error</comment>
-        <translation>Этот файл не существует</translation>
-    </message>
-    <message>
-        <source>Failed to read file</source>
-        <comment>error</comment>
-        <translation>Не удалось прочитать файл</translation>
-    </message>
-    <message>
-        <source>The string is empty</source>
-        <comment>error</comment>
-        <translation>Эта строка пуста</translation>
-    </message>
-    <message>
-        <source>The string is too long</source>
-        <comment>error</comment>
-        <translation>Эта строка слишком длинная</translation>
-    </message>
     <message>
         <source>The string is not an e-mail</source>
         <comment>error</comment>
         <translation>Эта строка не является адресом эл. почты</translation>
     </message>
     <message>
-        <source>The string is too short</source>
-        <comment>error</comment>
-        <translation>Эта строка слишком короткая</translation>
-    </message>
-    <message>
-        <source>The image is invalid</source>
-        <comment>error</comment>
-        <translation>Это изображение не является корректным</translation>
-    </message>
-    <message>
-        <source>The URL is invalid</source>
-        <comment>error</comment>
-        <translation>Эта ссылка является некорректной</translation>
-    </message>
-    <message>
-        <source>The password is not a correct SHA1 hash</source>
-        <comment>error</comment>
-        <translation>Этот пароль не является правильным SHA1-хешем</translation>
-    </message>
-    <message>
         <source>Unable to test avatar</source>
         <comment>error</comment>
         <translation>Невозможно проверить аватар</translation>
+    </message>
+    <message>
+        <source>Admin remark is too long</source>
+        <comment>error</comment>
+        <translation>Примечание администратора слишком длинное</translation>
+    </message>
+    <message>
+        <source>Avatar is invalid</source>
+        <comment>error</comment>
+        <translation>Аватар не является корректным</translation>
+    </message>
+    <message>
+        <source>Avatar&apos;s height is too big</source>
+        <comment>error</comment>
+        <translation>Высота аватара слишком велика</translation>
+    </message>
+    <message>
+        <source>Avatar file name is empty</source>
+        <comment>error</comment>
+        <translation>Имя файла аватара является пустым</translation>
+    </message>
+    <message>
+        <source>Avatar file does not exist</source>
+        <comment>error</comment>
+        <translation>Файл аватара не существует</translation>
+    </message>
+    <message>
+        <source>Failed to read avatar file</source>
+        <comment>error</comment>
+        <translation>Не удалось прочесть файл аватара</translation>
+    </message>
+    <message>
+        <source>Command is empty</source>
+        <comment>error</comment>
+        <translation>Команда является пустой</translation>
+    </message>
+    <message>
+        <source>Command is too long</source>
+        <comment>error</comment>
+        <translation>Команда слишком длинная</translation>
+    </message>
+    <message>
+        <source>E-mail is empty</source>
+        <comment>error</comment>
+        <translation>Адрес эл. почты является пустым</translation>
+    </message>
+    <message>
+        <source>E-mail is too long</source>
+        <comment>error</comment>
+        <translation>Адрес эл. почты слишком длинный</translation>
+    </message>
+    <message>
+        <source>File description is too long</source>
+        <comment>error</comment>
+        <translation>Описание файла слишком длинное</translation>
+    </message>
+    <message>
+        <source>Group name is too long</source>
+        <comment>error</comment>
+        <translation>Имя группы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Lab description is too long</source>
+        <comment>error</comment>
+        <translation>Описание лаб. работы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Lab title is too long</source>
+        <comment>error</comment>
+        <translation>Название лаб. работы слишком длинное</translation>
+    </message>
+    <message>
+        <source>Login is empty</source>
+        <comment>error</comment>
+        <translation>Логин является пустым</translation>
+    </message>
+    <message>
+        <source>Login is too short</source>
+        <comment>error</comment>
+        <translation>Логин слишком короткий</translation>
+    </message>
+    <message>
+        <source>Login is too long</source>
+        <comment>error</comment>
+        <translation>Логин слишком длинный</translation>
+    </message>
+    <message>
+        <source>Name is too long</source>
+        <comment>error</comment>
+        <translation>имя слишком длинное</translation>
+    </message>
+    <message>
+        <source>Organization name is too long</source>
+        <comment>error</comment>
+        <translation>Название организации слишком длинное</translation>
+    </message>
+    <message>
+        <source>Password is empty</source>
+        <comment>error</comment>
+        <translation>Пароль является пустым</translation>
+    </message>
+    <message>
+        <source>Password is too short</source>
+        <comment>error</comment>
+        <translation>Пароль слишком короткий</translation>
+    </message>
+    <message>
+        <source>Password is too long</source>
+        <comment>error</comment>
+        <translation>Пароль слишком длинный</translation>
+    </message>
+    <message>
+        <source>Password is not a correct SHA1 hash</source>
+        <comment>error</comment>
+        <translation>Пароль не является правильным SHA-1 хешем</translation>
+    </message>
+    <message>
+        <source>Post name is too long</source>
+        <comment>error</comment>
+        <translation>Название должности слишком длинное</translation>
+    </message>
+    <message>
+        <source>Role description is too long</source>
+        <comment>error</comment>
+        <translation>Описание роли слишком длинное</translation>
+    </message>
+    <message>
+        <source>Sample description is too long</source>
+        <comment>error</comment>
+        <translation>Описание сэмпла слишком длинное</translation>
+    </message>
+    <message>
+        <source>Sample title is too long</source>
+        <comment>error</comment>
+        <translation>Название сэмпла слишком длинное</translation>
+    </message>
+    <message>
+        <source>URL is too long</source>
+        <comment>error</comment>
+        <translation>Ссылка слишком длинная</translation>
+    </message>
+    <message>
+        <source>URL is invalid</source>
+        <comment>error</comment>
+        <translation>Ссылка не является корректной</translation>
+    </message>
+    <message>
+        <source>Patronymic is too long</source>
+        <comment>error</comment>
+        <translation>Отчество слишком длинное</translation>
+    </message>
+    <message>
+        <source>Surname is too long</source>
+        <comment>error</comment>
+        <translation>Фамилия слишком длинная</translation>
+    </message>
+    <message>
+        <source>Avatar&apos;s width is too big</source>
+        <comment>error</comment>
+        <translation>Ширина аватара слишком велика</translation>
+    </message>
+    <message>
+        <source>Avatar is too big</source>
+        <comment>error</comment>
+        <translation>Аватар слишком велик</translation>
     </message>
 </context>
 </TS>

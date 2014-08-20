@@ -107,7 +107,7 @@ int TCompileTexProjectReplyData::exitCode() const
     return d_func()->exitCode;
 }
 
-TBinaryFileList TCompileTexProjectReplyData::files() const
+const TBinaryFileList &TCompileTexProjectReplyData::files() const
 {
     return d_func()->files;
 }

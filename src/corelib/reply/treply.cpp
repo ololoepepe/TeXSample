@@ -21,8 +21,6 @@
 
 #include "treply.h"
 
-#include "tmessage.h"
-
 #include <BBase>
 #include <BeQtCore/private/bbase_p.h>
 
@@ -43,7 +41,7 @@ class TReplyPrivate : public BBasePrivate
 public:
     bool cacheUpToDate;
     QVariant data;
-    TMessage message;
+    QString message;
     QDateTime requestDateTime;
     bool success;
 public:
@@ -93,7 +91,7 @@ TReply::TReply() :
     d_func()->init();
 }
 
-TReply::TReply(const TMessage &message) :
+TReply::TReply(const QString &message) :
     BBase(*new TReplyPrivate(this))
 {
     d_func()->init();
@@ -119,7 +117,7 @@ void TReply::clear()
     B_D(TReply);
     d->cacheUpToDate = false;
     d->data.clear();
-    d->message = TMessage();
+    d->message.clear();
     d->requestDateTime = QDateTime().toUTC();
     d->success = false;
 }
@@ -139,19 +137,9 @@ bool TReply::isValid() const
     return d_func()->data.isValid();
 }
 
-TMessage TReply::message() const
+QString TReply::message() const
 {
     return d_func()->message;
-}
-
-QString TReply::messageText() const
-{
-    return d_func()->message.text();
-}
-
-QString TReply::messageTextNoTr() const
-{
-    return d_func()->message.textNoTr();
 }
 
 QDateTime TReply::requestDateTime() const
@@ -169,7 +157,7 @@ void TReply::setData(const QVariant &data)
     d_func()->data = data;
 }
 
-void TReply::setMessage(const TMessage &message)
+void TReply::setMessage(const QString &message)
 {
     d_func()->message = message;
 }
@@ -248,7 +236,7 @@ QDataStream &operator >>(QDataStream &stream, TReply &data)
     stream >> m;
     d->cacheUpToDate = m.value("cache_up_to_date").toBool();
     d->data = m.value("data");
-    d->message = m.value("message").value<TMessage>();
+    d->message = m.value("message").toString();
     d->requestDateTime = m.value("request_date_time").toDateTime().toUTC();
     d->success = m.value("success").toBool();
     return stream;

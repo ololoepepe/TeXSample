@@ -37,6 +37,8 @@ class TRecoverAccountReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TRecoverAccountReplyData)
 public:
+    bool success;
+public:
     explicit TRecoverAccountReplyDataPrivate(TRecoverAccountReplyData *q);
     ~TRecoverAccountReplyDataPrivate();
 public:
@@ -66,7 +68,7 @@ TRecoverAccountReplyDataPrivate::~TRecoverAccountReplyDataPrivate()
 
 void TRecoverAccountReplyDataPrivate::init()
 {
-    //
+    success = false;
 }
 
 /*============================================================================
@@ -93,20 +95,33 @@ TRecoverAccountReplyData::~TRecoverAccountReplyData()
     //
 }
 
+/*============================== Public methods ============================*/
+
+void TRecoverAccountReplyData::setSuccess(bool success)
+{
+    d_func()->success = success;
+}
+
+bool TRecoverAccountReplyData::success() const
+{
+    return d_func()->success;
+}
+
 /*============================== Public operators ==========================*/
 
-TRecoverAccountReplyData &TRecoverAccountReplyData::operator =(const TRecoverAccountReplyData &/*other*/)
+TRecoverAccountReplyData &TRecoverAccountReplyData::operator =(const TRecoverAccountReplyData &other)
 {
-    //B_D(TRecoverAccountReplyData);
-    //const TRecoverAccountReplyDataPrivate *dd = other.d_func();
+    B_D(TRecoverAccountReplyData);
+    const TRecoverAccountReplyDataPrivate *dd = other.d_func();
+    d->success = dd->success;
     return *this;
 }
 
-bool TRecoverAccountReplyData::operator ==(const TRecoverAccountReplyData &/*other*/) const
+bool TRecoverAccountReplyData::operator ==(const TRecoverAccountReplyData &other) const
 {
-    //const B_D(TRecoverAccountReplyData);
-    //const TRecoverAccountReplyDataPrivate *dd = other.d_func();
-    return true;
+    const B_D(TRecoverAccountReplyData);
+    const TRecoverAccountReplyDataPrivate *dd = other.d_func();
+    return d->success == dd->success;
 }
 
 bool TRecoverAccountReplyData::operator !=(const TRecoverAccountReplyData &other) const
@@ -121,19 +136,21 @@ TRecoverAccountReplyData::operator QVariant() const
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TRecoverAccountReplyData &/*data*/)
+QDataStream &operator <<(QDataStream &stream, const TRecoverAccountReplyData &data)
 {
-    //const TRecoverAccountReplyDataPrivate *d = data.d_func();
+    const TRecoverAccountReplyDataPrivate *d = data.d_func();
     QVariantMap m;
+    m.insert("success", d->success);
     stream << m;
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TRecoverAccountReplyData &/*data*/)
+QDataStream &operator >>(QDataStream &stream, TRecoverAccountReplyData &data)
 {
-    //TRecoverAccountReplyDataPrivate *d = data.d_func();
+    TRecoverAccountReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
+    d->success = m.value("success").toBool();
     return stream;
 }
 

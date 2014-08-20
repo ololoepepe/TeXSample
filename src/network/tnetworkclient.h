@@ -24,7 +24,6 @@
 
 class TNetworkClientPrivate;
 
-class TMessage;
 class TReply;
 class TUserInfo;
 
@@ -32,6 +31,7 @@ class BNetworkConnection;
 class BNetworkOperation;
 
 class QByteArray;
+class QDateTime;
 class QString;
 class QVariant;
 class QWidget;
@@ -60,26 +60,30 @@ public:
         DisconnectingState
     };
 public:
-    typedef void (*ShowMessageFunction)(const QString &text, const QString &informativeText, QWidget *parentWidget);
-    typedef bool (*WaitForConnectedFunction)(BNetworkConnection *, int timeout, QWidget *parentWidget, TMessage *);
-    typedef bool (*WaitForFinishedFunction)(BNetworkOperation *, int timeout, QWidget *parentWidget, TMessage *);
+    typedef void (*ShowMessageFunction)(const QString &text, const QString &informativeText, bool error,
+                                        QWidget *parentWidget);
+    typedef bool (*WaitForConnectedFunction)(BNetworkConnection *, int timeout, QWidget *parentWidget, QString *msg);
+    typedef bool (*WaitForFinishedFunction)(BNetworkOperation *, int timeout, QWidget *parentWidget, QString *msg);
 public:
     explicit TNetworkClient(QObject *parent = 0);
     ~TNetworkClient();
 protected:
     explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
 public:
-    bool canConnect() const;
-    bool canDisconnect() const;
+    bool cachingEnabled() const;
     QString hostName() const;
     bool isAuthorized() const;
     bool isConnected() const;
     bool isValid(bool anonymous = false) const;
     QString login() const;
     QByteArray password() const;
+    TReply performAnonymousOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
     virtual TReply performAnonymousOperation(const QString &operation, const QVariant &data,
-                                             QWidget *parentWidget = 0);
-    virtual TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+                                             const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+    TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    virtual TReply performOperation(const QString &operation, const QVariant &data,
+                                    const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+    void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
     void setLogin(const QString &login);
     void setPassword(const QByteArray &password);
@@ -105,13 +109,11 @@ public Q_SLOTS:
     void reconnect();
 Q_SIGNALS:
     void authorizedChanged(bool authorized);
-    void canDisconnectChanged(bool canConnect);
-    void canConnectChanged(bool canConnect);
     void connectedChanged(bool connected);
     void hostNameChanged(const QString &hostName);
     void loginChanged(const QString &login);
     void passwordChanged(const QByteArray &password);
-    void stateChanged(State s);
+    void stateChanged(TNetworkClient::State s);
     void validityChanged(bool valid);
     void anonymousValidityChanged(bool valid);
 private:

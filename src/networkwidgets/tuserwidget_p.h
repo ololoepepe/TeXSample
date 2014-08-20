@@ -23,6 +23,7 @@
 #ifndef TUSERWIDGET_P_H
 #define TUSERWIDGET_P_H
 
+class TAbstractCache;
 class TNetworkClient;
 class TUserModel;
 
@@ -69,6 +70,8 @@ public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
+    bool alwaysRequestAvatar;
+    TAbstractCache *cache;
     TNetworkClient *client;
     TUserProxyModel *proxyModel;
     QTableView *view;
@@ -77,6 +80,7 @@ public:
     ~TUserWidgetPrivate();
 public:
     void init();
+    void updateUserList();
 public Q_SLOTS:
     void addUser();
     void clientAuthorizedChanged(bool authorized);

@@ -25,11 +25,14 @@
 
 #include "tlistwidget.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TDeleteInvitesReplyData>
 #include <TeXSampleCore/TDeleteInvitesRequestData>
 #include <TeXSampleCore/TGenerateInvitesReplyData>
 #include <TeXSampleCore/TGenerateInvitesRequestData>
+#include <TeXSampleCore/TGetInviteInfoListReplyData>
+#include <TeXSampleCore/TGetInviteInfoListRequestData>
 #include <TeXSampleCore/TGroupInfo>
 #include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TIdList>
@@ -100,7 +103,7 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
     if (Qt::ToolTipRole == role) {
-        QString code = BeQt::pureUuidText(sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>());
+        QString code = sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>().toString(true);
         QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
         return code + " [" + ownerLogin + "]";
     }
@@ -146,6 +149,7 @@ TInviteWidgetPrivate::~TInviteWidgetPrivate()
 
 void TInviteWidgetPrivate::init()
 {
+    cache = 0;
     client = 0;
     maxInviteCount = 0;
     proxyModel = new TInviteProxyModel(this);
@@ -162,7 +166,6 @@ void TInviteWidgetPrivate::init()
         view->verticalHeader()->setVisible(false);
         view->setContextMenuPolicy(Qt::NoContextMenu);
         view->setModel(proxyModel);
-        connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(copyInvite(QModelIndex)));
         connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
                 this, SLOT(selectionChanged(QItemSelection, QItemSelection)));
       vlt->addWidget(view);
@@ -179,13 +182,40 @@ void TInviteWidgetPrivate::init()
       vlt->addWidget(tbar);
 }
 
+void TInviteWidgetPrivate::updateInviteList()
+{
+    if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
+        return;
+    TGetInviteInfoListRequestData request;
+    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetInviteInfoList) : QDateTime();
+    TReply reply = client->performOperation(TOperation::GetInviteInfoList, request, dt);
+    if (!reply.success()) {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Updating invite list failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to update invite list. The following error occured:", "msgbox text"));
+        msg.setInformativeText(reply.message());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
+    Model->removeInvites(data.deletedInvites());
+    Model->addInvites(data.newInvites());
+    if (cache)
+        cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);
+}
+
 /*============================== Public slots ==============================*/
 
 void TInviteWidgetPrivate::clientAthorizedChanged(bool authorized)
 {
     actDelete->setEnabled(client && authorized && view->selectionModel()->hasSelection());
     actGenerate->setEnabled(client && authorized
-                            && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
+                            && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        updateInviteList();
 }
 
 void TInviteWidgetPrivate::copyInvites()
@@ -198,7 +228,7 @@ void TInviteWidgetPrivate::copyInvites()
         TInviteInfo info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
         if (!info.isValid())
             continue;
-        list << BeQt::pureUuidText(info.code());
+        list << info.code().toString(true);
     }
     if (list.isEmpty())
         return;
@@ -232,7 +262,7 @@ void TInviteWidgetPrivate::deleteInvites()
         msg.setWindowTitle(tr("Deleting invites failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to delete invites. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -244,7 +274,7 @@ void TInviteWidgetPrivate::deleteInvites()
 void TInviteWidgetPrivate::generateInvites()
 {
     if (!client || !client->isAuthorized()
-            || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::ModeratorLevel))
+            || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
         return;
     BDialog dlg(q_func());
     dlg.setWindowTitle(tr("Generating invites", "dlg windowTitle"));
@@ -255,7 +285,7 @@ void TInviteWidgetPrivate::generateInvites()
               foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
                   cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
                   BGuiTools::setItemEnabled(cmboxAccessLevel, cmboxAccessLevel->count() - 1,
-                                            lvl > client->userInfo().accessLevel());
+                                            lvl <= client->userInfo().accessLevel());
               }
               if (cmboxAccessLevel->count())
                 cmboxAccessLevel->setCurrentIndex(0);
@@ -322,7 +352,7 @@ void TInviteWidgetPrivate::generateInvites()
         msg.setWindowTitle(tr("Generating invites failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to generate invites. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -357,6 +387,11 @@ TInviteWidget::~TInviteWidget()
 
 /*============================== Public methods ============================*/
 
+TAbstractCache *TInviteWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TInviteWidget::client() const
 {
     return d_func()->client;
@@ -365,6 +400,11 @@ TNetworkClient *TInviteWidget::client() const
 quint16 TInviteWidget::maximumInviteCount() const
 {
     return d_func()->maxInviteCount;
+}
+
+void TInviteWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
 }
 
 void TInviteWidget::setClient(TNetworkClient *client)
@@ -377,7 +417,9 @@ void TInviteWidget::setClient(TNetworkClient *client)
         connect(client, SIGNAL(authorizedChanged(bool)), d, SLOT(clientAthorizedChanged(bool)));
     d->actDelete->setEnabled(client && client->isAuthorized() && d->view->selectionModel()->hasSelection());
     d->actGenerate->setEnabled(client && client->isAuthorized()
-                               && d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel));
+                               && d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        d->updateInviteList();
 }
 
 void TInviteWidget::setMaximumInviteCount(quint16 count)

@@ -27,7 +27,6 @@
 #include <BeQtCore/private/bbase_p.h>
 
 #include <QByteArray>
-#include <QCryptographicHash>
 #include <QDataStream>
 #include <QDebug>
 #include <QString>

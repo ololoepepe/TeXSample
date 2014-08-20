@@ -25,6 +25,7 @@
 
 class TInviteWidgetPrivate;
 
+class TAbstractCache;
 class TInviteModel;
 class TNetworkClient;
 
@@ -46,8 +47,10 @@ public:
     explicit TInviteWidget(TInviteModel *model, QWidget *parent = 0);
     ~TInviteWidget();
 public:
+    TAbstractCache *cache() const;
     TNetworkClient *client() const;
     quint16 maximumInviteCount() const;
+    void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
     void setMaximumInviteCount(quint16 count);
 private:

@@ -12,13 +12,13 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_CORE_LIB
 
 HEADERS += \
+    tabstractcache.h \
     taccesslevel.h \
     tauthorinfo.h \
     tauthorinfolist.h \
     tbinaryfile.h \
     tbinaryfilelist.h \
     tclientinfo.h \
-    tcommandmessage.h \
     tcoreapplication.h \
     tfileinfo.h \
     tfileinfolist.h \
@@ -38,31 +38,33 @@ HEADERS += \
     tlabinfo.h \
     tlabinfolist.h \
     tlabtype.h \
-    tmessage.h \
     tnamespace.h \
     toperation.h \
     tsampleinfo.h \
     tsampleinfolist.h \
     tsampletype.h \
+    tserverstate.h \
     tservice.h \
     tservicelist.h \
     ttexcompiler.h \
     ttexfile.h \
     ttexfilelist.h \
     ttexproject.h \
+    tuserconnectioninfo.h \
+    tuserconnectioninfolist.h \
     tuseridentifier.h \
     tuserinfo.h \
     tuserinfolist.h \
     tusermodel.h
 
 SOURCES += \
+    tabstractcache.cpp \
     taccesslevel.cpp \
     tauthorinfo.cpp \
     tauthorinfolist.cpp \
     tbinaryfile.cpp \
     tbinaryfilelist.cpp \
     tclientinfo.cpp \
-    tcommandmessage.cpp \
     tcoreapplication.cpp \
     tfileinfo.cpp \
     tfileinfolist.cpp \
@@ -82,17 +84,19 @@ SOURCES += \
     tlabinfo.cpp \
     tlabinfolist.cpp \
     tlabtype.cpp \
-    tmessage.cpp \
     tnamespace.cpp \
     tsampleinfo.cpp \
     tsampleinfolist.cpp \
     tsampletype.cpp \
+    tserverstate.cpp \
     tservice.cpp \
     tservicelist.cpp \
     ttexcompiler.cpp \
     ttexfile.cpp \
     ttexfilelist.cpp \
     ttexproject.cpp \
+    tuserconnectioninfo.cpp \
+    tuserconnectioninfolist.cpp \
     tuseridentifier.cpp \
     tuserinfo.cpp \
     tuserinfolist.cpp \

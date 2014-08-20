@@ -23,7 +23,6 @@
 #include "trecoverywidget.h"
 #include "trecoverywidget_p.h"
 
-#include <TeXSampleCore/TMessage>
 #include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TRecoverAccountRequestData>
@@ -38,7 +37,9 @@
 #include <BPasswordGroup>
 #include <BPasswordWidget>
 #include <BTextTools>
+#include <BUuid>
 
+#include <QByteArray>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -128,7 +129,8 @@ void TRecoveryWidgetPrivate::init()
               inputPwd2 = new BInputField;
               inputPwd2->addWidget(pwdwgt2);
               pwdgrp->addPasswordWidget(pwdwgt2);
-              connect(pwdgrp, SIGNAL(passwordsMatchAndValidChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+              connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), inputPwd2, SLOT(setValid(bool)));
+              connect(pwdgrp, SIGNAL(passwordsMatchAndAcceptableChanged(bool)), this, SLOT(checkInputs()));
             flt->addRow(tr("Password confirmation:", "lbl text"), inputPwd2);
           vlt1->addLayout(flt);
         gbox->setLayout(vlt1);
@@ -190,7 +192,7 @@ void TRecoveryWidgetPrivate::getCode()
         msg.setWindowTitle(tr("Getting recovery code error", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to get recovery code due to the following error:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
@@ -216,8 +218,8 @@ void TRecoveryWidgetPrivate::recoverAccount()
     if (!b)
         return;
     TRecoverAccountRequestData data;
-    data.setPassword(pwdwgt1->openPassword());
-    data.setRecoveryCode(ledtCode->text());
+    data.setPassword(Texsample::encryptPassword(pwdwgt1->openPassword()));
+    data.setRecoveryCode(BUuid(ledtCode->text()));
     TReply r = Client->performAnonymousOperation(TOperation::RecoverAccount, data, q_func());
     if (r) {
         QMessageBox msg(q_func());
@@ -232,7 +234,7 @@ void TRecoveryWidgetPrivate::recoverAccount()
         msg.setWindowTitle(tr("Account recovering error", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to recover account due to the following error:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();

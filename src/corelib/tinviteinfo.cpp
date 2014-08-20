@@ -21,6 +21,7 @@
 
 #include "tinviteinfo.h"
 
+#include "taccesslevel.h"
 #include "tgroupinfolist.h"
 #include "tnamespace.h"
 #include "tservicelist.h"
@@ -44,6 +45,7 @@ class TInviteInfoPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TInviteInfo)
 public:
+    TAccessLevel accessLevel;
     BUuid code;
     QDateTime creationDT;
     QDateTime expirationDT;
@@ -114,9 +116,15 @@ TInviteInfo::~TInviteInfo()
 
 /*============================== Public methods ============================*/
 
+TAccessLevel TInviteInfo::accessLevel() const
+{
+    return d_func()->accessLevel;
+}
+
 void TInviteInfo::clear()
 {
     B_D(TInviteInfo);
+    d->accessLevel = TAccessLevel();
     d->code = BUuid();
     d->creationDT = QDateTime().toUTC();
     d->expirationDT = QDateTime().toUTC();
@@ -155,8 +163,8 @@ quint64 TInviteInfo::id() const
 bool TInviteInfo::isValid() const
 {
     const B_D(TInviteInfo);
-    return !d->code.isNull() && d->creationDT.isValid() && d->expirationDT.isValid() && d->id && d->ownerId
-            && !d->ownerLogin.isEmpty();
+    return d->accessLevel.isValid() && !d->code.isNull() && d->creationDT.isValid() && d->expirationDT.isValid()
+            && d->id && d->ownerId  && !d->ownerLogin.isEmpty();
 }
 
 quint64 TInviteInfo::ownerId() const
@@ -172,6 +180,11 @@ QString TInviteInfo::ownerLogin() const
 TServiceList TInviteInfo::services() const
 {
     return d_func()->services;
+}
+
+void TInviteInfo::setAccessLevel(const TAccessLevel &accessLevel)
+{
+    d_func()->accessLevel = accessLevel;
 }
 
 void TInviteInfo::setCode(const BUuid &code)
@@ -224,6 +237,7 @@ TInviteInfo &TInviteInfo::operator =(const TInviteInfo &other)
 {
     B_D(TInviteInfo);
     const TInviteInfoPrivate *dd = other.d_func();
+    d->accessLevel = dd->accessLevel;
     d->code = dd->code;
     d->creationDT = dd->creationDT;
     d->expirationDT = dd->expirationDT;
@@ -239,9 +253,9 @@ bool TInviteInfo::operator ==(const TInviteInfo &other) const
 {
     const B_D(TInviteInfo);
     const TInviteInfoPrivate *dd = other.d_func();
-    return d->code == dd->code && d->creationDT == dd->creationDT && d->expirationDT == dd->expirationDT
-            && d->groups == dd->groups && d->id == dd->id && d->ownerId == dd->ownerId
-            && d->ownerLogin == dd->ownerLogin && d->services == dd->services;
+    return d->accessLevel == dd->accessLevel && d->code == dd->code && d->creationDT == dd->creationDT
+            && d->expirationDT == dd->expirationDT && d->groups == dd->groups && d->id == dd->id
+            && d->ownerId == dd->ownerId && d->ownerLogin == dd->ownerLogin && d->services == dd->services;
 }
 
 TInviteInfo::operator QVariant() const
@@ -255,7 +269,8 @@ QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info)
 {
     const TInviteInfoPrivate *d = info.d_func();
     QVariantMap m;
-    m.insert("code", QVariant::fromValue(d->code));
+    m.insert("access_level", d->accessLevel);
+    m.insert("code", d->code);
     m.insert("creation_date_time", d->creationDT);
     m.insert("expiration_date_time", d->expirationDT);
     m.insert("grouops", d->groups);
@@ -272,6 +287,7 @@ QDataStream &operator >>(QDataStream &stream, TInviteInfo &info)
     TInviteInfoPrivate *d = info.d_func();
     QVariantMap m;
     stream >> m;
+    d->accessLevel = m.value("access_level").value<TAccessLevel>();
     d->code = m.value("code").value<BUuid>();
     d->creationDT = m.value("creation_date_time").toDateTime().toUTC();
     d->expirationDT = m.value("expiration_date_time").toDateTime().toUTC();

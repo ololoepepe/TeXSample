@@ -22,21 +22,160 @@
 #include "tlistwidget.h"
 #include "tlistwidget_p.h"
 
+#include "tabstractlistwidgetitemdelegate.h"
+
 #include <BApplication>
 #include <BBaseObject>
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QAbstractItemDelegate>
 #include <QAction>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMenu>
+#include <QModelIndex>
+#include <QObject>
+#include <QPointer>
+#include <QSize>
 #include <QString>
 #include <QStringList>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include <QToolButton>
 #include <QVariant>
+#include <QVariantList>
 #include <QWidget>
+
+/*============================================================================
+================================ TListWidgetProxyItemDelegate ================
+============================================================================*/
+
+/*============================== Public constructors =======================*/
+
+TListWidgetProxyItemDelegate::TListWidgetProxyItemDelegate(TAbstractListWidgetItemDelegate *delegate,
+                                                           TListWidgetPrivate *parent) :
+    QStyledItemDelegate(parent), ItemDelegate(delegate)
+{
+    currentEditor = 0;
+    currentRow = -1;
+    if (!delegate)
+        return;
+    if (!delegate->parent())
+        delegate->setParent(this);
+    connect(delegate, SIGNAL(closeEditor(QWidget *)), this, SIGNAL(closeEditor(QWidget *)));
+    connect(delegate, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
+            this, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)));
+    connect(delegate, SIGNAL(commitData(QWidget *)), this, SIGNAL(commitData(QWidget *)));
+    connect(delegate, SIGNAL(commitDataAndCloseEditor(QWidget *)), this, SLOT(commitDataAndCloseEditor(QWidget *)));
+    connect(delegate, SIGNAL(commitDataAndCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
+            this, SLOT(commitDataAndCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint)));
+}
+
+TListWidgetProxyItemDelegate::~TListWidgetProxyItemDelegate()
+{
+    //
+}
+
+/*============================== Public methods ============================*/
+
+QWidget *TListWidgetProxyItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                                    const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid())
+        return QStyledItemDelegate::createEditor(parent, option, index);
+    TListWidgetProxyItemDelegate *self = getSelf();
+    self->currentRow = index.row();
+    self->currentEditor = ItemDelegate->createEditor(parent, option);
+    connect(currentEditor, SIGNAL(destroyed()), this, SLOT(clearCurrent()));
+    if (ItemDelegate->hideRowsWhenEditing()) {
+        TListWidgetPrivate *lwp = qobject_cast<TListWidgetPrivate *>(self->parent());
+        self->currentText = lwp->lstwgt->item(currentRow)->text();
+        lwp->lstwgt->item(currentRow)->setText(""); //NOTE: Hack to hide the item
+        foreach (int i, bRangeD(0, lwp->lstwgt->count() - 1)) {
+            if (i == currentRow)
+                continue;
+            lwp->lstwgt->setRowHidden(i, true);
+        }
+    }
+    return currentEditor;
+}
+
+bool TListWidgetProxyItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                               const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (!ItemDelegate || !index.isValid() || index.row() != currentRow)
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
+    return ItemDelegate->editorEvent(currentEditor, event, option);
+}
+
+bool TListWidgetProxyItemDelegate::eventFilter(QObject *object, QEvent *event)
+{
+    if (ItemDelegate && ItemDelegate->eventFilter(object, event))
+        return true;
+    return QStyledItemDelegate::eventFilter(object, event);
+}
+
+TListWidgetProxyItemDelegate *TListWidgetProxyItemDelegate::getSelf() const
+{
+    return const_cast<TListWidgetProxyItemDelegate *>(this);
+}
+
+QSize TListWidgetProxyItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid() || currentEditor.isNull() || index.row() != currentRow)
+        return QStyledItemDelegate::sizeHint(option, index);
+    return ItemDelegate->sizeHint(currentEditor, option);
+}
+
+void TListWidgetProxyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid() || index.row() != currentRow)
+        return QStyledItemDelegate::setEditorData(editor, index);
+    ItemDelegate->setEditorData(editor, index.data().toString(), index.data(Qt::UserRole));
+}
+
+void TListWidgetProxyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                                const QModelIndex &index) const
+{
+    if (!ItemDelegate || !index.isValid() || !model || index.row() != currentRow)
+        return QStyledItemDelegate::setModelData(editor, model, index);
+    QString text;
+    QVariant data;
+    TListWidgetProxyItemDelegate *self = getSelf();
+    if (!ItemDelegate->setModelData(editor, text, data)) {
+        self->confirmed = false;
+        return;
+    }
+    self->confirmed = true;
+    model->setData(index, text);
+    model->setData(index, data, Qt::UserRole);
+}
+
+/*============================== Public slots ==============================*/
+
+void TListWidgetProxyItemDelegate::clearCurrent()
+{
+    if (ItemDelegate && ItemDelegate->hideRowsWhenEditing()) {
+        TListWidgetPrivate *lwp = qobject_cast<TListWidgetPrivate *>(parent());
+        if (!confirmed)
+            lwp->lstwgt->item(currentRow)->setText(currentText);
+        foreach (int i, bRangeD(0, lwp->lstwgt->count() - 1)) {
+            if (i == currentRow)
+                continue;
+            lwp->lstwgt->setRowHidden(i, false);
+        }
+    }
+    currentRow = -1;
+}
+
+void TListWidgetProxyItemDelegate::commitDataAndCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    Q_EMIT commitData(editor);
+    Q_EMIT closeEditor(editor, hint);
+}
 
 /*============================================================================
 ================================ TListWidgetPrivate ==========================
@@ -57,7 +196,7 @@ TListWidgetPrivate::~TListWidgetPrivate()
 
 /*============================== Static public methods =====================*/
 
-bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListWidget::Item &item2)
+bool TListWidgetPrivate::defaultTestItemEquality(const TListWidget::Item &item1, const TListWidget::Item &item2)
 {
     return item1.text == item2.text;
 }
@@ -66,6 +205,8 @@ bool TListWidgetPrivate::itemsEqual(const TListWidget::Item &item1, const TListW
 
 void TListWidgetPrivate::init()
 {
+    testItemEqualityFunction = &defaultTestItemEquality;
+    itemDelegate = 0;
     readOnly = false;
     maxCount = 0;
     //
@@ -123,18 +264,26 @@ void TListWidgetPrivate::addItem(QString text, QVariant data)
     QAction *act = qobject_cast<QAction *>(sender());
     if (act)
         text = act->text();
+    if (act)
+        data = act->data();
     if (text.isEmpty()) {
         QListWidgetItem *lwi = lstwgt->item(lstwgt->count() - 1);
         if (lwi && lwi->text().isEmpty())
             return;
     }
-    if (!text.isEmpty() && q_func()->items().contains(text))
+    if (!text.isEmpty()) {
+        TListWidget::Item it;
+        it.text = text;
+        it.data = data;
+        foreach (const TListWidget::Item &itt, q_func()->items()) {
+            if (testItemEqualityFunction(itt, it))
+                return;
+        }
         return;
+    }
     QListWidgetItem *lwi = new QListWidgetItem(text);
     if (!readOnly)
         lwi->setFlags(lwi->flags () | Qt::ItemIsEditable);
-    if (act)
-        data = act->data();
     lwi->setData(Qt::UserRole, data);
     int ind = lstwgt->count();
     if (!text.isEmpty() && ind && lstwgt->item(ind - 1)->text().isEmpty())
@@ -231,9 +380,43 @@ QVariant TListWidget::availableItemData(int index) const
     return list.at(index)->data();
 }
 
-QStringList TListWidget::availableItems() const
+QVariantList TListWidget::availableItemDataList() const
 {
-    QStringList list = items();
+    QVariantList list;
+    foreach (QAction *act, d_func()->tbtnAdd->menu()->actions())
+        list << act->data();
+    return list;
+}
+
+QList<TListWidget::Item> TListWidget::availableItems() const
+{
+    QList<Item> list = items();
+    foreach (QAction *act, d_func()->tbtnAdd->menu()->actions()) {
+        Item it;
+        it.data = act->data();
+        it.text = act->text();
+        list << it;
+    }
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+        foreach (int j, bRangeD(0, list.size() - 1)) {
+            if (j == i)
+                continue;
+            if (d_func()->testItemEqualityFunction(list.at(i), list.at(j))) {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+        list.removeFirst();
+    return list;
+}
+
+QStringList TListWidget::availableItemTexts() const
+{
+    QStringList list = itemTexts();
     foreach (QAction *act, d_func()->tbtnAdd->menu()->actions())
         list << act->text();
     list.removeAll("");
@@ -270,7 +453,56 @@ QVariant TListWidget::itemData(int index) const
     return d_func()->lstwgt->item(index)->data(Qt::UserRole);
 }
 
-QStringList TListWidget::items() const
+QVariantList TListWidget::itemDataList() const
+{
+    QVariantList list;
+    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1)) {
+        if (d_func()->lstwgt->item(i)->text().isEmpty())
+            continue;
+        list << d_func()->lstwgt->item(i)->data(Qt::UserRole);
+    }
+    return list;
+}
+
+TAbstractListWidgetItemDelegate *TListWidget::itemDelegate() const
+{
+    return d_func()->itemDelegate ? d_func()->itemDelegate->ItemDelegate : 0;
+}
+
+QList<TListWidget::Item> TListWidget::items() const
+{
+    QList<Item> list;
+    foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1)) {
+        Item it;
+        it.text = d_func()->lstwgt->item(i)->text();
+        it.data = d_func()->lstwgt->item(i)->data(Qt::UserRole);
+        list << it;
+    }
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).text.isEmpty())
+            list.removeAt(i);
+        foreach (int j, bRangeD(0, list.size() - 1)) {
+            if (j == i)
+                continue;
+            if (d_func()->testItemEqualityFunction(list.at(i), list.at(j))) {
+                list.removeAt(i);
+                break;
+            }
+        }
+    }
+    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+        list.removeFirst();
+    return list;
+}
+
+QString TListWidget::itemText(int index) const
+{
+    if (index < 0 || index >= d_func()->lstwgt->count())
+        return QString();
+    return d_func()->lstwgt->item(index)->text();
+}
+
+QStringList TListWidget::itemTexts() const
 {
     QStringList list;
     foreach (int i, bRangeD(0, d_func()->lstwgt->count() - 1))
@@ -297,20 +529,21 @@ void TListWidget::setAvailableItemData(int index, const QVariant &data)
 
 void TListWidget::setAvailableItems(QList<Item> list)
 {
-    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    B_D(TListWidget);
+    bRemoveDuplicates(list, d->testItemEqualityFunction);
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         if (list.at(i).text.isEmpty())
             list.removeAt(i);
     }
-    d_func()->tbtnAdd->menu()->clear();
-    while (d_func()->maxCount && list.size() > d_func()->maxCount)
+    d->tbtnAdd->menu()->clear();
+    while (d->maxCount && list.size() > d->maxCount)
         list.removeFirst();
     foreach (const Item &item, list) {
-        QAction *act = d_func()->tbtnAdd->menu()->addAction(item.text);
+        QAction *act = d->tbtnAdd->menu()->addAction(item.text);
         act->setData(item.data);
-        connect(act, SIGNAL(triggered()), d_func(), SLOT(addItem()));
+        connect(act, SIGNAL(triggered()), d, SLOT(addItem()));
     }
-    d_func()->tbtnAdd->setEnabled(!d_func()->tbtnAdd->menu()->isEmpty());
+    d->tbtnAdd->setEnabled(!d->tbtnAdd->menu()->isEmpty());
 }
 
 void TListWidget::setAvailableItems(const QStringList &list)
@@ -340,19 +573,33 @@ void TListWidget::setItemData(int index, const QVariant &data)
     d_func()->lstwgt->item(index)->setData(Qt::UserRole, data);
 }
 
+void TListWidget::setItemDelegate(TAbstractListWidgetItemDelegate *delegate)
+{
+    B_D(TListWidget);
+    if (d->itemDelegate)
+        d->lstwgt->setItemDelegate(0);
+    delete d->itemDelegate;
+    d->itemDelegate = 0;
+    if (delegate) {
+        d->itemDelegate = new TListWidgetProxyItemDelegate(delegate, d);
+        d->lstwgt->setItemDelegate(d->itemDelegate);
+    }
+}
+
 void TListWidget::setItems(QList<Item> list)
 {
-    bRemoveDuplicates(list, &TListWidgetPrivate::itemsEqual);
+    B_D(TListWidget);
+    bRemoveDuplicates(list, d->testItemEqualityFunction);
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         if (list.at(i).text.isEmpty())
             list.removeAt(i);
     }
-    d_func()->lstwgt->clear();
-    d_func()->lstwgtCurrentItemChanged(d_func()->lstwgt->currentItem());
+    d->lstwgt->clear();
+    d->lstwgtCurrentItemChanged(d->lstwgt->currentItem());
     foreach (const Item &item, list)
-        d_func()->addItem(item.text, item.data);
+        d->addItem(item.text, item.data);
     if (!isReadOnly())
-        d_func()->addItem();
+        d->addItem();
 }
 
 void TListWidget::setItems(const QStringList &list)
@@ -384,4 +631,14 @@ void TListWidget::setMaxAvailableItems(int count)
         return;
     d_func()->maxCount = count;
     setAvailableItems(availableItems());
+}
+
+void TListWidget::setTestItemEqualityFunction(TestItemEqualityFunction f)
+{
+    d_func()->testItemEqualityFunction = f ? f : &TListWidgetPrivate::defaultTestItemEquality;
+}
+
+TListWidget::TestItemEqualityFunction TListWidget::testItemEqualityFunction() const
+{
+    return d_func()->testItemEqualityFunction;
 }

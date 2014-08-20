@@ -23,6 +23,7 @@
 #ifndef TGROUPWIDGET_P_H
 #define TGROUPWIDGET_P_H
 
+class TAbstractCache;
 class TGroupModel;
 class TNetworkClient;
 
@@ -69,6 +70,7 @@ public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
+    TAbstractCache *cache;
     TNetworkClient *client;
     TGroupProxyModel *proxyModel;
     QTableView *view;
@@ -77,6 +79,7 @@ public:
     ~TGroupWidgetPrivate();
 public:
     void init();
+    void updateGroupList();
 public Q_SLOTS:
     void addGroup();
     void clientAuthorizedChanged(bool authorized);

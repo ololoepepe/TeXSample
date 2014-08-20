@@ -25,12 +25,17 @@
 
 #include "tuserinfowidget.h"
 
+#include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserReplyData>
 #include <TeXSampleCore/TAddUserRequestData>
+#include <TeXSampleCore/TDeleteUserReplyData>
 #include <TeXSampleCore/TDeleteUserRequestData>
 #include <TeXSampleCore/TEditUserReplyData>
 #include <TeXSampleCore/TEditUserRequestData>
+#include <TeXSampleCore/TGetUserInfoListAdminReplyData>
+#include <TeXSampleCore/TGetUserInfoListAdminRequestData>
+#include <TeXSampleCore/TIdList>
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleCore/TUserInfoList>
 #include <TeXSampleCore/TUserModel>
@@ -45,6 +50,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -96,6 +102,8 @@ QVariant TUserProxyModel::data(const QModelIndex &index, int role) const
     case Qt::DecorationRole: {
         //Avatar
         QPixmap p = QPixmap::fromImage(sourceModel()->data(sourceModel()->index(index.row(), 12)).value<QImage>());
+        if (p.isNull())
+            return QVariant();
         return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     case Qt::CheckStateRole: {
@@ -164,6 +172,8 @@ TUserWidgetPrivate::~TUserWidgetPrivate()
 
 void TUserWidgetPrivate::init()
 {
+    alwaysRequestAvatar = false;
+    cache = 0;
     client = 0;
     proxyModel = new TUserProxyModel(this);
     proxyModel->setSourceModel(Model);
@@ -191,6 +201,31 @@ void TUserWidgetPrivate::init()
         actEdit = tbar->addAction(BApplication::icon("edit"), tr("Edit user...", "act text"), this, SLOT(editUser()));
           actEdit->setEnabled(false);
       vlt->addWidget(tbar);
+}
+
+void TUserWidgetPrivate::updateUserList()
+{
+    if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
+        return;
+    TGetUserInfoListAdminRequestData request;
+    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetUserInfoListAdmin) : QDateTime();
+    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, dt);
+    if (!reply.success()) {
+        QMessageBox msg(q_func());
+        msg.setWindowTitle(tr("Updating user list failed", "msgbox windowTitle"));
+        msg.setIcon(QMessageBox::Critical);
+        msg.setText(tr("Failed to update user list. The following error occured:", "msgbox text"));
+        msg.setInformativeText(reply.message());
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.setDefaultButton(QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    TGetUserInfoListAdminReplyData data = reply.data().value<TGetUserInfoListAdminReplyData>();
+    Model->removeUsers(data.deletedUsers());
+    Model->addUsers(data.newUsers());
+    if (cache)
+        cache->setData(TOperation::GetUserInfoListAdmin, reply.requestDateTime(), data);
 }
 
 /*============================== Public slots ==============================*/
@@ -221,13 +256,15 @@ void TUserWidgetPrivate::addUser()
         msg.setWindowTitle(tr("Adding user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to add user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
         return;
     }
     Model->addUser(r.data().value<TAddUserReplyData>().userInfo());
+    if (cache)
+        cache->setData(TOperation::AddUser, r.requestDateTime(), r.data());
 }
 
 void TUserWidgetPrivate::clientAuthorizedChanged(bool authorized)
@@ -235,6 +272,8 @@ void TUserWidgetPrivate::clientAuthorizedChanged(bool authorized)
     actAdd->setEnabled(client && authorized
                        && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
     selectionChanged(view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        updateUserList();
 }
 
 void TUserWidgetPrivate::deleteUser()
@@ -256,13 +295,16 @@ void TUserWidgetPrivate::deleteUser()
         msg.setWindowTitle(tr("Deleting user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to delete user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
         return;
     }
+
     Model->removeUser(userId);
+    if (cache)
+        cache->removeData(TOperation::DeleteUser, userId);
 }
 
 void TUserWidgetPrivate::editUser(QModelIndex index)
@@ -282,6 +324,7 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
       TUserInfoWidget *wgt = new TUserInfoWidget(TUserInfoWidget::EditMode);
         wgt->setModel(Model);
         wgt->setClient(client);
+        wgt->setAlwaysRequestAvatar(alwaysRequestAvatar);
         wgt->setUser(userId);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(wgt->hasValidInput());
@@ -299,13 +342,15 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         msg.setWindowTitle(tr("Editing user failed", "msgbox windowTitle"));
         msg.setIcon(QMessageBox::Critical);
         msg.setText(tr("Failed to edit user. The following error occured:", "msgbox text"));
-        msg.setInformativeText(r.messageText());
+        msg.setInformativeText(r.message());
         msg.setStandardButtons(QMessageBox::Ok);
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
         return;
     }
     Model->updateUser(userId, r.data().value<TEditUserReplyData>().userInfo(), data.editAvatar());
+    if (cache)
+        cache->setData(TOperation::EditUser, r.requestDateTime(), r.data());
 }
 
 void TUserWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
@@ -340,9 +385,29 @@ TUserWidget::~TUserWidget()
 
 /*============================== Public methods ============================*/
 
+bool TUserWidget::alwaysRequestAvatar() const
+{
+    return d_func()->alwaysRequestAvatar;
+}
+
+TAbstractCache *TUserWidget::cache() const
+{
+    return d_func()->cache;
+}
+
 TNetworkClient *TUserWidget::client() const
 {
     return d_func()->client;
+}
+
+void TUserWidget::setAlwaysRequestAvatar(bool enabled)
+{
+    d_func()->alwaysRequestAvatar = enabled;
+}
+
+void TUserWidget::setCache(TAbstractCache *cache)
+{
+    d_func()->cache = cache;
 }
 
 void TUserWidget::setClient(TNetworkClient *client)
@@ -356,4 +421,6 @@ void TUserWidget::setClient(TNetworkClient *client)
     d->actAdd->setEnabled(client && client->isAuthorized()
                           && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel));
     d->selectionChanged(d->view->selectionModel()->selection(), QItemSelection());
+    if (client && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel))
+        d->updateUserList();
 }

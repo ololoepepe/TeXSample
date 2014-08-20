@@ -31,7 +31,6 @@
 #include <BeQtCore/private/bbase_p.h>
 
 #include <QByteArray>
-#include <QCryptographicHash>
 #include <QDataStream>
 #include <QDebug>
 #include <QImage>
@@ -182,11 +181,6 @@ QString TEditUserRequestData::email() const
     return d_func()->email;
 }
 
-QByteArray TEditUserRequestData::encryptedPassword() const
-{
-    return d_func()->password;
-}
-
 TIdList TEditUserRequestData::groups() const
 {
     return d_func()->groups;
@@ -207,6 +201,11 @@ bool TEditUserRequestData::isValid() const
 QString TEditUserRequestData::name() const
 {
     return d_func()->name;
+}
+
+QByteArray TEditUserRequestData::password() const
+{
+    return d_func()->password;
 }
 
 QString TEditUserRequestData::patronymic() const
@@ -274,20 +273,19 @@ void TEditUserRequestData::setName(const QString &name)
     d_func()->name = Texsample::testName(name) ? name : QString();
 }
 
-void TEditUserRequestData::setPassword(const QString &password)
+void TEditUserRequestData::setPassword(const QByteArray &password)
 {
-    d_func()->password = Texsample::testPassword(password) ?
-                QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha1) : QByteArray();
+    d_func()->password = Texsample::testPassword(password) ? password : QByteArray();
 }
 
 void TEditUserRequestData::setPatronymic(const QString &patronymic)
 {
-    d_func()->patronymic = Texsample::testName(patronymic) ? patronymic : QString();
+    d_func()->patronymic = Texsample::testPatronymic(patronymic) ? patronymic : QString();
 }
 
 void TEditUserRequestData::setSurname(const QString &surname)
 {
-    d_func()->surname = Texsample::testName(surname) ? surname : QString();
+    d_func()->surname = Texsample::testSurname(surname) ? surname : QString();
 }
 
 QString TEditUserRequestData::surname() const
