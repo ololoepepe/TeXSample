@@ -115,13 +115,13 @@ void TNetworkClientPrivate::init()
     connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(connection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
     reconnecting = false;
-    showMessageFunction = 0;
+    showMessageFunction = &TNetworkClient::defaultShowMessageFunction;
     state = TNetworkClient::DisconnectedState;
     waitForConnectedDelay = BeQt::Second / 2;
-    waitForConnectedFunction = 0;
+    waitForConnectedFunction = &TNetworkClient::defaultWaitForConnectedFunction;
     waitForConnectedTimeout = 10 * BeQt::Second;
     waitForFinishedDelay = BeQt::Second / 2;
-    waitForFinishedFunction = 0;
+    waitForFinishedFunction = &TNetworkClient::defaultWaitForFinishedFunction;
     waitForFinishedTimeout = -1;
 }
 
@@ -145,7 +145,8 @@ void TNetworkClientPrivate::showMessage(const QString &text, const QString &info
                                         QWidget *parentWidget)
 {
     if (showMessageFunction)
-        showMessageFunction(text, informativeText, error, parentWidget);
+        return showMessageFunction(text, informativeText, error, parentWidget);
+    return TNetworkClient::defaultShowMessageFunction(text, informativeText, error, parentWidget);
 }
 
 bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWidget *parentWidget, QString *msg)
@@ -159,10 +160,7 @@ bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWi
         return bRet(msg, QString(), true);
     if (waitForConnectedFunction)
         return waitForConnectedFunction(connection, waitForConnectedTimeout, parentWidget, msg);
-    BeQt::waitNonBlocking(connection, SIGNAL(connected()), waitForConnectedTimeout);
-    if (connection->isConnected())
-        return bRet(msg, QString(), true);
-    return bRet(msg, connection->errorString(), false);
+    return TNetworkClient::defaultWaitForConnectedFunction(connection, waitForConnectedTimeout, parentWidget, msg);
 }
 
 bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidget *parentWidget, QString *msg)
@@ -171,12 +169,9 @@ bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidge
         return bRet(msg, tr("Null connection pointer", "error"), false);
     if (operation->isFinished() || operation->waitForFinished(waitForFinishedDelay))
         return bRet(msg, QString(), true);
-    if (waitForFinishedFunction) {
+    if (waitForFinishedFunction)
         return waitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, msg);
-    }
-    if (operation->waitForFinished(waitForFinishedTimeout))
-        return bRet(msg, QString(), true);
-    return bRet(msg, tr("Operation timed out", "error"), false);
+    return TNetworkClient::defaultWaitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, msg);
 }
 
 /*============================== Public slots ==============================*/
@@ -239,6 +234,37 @@ TNetworkClient::TNetworkClient(TNetworkClientPrivate &d, QObject *parent) :
     QObject(parent), BBaseObject(d)
 {
     d_func()->init();
+}
+
+/*============================== Static public methods =====================*/
+
+void TNetworkClient::defaultShowMessageFunction(const QString &, const QString &, bool, QWidget *)
+{
+    //Do nothing
+}
+
+bool TNetworkClient::defaultWaitForConnectedFunction(BNetworkConnection *connection, int timeout, QWidget *,
+                                                     QString *msg)
+{
+    if (!connection)
+        return bRet(msg, tr("Null connection pointer", "error"), false);
+    if (connection->isConnected())
+        return bRet(msg, QString(), true);
+    BeQt::waitNonBlocking(connection, SIGNAL(connected()), timeout);
+    if (connection->isConnected())
+        return bRet(msg, QString(), true);
+    return bRet(msg, connection->errorString(), false);
+}
+
+bool TNetworkClient::defaultWaitForFinishedFunction(BNetworkOperation *op, int timeout, QWidget *, QString *msg)
+{
+    if (!op)
+        return bRet(msg, tr("Null connection pointer", "error"), false);
+    if (op->isFinished())
+        return bRet(msg, QString(), true);
+    if (op->waitForFinished(timeout))
+        return bRet(msg, QString(), true);
+    return bRet(msg, tr("Operation timed out", "error"), false);
 }
 
 /*============================== Public methods ============================*/

@@ -70,6 +70,13 @@ public:
 protected:
     explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
 public:
+    static void defaultShowMessageFunction(const QString &text, const QString &informativeText, bool error,
+                                    QWidget *parentWidget);
+    static bool defaultWaitForConnectedFunction(BNetworkConnection *connection, int timeout, QWidget *parentWidget,
+                                                QString *msg);
+    static bool defaultWaitForFinishedFunction(BNetworkOperation *op, int timeout, QWidget *parentWidget,
+                                               QString *msg);
+public:
     bool cachingEnabled() const;
     QString hostName() const;
     bool isAuthorized() const;
