@@ -21,6 +21,8 @@
 
 #include "tapplication.h"
 
+#include <TeXSampleCore/TApplicationBase>
+
 #include <BApplication>
 
 #include <QString>
@@ -32,20 +34,18 @@
 /*============================== Public constructors =======================*/
 
 TApplication::TApplication(int &argc, char **argv, const QString &applicationName, const QString &organizationName) :
-    BApplication(argc, argv, applicationName, organizationName)
+    BApplication(argc, argv, applicationName, organizationName), TApplicationBase()
 {
 #if defined(TSMP_BUILTIN_RESOURCES)
-    Q_INIT_RESOURCE(texsample_translations);
     Q_INIT_RESOURCE(texsamplewidgets);
 #endif
     tRegister();
 }
 
 TApplication::TApplication(int &argc, char **argv, const InitialSettings &s) :
-    BApplication(argc, argv, s)
+    BApplication(argc, argv, s), TApplicationBase()
 {
 #if defined(TSMP_BUILTIN_RESOURCES)
-    Q_INIT_RESOURCE(texsample_translations);
     Q_INIT_RESOURCE(texsamplewidgets);
 #endif
     tRegister();
@@ -54,7 +54,6 @@ TApplication::TApplication(int &argc, char **argv, const InitialSettings &s) :
 TApplication::~TApplication()
 {
 #if defined(TSMP_BUILTIN_RESOURCES)
-    Q_CLEANUP_RESOURCE(texsample_translations);
     Q_CLEANUP_RESOURCE(texsamplewidgets);
 #endif
 }

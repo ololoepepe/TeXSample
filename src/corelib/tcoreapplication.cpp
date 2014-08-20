@@ -21,6 +21,8 @@
 
 #include "tcoreapplication.h"
 
+#include "tapplicationbase.h"
+
 #include <BCoreApplication>
 
 #include <QString>
@@ -33,26 +35,18 @@
 
 TCoreApplication::TCoreApplication(int &argc, char **argv, const QString &applicationName,
                                    const QString &organizationName) :
-    BCoreApplication(argc, argv, applicationName, organizationName)
+    BCoreApplication(argc, argv, applicationName, organizationName), TApplicationBase()
 {
-#if defined(TSMP_BUILTIN_RESOURCES)
-    Q_INIT_RESOURCE(texsample_translations);
-#endif
-    tRegister();
+    //
 }
 
 TCoreApplication::TCoreApplication(int &argc, char **argv, const InitialSettings &s) :
-    BCoreApplication(argc, argv, s)
+    BCoreApplication(argc, argv, s), TApplicationBase()
 {
-#if defined(TSMP_BUILTIN_RESOURCES)
-    Q_INIT_RESOURCE(texsample_translations);
-#endif
-    tRegister();
+    //
 }
 
 TCoreApplication::~TCoreApplication()
 {
-#if defined(TSMP_BUILTIN_RESOURCES)
-    Q_CLEANUP_RESOURCE(texsample_translations);
-#endif
+    //
 }

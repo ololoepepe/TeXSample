@@ -38,7 +38,7 @@ texsampleLibsPath=$${PWD}/../../lib
 
 win32 {
     #Set suffix for libraries names
-    libNameSuffix=1
+    libNameSuffix=2
 }
 
 #Gets short module name, for example "core", "widgets", etc.

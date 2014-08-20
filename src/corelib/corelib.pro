@@ -14,6 +14,7 @@ DEFINES += TSMP_BUILD_CORE_LIB
 HEADERS += \
     tabstractcache.h \
     taccesslevel.h \
+    tapplicationbase.h \
     tauthorinfo.h \
     tauthorinfolist.h \
     tbinaryfile.h \
@@ -60,6 +61,7 @@ HEADERS += \
 SOURCES += \
     tabstractcache.cpp \
     taccesslevel.cpp \
+    tapplicationbase.cpp \
     tauthorinfo.cpp \
     tauthorinfolist.cpp \
     tbinaryfile.cpp \

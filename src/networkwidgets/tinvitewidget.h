@@ -39,7 +39,7 @@ class TNetworkClient;
 ================================ TInviteWidget ===============================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TInviteWidget : public QWidget, public BBaseObject
+class T_NETWORKWIDGETS_EXPORT TInviteWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
     B_DECLARE_PRIVATE(TInviteWidget)
