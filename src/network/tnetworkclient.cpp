@@ -315,6 +315,12 @@ TReply TNetworkClient::performAnonymousOperation(const QString &operation, const
     return performAnonymousOperation(operation, data, QDateTime(), parentWidget);
 }
 
+TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data, int timeout,
+                                                 QWidget *parentWidget)
+{
+    return performAnonymousOperation(operation, data, QDateTime(), timeout, parentWidget);
+}
+
 TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data,
                                                  const QDateTime &lastRequestDateTime, QWidget *parentWidget)
 {
@@ -332,6 +338,12 @@ TReply TNetworkClient::performAnonymousOperation(const QString &operation, const
 TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget)
 {
     return performOperation(operation, data, QDateTime(), parentWidget);
+}
+
+TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data, int timeout,
+                                        QWidget *parentWidget)
+{
+    return performOperation(operation, data, QDateTime(), timeout, parentWidget);
 }
 
 TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data,
