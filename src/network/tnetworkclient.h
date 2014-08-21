@@ -85,11 +85,16 @@ public:
     QString login() const;
     QByteArray password() const;
     TReply performAnonymousOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    TReply performAnonymousOperation(const QString &operation, const QVariant &data,
+                                     const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
     virtual TReply performAnonymousOperation(const QString &operation, const QVariant &data,
-                                             const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+                                             const QDateTime &lastRequestDateTime, int timeout,
+                                             QWidget *parentWidget = 0);
     TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    TReply performOperation(const QString &operation, const QVariant &data, const QDateTime &lastRequestDateTime,
+                            QWidget *parentWidget = 0);
     virtual TReply performOperation(const QString &operation, const QVariant &data,
-                                    const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+                                    const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget = 0);
     void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
     void setLogin(const QString &login);

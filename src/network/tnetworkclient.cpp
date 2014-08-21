@@ -70,7 +70,7 @@ TNetworkClientPrivate::~TNetworkClientPrivate()
 /*============================== Public methods ============================*/
 
 TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, const QString &operation,
-                                               const QVariant &data, const QDateTime &lastRequestDateTime,
+                                               const QVariant &data, const QDateTime &lastRequestDateTime, int timeout,
                                                QWidget *parentWidget)
 {
     if (operation.isEmpty())
@@ -93,7 +93,7 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     request.setLastRequestDateTime(lastRequestDateTime);
     QScopedPointer<BNetworkOperation> op(connection->sendRequest(operation, request));
     QString msg;
-    if (!waitForFinished(op.data(), parentWidget, &msg)) {
+    if (!waitForFinished(op.data(), timeout, parentWidget, &msg)) {
         if (scopedConnection)
             delete connection;
         else
@@ -165,15 +165,16 @@ bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWi
     return TNetworkClient::defaultWaitForConnectedFunction(connection, waitForConnectedTimeout, parentWidget, msg);
 }
 
-bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, QWidget *parentWidget, QString *msg)
+bool TNetworkClientPrivate::waitForFinished(BNetworkOperation *operation, int timeout, QWidget *parentWidget,
+                                            QString *msg)
 {
     if (!operation)
         return bRet(msg, tr("Null connection pointer", "error"), false);
     if (operation->isFinished() || operation->waitForFinished(waitForFinishedDelay))
         return bRet(msg, QString(), true);
     if (waitForFinishedFunction)
-        return waitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, msg);
-    return TNetworkClient::defaultWaitForFinishedFunction(operation, waitForFinishedTimeout, parentWidget, msg);
+        return waitForFinishedFunction(operation, timeout, parentWidget, msg);
+    return TNetworkClient::defaultWaitForFinishedFunction(operation, timeout, parentWidget, msg);
 }
 
 /*============================== Public slots ==============================*/
@@ -315,9 +316,17 @@ TReply TNetworkClient::performAnonymousOperation(const QString &operation, const
 }
 
 TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data,
-                                                 const QDateTime &lastRequestDateTime,QWidget *parentWidget)
+                                                 const QDateTime &lastRequestDateTime, QWidget *parentWidget)
 {
-    return d_func()->performOperation(0, operation, data, lastRequestDateTime, parentWidget);
+    return performAnonymousOperation(operation, data, lastRequestDateTime, d_func()->waitForFinishedTimeout,
+                                     parentWidget);
+}
+
+TReply TNetworkClient::performAnonymousOperation(const QString &operation, const QVariant &data,
+                                                 const QDateTime &lastRequestDateTime, int timeout,
+                                                 QWidget *parentWidget)
+{
+    return d_func()->performOperation(0, operation, data, lastRequestDateTime, timeout, parentWidget);
 }
 
 TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget)
@@ -328,9 +337,16 @@ TReply TNetworkClient::performOperation(const QString &operation, const QVariant
 TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data,
                                         const QDateTime &lastRequestDateTime, QWidget *parentWidget)
 {
+    return performOperation(operation, data, lastRequestDateTime, d_func()->waitForFinishedTimeout, parentWidget);
+}
+
+TReply TNetworkClient::performOperation(const QString &operation, const QVariant &data,
+                                        const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget)
+{
     if (!isAuthorized() && TOperation::Authorize != operation)
         return TReply(tr("Not authorized", "error"));
-    return d_func()->performOperation(d_func()->connection, operation, data, lastRequestDateTime, parentWidget);
+    return d_func()->performOperation(d_func()->connection, operation, data, lastRequestDateTime, timeout,
+                                      parentWidget);
 }
 
 void TNetworkClient::setCachingEnabled(bool enabled)
