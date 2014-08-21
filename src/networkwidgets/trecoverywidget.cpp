@@ -40,6 +40,7 @@
 #include <BUuid>
 
 #include <QByteArray>
+#include <QFont>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>

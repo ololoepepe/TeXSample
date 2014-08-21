@@ -74,6 +74,14 @@
     </message>
 </context>
 <context>
+    <name>TConfirmationWidgetPrivate</name>
+    <message>
+        <source>Code:</source>
+        <comment>lbl text</comment>
+        <translation>Код:</translation>
+    </message>
+</context>
+<context>
     <name>TGroupModel</name>
     <message>
         <source>ID</source>
