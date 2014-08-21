@@ -297,6 +297,7 @@ void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode
     if (SeparateMode == mode) {
         inputPwdOld = new BInputField;
           pwdwgtOld = new BPasswordWidget;
+            pwdwgtOld->setSavePasswordVisible(false);
             pwdwgtOld->setValidator(new QRegExpValidator(rx, this));
             connect(pwdwgtOld, SIGNAL(passwordChanged()), this, SLOT(checkChangeEmailInputs()));
             connect(pwdwgtOld, SIGNAL(passwordChanged()), this, SLOT(checkChangePasswordInputs()));

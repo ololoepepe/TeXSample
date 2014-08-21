@@ -98,6 +98,8 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
             delete connection;
         else
             connection->close();
+        if (op->isError())
+            op.take(); //NOTE: Required to prevent double deletion when autoDelete is set to true
         return TReply(msg);
     }
     if (scopedConnection)

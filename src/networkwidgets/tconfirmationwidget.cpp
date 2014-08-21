@@ -29,6 +29,7 @@
 #include <BeQtCore/private/bbaseobject_p.h>
 #include <BGuiTools>
 #include <BInputField>
+#include <BUuid>
 
 #include <QFont>
 #include <QFormLayout>
@@ -98,6 +99,11 @@ TConfirmationWidget::~TConfirmationWidget()
 }
 
 /*============================== Public methods ============================*/
+
+BUuid TConfirmationWidget::code() const
+{
+    return BUuid(d_func()->ledtCode->text());
+}
 
 bool TConfirmationWidget::hasValidInput() const
 {

@@ -25,6 +25,8 @@
 
 class TConfirmationWidgetPrivate;
 
+class BUuid;
+
 #include <TeXSampleCore/TeXSampleGlobal>
 
 #include <BBaseObject>
@@ -43,6 +45,7 @@ public:
     explicit TConfirmationWidget(QWidget *parent = 0);
     ~TConfirmationWidget();
 public:
+    BUuid code() const;
     bool hasValidInput() const;
 Q_SIGNALS:
     void inputValidityChanged(bool valid);
