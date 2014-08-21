@@ -1058,11 +1058,11 @@ void TUserInfoWidget::setClient(TNetworkClient *client)
         setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
 
-void TUserInfoWidget::setUser(quint64 userId)
+bool TUserInfoWidget::setUser(quint64 userId)
 {
     B_D(TUserInfoWidget);
     if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
-        return;
+        return false;
     if (d->client && d->client->isAuthorized()) {
         QVariant requestData;
         QString op;
@@ -1092,7 +1092,7 @@ void TUserInfoWidget::setUser(quint64 userId)
             msg.setStandardButtons(QMessageBox::Ok);
             msg.setDefaultButton(QMessageBox::Ok);
             msg.exec();
-            return;
+            return false;
         }
         TUserInfo info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
                                  reply.data().value<TGetUserInfoReplyData>().userInfo();
@@ -1130,6 +1130,7 @@ void TUserInfoWidget::setUser(quint64 userId)
     d->setGroups(info.groups());
     d->setServices(info.availableServices());
     d->checkInputs();
+    return info.isValid();
 }
 
 void TUserInfoWidget::setModel(TUserModel *model)
