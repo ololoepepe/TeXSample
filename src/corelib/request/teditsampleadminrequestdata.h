@@ -25,7 +25,7 @@
 class TEditSampleAdminRequestDataPrivate;
 
 class TAuthorInfoList;
-class TIdList;
+class TSampleType;
 class TTexProject;
 
 class QDataStream;
@@ -57,7 +57,6 @@ public:
     void clear();
     QString description() const;
     bool editProject() const;
-    TIdList groups() const;
     bool isValid() const;
     TTexProject project() const;
     quint8 rating() const;
@@ -65,13 +64,14 @@ public:
     void setAuthors(const TAuthorInfoList &authors);
     void setDescritpion(const QString &description);
     void setEditProject(bool edit);
-    void setGroups(const TIdList &groups);
     void setProject(const TTexProject &project);
     void setRating(quint8 rating);
     void setTags(const QStringList &tags);
     void setTitle(const QString &title);
+    void setType(const TSampleType &type);
     QStringList tags() const;
     QString title() const;
+    TSampleType type() const;
 public:
     TEditSampleAdminRequestData &operator =(const TEditSampleAdminRequestData &other);
     bool operator ==(const TEditSampleAdminRequestData &other) const;

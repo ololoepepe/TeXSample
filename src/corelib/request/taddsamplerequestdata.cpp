@@ -22,7 +22,6 @@
 #include "taddsamplerequestdata.h"
 
 #include "tauthorinfolist.h"
-#include "tidlist.h"
 #include "tnamespace.h"
 #include "ttexproject.h"
 
@@ -47,7 +46,6 @@ class TAddSampleRequestDataPrivate : public BBasePrivate
 public:
     TAuthorInfoList authors;
     QString description;
-    TIdList groups;
     TTexProject project;
     QStringList tags;
     QString title;
@@ -120,7 +118,6 @@ void TAddSampleRequestData::clear()
     B_D(TAddSampleRequestData);
     d->authors.clear();
     d->description.clear();
-    d->groups.clear();
     d->project.clear();
     d->tags.clear();
     d->title.clear();
@@ -129,11 +126,6 @@ void TAddSampleRequestData::clear()
 QString TAddSampleRequestData::description() const
 {
     return d_func()->description;
-}
-
-TIdList TAddSampleRequestData::groups() const
-{
-    return d_func()->groups;
 }
 
 bool TAddSampleRequestData::isValid() const
@@ -155,14 +147,6 @@ void TAddSampleRequestData::setAuthors(const TAuthorInfoList &authors)
 void TAddSampleRequestData::setDescritpion(const QString &description)
 {
     d_func()->description = Texsample::testLabDescription(description) ? description : QString();
-}
-
-void TAddSampleRequestData::setGroups(const TIdList &groups)
-{
-    B_D(TAddSampleRequestData);
-    d->groups = groups;
-    d->groups.removeAll(0);
-    bRemoveDuplicates(d->groups);
 }
 
 void TAddSampleRequestData::setProject(const TTexProject &project)
@@ -200,7 +184,6 @@ TAddSampleRequestData &TAddSampleRequestData::operator =(const TAddSampleRequest
     const TAddSampleRequestDataPrivate *dd = other.d_func();
     d->authors = dd->authors;
     d->description = dd->description;
-    d->groups = dd->groups;
     d->project = dd->project;
     d->tags = dd->tags;
     d->title = dd->title;
@@ -211,8 +194,8 @@ bool TAddSampleRequestData::operator ==(const TAddSampleRequestData &other) cons
 {
     const B_D(TAddSampleRequestData);
     const TAddSampleRequestDataPrivate *dd = other.d_func();
-    return d->authors == dd->authors && d->description == dd->description && d->groups == dd->groups
-            && d->project == dd->project && d->tags == dd->tags && d->title == dd->title;
+    return d->authors == dd->authors && d->description == dd->description && d->project == dd->project
+            && d->tags == dd->tags && d->title == dd->title;
 }
 
 bool TAddSampleRequestData::operator !=(const TAddSampleRequestData &other) const
@@ -233,7 +216,6 @@ QDataStream &operator <<(QDataStream &stream, const TAddSampleRequestData &data)
     QVariantMap m;
     m.insert("authors", d->authors);
     m.insert("description", d->description);
-    m.insert("groups", d->groups);
     m.insert("project", d->project);
     m.insert("tags", d->tags);
     m.insert("title", d->title);
@@ -248,7 +230,6 @@ QDataStream &operator >>(QDataStream &stream, TAddSampleRequestData &data)
     stream >> m;
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->description = m.value("description").toString();
-    d->groups = m.value("groups").value<TIdList>();
     d->project = m.value("project").value<TTexProject>();
     d->tags = m.value("tags").toStringList();
     d->title = m.value("title").toString();

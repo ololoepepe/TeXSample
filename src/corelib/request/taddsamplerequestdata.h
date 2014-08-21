@@ -25,7 +25,6 @@
 class TAddSampleRequestDataPrivate;
 
 class TAuthorInfoList;
-class TIdList;
 class TTexProject;
 
 class QDataStream;
@@ -55,12 +54,10 @@ public:
     TAuthorInfoList authors() const;
     void clear();
     QString description() const;
-    TIdList groups() const;
     bool isValid() const;
     TTexProject project() const;
     void setAuthors(const TAuthorInfoList &authors);
     void setDescritpion(const QString &description);
-    void setGroups(const TIdList &groups);
     void setProject(const TTexProject &project);
     void setTags(const QStringList &tags);
     void setTitle(const QString &title);

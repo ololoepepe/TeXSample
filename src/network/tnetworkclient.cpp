@@ -153,6 +153,8 @@ bool TNetworkClientPrivate::waitForConnected(BNetworkConnection *connection, QWi
 {
     if (!connection)
         return bRet(msg, tr("Null connection pointer", "error"), false);
+    if (connection->error() != QAbstractSocket::UnknownSocketError)
+        return bRet(msg, connection->errorString(), false);
     if (connection->isConnected())
         return bRet(msg, QString(), true);
     BeQt::waitNonBlocking(connection, SIGNAL(connected()), waitForConnectedDelay);
@@ -248,6 +250,8 @@ bool TNetworkClient::defaultWaitForConnectedFunction(BNetworkConnection *connect
 {
     if (!connection)
         return bRet(msg, tr("Null connection pointer", "error"), false);
+    if (connection->error() != QAbstractSocket::UnknownSocketError)
+        return bRet(msg, connection->errorString(), false);
     if (connection->isConnected())
         return bRet(msg, QString(), true);
     BeQt::waitNonBlocking(connection, SIGNAL(connected()), timeout);

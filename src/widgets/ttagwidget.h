@@ -47,8 +47,10 @@ protected:
     explicit TTagWidget(TTagWidgetPrivate &d, QWidget *parent = 0);
 public:
     QStringList availableTags() const;
+    bool buttonsVisible() const;
     bool isReadOnly() const;
     void setAvailableTags(const QStringList &list);
+    void setButtonsVisible(bool b);
     void setReadOnly(bool ro);
     void setTags(const QStringList &list);
     QStringList tags() const;

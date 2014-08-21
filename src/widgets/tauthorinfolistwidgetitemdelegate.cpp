@@ -84,7 +84,7 @@ bool TAuthorInfoDelegateWidget::eventFilter(QObject *, QEvent *event)
     if (event->type() == QEvent::Resize && parentWidget()) {
         QResizeEvent *re = static_cast<QResizeEvent *>(event);
         setFixedWidth(qMax(re->size().width() - 4, sizeHint().width()));
-        setFixedHeight(qMin(re->size().height() - 4, sizeHint().height()));
+        setFixedHeight(qMax(re->size().height() - 4, sizeHint().height()));
     }
     return false;
 }
@@ -181,7 +181,7 @@ QWidget *TAuthorInfoListWidgetItemDelegate::createEditor(QWidget *parent, const 
     connect(wgt, SIGNAL(commitDataAndCloseEditor(QWidget *)), d, SLOT(commitDataAndCloseEditor(QWidget *)));
     if (parent) {
         wgt->setFixedWidth(qMax(parent->width() - 4, wgt->sizeHint().width()));
-        wgt->setFixedHeight(qMin(parent->height() - 4, wgt->sizeHint().height()));
+        wgt->setFixedHeight(qMax(parent->height() - 4, wgt->sizeHint().height()));
     }
     connect(wgt, SIGNAL(destroyed()), d, SLOT(clearCurrent()));
     const_cast<TAuthorInfoListWidgetItemDelegate *>(this)->d_func()->currentEditor = wgt;
