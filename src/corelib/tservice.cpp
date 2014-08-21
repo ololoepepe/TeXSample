@@ -86,8 +86,7 @@ QString TService::serviceToString(Service srv)
 
 QString TService::serviceToStringNoTr(Service srv)
 {
-    switch (srv)
-    {
+    switch (srv) {
     case TexsampleService:
         return QT_TRANSLATE_NOOP("TService", "TeXSample");
     case CloudlabService:

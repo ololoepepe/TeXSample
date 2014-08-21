@@ -95,8 +95,7 @@ QString TSampleType::sampleTypeToString(TSampleType type, bool singular)
 
 QString TSampleType::sampleTypeToStringNoTr(TSampleType type, bool singular)
 {
-    switch (type)
-    {
+    switch (type) {
     case Unverified:
         return singular ? QT_TRANSLATE_NOOP("TSampleType singular", "Unverified") :
                           QT_TRANSLATE_NOOP("TSampleType plural", "Unverified");

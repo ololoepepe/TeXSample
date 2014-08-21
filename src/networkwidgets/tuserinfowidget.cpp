@@ -37,6 +37,8 @@
 #include <TeXSampleCore/TEditSelfRequestData>
 #include <TeXSampleCore/TEditUserRequestData>
 #include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TGetSelfInfoReplyData>
+#include <TeXSampleCore/TGetSelfInfoRequestData>
 #include <TeXSampleCore/TGetUserAvatarReplyData>
 #include <TeXSampleCore/TGetUserAvatarRequestData>
 #include <TeXSampleCore/TGetUserInfoAdminReplyData>
@@ -455,6 +457,7 @@ void TUserInfoWidgetPrivate::init()
             flt = new QFormLayout(gbox);
               createPasswordGroup(flt, SeparateMode);
               createEmailGroup(flt, SeparateMode);
+          vlt->addWidget(gbox);
           flt = new QFormLayout;
             createRegistrationDateTimeField(flt);
             createLastModificationDateTimeField(flt);
@@ -636,9 +639,9 @@ void TUserInfoWidgetPrivate::checkInputs()
     bool idValid = TUserInfoWidget::AddMode == Mode || TUserInfoWidget::RegisterMode == Mode || id;
     bool inviteValid = !ledtInvite || ledtInvite->hasAcceptableInput();
     bool loginValid = !ledtLogin || (ledtLogin->hasAcceptableInput() && !occupiedLogins.contains(ledtLogin->text()));
-    bool emailValid = !edtgrpEmail || (edtgrpEmail->textsMatchAndAcceptable()
-                                       && !occupiedEmails.contains(ledtEmail1->text()));
-    bool passwordValid = !pwdgrp || pwdgrp->passwordsMatchAndAcceptable();
+    bool emailValid = !edtgrpEmail || btnChangeEmail || (edtgrpEmail->textsMatchAndAcceptable()
+                                                         && !occupiedEmails.contains(ledtEmail1->text()));
+    bool passwordValid = !pwdgrp || btnChangePassword || pwdgrp->passwordsMatchAndAcceptable();
     if (cboxChangeEmail) {
         inputEmail1->setEnabled(cboxChangeEmail->isChecked());
         inputEmail2->setEnabled(cboxChangeEmail->isChecked());
@@ -1054,8 +1057,6 @@ void TUserInfoWidget::setClient(TNetworkClient *client)
     }
     d->clientAuthorizedChanged(client && client->isAuthorized());
     d->clientAnonymousValidityChanged(client && client->isValid(true));
-    if (EditSelfMode == d->Mode)
-        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
 
 bool TUserInfoWidget::setUser(quint64 userId)
@@ -1068,7 +1069,11 @@ bool TUserInfoWidget::setUser(quint64 userId)
         QString op;
         bool admin = d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
         bool avatar = (EditMode == d->Mode || EditSelfMode == d->Mode || d->alwaysRequestAvatar);
-        if (admin) {
+        if (EditSelfMode == d->Mode) {
+            TGetSelfInfoRequestData request;
+            op = TOperation::GetSelfInfo;
+            requestData = request;
+        } else if (admin) {
             TGetUserInfoAdminRequestData request;
             request.setIdentifier(userId);
             request.setIncludeAvatar(avatar);
@@ -1094,11 +1099,21 @@ bool TUserInfoWidget::setUser(quint64 userId)
             msg.exec();
             return false;
         }
-        TUserInfo info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
-                                 reply.data().value<TGetUserInfoReplyData>().userInfo();
-        d->model->updateUser(userId, info, !avatar);
-        if (d->cache)
-            d->cache->setData(op, reply.requestDateTime(), reply.data());
+        if (!reply.cacheUpToDate()) {
+            TUserInfo info;
+            if (EditSelfMode == d->Mode) {
+                info = reply.data().value<TGetSelfInfoReplyData>().userInfo();
+            } else {
+                info = admin ? reply.data().value<TGetUserInfoAdminReplyData>().userInfo() :
+                               reply.data().value<TGetUserInfoReplyData>().userInfo();
+            }
+            if (d->model->userInfo(userId).isValid())
+                d->model->updateUser(userId, info, !avatar);
+            else
+                d->model->addUser(info);
+            if (d->cache)
+                d->cache->setData(op, reply.requestDateTime(), reply.data());
+        }
     }
     TUserInfo info = d->model->userInfo(userId);
     d->id = info.id();
@@ -1137,6 +1152,4 @@ void TUserInfoWidget::setModel(TUserModel *model)
 {
     B_D(TUserInfoWidget);
     d->model = model;
-    if (EditSelfMode == d->Mode)
-        setUser(d->client && d->client->isAuthorized() ? d->client->userInfo().id() : 0);
 }
