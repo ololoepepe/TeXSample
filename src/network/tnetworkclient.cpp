@@ -48,6 +48,7 @@ class QWidget;
 #include <QMetaObject>
 #include <QObject>
 #include <QScopedPointer>
+#include <QTimer>
 #include <QVariant>
 
 /*============================================================================
@@ -67,7 +68,37 @@ TNetworkClientPrivate::~TNetworkClientPrivate()
     //
 }
 
+/*============================== Static public methods =====================*/
+
+bool TNetworkClientPrivate::handleNoopRequest(BNetworkOperation *op)
+{
+    op->reply();
+    return true;
+}
+
 /*============================== Public methods ============================*/
+
+void TNetworkClientPrivate::init()
+{
+    pingInterval = 0;
+    pingTimeout = 5 * BeQt::Minute;
+    connect(&pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
+    caching = false;
+    connection = new BNetworkConnection(BGenericSocket::TcpSocket, this);
+    connect(connection, SIGNAL(connected()), this, SLOT(connected()));
+    connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(connection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
+    connection->installRequestHandler(BNetworkConnection::NoopOperation, &handleNoopRequest);
+    reconnecting = false;
+    showMessageFunction = &TNetworkClient::defaultShowMessageFunction;
+    state = TNetworkClient::DisconnectedState;
+    waitForConnectedDelay = BeQt::Second / 2;
+    waitForConnectedFunction = &TNetworkClient::defaultWaitForConnectedFunction;
+    waitForConnectedTimeout = 10 * BeQt::Second;
+    waitForFinishedDelay = BeQt::Second / 2;
+    waitForFinishedFunction = &TNetworkClient::defaultWaitForFinishedFunction;
+    waitForFinishedTimeout = -1;
+}
 
 TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, const QString &operation,
                                                const QVariant &data, const QDateTime &lastRequestDateTime, int timeout,
@@ -107,24 +138,6 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     if (op->isError())
         return TReply(tr("Operation error", "error"));
     return op->variantData().value<TReply>();
-}
-
-void TNetworkClientPrivate::init()
-{
-    caching = false;
-    connection = new BNetworkConnection(BGenericSocket::TcpSocket, this);
-    connect(connection, SIGNAL(connected()), this, SLOT(connected()));
-    connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(connection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
-    reconnecting = false;
-    showMessageFunction = &TNetworkClient::defaultShowMessageFunction;
-    state = TNetworkClient::DisconnectedState;
-    waitForConnectedDelay = BeQt::Second / 2;
-    waitForConnectedFunction = &TNetworkClient::defaultWaitForConnectedFunction;
-    waitForConnectedTimeout = 10 * BeQt::Second;
-    waitForFinishedDelay = BeQt::Second / 2;
-    waitForFinishedFunction = &TNetworkClient::defaultWaitForFinishedFunction;
-    waitForFinishedTimeout = -1;
 }
 
 void TNetworkClientPrivate::setState(TNetworkClient::State s, TUserInfo info)
@@ -192,6 +205,8 @@ void TNetworkClientPrivate::connected()
     if (reply.success()) {
         TAuthorizeReplyData replyData = reply.data().value<TAuthorizeReplyData>();
         setState(TNetworkClient::AuthorizedState, replyData.userInfo());
+        if (pingInterval > 0 && pingTimeout > 0)
+            pingTimer.start(pingInterval);
     } else {
         q_func()->disconnectFromServer();
         showMessage(reply.message(), "", true);
@@ -200,6 +215,7 @@ void TNetworkClientPrivate::connected()
 
 void TNetworkClientPrivate::disconnected()
 {
+    pingTimer.stop();
     setState(TNetworkClient::DisconnectedState);
     if (reconnecting) {
         reconnecting = false;
@@ -209,11 +225,22 @@ void TNetworkClientPrivate::disconnected()
 
 void TNetworkClientPrivate::error(QAbstractSocket::SocketError)
 {
+    pingTimer.stop();
     setState(TNetworkClient::DisconnectedState);
     QString errorString = connection->errorString();
     if (connection->isConnected())
         connection->close();
     showMessage(tr("An error occured", "message text"), errorString, true);
+}
+
+void TNetworkClientPrivate::ping()
+{
+    if (pingTimeout <= 0)
+        return pingTimer.stop();
+    BNetworkOperation *op = connection->sendRequest(BNetworkConnection::operation(BNetworkConnection::NoopOperation));
+    op->setAutoDelete(true);
+    if (!op->waitForFinished(pingTimeout))
+        q_func()->disconnectFromServer();
 }
 
 /*============================================================================
@@ -363,6 +390,16 @@ TReply TNetworkClient::performOperation(const QString &operation, const QVariant
                                       parentWidget);
 }
 
+int TNetworkClient::pingInterval() const
+{
+    return d_func()->pingInterval;
+}
+
+int TNetworkClient::pingTimeout() const
+{
+    return d_func()->pingTimeout;
+}
+
 void TNetworkClient::setCachingEnabled(bool enabled)
 {
     d_func()->caching = enabled;
@@ -406,6 +443,20 @@ void TNetworkClient::setPassword(const QByteArray &password)
         Q_EMIT passwordChanged(pwd);
     if (bvalid != isValid())
         Q_EMIT validityChanged(!bvalid);
+}
+
+void TNetworkClient::setPingInterval(int msecs)
+{
+    B_D(TNetworkClient);
+    d->pingInterval = (msecs > 0) ? msecs : 0;
+    d->pingTimer.stop();
+    if (msecs > 0 && d->pingTimeout > 0 && isAuthorized())
+        d->pingTimer.start(msecs);
+}
+
+void TNetworkClient::setPingTimeout(int msecs)
+{
+    d_func()->pingTimeout = (msecs > 0) ? msecs : 0;
 }
 
 void TNetworkClient::setShowMessageFunction(ShowMessageFunction function)

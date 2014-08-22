@@ -39,8 +39,9 @@ class QWidget;
 
 #include <QAbstractSocket>
 #include <QByteArray>
-#include <QString>
 #include <QObject>
+#include <QString>
+#include <QTimer>
 
 /*============================================================================
 ================================ TNetworkClientPrivate =======================
@@ -56,9 +57,12 @@ public:
     QString hostName;
     QString login;
     QByteArray password;
+    int pingInterval;
+    int pingTimeout;
     bool reconnecting;
     TNetworkClient::ShowMessageFunction showMessageFunction;
     TNetworkClient::State state;
+    QTimer pingTimer;
     TUserInfo userInfo;
     int waitForConnectedDelay;
     TNetworkClient::WaitForConnectedFunction waitForConnectedFunction;
@@ -70,9 +74,11 @@ public:
     explicit TNetworkClientPrivate(TNetworkClient *q);
     ~TNetworkClientPrivate();
 public:
+    static bool handleNoopRequest(BNetworkOperation *op);
+public:
+    void init();
     TReply performOperation(BNetworkConnection *connection, const QString &operation, const QVariant &data,
                             const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget = 0);
-    void init();
     void setState(TNetworkClient::State s, TUserInfo info = TUserInfo());
     void showMessage(const QString &text, const QString &informativeText = QString(), bool error = true,
                      QWidget *parentWidget = 0);
@@ -82,6 +88,7 @@ public Q_SLOTS:
     void connected();
     void disconnected();
     void error(QAbstractSocket::SocketError error);
+    void ping();
 private:
     Q_DISABLE_COPY(TNetworkClientPrivate)
 };

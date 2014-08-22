@@ -98,10 +98,14 @@ public:
                             QWidget *parentWidget = 0);
     virtual TReply performOperation(const QString &operation, const QVariant &data,
                                     const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget = 0);
+    int pingInterval() const;
+    int pingTimeout() const;
     void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
     void setLogin(const QString &login);
     void setPassword(const QByteArray &password);
+    void setPingInterval(int msecs);
+    void setPingTimeout(int msecs);
     void setShowMessageFunction(ShowMessageFunction function);
     void setWaitForConnectedDelay(int msecs);
     void setWaitForConnectedFunction(WaitForConnectedFunction function);
