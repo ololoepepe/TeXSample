@@ -37,12 +37,8 @@ texsampleLibsPath=$${PWD}/../../lib
 !exists($${texsampleLibsPath}):error("TeXSample libs not found")
 
 win32 {
-    #If CONFIG contains "release" or "debug", set special suffix for libs' path
-    releaseDebugSuffix=
-    CONFIG(release, debug|release):releaseDebugSuffix=/release
-    CONFIG(debug, debug|release):releaseDebugSuffix=/debug
     #Set suffix for libraries names
-    libNameSuffix=1
+    libNameSuffix=2
 }
 
 #Gets short module name, for example "core", "widgets", etc.
@@ -52,7 +48,7 @@ defineTest(addTexsampleModule) {
     fullName=$$fullTexsampleModuleName($${shortName})
     INCLUDEPATH *= $${texsampleHeadersPath}/$${fullName}
     DEPENDPATH *= $${texsampleHeadersPath}/$${fullName}
-    LIBS *= -L$${texsampleLibsPath}$${releaseDebugSuffix}/ -l$${fullName}$${libNameSuffix}
+    LIBS *= -L$${texsampleLibsPath}/ -l$${fullName}$${libNameSuffix}
     export(INCLUDEPATH)
     export(DEPENDPATH)
     export(LIBS)

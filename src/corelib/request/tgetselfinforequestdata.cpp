@@ -37,8 +37,6 @@ class TGetSelfInfoRequestDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TGetSelfInfoRequestData)
 public:
-    bool includeAvatar;
-public:
     explicit TGetSelfInfoRequestDataPrivate(TGetSelfInfoRequestData *q);
     ~TGetSelfInfoRequestDataPrivate();
 public:
@@ -68,7 +66,7 @@ TGetSelfInfoRequestDataPrivate::~TGetSelfInfoRequestDataPrivate()
 
 void TGetSelfInfoRequestDataPrivate::init()
 {
-    includeAvatar = false;
+    //
 }
 
 /*============================================================================
@@ -95,43 +93,20 @@ TGetSelfInfoRequestData::~TGetSelfInfoRequestData()
     //
 }
 
-/*============================== Public methods ============================*/
-
-void TGetSelfInfoRequestData::clear()
-{
-    d_func()->includeAvatar = false;
-}
-
-bool TGetSelfInfoRequestData::includeAvatar() const
-{
-    return d_func()->includeAvatar;
-}
-
-bool TGetSelfInfoRequestData::isValid() const
-{
-    return true;
-}
-
-void TGetSelfInfoRequestData::setIncludeAvatar(bool include)
-{
-    d_func()->includeAvatar = include;
-}
-
 /*============================== Public operators ==========================*/
 
-TGetSelfInfoRequestData &TGetSelfInfoRequestData::operator =(const TGetSelfInfoRequestData &other)
+TGetSelfInfoRequestData &TGetSelfInfoRequestData::operator =(const TGetSelfInfoRequestData &/*other*/)
 {
-    B_D(TGetSelfInfoRequestData);
-    const TGetSelfInfoRequestDataPrivate *dd = other.d_func();
-    d->includeAvatar = dd->includeAvatar;
+    //B_D(TGetSelfInfoRequestData);
+    //const TGetSelfInfoRequestDataPrivate *dd = other.d_func();
     return *this;
 }
 
-bool TGetSelfInfoRequestData::operator ==(const TGetSelfInfoRequestData &other) const
+bool TGetSelfInfoRequestData::operator ==(const TGetSelfInfoRequestData &/*other*/) const
 {
-    const B_D(TGetSelfInfoRequestData);
-    const TGetSelfInfoRequestDataPrivate *dd = other.d_func();
-    return d->includeAvatar == dd->includeAvatar;
+    //const B_D(TGetSelfInfoRequestData);
+    //const TGetSelfInfoRequestDataPrivate *dd = other.d_func();
+    return true;
 }
 
 bool TGetSelfInfoRequestData::operator !=(const TGetSelfInfoRequestData &other) const
@@ -146,21 +121,19 @@ TGetSelfInfoRequestData::operator QVariant() const
 
 /*============================== Public friend operators ===================*/
 
-QDataStream &operator <<(QDataStream &stream, const TGetSelfInfoRequestData &data)
+QDataStream &operator <<(QDataStream &stream, const TGetSelfInfoRequestData &/*data*/)
 {
-    const TGetSelfInfoRequestDataPrivate *d = data.d_func();
+    //const TGetSelfInfoRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("include_avatar", d->includeAvatar);
     stream << m;
     return stream;
 }
 
-QDataStream &operator >>(QDataStream &stream, TGetSelfInfoRequestData &data)
+QDataStream &operator >>(QDataStream &stream, TGetSelfInfoRequestData &/*data*/)
 {
-    TGetSelfInfoRequestDataPrivate *d = data.d_func();
+    //TGetSelfInfoRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->includeAvatar = m.value("include_avatar").toBool();
     return stream;
 }
 

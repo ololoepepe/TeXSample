@@ -190,7 +190,7 @@ void TGroupWidgetPrivate::updateGroupList()
     TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
     Model->removeGroups(data.deletedGroups());
     Model->addGroups(data.newGroups());
-    if (cache)
+    if (cache && !reply.cacheUpToDate())
         cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);
 }
 

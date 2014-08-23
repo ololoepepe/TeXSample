@@ -22,7 +22,6 @@
 #include "teditsamplerequestdata.h"
 
 #include "tauthorinfolist.h"
-#include "tidlist.h"
 #include "tnamespace.h"
 #include "ttexproject.h"
 
@@ -48,7 +47,6 @@ public:
     TAuthorInfoList authors;
     QString description;
     bool editProject;
-    TIdList groups;
     TTexProject project;
     QStringList tags;
     QString title;
@@ -122,7 +120,6 @@ void TEditSampleRequestData::clear()
     d->authors.clear();
     d->description.clear();
     d->editProject = false;
-    d->groups.clear();
     d->project.clear();
     d->tags.clear();
     d->title.clear();
@@ -136,11 +133,6 @@ QString TEditSampleRequestData::description() const
 bool TEditSampleRequestData::editProject() const
 {
     return d_func()->editProject;
-}
-
-TIdList TEditSampleRequestData::groups() const
-{
-    return d_func()->groups;
 }
 
 bool TEditSampleRequestData::isValid() const
@@ -167,14 +159,6 @@ void TEditSampleRequestData::setDescritpion(const QString &description)
 void TEditSampleRequestData::setEditProject(bool edit)
 {
     d_func()->editProject = edit;
-}
-
-void TEditSampleRequestData::setGroups(const TIdList &groups)
-{
-    B_D(TEditSampleRequestData);
-    d->groups = groups;
-    d->groups.removeAll(0);
-    bRemoveDuplicates(d->groups);
 }
 
 void TEditSampleRequestData::setProject(const TTexProject &project)
@@ -213,7 +197,6 @@ TEditSampleRequestData &TEditSampleRequestData::operator =(const TEditSampleRequ
     d->authors = dd->authors;
     d->description = dd->description;
     d->editProject = dd->editProject;
-    d->groups = dd->groups;
     d->project = dd->project;
     d->tags = dd->tags;
     d->title = dd->title;
@@ -225,7 +208,7 @@ bool TEditSampleRequestData::operator ==(const TEditSampleRequestData &other) co
     const B_D(TEditSampleRequestData);
     const TEditSampleRequestDataPrivate *dd = other.d_func();
     return d->authors == dd->authors && d->description == dd->description && d->editProject == dd->editProject
-            && d->groups == dd->groups && d->project == dd->project && d->tags == dd->tags && d->title == dd->title;
+            && d->project == dd->project && d->tags == dd->tags && d->title == dd->title;
 }
 
 bool TEditSampleRequestData::operator !=(const TEditSampleRequestData &other) const
@@ -247,7 +230,6 @@ QDataStream &operator <<(QDataStream &stream, const TEditSampleRequestData &data
     m.insert("authors", d->authors);
     m.insert("description", d->description);
     m.insert("edit_project", d->editProject);
-    m.insert("groups", d->groups);
     m.insert("project", d->project);
     m.insert("tags", d->tags);
     m.insert("title", d->title);
@@ -263,7 +245,6 @@ QDataStream &operator >>(QDataStream &stream, TEditSampleRequestData &data)
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->description = m.value("description").toString();
     d->editProject = m.value("edit_project").toBool();
-    d->groups = m.value("groups").value<TIdList>();
     d->project = m.value("project").value<TTexProject>();
     d->tags = m.value("tags").toStringList();
     d->title = m.value("title").toString();

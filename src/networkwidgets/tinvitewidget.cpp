@@ -203,7 +203,7 @@ void TInviteWidgetPrivate::updateInviteList()
     TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
     Model->removeInvites(data.deletedInvites());
     Model->addInvites(data.newInvites());
-    if (cache)
+    if (cache && !reply.cacheUpToDate())
         cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);
 }
 

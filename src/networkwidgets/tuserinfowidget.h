@@ -78,7 +78,7 @@ public:
     void setAlwaysRequestAvatar(bool enabled);
     void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
-    void setUser(quint64 userId);
+    bool setUser(quint64 userId);
     void setModel(TUserModel *model);
 Q_SIGNALS:
     void inputValidityChanged(bool valid);

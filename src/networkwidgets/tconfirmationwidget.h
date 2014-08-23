@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,39 +20,37 @@
 **
 ****************************************************************************/
 
-#ifndef TAPPLICATION_H
-#define TAPPLICATION_H
+#ifndef TCONFIRMATIONWIDGET_H
+#define TCONFIRMATIONWIDGET_H
 
-#include <TeXSampleCore/TApplicationBase>
+class TConfirmationWidgetPrivate;
 
-#include <BApplication>
+class BUuid;
 
-#include <QString>
+#include <TeXSampleCore/TeXSampleGlobal>
 
-#if defined(tApp)
-#   undef tApp
-#endif
-#define tApp (static_cast<TApplication *>(BApplicationBase::binstance()))
-#if defined(bApp)
-#   undef bApp
-#endif
-#define bApp (static_cast<TApplication *>(BApplicationBase::binstance()))
+#include <BBaseObject>
+
+#include <QWidget>
 
 /*============================================================================
-================================ TApplication ================================
+================================ TConfirmationWidget =========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TApplication : public BApplication, public TApplicationBase
+class T_NETWORKWIDGETS_EXPORT TConfirmationWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
+    B_DECLARE_PRIVATE(TConfirmationWidget)
 public:
-    explicit TApplication(int &argc, char **argv, const QString &applicationName = QString(),
-                          const QString &organizationName = QString());
-    explicit TApplication(int &argc, char **argv, const InitialSettings &s);
-    ~TApplication();
+    explicit TConfirmationWidget(QWidget *parent = 0);
+    ~TConfirmationWidget();
+public:
+    BUuid code() const;
+    bool hasValidInput() const;
+Q_SIGNALS:
+    void inputValidityChanged(bool valid);
 private:
-    Q_DISABLE_COPY(TApplication)
+    Q_DISABLE_COPY(TConfirmationWidget)
 };
 
-#endif // TAPPLICATION_H
-
+#endif // TCONFIRMATIONWIDGET_H

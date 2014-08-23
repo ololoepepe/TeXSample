@@ -22,7 +22,7 @@
 #ifndef TCOREAPPLICATION_H
 #define TCOREAPPLICATION_H
 
-#include "tglobal.h"
+#include "tapplicationbase.h"
 
 #include <BCoreApplication>
 
@@ -35,10 +35,10 @@
 #define bApp (static_cast<TApplication *>(BApplicationBase::binstance()))
 
 /*============================================================================
-================================ TApplication ================================
+================================ TCoreApplication ============================
 ============================================================================*/
 
-class T_CORE_EXPORT TCoreApplication : public BCoreApplication
+class T_CORE_EXPORT TCoreApplication : public BCoreApplication, public TApplicationBase
 {
     Q_OBJECT
 public:
@@ -51,4 +51,3 @@ private:
 };
 
 #endif // TCOREAPPLICATION_H
-

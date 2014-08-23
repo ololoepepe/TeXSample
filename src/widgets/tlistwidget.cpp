@@ -169,6 +169,7 @@ void TListWidgetProxyItemDelegate::clearCurrent()
         }
     }
     currentRow = -1;
+    confirmed = false;
 }
 
 void TListWidgetProxyItemDelegate::commitDataAndCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)

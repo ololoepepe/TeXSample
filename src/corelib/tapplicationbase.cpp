@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleCore module of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,39 +19,27 @@
 **
 ****************************************************************************/
 
-#ifndef TAPPLICATION_H
-#define TAPPLICATION_H
+#include "tapplicationbase.h"
 
-#include <TeXSampleCore/TApplicationBase>
-
-#include <BApplication>
-
-#include <QString>
-
-#if defined(tApp)
-#   undef tApp
-#endif
-#define tApp (static_cast<TApplication *>(BApplicationBase::binstance()))
-#if defined(bApp)
-#   undef bApp
-#endif
-#define bApp (static_cast<TApplication *>(BApplicationBase::binstance()))
+#include "tglobal.h"
 
 /*============================================================================
-================================ TApplication ================================
+================================ TCoreApplication ============================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TApplication : public BApplication, public TApplicationBase
+/*============================== Public constructors =======================*/
+
+TApplicationBase::TApplicationBase()
 {
-    Q_OBJECT
-public:
-    explicit TApplication(int &argc, char **argv, const QString &applicationName = QString(),
-                          const QString &organizationName = QString());
-    explicit TApplication(int &argc, char **argv, const InitialSettings &s);
-    ~TApplication();
-private:
-    Q_DISABLE_COPY(TApplication)
-};
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_INIT_RESOURCE(texsample_translations);
+#endif
+    tRegister();
+}
 
-#endif // TAPPLICATION_H
-
+TApplicationBase::~TApplicationBase()
+{
+#if defined(TSMP_BUILTIN_RESOURCES)
+    Q_CLEANUP_RESOURCE(texsample_translations);
+#endif
+}

@@ -34,6 +34,7 @@
 #include <QMenu>
 #include <QRegExp>
 #include <QSignalMapper>
+#include <QSize>
 #include <QString>
 #include <QStringList>
 #include <QToolButton>
@@ -67,10 +68,13 @@ void TTagWidgetPrivate::init()
       hlt->setContentsMargins(0, 0, 0, 0);
       ledt = new QLineEdit;
       hlt->addWidget(ledt);
+      QSize sz(ledt->sizeHint().height(), ledt->sizeHint().height());
       tbtn = new QToolButton;
         tbtn->setMenu(new QMenu);
         tbtn->setPopupMode(QToolButton::InstantPopup);
+        tbtn->setIconSize(sz - (tbtn->sizeHint() - tbtn->iconSize()));
         tbtn->setIcon(BApplication::icon("flag"));
+        tbtn->setFixedSize(sz);
         tbtn->setToolTip(tr("Add tag...", "tbtn toolTip"));
         tbtn->setEnabled(false);
       hlt->addWidget(tbtn);
@@ -120,6 +124,11 @@ QStringList TTagWidget::availableTags() const
     return list;
 }
 
+bool TTagWidget::buttonsVisible() const
+{
+    return d_func()->tbtn->isVisible();
+}
+
 bool TTagWidget::isReadOnly() const
 {
     return d_func()->ledt->isReadOnly();
@@ -138,6 +147,11 @@ void TTagWidget::setAvailableTags(const QStringList &list)
         bSetMapping(d_func()->mpr, act, SIGNAL(triggered()), tag);
     }
     d_func()->tbtn->setEnabled(!isReadOnly() && !d_func()->tbtn->menu()->isEmpty());
+}
+
+void TTagWidget::setButtonsVisible(bool b)
+{
+    d_func()->tbtn->setVisible(b);
 }
 
 void TTagWidget::setReadOnly(bool ro)

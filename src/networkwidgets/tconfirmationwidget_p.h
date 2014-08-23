@@ -2,7 +2,8 @@
 **
 ** Copyright (C) 2013-2014 Andrey Bogdanov
 **
-** This file is part of the TeXSampleWidgets module of the TeXSample library.
+** This file is part of the TeXSampleNetworkWidgets module
+** of the TeXSample library.
 **
 ** TeXSample is free software: you can redistribute it and/or modify it under
 ** the terms of the GNU Lesser General Public License as published by
@@ -19,39 +20,38 @@
 **
 ****************************************************************************/
 
-#ifndef TAPPLICATION_H
-#define TAPPLICATION_H
+#ifndef TCONFIRMATIONWIDGET_P_H
+#define TCONFIRMATIONWIDGET_P_H
 
-#include <TeXSampleCore/TApplicationBase>
+class BInputField;
 
-#include <BApplication>
+class QLineEdit;
 
-#include <QString>
+#include "tconfirmationwidget.h"
 
-#if defined(tApp)
-#   undef tApp
-#endif
-#define tApp (static_cast<TApplication *>(BApplicationBase::binstance()))
-#if defined(bApp)
-#   undef bApp
-#endif
-#define bApp (static_cast<TApplication *>(BApplicationBase::binstance()))
+#include <TeXSampleCore/TeXSampleGlobal>
+
+#include <BeQtCore/private/bbaseobject_p.h>
 
 /*============================================================================
-================================ TApplication ================================
+================================ TConfirmationWidgetPrivate ==================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TApplication : public BApplication, public TApplicationBase
+class T_NETWORKWIDGETS_EXPORT TConfirmationWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
+    B_DECLARE_PUBLIC(TConfirmationWidget)
 public:
-    explicit TApplication(int &argc, char **argv, const QString &applicationName = QString(),
-                          const QString &organizationName = QString());
-    explicit TApplication(int &argc, char **argv, const InitialSettings &s);
-    ~TApplication();
-private:
-    Q_DISABLE_COPY(TApplication)
+    BInputField *inputCode;
+    QLineEdit *ledtCode;
+    bool valid;
+public:
+    explicit TConfirmationWidgetPrivate(TConfirmationWidget *q);
+    ~TConfirmationWidgetPrivate();
+public:
+    void init();
+public Q_SLOTS:
+    void checkInputs();
 };
 
-#endif // TAPPLICATION_H
-
+#endif // TCONFIRMATIONWIDGET_P_H

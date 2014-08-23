@@ -22,8 +22,8 @@
 #include "teditsampleadminrequestdata.h"
 
 #include "tauthorinfolist.h"
-#include "tidlist.h"
 #include "tnamespace.h"
+#include "tsampletype.h"
 #include "ttexproject.h"
 
 #include <BBase>
@@ -48,12 +48,12 @@ public:
     TAuthorInfoList authors;
     QString description;
     bool editProject;
-    TIdList groups;
     TTexProject project;
     quint8 rating;
     QString remark;
     QStringList tags;
     QString title;
+    TSampleType type;
 public:
     explicit TEditSampleAdminRequestDataPrivate(TEditSampleAdminRequestData *q);
     ~TEditSampleAdminRequestDataPrivate();
@@ -130,12 +130,12 @@ void TEditSampleAdminRequestData::clear()
     d->authors.clear();
     d->description.clear();
     d->editProject = false;
-    d->groups.clear();
     d->project.clear();
     d->rating = 0;
     d->remark.clear();
     d->tags.clear();
     d->title.clear();
+    d->type = TSampleType();
 }
 
 QString TEditSampleAdminRequestData::description() const
@@ -146,11 +146,6 @@ QString TEditSampleAdminRequestData::description() const
 bool TEditSampleAdminRequestData::editProject() const
 {
     return d_func()->editProject;
-}
-
-TIdList TEditSampleAdminRequestData::groups() const
-{
-    return d_func()->groups;
 }
 
 bool TEditSampleAdminRequestData::isValid() const
@@ -189,14 +184,6 @@ void TEditSampleAdminRequestData::setEditProject(bool edit)
     d_func()->editProject = edit;
 }
 
-void TEditSampleAdminRequestData::setGroups(const TIdList &groups)
-{
-    B_D(TEditSampleAdminRequestData);
-    d->groups = groups;
-    d->groups.removeAll(0);
-    bRemoveDuplicates(d->groups);
-}
-
 void TEditSampleAdminRequestData::setProject(const TTexProject &project)
 {
     d_func()->project = project;
@@ -219,6 +206,11 @@ void TEditSampleAdminRequestData::setTitle(const QString &title)
     d_func()->title = Texsample::testLabTitle(title) ? title : QString();
 }
 
+void TEditSampleAdminRequestData::setType(const TSampleType &type)
+{
+    d_func()->type = type;
+}
+
 QStringList TEditSampleAdminRequestData::tags() const
 {
     return d_func()->tags;
@@ -227,6 +219,11 @@ QStringList TEditSampleAdminRequestData::tags() const
 QString TEditSampleAdminRequestData::title() const
 {
     return d_func()->title;
+}
+
+TSampleType TEditSampleAdminRequestData::type() const
+{
+    return d_func()->type;
 }
 
 /*============================== Public operators ==========================*/
@@ -238,12 +235,12 @@ TEditSampleAdminRequestData &TEditSampleAdminRequestData::operator =(const TEdit
     d->authors = dd->authors;
     d->description = dd->description;
     d->editProject = dd->editProject;
-    d->groups = dd->groups;
     d->project = dd->project;
     d->rating = dd->rating;
     d->remark = dd->remark;
     d->tags = dd->tags;
     d->title = dd->title;
+    d->type = dd->type;
     return *this;
 }
 
@@ -252,8 +249,8 @@ bool TEditSampleAdminRequestData::operator ==(const TEditSampleAdminRequestData 
     const B_D(TEditSampleAdminRequestData);
     const TEditSampleAdminRequestDataPrivate *dd = other.d_func();
     return d->authors == dd->authors && d->description == dd->description && d->editProject == dd->editProject
-            && d->groups == dd->groups && d->project == dd->project && d->rating == dd->rating
-            && d->remark == dd->remark && d->tags == dd->tags && d->title == dd->title;
+            && d->project == dd->project && d->rating == dd->rating && d->remark == dd->remark && d->tags == dd->tags
+            && d->title == dd->title && d->type == dd->type;
 }
 
 bool TEditSampleAdminRequestData::operator !=(const TEditSampleAdminRequestData &other) const
@@ -275,12 +272,12 @@ QDataStream &operator <<(QDataStream &stream, const TEditSampleAdminRequestData 
     m.insert("authors", d->authors);
     m.insert("description", d->description);
     m.insert("edit_project", d->editProject);
-    m.insert("groups", d->groups);
     m.insert("project", d->project);
     m.insert("rating", d->rating);
     m.insert("remark", d->remark);
     m.insert("tags", d->tags);
     m.insert("title", d->title);
+    m.insert("type", d->type);
     stream << m;
     return stream;
 }
@@ -293,12 +290,12 @@ QDataStream &operator >>(QDataStream &stream, TEditSampleAdminRequestData &data)
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->description = m.value("description").toString();
     d->editProject = m.value("edit_project").toBool();
-    d->groups = m.value("groups").value<TIdList>();
     d->project = m.value("project").value<TTexProject>();
     d->rating = m.value("rating").toUInt();
     d->remark = m.value("remark").toString();
     d->tags = m.value("tags").toStringList();
     d->title = m.value("title").toString();
+    d->type = m.value("type").value<TSampleType>();
     return stream;
 }
 

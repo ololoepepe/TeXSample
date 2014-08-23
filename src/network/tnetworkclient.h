@@ -70,6 +70,13 @@ public:
 protected:
     explicit TNetworkClient(TNetworkClientPrivate &d, QObject *parent = 0);
 public:
+    static void defaultShowMessageFunction(const QString &text, const QString &informativeText, bool error,
+                                    QWidget *parentWidget);
+    static bool defaultWaitForConnectedFunction(BNetworkConnection *connection, int timeout, QWidget *parentWidget,
+                                                QString *msg);
+    static bool defaultWaitForFinishedFunction(BNetworkOperation *op, int timeout, QWidget *parentWidget,
+                                               QString *msg);
+public:
     bool cachingEnabled() const;
     QString hostName() const;
     bool isAuthorized() const;
@@ -78,15 +85,27 @@ public:
     QString login() const;
     QByteArray password() const;
     TReply performAnonymousOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    TReply performAnonymousOperation(const QString &operation, const QVariant &data, int timeout,
+                                     QWidget *parentWidget = 0);
+    TReply performAnonymousOperation(const QString &operation, const QVariant &data,
+                                     const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
     virtual TReply performAnonymousOperation(const QString &operation, const QVariant &data,
-                                             const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+                                             const QDateTime &lastRequestDateTime, int timeout,
+                                             QWidget *parentWidget = 0);
     TReply performOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
+    TReply performOperation(const QString &operation, const QVariant &data, int timeout, QWidget *parentWidget = 0);
+    TReply performOperation(const QString &operation, const QVariant &data, const QDateTime &lastRequestDateTime,
+                            QWidget *parentWidget = 0);
     virtual TReply performOperation(const QString &operation, const QVariant &data,
-                                    const QDateTime &lastRequestDateTime, QWidget *parentWidget = 0);
+                                    const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget = 0);
+    int pingInterval() const;
+    int pingTimeout() const;
     void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
     void setLogin(const QString &login);
     void setPassword(const QByteArray &password);
+    void setPingInterval(int msecs);
+    void setPingTimeout(int msecs);
     void setShowMessageFunction(ShowMessageFunction function);
     void setWaitForConnectedDelay(int msecs);
     void setWaitForConnectedFunction(WaitForConnectedFunction function);

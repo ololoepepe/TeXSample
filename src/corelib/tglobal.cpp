@@ -227,8 +227,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetSamplePreviewReplyData>();
     qRegisterMetaType<TGetSampleSourceReplyData>();
     qRegisterMetaTypeStreamOperators<TGetSampleSourceReplyData>();
-    qRegisterMetaType<TGetSelfInfoRequestData>();
-    qRegisterMetaTypeStreamOperators<TGetSelfInfoRequestData>();
+    qRegisterMetaType<TGetSelfInfoReplyData>();
+    qRegisterMetaTypeStreamOperators<TGetSelfInfoReplyData>();
     qRegisterMetaType<TGetServerStateReplyData>();
     qRegisterMetaTypeStreamOperators<TGetServerStateReplyData>();
     qRegisterMetaType<TGetUserAvatarReplyData>();
@@ -430,5 +430,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "2.0.0-beta4";
+    return "2.0.0-beta5";
 }

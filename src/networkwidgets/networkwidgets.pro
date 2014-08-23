@@ -11,6 +11,8 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_NETWORKWIDGETS_LIB
 
 HEADERS += \
+    tconfirmationwidget.h \
+    tconfirmationwidget_p.h \
     tgroupwidget.h \
     tgroupwidget_p.h \
     tinvitewidget.h \
@@ -23,6 +25,7 @@ HEADERS += \
     tuserwidget_p.h
 
 SOURCES += \
+    tconfirmationwidget.cpp \
     tgroupwidget.cpp \
     tinvitewidget.cpp \
     trecoverywidget.cpp \

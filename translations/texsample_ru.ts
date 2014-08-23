@@ -74,6 +74,14 @@
     </message>
 </context>
 <context>
+    <name>TConfirmationWidgetPrivate</name>
+    <message>
+        <source>Code:</source>
+        <comment>lbl text</comment>
+        <translation>Код:</translation>
+    </message>
+</context>
+<context>
     <name>TGroupModel</name>
     <message>
         <source>ID</source>
@@ -375,6 +383,16 @@
         <comment>error</comment>
         <translation>Не авторизован</translation>
     </message>
+    <message>
+        <source>Null connection pointer</source>
+        <comment>error</comment>
+        <translation>Нулевой указатель на соединение</translation>
+    </message>
+    <message>
+        <source>Operation timed out</source>
+        <comment>error</comment>
+        <translation>Время ожидания завершения операции истекло</translation>
+    </message>
 </context>
 <context>
     <name>TNetworkClientPrivate</name>
@@ -401,7 +419,7 @@
     <message>
         <source>Operation timed out</source>
         <comment>error</comment>
-        <translation>Время ожидания завершения операции истекло</translation>
+        <translation type="obsolete">Время ожидания завершения операции истекло</translation>
     </message>
     <message>
         <source>Invalid parameter (internal error)</source>

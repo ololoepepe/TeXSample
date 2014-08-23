@@ -11,6 +11,7 @@
 #include "taddsamplerequestdata.h"
 #include "tadduserreplydata.h"
 #include "tadduserrequestdata.h"
+#include "tapplicationbase.h"
 #include "tauthorinfo.h"
 #include "tauthorinfolist.h"
 #include "tauthorizereplydata.h"

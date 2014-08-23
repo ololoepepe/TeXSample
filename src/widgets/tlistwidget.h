@@ -26,6 +26,7 @@ class TListWidgetPrivate;
 
 class TAbstractListWidgetItemDelegate;
 
+class QSize;
 class QStringList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
