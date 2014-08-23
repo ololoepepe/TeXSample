@@ -5,39 +5,53 @@
     <name>TAccessLevel</name>
     <message>
         <source>User</source>
+        <comment>singular</comment>
         <translation>Пользователь</translation>
     </message>
     <message>
         <source>Users</source>
+        <comment>plural</comment>
         <translation>Пользователи</translation>
     </message>
     <message>
         <source>Moderator</source>
+        <comment>singular</comment>
         <translation>Модератор</translation>
     </message>
     <message>
         <source>Moderators</source>
+        <comment>plural</comment>
         <translation>Модераторы</translation>
     </message>
     <message>
-        <source>Administrators</source>
-        <translation>Администраторы</translation>
-    </message>
-    <message>
         <source>Administrator</source>
+        <comment>singular</comment>
         <translation>Администратор</translation>
     </message>
     <message>
-        <source>No</source>
-        <translation>Нет</translation>
+        <source>Administrators</source>
+        <comment>plural</comment>
+        <translation>Администраторы</translation>
     </message>
     <message>
         <source>Superuser</source>
+        <comment>singular</comment>
         <translation>Суперпользователь</translation>
     </message>
     <message>
         <source>Superusers</source>
+        <comment>plural</comment>
         <translation>Суперпользователи</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <comment>singular</comment>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <comment>plural</comment>
+        <translation>Нет</translation>
     </message>
 </context>
 <context>
@@ -319,33 +333,36 @@
     </message>
 </context>
 <context>
-    <name>TLabType plural</name>
-    <message>
-        <source>Desktop applications</source>
-        <translation>Настольные приложения</translation>
-    </message>
-    <message>
-        <source>Web applications</source>
-        <translation>Веб-приложения</translation>
-    </message>
-    <message>
-        <source>External URLs</source>
-        <translation>Внешние ссылки</translation>
-    </message>
-</context>
-<context>
-    <name>TLabType singular</name>
+    <name>TLabType</name>
     <message>
         <source>Desktop application</source>
+        <comment>singular</comment>
         <translation>Настольное приложение</translation>
     </message>
     <message>
+        <source>Desktop applications</source>
+        <comment>plural</comment>
+        <translation>Настольные приложения</translation>
+    </message>
+    <message>
         <source>Web application</source>
+        <comment>singular</comment>
         <translation>Веб-приложение</translation>
     </message>
     <message>
+        <source>Web applications</source>
+        <comment>plural</comment>
+        <translation>Веб-приложения</translation>
+    </message>
+    <message>
         <source>External URL</source>
+        <comment>singular</comment>
         <translation>Внешняя ссылка</translation>
+    </message>
+    <message>
+        <source>External URLs</source>
+        <comment>plural</comment>
+        <translation>Внешние ссылки</translation>
     </message>
 </context>
 <context>
@@ -415,11 +432,6 @@
         <source>Null connection pointer</source>
         <comment>error</comment>
         <translation>Нулевой указатель на соединение</translation>
-    </message>
-    <message>
-        <source>Operation timed out</source>
-        <comment>error</comment>
-        <translation type="obsolete">Время ожидания завершения операции истекло</translation>
     </message>
     <message>
         <source>Invalid parameter (internal error)</source>
@@ -531,33 +543,36 @@
     </message>
 </context>
 <context>
-    <name>TSampleType plural</name>
+    <name>TSampleType</name>
     <message>
         <source>Unverified</source>
+        <comment>singular</comment>
+        <translation>Непроверенный</translation>
+    </message>
+    <message>
+        <source>Unverified</source>
+        <comment>plural</comment>
         <translation>Непроверенные</translation>
     </message>
     <message>
         <source>Approved</source>
+        <comment>singular</comment>
+        <translation>Утверждённый</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <comment>plural</comment>
         <translation>Утверждённые</translation>
     </message>
     <message>
         <source>Rejected</source>
-        <translation>Отклонённые</translation>
-    </message>
-</context>
-<context>
-    <name>TSampleType singular</name>
-    <message>
-        <source>Unverified</source>
-        <translation>Непроверенный</translation>
-    </message>
-    <message>
-        <source>Approved</source>
-        <translation>Утверждённый</translation>
+        <comment>singular</comment>
+        <translation>Отклонённый</translation>
     </message>
     <message>
         <source>Rejected</source>
-        <translation>Отклонённый</translation>
+        <comment>plural</comment>
+        <translation>Отклонённые</translation>
     </message>
 </context>
 <context>

@@ -84,27 +84,35 @@ void TAccessLevelPrivate::init()
 
 QString TAccessLevel::accessLevelToString(AccessLevel lvl, bool singular)
 {
-    return tr(accessLevelToStringNoTr(lvl, singular).toUtf8().constData());
+    switch (lvl) {
+    case UserLevel:
+        return singular ? tr("User", "singular") : tr("Users", "plural");
+    case ModeratorLevel:
+        return singular ? tr("Moderator", "singular") : tr("Moderators", "plural");
+    case AdminLevel:
+        return singular ? tr("Administrator", "singular") : tr("Administrators", "plural");
+    case SuperuserLevel:
+        return singular ? tr("Superuser", "singular") : tr("Superusers", "plural");
+    case NoLevel:
+    default:
+        return singular ? tr("No", "singular") : tr("No", "plural");
+    }
 }
 
 QString TAccessLevel::accessLevelToStringNoTr(AccessLevel lvl, bool singular)
 {
-    switch (lvl)
-    {
+    switch (lvl) {
     case UserLevel:
-        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "User") : QT_TRANSLATE_NOOP("TAccessLevel", "Users");
+        return singular ? "User" : "Users";
     case ModeratorLevel:
-        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Moderator") :
-                          QT_TRANSLATE_NOOP("TAccessLevel", "Moderators");
+        return singular ? "Moderator" : "Moderators";
     case AdminLevel:
-        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Administrator") :
-                          QT_TRANSLATE_NOOP("TAccessLevel", "Administrators");
+        return singular ? "Administrator" : "Administrators";
     case SuperuserLevel:
-        return singular ? QT_TRANSLATE_NOOP("TAccessLevel", "Superuser") :
-                          QT_TRANSLATE_NOOP("TAccessLevel", "Superusers");
+        return singular ? "Superuser" : "Superusers";
     case NoLevel:
     default:
-        return QT_TRANSLATE_NOOP("TAccessLevel", "No");
+        return "No";
     }
 }
 
