@@ -27,7 +27,6 @@ class TNetworkClientPrivate;
 class TReply;
 class TUserInfo;
 
-class BNetworkConnection;
 class BNetworkOperation;
 
 class QByteArray;
@@ -39,6 +38,7 @@ class QWidget;
 #include "tglobal.h"
 
 #include <BBaseObject>
+#include <BNetworkConnection>
 
 #include <QObject>
 
@@ -82,6 +82,7 @@ public:
     bool isAuthorized() const;
     bool isConnected() const;
     bool isValid(bool anonymous = false) const;
+    BNetworkConnection::LoggingMode loggingMode() const;
     QString login() const;
     QByteArray password() const;
     TReply performAnonymousOperation(const QString &operation, const QVariant &data, QWidget *parentWidget = 0);
@@ -102,6 +103,7 @@ public:
     int pingTimeout() const;
     void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
+    void setLoggingMode(BNetworkConnection::LoggingMode mode);
     void setLogin(const QString &login);
     void setPassword(const QByteArray &password);
     void setPingInterval(int msecs);

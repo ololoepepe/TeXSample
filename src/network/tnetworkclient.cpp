@@ -84,6 +84,7 @@ void TNetworkClientPrivate::init()
     connect(&pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
     caching = false;
     connection = new BNetworkConnection(BGenericSocket::TcpSocket, this);
+    connection->setLoggingMode(BNetworkConnection::NoLogging);
     connect(connection, SIGNAL(connected()), this, SLOT(connected()));
     connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(connection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
@@ -110,6 +111,7 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     bool scopedConnection = !connection;
     if (scopedConnection) {
         connection = new BNetworkConnection(BGenericSocket::TcpSocket);
+        connection->setLoggingMode(this->connection->loggingMode());
         connection->connectToHost(hostName, Texsample::MainPort);
         QString msg;
         if (!waitForConnected(connection, parentWidget, &msg)) {
@@ -327,6 +329,11 @@ bool TNetworkClient::isValid(bool anonymous) const
             && (anonymous || (!d_func()->login.isEmpty() && !d_func()->password.isEmpty()));
 }
 
+BNetworkConnection::LoggingMode TNetworkClient::loggingMode() const
+{
+    return d_func()->connection->loggingMode();
+}
+
 QString TNetworkClient::login() const
 {
     return d_func()->login;
@@ -416,6 +423,11 @@ void TNetworkClient::setHostName(const QString &hostName)
         Q_EMIT validityChanged(!bvalid);
     if (bvalida != isValid(true))
         Q_EMIT anonymousValidityChanged(!bvalida);
+}
+
+void TNetworkClient::setLoggingMode(BNetworkConnection::LoggingMode mode)
+{
+    d_func()->connection->setLoggingMode(mode);
 }
 
 void TNetworkClient::setLogin(const QString &login)
