@@ -104,7 +104,7 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
         return QVariant();
     if (Qt::ToolTipRole == role) {
         QString code = sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>().toString(true);
-        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
+        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 6)).toString();
         return code + " [" + ownerLogin + "]";
     }
     switch (index.column()) {

@@ -152,6 +152,11 @@ bool TAccessLevel::isValid() const
     return NoLevel != d_func()->level;
 }
 
+TAccessLevel::AccessLevel TAccessLevel::level() const
+{
+    return d_func()->level;
+}
+
 QString TAccessLevel::toString() const
 {
     return accessLevelToString(d_func()->level);

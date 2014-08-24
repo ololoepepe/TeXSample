@@ -877,7 +877,7 @@ QVariant TUserInfoWidget::createRequestData() const
     switch (d->Mode) {
     case AddMode: {
         TAddUserRequestData data;
-        data.setAccesslevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
+        data.setAccessLevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
         data.setAvatar(d->avatar);
         data.setEmail(d->ledtEmail1->text());
         data.setGroups(d->groups());
@@ -891,7 +891,7 @@ QVariant TUserInfoWidget::createRequestData() const
     }
     case EditMode: {
         TEditUserRequestData data;
-        data.setAccesslevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
+        data.setAccessLevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
         data.setActive(d->cboxActive->isChecked());
         if (d->editAvatar)
             data.setAvatar(d->avatar);

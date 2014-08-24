@@ -31,6 +31,7 @@
 #include <BInputField>
 #include <BUuid>
 
+#include <QDebug>
 #include <QFont>
 #include <QFormLayout>
 #include <QLineEdit>
@@ -77,6 +78,7 @@ void TConfirmationWidgetPrivate::checkInputs()
     bool v = ledtCode->hasAcceptableInput();
     if (v == valid)
         return;
+    valid = v;
     inputCode->setValid(valid);
     QMetaObject::invokeMethod(q_func(), "inputValidityChanged", Q_ARG(bool, valid));
 }

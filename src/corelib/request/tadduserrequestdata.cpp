@@ -180,7 +180,7 @@ QString TAddUserRequestData::patronymic() const
     return d_func()->patronymic;
 }
 
-void TAddUserRequestData::setAccesslevel(const TAccessLevel &accessLevel)
+void TAddUserRequestData::setAccessLevel(const TAccessLevel &accessLevel)
 {
     d_func()->accessLevel = accessLevel;
 }

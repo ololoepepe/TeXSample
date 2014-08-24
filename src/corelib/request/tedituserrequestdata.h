@@ -69,7 +69,7 @@ public:
     QString name() const;
     QByteArray password() const;
     QString patronymic() const;
-    void setAccesslevel(const TAccessLevel &accessLevel);
+    void setAccessLevel(const TAccessLevel &accessLevel);
     void setActive(bool active);
     void setAvailableServices(const TServiceList &services);
     void setAvatar(const QImage &avatar);

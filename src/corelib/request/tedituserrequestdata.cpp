@@ -213,7 +213,7 @@ QString TEditUserRequestData::patronymic() const
     return d_func()->patronymic;
 }
 
-void TEditUserRequestData::setAccesslevel(const TAccessLevel &accessLevel)
+void TEditUserRequestData::setAccessLevel(const TAccessLevel &accessLevel)
 {
     d_func()->accessLevel = accessLevel;
 }
