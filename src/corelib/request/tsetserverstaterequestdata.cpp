@@ -39,7 +39,7 @@ class TSetServerStateRequestDataPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TSetServerStateRequestData)
 public:
     QString address;
-    bool connected;
+    bool listening;
 public:
     explicit TSetServerStateRequestDataPrivate(TSetServerStateRequestData *q);
     ~TSetServerStateRequestDataPrivate();
@@ -71,7 +71,7 @@ TSetServerStateRequestDataPrivate::~TSetServerStateRequestDataPrivate()
 
 void TSetServerStateRequestDataPrivate::init()
 {
-    connected = false;
+    listening = false;
 }
 
 /*============================================================================
@@ -109,12 +109,12 @@ void TSetServerStateRequestData::clear()
 {
     B_D(TSetServerStateRequestData);
     d->address.clear();
-    d->connected = false;
+    d->listening = false;
 }
 
-bool TSetServerStateRequestData::connected()
+bool TSetServerStateRequestData::listening()
 {
-    return d_func()->connected;
+    return d_func()->listening;
 }
 
 bool TSetServerStateRequestData::isValid()
@@ -127,9 +127,9 @@ void TSetServerStateRequestData::setAddress(const QString &address)
     d_func()->address = address;
 }
 
-void TSetServerStateRequestData::setConnected(bool connected)
+void TSetServerStateRequestData::setListening(bool listening)
 {
-    d_func()->connected = connected;
+    d_func()->listening = listening;
 }
 
 /*============================== Public operators ==========================*/
@@ -139,7 +139,7 @@ TSetServerStateRequestData &TSetServerStateRequestData::operator =(const TSetSer
     B_D(TSetServerStateRequestData);
     const TSetServerStateRequestDataPrivate *dd = other.d_func();
     d->address = dd->address;
-    d->connected = dd->connected;
+    d->listening = dd->listening;
     return *this;
 }
 
@@ -147,7 +147,7 @@ bool TSetServerStateRequestData::operator ==(const TSetServerStateRequestData &o
 {
     const B_D(TSetServerStateRequestData);
     const TSetServerStateRequestDataPrivate *dd = other.d_func();
-    return d->address == dd->address && d->connected == dd->connected;
+    return d->address == dd->address && d->listening == dd->listening;
 }
 
 bool TSetServerStateRequestData::operator !=(const TSetServerStateRequestData &other) const
@@ -167,8 +167,7 @@ QDataStream &operator <<(QDataStream &stream, const TSetServerStateRequestData &
     const TSetServerStateRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     m.insert("address", d->address);
-    if (d->connected)
-        m.insert("connected", d->connected);
+    m.insert("listening", d->listening);
     stream << m;
     return stream;
 }
@@ -179,7 +178,7 @@ QDataStream &operator >>(QDataStream &stream, TSetServerStateRequestData &data)
     QVariantMap m;
     stream >> m;
     d->address = m.value("address").toString();
-    d->connected = m.value("connected").toBool();
+    d->listening = m.value("listening").toBool();
     return stream;
 }
 

@@ -45,9 +45,9 @@ class T_CORE_EXPORT TGetUserConnectionInfoListRequestData : public BBase
 public:
     enum MatchType
     {
-        MatchLoginAndUniqueId = 1,
-        MatchLogin,
-        MatchUniqueId
+        MatchLogin = 0x01,
+        MatchUniqueId = 0x02,
+        MatchLoginAndUniqueId = MatchLogin | MatchUniqueId
     };
 public:
     explicit TGetUserConnectionInfoListRequestData();

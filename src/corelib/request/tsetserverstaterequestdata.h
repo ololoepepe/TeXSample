@@ -49,10 +49,10 @@ public:
 public:
     QString address() const;
     void clear();
-    bool connected();
+    bool listening();
     bool isValid();
     void setAddress(const QString &address);
-    void setConnected(bool connected);
+    void setListening(bool listening);
 public:
     TSetServerStateRequestData &operator =(const TSetServerStateRequestData &other);
     bool operator ==(const TSetServerStateRequestData &other) const;

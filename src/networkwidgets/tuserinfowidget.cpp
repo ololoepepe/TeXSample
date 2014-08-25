@@ -1170,7 +1170,7 @@ bool TUserInfoWidget::setUser(quint64 userId)
                                reply.data().value<TGetUserInfoReplyData>().userInfo();
             }
             if (d->model->userInfo(userId).isValid())
-                d->model->updateUser(userId, info, !avatar);
+                d->model->updateUser(userId, info, avatar);
             else
                 d->model->addUser(info);
             if (d->cache)

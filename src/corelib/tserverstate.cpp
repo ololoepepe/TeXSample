@@ -37,7 +37,7 @@ class TServerStatePrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TServerState)
 public:
-    bool connected;
+    bool listening;
     qint64 uptime;
 public:
     explicit TServerStatePrivate(TServerState *q);
@@ -102,18 +102,18 @@ TServerState::~TServerState()
 void TServerState::clear()
 {
     B_D(TServerState);
-    d->connected = false;
+    d->listening = false;
     d->uptime = 0;
 }
 
-bool TServerState::connected() const
+bool TServerState::listening() const
 {
-    return d_func()->connected;
+    return d_func()->listening;
 }
 
-void TServerState::setConnected(bool connected)
+void TServerState::setListening(bool listening)
 {
-    d_func()->connected = connected;
+    d_func()->listening = listening;
 }
 
 void TServerState::setUptime(qint64 msecs)
@@ -132,7 +132,7 @@ TServerState &TServerState::operator =(const TServerState &other)
 {
     B_D(TServerState);
     const TServerStatePrivate *dd = other.d_func();
-    d->connected = dd->connected;
+    d->listening = dd->listening;
     d->uptime = dd->uptime;
     return *this;
 }
@@ -141,7 +141,7 @@ bool TServerState::operator ==(const TServerState &other) const
 {
     const B_D(TServerState);
     const TServerStatePrivate *dd = other.d_func();
-    return d_func()->connected == dd->connected && d->uptime == dd->uptime;
+    return d_func()->listening == dd->listening && d->uptime == dd->uptime;
 }
 
 bool TServerState::operator !=(const TServerState &other) const
@@ -160,7 +160,7 @@ QDataStream &operator <<(QDataStream &stream, const TServerState &data)
 {
     const TServerStatePrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("connected", d->connected);
+    m.insert("listening", d->listening);
     m.insert("uptime", d->uptime);
     stream << m;
     return stream;
@@ -171,7 +171,7 @@ QDataStream &operator >>(QDataStream &stream, TServerState &data)
     TServerStatePrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->connected = m.value("connected").toBool();
+    d->listening = m.value("listening").toBool();
     d->uptime = m.value("uptime").toLongLong();
     return stream;
 }

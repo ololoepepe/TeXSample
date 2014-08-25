@@ -45,8 +45,8 @@ public:
     ~TServerState();
 public:
     void clear();
-    bool connected() const;
-    void setConnected(bool connected);
+    bool listening() const;
+    void setListening(bool listening);
     void setUptime(qint64 msecs);
     qint64 uptime() const;
 public:

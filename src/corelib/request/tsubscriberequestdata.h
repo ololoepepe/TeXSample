@@ -48,7 +48,7 @@ public:
 public:
     void clear();
     bool isValid() const;
-    void setSubscribedTLog(bool subscribed);
+    void setSubscribedToLog(bool subscribed);
     bool subscribedToLog() const;
 public:
     TSubscribeRequestData &operator =(const TSubscribeRequestData &other);
