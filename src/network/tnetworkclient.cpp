@@ -28,6 +28,8 @@ class QWidget;
 #include <TeXSampleCore/TAuthorizeRequestData>
 #include <TeXSampleCore/TClientInfo>
 #include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TGroupInfo>
+#include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TRequest>
@@ -303,6 +305,16 @@ bool TNetworkClient::defaultWaitForFinishedFunction(BNetworkOperation *op, int t
 
 /*============================== Public methods ============================*/
 
+void TNetworkClient::addAvailableGroup(const TGroupInfo &groupInfo)
+{
+    if (!groupInfo.isValid())
+        return;
+    TUserInfo &info = d_func()->userInfo;
+    TGroupInfoList list = info.availableGroups();
+    list << groupInfo;
+    info.setAvailableGroups(list);
+}
+
 bool TNetworkClient::cachingEnabled() const
 {
     return d_func()->caching;
@@ -403,6 +415,21 @@ int TNetworkClient::pingInterval() const
 int TNetworkClient::pingTimeout() const
 {
     return d_func()->pingTimeout;
+}
+
+void TNetworkClient::removeAvailableGroup(quint64 groupId)
+{
+    if (!groupId)
+        return;
+    TUserInfo &info = d_func()->userInfo;
+    TGroupInfoList list = info.availableGroups();
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).id() == groupId) {
+            list.removeAt(i);
+            break;
+        }
+    }
+    info.setAvailableGroups(list);
 }
 
 void TNetworkClient::setCachingEnabled(bool enabled)

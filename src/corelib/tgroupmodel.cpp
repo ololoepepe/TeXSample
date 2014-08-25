@@ -31,6 +31,7 @@
 
 #include <QAbstractTableModel>
 #include <QDateTime>
+#include <QDebug>
 #include <QMap>
 #include <QModelIndex>
 #include <QObject>

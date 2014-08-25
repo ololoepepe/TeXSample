@@ -203,8 +203,10 @@ void TInviteWidgetPrivate::updateInviteList()
     TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
     Model->removeInvites(data.deletedInvites());
     Model->addInvites(data.newInvites());
-    if (cache && !reply.cacheUpToDate())
+    if (cache && !reply.cacheUpToDate()) {
+        cache->removeData(TOperation::GetInviteInfoList, data.deletedInvites());
         cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);
+    }
 }
 
 /*============================== Public slots ==============================*/
@@ -268,7 +270,10 @@ void TInviteWidgetPrivate::deleteInvites()
         msg.exec();
         return;
     }
-    Model->removeInvites(r.data().value<TDeleteInvitesReplyData>().identifiers());
+    TIdList ids = r.data().value<TDeleteInvitesReplyData>().identifiers();
+    Model->removeInvites(ids);
+    if (cache)
+        cache->removeData(TOperation::DeleteInvites, ids);
 }
 
 void TInviteWidgetPrivate::generateInvites()
@@ -359,6 +364,8 @@ void TInviteWidgetPrivate::generateInvites()
         return;
     }
     Model->addInvites(r.data().value<TGenerateInvitesReplyData>().generatedInvites());
+    if (cache)
+        cache->setData(TOperation::GenerateInvites, r.requestDateTime(), r.data());
 }
 
 void TInviteWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)

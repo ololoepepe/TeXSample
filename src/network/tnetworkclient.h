@@ -24,6 +24,7 @@
 
 class TNetworkClientPrivate;
 
+class TGroupInfo;
 class TReply;
 class TUserInfo;
 
@@ -77,6 +78,7 @@ public:
     static bool defaultWaitForFinishedFunction(BNetworkOperation *op, int timeout, QWidget *parentWidget,
                                                QString *msg);
 public:
+    void addAvailableGroup(const TGroupInfo &groupInfo);
     bool cachingEnabled() const;
     QString hostName() const;
     bool isAuthorized() const;
@@ -101,6 +103,7 @@ public:
                                     const QDateTime &lastRequestDateTime, int timeout, QWidget *parentWidget = 0);
     int pingInterval() const;
     int pingTimeout() const;
+    void removeAvailableGroup(quint64 groupId);
     void setCachingEnabled(bool enabled);
     void setHostName(const QString &hostName);
     void setLoggingMode(BNetworkConnection::LoggingMode mode);
