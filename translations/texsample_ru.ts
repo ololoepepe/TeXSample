@@ -633,7 +633,7 @@
     <message>
         <source>Failed to confirm e-mail change due to the following error:</source>
         <comment>msgbox text</comment>
-        <translation>Не удалось подтвердить смену адреса эл. почты из-за следующей ошиюки:</translation>
+        <translation>Не удалось подтвердить смену адреса эл. почты из-за следующей ошибки:</translation>
     </message>
 </context>
 <context>
@@ -889,7 +889,7 @@
         <translation>Вы успешно изменили свой пароль</translation>
     </message>
     <message>
-        <source>You have successfully changed your e-mail. Confirmation code was sent to your new e-mail.Please, click OK and enter that code to finish em-mail change</source>
+        <source>You have successfully changed your e-mail. Confirmation code was sent to your new e-mail.Please, click OK and enter that code to finish e-mail change</source>
         <comment>msgbox text</comment>
         <translation>Вы успешно изменили свой адрес эл. почты. Код подтверждения был выслан на вашу новую эл. почту. Нажмите ОК и введите этот код, чтобы завершить смену адреса эл. почты</translation>
     </message>

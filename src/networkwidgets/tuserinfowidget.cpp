@@ -572,7 +572,7 @@ void TUserInfoWidgetPrivate::changeEmail()
     msg.setWindowTitle(tr("E-mail changed", "msgbox windowTitle"));
     msg.setIcon(QMessageBox::Information);
     msg.setText(tr("You have successfully changed your e-mail. Confirmation code was sent to your new e-mail."
-                   "Please, click OK and enter that code to finish em-mail change", "msgbox text"));
+                   "Please, click OK and enter that code to finish e-mail change", "msgbox text"));
     msg.setStandardButtons(QMessageBox::Ok);
     msg.setDefaultButton(QMessageBox::Ok);
     msg.exec();
