@@ -37,6 +37,7 @@ const QString ChangePassword = "change_password";
 const QString CheckEmailAvailability = "check_email_availability";
 const QString CheckLoginAvailability = "check_login_availability";
 const QString CompileTexProject = "compile_tex_project";
+const QString ConfirmEmailChange = "confirm_email_change";
 const QString ConfirmRegistration = "confirm_registration";
 const QString DeleteGroup = "delete_group";
 const QString DeleteInvites = "delete_invites";

@@ -31,6 +31,7 @@
 #include "reply/tcheckemailavailabilityreplydata.h"
 #include "reply/tcheckloginavailabilityreplydata.h"
 #include "reply/tcompiletexprojectreplydata.h"
+#include "reply/tconfirmemailchangereplydata.h"
 #include "reply/tconfirmregistrationreplydata.h"
 #include "reply/tdeletegroupreplydata.h"
 #include "reply/tdeleteinvitesreplydata.h"
@@ -78,6 +79,7 @@
 #include "request/tcheckemailavailabilityrequestdata.h"
 #include "request/tcheckloginavailabilityrequestdata.h"
 #include "request/tcompiletexprojectrequestdata.h"
+#include "request/tconfirmemailchangerequestdata.h"
 #include "request/tconfirmregistrationrequestdata.h"
 #include "request/tdeletegrouprequestdata.h"
 #include "request/tdeleteinvitesrequestdata.h"
@@ -183,6 +185,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityReplyData>();
     qRegisterMetaType<TCompileTexProjectReplyData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectReplyData>();
+    qRegisterMetaType<TConfirmEmailChangeReplyData>();
+    qRegisterMetaTypeStreamOperators<TConfirmEmailChangeReplyData>();
     qRegisterMetaType<TConfirmRegistrationReplyData>();
     qRegisterMetaTypeStreamOperators<TConfirmRegistrationReplyData>();
     qRegisterMetaType<TDeleteGroupReplyData>();
@@ -278,6 +282,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityRequestData>();
     qRegisterMetaType<TCompileTexProjectRequestData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectRequestData>();
+    qRegisterMetaType<TConfirmEmailChangeRequestData>();
+    qRegisterMetaTypeStreamOperators<TConfirmEmailChangeRequestData>();
     qRegisterMetaType<TConfirmRegistrationRequestData>();
     qRegisterMetaTypeStreamOperators<TConfirmRegistrationRequestData>();
     qRegisterMetaType<TDeleteGroupRequestData>();

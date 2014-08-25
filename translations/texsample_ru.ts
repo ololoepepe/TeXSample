@@ -610,6 +610,31 @@
         <comment>msgbox text</comment>
         <translation>Не удалось получить информацию о пользователе. Произошла следующая ошибка:</translation>
     </message>
+    <message>
+        <source>E-mail change confirmation</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Подтверждение смены адреса эл.почты</translation>
+    </message>
+    <message>
+        <source>E-mail change confirmed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Смена адреса эл. почты подтверждена</translation>
+    </message>
+    <message>
+        <source>You have successfully confirmed your e-mail change</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно подтвердили смену своего адреса эл.почты</translation>
+    </message>
+    <message>
+        <source>E-mail change confirmation error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Ошибка подтверждения смены адреса эл. почты</translation>
+    </message>
+    <message>
+        <source>Failed to confirm e-mail change due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось подтвердить смену адреса эл. почты из-за следующей ошиюки:</translation>
+    </message>
 </context>
 <context>
     <name>TUserInfoWidgetPrivate</name>
@@ -847,6 +872,26 @@
         <source>Services</source>
         <comment>gbox title</comment>
         <translation>Сервисы</translation>
+    </message>
+    <message>
+        <source>E-mail changed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Адрес эл. почты изменен</translation>
+    </message>
+    <message>
+        <source>Password changed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Пароль изменен</translation>
+    </message>
+    <message>
+        <source>You have successfully changed your password</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно изменили свой пароль</translation>
+    </message>
+    <message>
+        <source>You have successfully changed your e-mail. Confirmation code was sent to your new e-mail.Please, click OK and enter that code to finish em-mail change</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно изменили свой адрес эл. почты. Код подтверждения был выслан на вашу новую эл. почту. Нажмите ОК и введите этот код, чтобы завершить смену адреса эл. почты</translation>
     </message>
 </context>
 <context>

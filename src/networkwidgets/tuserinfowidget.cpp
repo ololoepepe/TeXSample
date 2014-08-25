@@ -23,6 +23,7 @@
 #include "tuserinfowidget.h"
 #include "tuserinfowidget_p.h"
 
+#include "tconfirmationwidget.h"
 #include "tlistwidget.h"
 
 #include <TeXSampleCore/TAbstractCache>
@@ -34,6 +35,8 @@
 #include <TeXSampleCore/TCheckEmailAvailabilityRequestData>
 #include <TeXSampleCore/TCheckLoginAvailabilityReplyData>
 #include <TeXSampleCore/TCheckLoginAvailabilityRequestData>
+#include <TeXSampleCore/TConfirmEmailChangeReplyData>
+#include <TeXSampleCore/TConfirmEmailChangeRequestData>
 #include <TeXSampleCore/TEditSelfRequestData>
 #include <TeXSampleCore/TEditUserRequestData>
 #include <TeXSampleCore/TeXSample>
@@ -67,6 +70,7 @@
 #include <BPasswordGroup>
 #include <BPasswordWidget>
 #include <BTextTools>
+#include <BUuid>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -561,10 +565,18 @@ void TUserInfoWidgetPrivate::changeEmail()
         msg.setDefaultButton(QMessageBox::Ok);
         msg.exec();
         return;
-    } else {
-        occupiedEmails.insert(email, true);
-        checkInputs();
     }
+    occupiedEmails.insert(email, true);
+    checkInputs();
+    QMessageBox msg(q_func());
+    msg.setWindowTitle(tr("E-mail changed", "msgbox windowTitle"));
+    msg.setIcon(QMessageBox::Information);
+    msg.setText(tr("You have successfully changed your e-mail. Confirmation code was sent to your new e-mail."
+                   "Please, click OK and enter that code to finish em-mail change", "msgbox text"));
+    msg.setStandardButtons(QMessageBox::Ok);
+    msg.setDefaultButton(QMessageBox::Ok);
+    msg.exec();
+    TUserInfoWidget::showConfirmEmailChangeDialog(client, q_func());
 }
 
 void TUserInfoWidgetPrivate::changePassword()
@@ -586,6 +598,13 @@ void TUserInfoWidgetPrivate::changePassword()
         msg.exec();
         return;
     }
+    QMessageBox msg(q_func());
+    msg.setWindowTitle(tr("Password changed", "msgbox windowTitle"));
+    msg.setIcon(QMessageBox::Information);
+    msg.setText(tr("You have successfully changed your password", "msgbox text"));
+    msg.setStandardButtons(QMessageBox::Ok);
+    msg.setDefaultButton(QMessageBox::Ok);
+    msg.exec();
 }
 
 void TUserInfoWidgetPrivate::checkChangeEmailInputs()
@@ -850,6 +869,48 @@ TUserInfoWidget::TUserInfoWidget(Mode mode, QWidget *parent) :
 TUserInfoWidget::~TUserInfoWidget()
 {
     //
+}
+
+/*============================== Static public methods =====================*/
+
+bool TUserInfoWidget::showConfirmEmailChangeDialog(TNetworkClient *client, QWidget *parent)
+{
+    if (!client || !client->isValid())
+        return false;
+    BDialog dlg(parent);
+    dlg.setWindowTitle(tr("E-mail change confirmation", "dlg windowTitle"));
+    TConfirmationWidget *cwgt = new TConfirmationWidget;
+    dlg.setWidget(cwgt);
+    dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
+    QPushButton *btnAccept = dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
+    btnAccept->setEnabled(cwgt->hasValidInput());
+    connect(cwgt, SIGNAL(inputValidityChanged(bool)), btnAccept, SLOT(setEnabled(bool)));
+    dlg.resize(450, 0);
+    while (dlg.exec() == BDialog::Accepted) {
+        TConfirmEmailChangeRequestData requestData;
+        requestData.setConfirmationCode(cwgt->code());
+        TReply r = client->performAnonymousOperation(TOperation::ConfirmEmailChange, requestData, parent);
+        if (r.success()) {
+            QMessageBox msg(parent);
+            msg.setWindowTitle(tr("E-mail change confirmed", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Information);
+            msg.setText(tr("You have successfully confirmed your e-mail change", "msgbox text"));
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.setDefaultButton(QMessageBox::Ok);
+            msg.exec();
+            return true;
+        } else {
+            QMessageBox msg(parent);
+            msg.setWindowTitle(tr("E-mail change confirmation error", "msgbox windowTitle"));
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(tr("Failed to confirm e-mail change due to the following error:", "msgbox text"));
+            msg.setInformativeText(r.message());
+            msg.setStandardButtons(QMessageBox::Ok);
+            msg.setDefaultButton(QMessageBox::Ok);
+            msg.exec();
+        }
+    }
+    return false;
 }
 
 /*============================== Public methods ============================*/

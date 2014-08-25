@@ -62,6 +62,8 @@ public:
     explicit TUserInfoWidget(Mode mode, QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
+    static bool showConfirmEmailChangeDialog(TNetworkClient *client, QWidget *parent = 0);
+public:
     bool alwaysRequestAvatar() const;
     TAbstractCache *cache() const;
     TNetworkClient *client() const;

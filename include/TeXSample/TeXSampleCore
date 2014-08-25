@@ -29,6 +29,8 @@
 #include "tclientinfo.h"
 #include "tcompiletexprojectreplydata.h"
 #include "tcompiletexprojectrequestdata.h"
+#include "tconfirmemailchangereplydata.h"
+#include "tconfirmemailchangerequestdata.h"
 #include "tconfirmregistrationreplydata.h"
 #include "tconfirmregistrationrequestdata.h"
 #include "tcoreapplication.h"
