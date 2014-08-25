@@ -643,7 +643,7 @@ void TUserInfoWidgetPrivate::checkEmail()
         msg.exec();
         return;
     }
-    QPoint p = inputEmail1->mapToGlobal(tbtnCheckEmail->pos()) + QPoint(tbtnCheckEmail->width(), 0);
+    QPoint p = tbtnCheckEmail->parentWidget()->mapToGlobal(tbtnCheckEmail->pos()) + QPoint(tbtnCheckEmail->width(), 0);
     if (r.data().value<TCheckEmailAvailabilityReplyData>().available()) {
         occupiedEmails.remove(email);
         QToolTip::showText(p, tr("The e-mail is free", "toolTip"), tbtnCheckEmail);
@@ -677,7 +677,7 @@ void TUserInfoWidgetPrivate::checkInputs()
     if (tbtnCheckLogin)
         tbtnCheckLogin->setEnabled(client && client->isValid(true) && ledtLogin->hasAcceptableInput());
     if (inputEmail1)
-        inputEmail1->setValid(ledtEmail1->hasAcceptableInput());
+        inputEmail1->setValid(ledtEmail1->hasAcceptableInput() && !occupiedEmails.contains(ledtEmail1->text()));
     if (tbtnCheckEmail) {
         tbtnCheckEmail->setEnabled((!cboxChangeEmail || cboxChangeEmail->isChecked())
                                    && client && client->isValid(true) && ledtEmail1->hasAcceptableInput());
@@ -711,7 +711,7 @@ void TUserInfoWidgetPrivate::checkLogin()
         msg.exec();
         return;
     }
-    QPoint p = inputLogin->mapToGlobal(tbtnCheckLogin->pos()) + QPoint(tbtnCheckLogin->width(), 0);
+    QPoint p = tbtnCheckLogin->parentWidget()->mapToGlobal(tbtnCheckLogin->pos()) + QPoint(tbtnCheckLogin->width(), 0);
     if (r.data().value<TCheckLoginAvailabilityReplyData>().available()) {
         occupiedLogins.remove(login);
         QToolTip::showText(p, tr("The login is free", "toolTip"), tbtnCheckLogin);
