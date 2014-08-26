@@ -57,6 +57,7 @@
 #include <TeXSampleCore/TUserModel>
 #include <TeXSampleNetwork/TNetworkClient>
 #include <TeXSampleWidgets/TConfirmationWidget>
+#include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
 #include <BBaseObject>
@@ -346,13 +347,10 @@ void TUserInfoWidgetPrivate::createRegistrationDateTimeField(QFormLayout *flt)
 void TUserInfoWidgetPrivate::createServicesSection(QHBoxLayout *hlt, bool readOnly)
 {
     QGroupBox *gbox = new QGroupBox(tr("Services", "gbox title"));
-      QFormLayout *flt = new QFormLayout(gbox);
-      foreach (const TService &s, TServiceList::allServices()) {
-          QCheckBox *cbox = new QCheckBox;
-            cbox->setEnabled(!readOnly);
-          flt->addRow(tr("Access to", "lbl text") + " " + s.toString() + ":", cbox);
-          cboxServiceMap.insert(s, cbox);
-      }
+      QVBoxLayout *vlt = new QVBoxLayout(gbox);
+        srvwgt = new TServiceWidget;
+          srvwgt->setReadOnly(readOnly);
+        vlt->addWidget(srvwgt);
     hlt->addWidget(gbox);
 }
 
@@ -504,18 +502,6 @@ void TUserInfoWidgetPrivate::init()
     checkChangePasswordInputs();
 }
 
-TServiceList TUserInfoWidgetPrivate::services() const
-{
-    TServiceList list;
-    if (cboxServiceMap.isEmpty())
-        return list;
-    foreach (const TService &service, TServiceList::allServices()) {
-        if (cboxServiceMap.value(service)->isChecked())
-            list << service;
-    }
-    return list;
-}
-
 void TUserInfoWidgetPrivate::setGroups(const TGroupInfoList &list)
 {
     if (!lstwgtGroups)
@@ -528,14 +514,6 @@ void TUserInfoWidgetPrivate::setGroups(const TGroupInfoList &list)
         ilist << item;
     }
     lstwgtGroups->setItems(ilist);
-}
-
-void TUserInfoWidgetPrivate::setServices(const TServiceList &list)
-{
-    if (cboxServiceMap.isEmpty())
-        return;
-    foreach (const TService &service, TServiceList::allServices())
-        cboxServiceMap.value(service)->setChecked(list.contains(service));
 }
 
 /*============================== Public slots ==============================*/
@@ -752,11 +730,11 @@ void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
         }
         lstwgtGroups->setAvailableItems(list);
     }
-    if (!cboxServiceMap.isEmpty() && (TUserInfoWidget::AddMode == Mode || TUserInfoWidget::EditMode == Mode)) {
-        foreach (const TService &service, TServiceList::allServices()) {
-            cboxServiceMap.value(service)->setEnabled(client && client->isAuthorized()
-                                                      && client->userInfo().availableServices().contains(service));
-        }
+    if (srvwgt) {
+        if (client && client->isAuthorized())
+            srvwgt->setAvailableServices(client->userInfo().availableServices());
+        else
+            srvwgt->setAvailableServices(TServiceList());
     }
 }
 
@@ -906,7 +884,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setName(d->ledtName->text());
         data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setAvailableServices(d->services());
+        data.setAvailableServices(d->srvwgt->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -925,7 +903,7 @@ QVariant TUserInfoWidget::createRequestData() const
         if (d->cboxChangePassword->isChecked())
             data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
         data.setPatronymic(d->ledtPatronymic->text());
-        data.setAvailableServices(d->services());
+        data.setAvailableServices(d->srvwgt->services());
         data.setSurname(d->ledtSurname->text());
         return data;
     }
@@ -1000,7 +978,7 @@ void TUserInfoWidget::restoreState(const QByteArray &state)
     if (AddMode == d->Mode) {
         d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData(m.value("access_level").toInt()));
         d->setGroups(m.value("groups").value<TGroupInfoList>());
-        d->setServices(m.value("available_services").value<TServiceList>());
+        d->srvwgt->setServices(m.value("available_services").value<TServiceList>());
     }
     if (RegisterMode == d->Mode)
         d->ledtInvite->setText(m.value("invite_code").toString());
@@ -1032,7 +1010,7 @@ QByteArray TUserInfoWidget::saveState() const
     if (AddMode == d->Mode) {
         m.insert("access_level", d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
         m.insert("groups", d->groupInfos());
-        m.insert("available_services", d->services());
+        m.insert("available_services", d->srvwgt->services());
     }
     if (RegisterMode == d->Mode)
         m.insert("invite_code", d->ledtInvite->text());
@@ -1146,7 +1124,7 @@ bool TUserInfoWidget::setUser(quint64 userId)
     d->avatarFileName.clear();
     d->resetAvatar(info.avatar());
     d->setGroups(info.groups());
-    d->setServices(info.availableServices());
+    d->srvwgt->setServices(info.availableServices());
     d->checkInputs();
     return info.isValid();
 }

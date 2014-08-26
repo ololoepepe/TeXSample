@@ -29,6 +29,7 @@ class TIdList;
 class TListWidget;
 class TNetworkClient;
 class TServiceList;
+class TServiceWidget;
 class TUserModel;
 
 class BEditGroup;
@@ -82,7 +83,6 @@ public:
     QPushButton *btnChangeEmail;
     QPushButton *btnChangePassword;
     QCheckBox *cboxActive;
-    QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
     TAbstractCache *cache;
@@ -115,6 +115,7 @@ public:
     BPasswordWidget *pwdwgt1;
     BPasswordWidget *pwdwgt2;
     BPasswordWidget *pwdwgtOld;
+    TServiceWidget *srvwgt;
     QToolButton *tbtnAvatar;
     QToolButton *tbtnCheckEmail;
     QToolButton *tbtnCheckLogin;
@@ -139,9 +140,7 @@ public:
     TGroupInfoList groupInfos() const;
     TIdList groups() const;
     void init();
-    TServiceList services() const;
     void setGroups(const TGroupInfoList &list);
-    void setServices(const TServiceList &list);
 public Q_SLOTS:
     void changeEmail();
     void changePassword();

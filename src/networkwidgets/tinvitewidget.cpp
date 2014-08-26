@@ -45,6 +45,7 @@
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleNetwork/TNetworkClient>
+#include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
 #include <BDialog>
@@ -307,16 +308,15 @@ void TInviteWidgetPrivate::generateInvites()
               sbox->setMaximum(maxInviteCount ? maxInviteCount : quint16(USHRT_MAX));
               sbox->setValue(1);
             flt->addRow(tr("Count:", "lbl text"), sbox);
-            QMap<TService, QCheckBox *> cboxMap;
-            foreach (const TService &service, TServiceList::allServices()) {
-                QCheckBox *cbox = new QCheckBox;
-                  cbox->setEnabled(client->userInfo().availableServices().contains(service));
-                flt->addRow(tr("Access to", "lbl text") + " " + service.toString() + ":", cbox);
-                cboxMap.insert(service, cbox);
-            }
           vlt->addLayout(flt);
-          QGroupBox *gbox = new QGroupBox(tr("Groups", "gbox title"));
+          QGroupBox *gbox = new QGroupBox(tr("Services", "gbox title"));
             QHBoxLayout *hlt = new QHBoxLayout(gbox);
+              TServiceWidget *swgt = new TServiceWidget;
+                swgt->setAvailableServices(client->userInfo().availableServices());
+              hlt->addWidget(swgt);
+          vlt->addWidget(gbox);
+          gbox = new QGroupBox(tr("Groups", "gbox title"));
+            hlt = new QHBoxLayout(gbox);
               TListWidget *lstwgt = new TListWidget;
                 lstwgt->setButtonsVisible(true);
                 lstwgt->setReadOnly(true);
@@ -337,10 +337,6 @@ void TInviteWidgetPrivate::generateInvites()
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
-    TServiceList services;
-    foreach (const TService &service, cboxMap.keys())
-        if (cboxMap.value(service)->isChecked())
-            services << service;
     TIdList groups;
     foreach (int i, bRangeD(0, lstwgt->itemCount() - 1))
         groups << lstwgt->itemData(i).toULongLong();
@@ -349,7 +345,7 @@ void TInviteWidgetPrivate::generateInvites()
     data.setCount(quint16(sbox->value()));
     data.setExpirationDateTime(dtedt->dateTime());
     data.setGroups(groups);
-    data.setServices(services);
+    data.setServices(swgt->services());
     if (!data.isValid())
         return;
     TReply r = client->performOperation(TOperation::GenerateInvites, data, q_func());

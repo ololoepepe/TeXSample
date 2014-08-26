@@ -297,11 +297,6 @@
         <translation>Количество:</translation>
     </message>
     <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
-    </message>
-    <message>
         <source>Groups</source>
         <comment>gbox title</comment>
         <translation>Группы</translation>
@@ -330,6 +325,11 @@
         <source>Failed to update invite list. The following error occured:</source>
         <comment>msgbox text</comment>
         <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>gbox title</comment>
+        <translation>Сервисы</translation>
     </message>
 </context>
 <context>
@@ -591,6 +591,14 @@
     </message>
 </context>
 <context>
+    <name>TServiceWidgetPrivate</name>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation>Доступ к</translation>
+    </message>
+</context>
+<context>
     <name>TTagWidgetPrivate</name>
     <message>
         <source>Add tag...</source>
@@ -747,11 +755,6 @@
         <source>Registration date:</source>
         <comment>lbl text</comment>
         <translation>Дата регистрации:</translation>
-    </message>
-    <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
     </message>
     <message>
         <source>Security</source>

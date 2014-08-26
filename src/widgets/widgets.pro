@@ -21,6 +21,8 @@ HEADERS += \
     tconfirmationwidget_p.h \
     tlistwidget_p.h \
     tlistwidget.h \
+    tservicewidget.h \
+    tservicewidget_p.h \
     ttagwidget.h \
     ttagwidget_p.h
 
@@ -31,6 +33,7 @@ SOURCES += \
     tauthorinfowidget.cpp \
     tconfirmationwidget.cpp \
     tlistwidget.cpp \
+    tservicewidget.cpp \
     ttagwidget.cpp
 
 contains(TSMP_CONFIG, builtin_resources) {
