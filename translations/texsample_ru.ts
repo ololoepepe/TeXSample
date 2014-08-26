@@ -909,6 +909,16 @@
         <comment>msgbox text</comment>
         <translation>Вы успешно изменили свой адрес эл. почты. Код подтверждения был выслан на вашу новую эл. почту. Нажмите ОК и введите этот код, чтобы завершить смену адреса эл. почты</translation>
     </message>
+    <message>
+        <source>New e-mail:</source>
+        <comment>lbl text</comment>
+        <translation>Новая эл. почта:</translation>
+    </message>
+    <message>
+        <source>New password:</source>
+        <comment>lbl text</comment>
+        <translation>Новый пароль:</translation>
+    </message>
 </context>
 <context>
     <name>TUserModel</name>

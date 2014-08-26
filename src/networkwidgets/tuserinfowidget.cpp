@@ -195,7 +195,8 @@ void TUserInfoWidgetPrivate::createEmailGroup(QFormLayout *flt, EditGroupMode mo
         tbtnCheckEmail->setFixedSize(sz);
         connect(tbtnCheckEmail, SIGNAL(clicked()), this, SLOT(checkEmail()));
       hlt->addWidget(tbtnCheckEmail);
-    flt->addRow(tr("E-mail:", "lbl text"), hlt);
+    flt->addRow((OptionalMode == mode || SeparateMode == mode) ? tr("New e-mail:", "lbl text") :
+                                                                 tr("E-mail:", "lbl text"), hlt);
     ledtEmail2 = new QLineEdit;
       ledtEmail1->setMaxLength(Texsample::MaximumEmailLength);
       ledtEmail2->setValidator(new QRegExpValidator(BTextTools::standardRegExp(BTextTools::EmailPattern), this));
@@ -252,7 +253,7 @@ void TUserInfoWidgetPrivate::createLoginFiled(QFormLayout *flt, bool readOnly)
       ledtLogin->setMaxLength(Texsample::MaximumLoginLength);
       ledtLogin->setReadOnly(readOnly);
       connect(ledtLogin, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-      inputLogin = new BInputField;
+      inputLogin = new BInputField(readOnly ? BInputField::ShowNever : BInputField::ShowAlways);
       inputLogin->addWidget(ledtLogin);
       QHBoxLayout *hlt = new QHBoxLayout;
       hlt->addWidget(inputLogin);
@@ -314,7 +315,8 @@ void TUserInfoWidgetPrivate::createPasswordGroup(QFormLayout *flt, EditGroupMode
       inputPwd1 = new BInputField;
       inputPwd1->addWidget(pwdwgt1);
       pwdgrp->addPasswordWidget(pwdwgt1);
-    flt->addRow(tr("Password:", "lbl text"), inputPwd1);
+    flt->addRow((OptionalMode == mode || SeparateMode == mode) ? tr("New password:", "lbl text") :
+                                                                 tr("Password:", "lbl text"), inputPwd1);
     pwdwgt2 = new BPasswordWidget;
       pwdwgt2->setValidator(new QRegExpValidator(rx, this));
       pwdwgt2->setSavePasswordVisible(false);
