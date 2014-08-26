@@ -20,38 +20,37 @@
 **
 ****************************************************************************/
 
-#ifndef TCONFIRMATIONWIDGET_P_H
-#define TCONFIRMATIONWIDGET_P_H
+#ifndef TCONFIRMATIONWIDGET_H
+#define TCONFIRMATIONWIDGET_H
 
-class BInputField;
+class TConfirmationWidgetPrivate;
 
-class QLineEdit;
-
-#include "tconfirmationwidget.h"
+class BUuid;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
-#include <BeQtCore/private/bbaseobject_p.h>
+#include <BBaseObject>
+
+#include <QWidget>
 
 /*============================================================================
-================================ TConfirmationWidgetPrivate ==================
+================================ TConfirmationWidget =========================
 ============================================================================*/
 
-class T_NETWORKWIDGETS_EXPORT TConfirmationWidgetPrivate : public BBaseObjectPrivate
+class T_WIDGETS_EXPORT TConfirmationWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PUBLIC(TConfirmationWidget)
+    B_DECLARE_PRIVATE(TConfirmationWidget)
 public:
-    BInputField *inputCode;
-    QLineEdit *ledtCode;
-    bool valid;
+    explicit TConfirmationWidget(QWidget *parent = 0);
+    ~TConfirmationWidget();
 public:
-    explicit TConfirmationWidgetPrivate(TConfirmationWidget *q);
-    ~TConfirmationWidgetPrivate();
-public:
-    void init();
-public Q_SLOTS:
-    void checkInputs();
+    BUuid code() const;
+    bool hasValidInput() const;
+Q_SIGNALS:
+    void inputValidityChanged(bool valid);
+private:
+    Q_DISABLE_COPY(TConfirmationWidget)
 };
 
-#endif // TCONFIRMATIONWIDGET_P_H
+#endif // TCONFIRMATIONWIDGET_H

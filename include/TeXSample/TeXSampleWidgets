@@ -5,6 +5,7 @@
 #include "tapplication.h"
 #include "tauthorinfolistwidgetitemdelegate.h"
 #include "tauthorinfowidget.h"
+#include "tconfirmationwidget.h"
 #include "tlistwidget.h"
 #include "ttagwidget.h"
 

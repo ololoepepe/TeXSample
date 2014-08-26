@@ -17,6 +17,8 @@ HEADERS += \
     tauthorinfolistwidgetitemdelegate_p.h \
     tauthorinfowidget.h \
     tauthorinfowidget_p.h \
+    tconfirmationwidget.h \
+    tconfirmationwidget_p.h \
     tlistwidget_p.h \
     tlistwidget.h \
     ttagwidget.h \
@@ -27,6 +29,7 @@ SOURCES += \
     tapplication.cpp \
     tauthorinfolistwidgetitemdelegate.cpp \
     tauthorinfowidget.cpp \
+    tconfirmationwidget.cpp \
     tlistwidget.cpp \
     ttagwidget.cpp
 

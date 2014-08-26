@@ -23,7 +23,6 @@
 #include "tuserinfowidget.h"
 #include "tuserinfowidget_p.h"
 
-#include "tconfirmationwidget.h"
 #include "tlistwidget.h"
 
 #include <TeXSampleCore/TAbstractCache>
@@ -57,6 +56,7 @@
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleCore/TUserModel>
 #include <TeXSampleNetwork/TNetworkClient>
+#include <TeXSampleWidgets/TConfirmationWidget>
 
 #include <BApplication>
 #include <BBaseObject>
