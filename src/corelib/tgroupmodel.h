@@ -36,6 +36,7 @@ class QVariant;
 #include <BBase>
 
 #include <QAbstractTableModel>
+#include <QDateTime>
 #include <QModelIndex>
 
 /*============================================================================
@@ -50,17 +51,21 @@ public:
     explicit TGroupModel(QObject *parent = 0);
     ~TGroupModel();
 public:
-    virtual void addGroup(const TGroupInfo &group);
-    virtual void addGroups(const TGroupInfoList &groupList);
+    void addGroup(const TGroupInfo &group);
+    void addGroups(const TGroupInfoList &groupList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual TGroupInfo groupInfo(quint64 id) const;
-    virtual TGroupInfo groupInfoAt(int index) const;
+    TGroupInfo groupInfo(quint64 id) const;
+    TGroupInfo groupInfoAt(int index) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual void removeGroup(quint64 id);
-    virtual void removeGroups(const TIdList &idList);
+    QDateTime lastUpdateDateTime() const;
+    void removeGroup(quint64 id);
+    void removeGroups(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
+    void update(const TGroupInfoList &newGroups, const TIdList &deletedGroups,
+                const QDateTime &updateDateTime = QDateTime());
+    void update(const TGroupInfoList &newGroups, const QDateTime &updateDateTime = QDateTime());
+    void updateGroup(quint64 groupId, const TGroupInfo &newInfo);
 private:
     Q_DISABLE_COPY(TGroupModel)
 };

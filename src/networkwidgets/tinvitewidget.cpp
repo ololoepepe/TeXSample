@@ -187,8 +187,7 @@ void TInviteWidgetPrivate::updateInviteList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
         return;
     TGetInviteInfoListRequestData request;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetInviteInfoList) : QDateTime();
-    TReply reply = client->performOperation(TOperation::GetInviteInfoList, request, dt);
+    TReply reply = client->performOperation(TOperation::GetInviteInfoList, request, Model->lastUpdateDateTime());
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating invite list failed", "msgbox windowTitle"));
@@ -201,8 +200,7 @@ void TInviteWidgetPrivate::updateInviteList()
         return;
     }
     TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
-    Model->removeInvites(data.deletedInvites());
-    Model->addInvites(data.newInvites());
+    Model->update(data.newInvites(), data.deletedInvites(), reply.requestDateTime());
     if (cache && !reply.cacheUpToDate()) {
         cache->removeData(TOperation::GetInviteInfoList, data.deletedInvites());
         cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);

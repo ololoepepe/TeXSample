@@ -50,6 +50,7 @@ class TInviteModelPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TInviteModel)
 public:
     TInviteInfoList invites;
+    QDateTime lastUpdateDateTime;
     QMap<quint64, TInviteInfo *> map;
 public:
     explicit TInviteModelPrivate(TInviteModel *q);
@@ -128,10 +129,15 @@ void TInviteModel::addInvites(const TInviteInfoList &inviteList)
     TInviteInfoList list = inviteList;
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         const TInviteInfo &info = list.at(i);
-        if (!info.isValid())
+        if (d->map.contains(info.id())) {
+            int row = d->indexOf(info.id());
+            d->invites[row] = info;
+            d->map.insert(info.id(), &d->invites[row]);
+            Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
             list.removeAt(i);
-        else if (d->map.contains(info.id()))
-            removeInvite(info.id());
+        } else if (!info.isValid()) {
+            list.removeAt(i);
+        }
     }
     if (list.isEmpty())
         return;
@@ -219,6 +225,11 @@ TInviteInfo TInviteModel::inviteInfoAt(int index) const
     return (index >= 0 && index < d_func()->invites.size()) ? d_func()->invites.at(index) : TInviteInfo();
 }
 
+QDateTime TInviteModel::lastUpdateDateTime() const
+{
+    return d_func()->lastUpdateDateTime;
+}
+
 void TInviteModel::removeInvite(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
@@ -239,4 +250,17 @@ void TInviteModel::removeInvites(const TIdList &idList)
 int TInviteModel::rowCount(const QModelIndex &) const
 {
     return d_func()->invites.size();
+}
+
+void TInviteModel::update(const TInviteInfoList &newInvites, const TIdList &deletedInvites,
+                          const QDateTime &updateDateTime)
+{
+    removeInvites(deletedInvites);
+    addInvites(newInvites);
+    d_func()->lastUpdateDateTime = updateDateTime.toUTC();
+}
+
+void TInviteModel::update(const TInviteInfoList &newInvites, const QDateTime &updateDateTime)
+{
+    update(newInvites, TIdList(), updateDateTime);
 }

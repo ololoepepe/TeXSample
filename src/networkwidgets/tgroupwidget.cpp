@@ -174,8 +174,7 @@ void TGroupWidgetPrivate::updateGroupList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::ModeratorLevel))
         return;
     TGetGroupInfoListRequestData request;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetGroupInfoList) : QDateTime();
-    TReply reply = client->performOperation(TOperation::GetGroupInfoList, request, dt);
+    TReply reply = client->performOperation(TOperation::GetGroupInfoList, request, Model->lastUpdateDateTime());
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating group list failed", "msgbox windowTitle"));
@@ -188,8 +187,7 @@ void TGroupWidgetPrivate::updateGroupList()
         return;
     }
     TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
-    Model->removeGroups(data.deletedGroups());
-    Model->addGroups(data.newGroups());
+    Model->update(data.newGroups(), data.deletedGroups(), reply.requestDateTime());
     if (cache && !reply.cacheUpToDate()) {
         cache->removeData(TOperation::GetGroupInfoList, data.deletedGroups());
         cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);

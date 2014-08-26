@@ -47,6 +47,7 @@ class TGroupModelPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TGroupModel)
 public:
     TGroupInfoList groups;
+    QDateTime lastUpdateDateTime;
     QMap<quint64, TGroupInfo *> map;
 public:
     explicit TGroupModelPrivate(TGroupModel *q);
@@ -90,7 +91,7 @@ int TGroupModelPrivate::indexOf(quint64 id) const
 
 void TGroupModelPrivate::init()
 {
-    //
+    lastUpdateDateTime.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -125,10 +126,17 @@ void TGroupModel::addGroups(const TGroupInfoList &groupList)
     TGroupInfoList list = groupList;
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         const TGroupInfo &info = list.at(i);
-        if (!info.isValid())
+        if (d->map.contains(info.id())) {
+            if (info.lastModificationDateTime() > d->map.value(info.id())->lastModificationDateTime()) {
+                int row = d->indexOf(info.id());
+                d->groups[row] = info;
+                d->map.insert(info.id(), &d->groups[row]);
+                Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
+            }
             list.removeAt(i);
-        else if (d->map.contains(info.id()))
-            removeGroup(info.id());
+        } else if (!info.isValid()) {
+            list.removeAt(i);
+        }
     }
     if (list.isEmpty())
         return;
@@ -204,6 +212,11 @@ QVariant TGroupModel::headerData(int section, Qt::Orientation orientation, int r
     }
 }
 
+QDateTime TGroupModel::lastUpdateDateTime() const
+{
+    return d_func()->lastUpdateDateTime;
+}
+
 void TGroupModel::removeGroup(quint64 id)
 {
     if (!id || !d_func()->map.contains(id))
@@ -224,6 +237,19 @@ void TGroupModel::removeGroups(const TIdList &idList)
 int TGroupModel::rowCount(const QModelIndex &) const
 {
     return d_func()->groups.size();
+}
+
+void TGroupModel::update(const TGroupInfoList &newGroups, const TIdList &deletedGroups,
+                         const QDateTime &updateDateTime)
+{
+    removeGroups(deletedGroups);
+    addGroups(newGroups);
+    d_func()->lastUpdateDateTime = updateDateTime.toUTC();
+}
+
+void TGroupModel::update(const TGroupInfoList &newGroups, const QDateTime &updateDateTime)
+{
+    update(newGroups, TIdList(), updateDateTime);
 }
 
 void TGroupModel::updateGroup(quint64 groupId, const TGroupInfo &newInfo)
