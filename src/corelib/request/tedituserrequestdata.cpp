@@ -50,7 +50,6 @@ public:
     bool active;
     TServiceList availableServices;
     QImage avatar;
-    bool editAvatar;
     bool editEmail;
     bool editPassword;
     QString email;
@@ -91,7 +90,6 @@ TEditUserRequestDataPrivate::~TEditUserRequestDataPrivate()
 void TEditUserRequestDataPrivate::init()
 {
     active = true;
-    editAvatar = false;
     editEmail = false;
     editPassword = false;
 }
@@ -149,7 +147,6 @@ void TEditUserRequestData::clear()
     d->active = true;
     d->availableServices.clear();
     d->avatar = QImage();
-    d->editAvatar = false;
     d->editEmail = false;
     d->editPassword = false;
     d->email.clear();
@@ -159,11 +156,6 @@ void TEditUserRequestData::clear()
     d->password.clear();
     d->patronymic.clear();
     d->surname.clear();
-}
-
-bool TEditUserRequestData::editAvatar() const
-{
-    return d_func()->editAvatar;
 }
 
 bool TEditUserRequestData::editEmail() const
@@ -235,11 +227,6 @@ void TEditUserRequestData::setAvatar(const QImage &avatar)
     d_func()->avatar = Texsample::testAvatar(avatar) ? avatar : QImage();
 }
 
-void TEditUserRequestData::setEditAvatar(bool edit)
-{
-    d_func()->editAvatar = edit;
-}
-
 void TEditUserRequestData::setEditEmail(bool edit)
 {
     d_func()->editEmail = edit;
@@ -303,7 +290,6 @@ TEditUserRequestData &TEditUserRequestData::operator =(const TEditUserRequestDat
     d->active = dd->active;
     d->availableServices = dd->availableServices;
     d->avatar = dd->avatar;
-    d->editAvatar = dd->editAvatar;
     d->editEmail = dd->editEmail;
     d->editPassword = dd->editPassword;
     d->email = dd->email;
@@ -322,10 +308,9 @@ bool TEditUserRequestData::operator ==(const TEditUserRequestData &other) const
     const TEditUserRequestDataPrivate *dd = other.d_func();
     return d->accessLevel == dd->accessLevel && d->active == dd->active
             && d->availableServices == dd->availableServices && d->avatar == dd->avatar
-            && d->editAvatar == dd->editAvatar && d->editEmail == dd->editEmail
-            && d->editPassword == dd->editPassword && d->email == dd->email && d->groups == dd->groups
-            && d->identifier == dd->identifier && d->name == dd->name && d->password == dd->password
-            && d->patronymic == dd->patronymic && d->surname == dd->surname;
+            && d->editEmail == dd->editEmail && d->editPassword == dd->editPassword && d->email == dd->email
+            && d->groups == dd->groups && d->identifier == dd->identifier && d->name == dd->name
+            && d->password == dd->password && d->patronymic == dd->patronymic && d->surname == dd->surname;
 }
 
 bool TEditUserRequestData::operator !=(const TEditUserRequestData &other) const
@@ -347,9 +332,7 @@ QDataStream &operator <<(QDataStream &stream, const TEditUserRequestData &data)
     m.insert("access_level", d->accessLevel);
     m.insert("active", d->active);
     m.insert("available_services", d->availableServices);
-    if (d->editAvatar)
-        m.insert("avatar", d->avatar);
-    m.insert("edit_avatar", d->editAvatar);
+    m.insert("avatar", d->avatar);
     m.insert("edit_email", d->editEmail);
     m.insert("edit_password", d->editPassword);
     if (d->editEmail)
@@ -374,7 +357,6 @@ QDataStream &operator >>(QDataStream &stream, TEditUserRequestData &data)
     d->active = m.value("active", true).toBool();
     d->availableServices = m.value("available_services").value<TServiceList>();
     d->avatar = m.value("avatar").value<QImage>();
-    d->editAvatar = m.value("edit_avatar").toBool();
     d->editEmail = m.value("edit_email").toBool();
     d->editPassword = m.value("edit_password").toBool();
     d->email = m.value("email").toString();

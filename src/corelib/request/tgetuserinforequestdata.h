@@ -50,10 +50,8 @@ public:
 public:
     void clear();
     TUserIdentifier identifier() const;
-    bool includeAvatar() const;
     bool isValid() const;
     void setIdentifier(const TUserIdentifier &identifier);
-    void setIncludeAvatar(bool include);
 public:
     TGetUserInfoRequestData &operator =(const TGetUserInfoRequestData &other);
     bool operator ==(const TGetUserInfoRequestData &other) const;

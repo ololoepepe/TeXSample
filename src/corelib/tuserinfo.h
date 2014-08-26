@@ -59,7 +59,6 @@ public:
     TServiceList availableServices() const;
     QImage avatar() const;
     void clear();
-    bool containsAvatar() const;
     QString email() const;
     TGroupInfoList groups() const;
     quint64 id() const;
@@ -74,7 +73,6 @@ public:
     void setAvailableGroups(const TGroupInfoList &groups);
     void setAvailableServices(const TServiceList &services);
     void setAvatar(const QImage &avatar);
-    void setContainsAvatar(bool contains);
     void setEmail(const QString &email);
     void setGroups(const TGroupInfoList &groups);
     void setId(quint64 id);

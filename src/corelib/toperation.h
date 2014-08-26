@@ -62,7 +62,6 @@ const QString GetSamplePreview = "get_sample_preview";
 const QString GetSampleSource = "get_sample_source";
 const QString GetSelfInfo = "get_self_info";
 const QString GetServerState = "get_server_state";
-const QString GetUserAvatar = "get_user_avatar";
 const QString GetUserConnectionInfoList = "get_user_connection_info_list";
 const QString GetUserInfo = "get_user_info";
 const QString GetUserInfoAdmin = "get_user_info_admin";

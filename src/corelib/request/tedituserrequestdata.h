@@ -58,7 +58,6 @@ public:
     TServiceList availableServices() const;
     QImage avatar() const;
     void clear();
-    bool editAvatar() const;
     bool editEmail() const;
     bool editPassword() const;
     QString email() const;
@@ -73,7 +72,6 @@ public:
     void setActive(bool active);
     void setAvailableServices(const TServiceList &services);
     void setAvatar(const QImage &avatar);
-    void setEditAvatar(bool edit);
     void setEditEmail(bool edit);
     void setEditPassword(bool edit);
     void setEmail(const QString &email);

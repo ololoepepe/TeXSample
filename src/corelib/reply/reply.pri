@@ -34,7 +34,6 @@ HEADERS += \
     $${PWD}/tgetsamplesourcereplydata.h \
     $${PWD}/tgetselfinforeplydata.h \
     $${PWD}/tgetserverstatereplydata.h \
-    $${PWD}/tgetuseravatarreplydata.h \
     $${PWD}/tgetuserconnectioninfolistreplydata.h \
     $${PWD}/tgetuserinfoadminreplydata.h \
     $${PWD}/tgetuserinfolistadminreplydata.h \
@@ -84,7 +83,6 @@ SOURCES += \
     $${PWD}/tgetsamplesourcereplydata.cpp \
     $${PWD}/tgetselfinforeplydata.cpp \
     $${PWD}/tgetserverstatereplydata.cpp \
-    $${PWD}/tgetuseravatarreplydata.cpp \
     $${PWD}/tgetuserconnectioninfolistreplydata.cpp \
     $${PWD}/tgetuserinfoadminreplydata.cpp \
     $${PWD}/tgetuserinfolistadminreplydata.cpp \

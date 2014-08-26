@@ -82,8 +82,6 @@
 #include "tgetselfinforequestdata.h"
 #include "tgetserverstatereplydata.h"
 #include "tgetserverstaterequestdata.h"
-#include "tgetuseravatarreplydata.h"
-#include "tgetuseravatarrequestdata.h"
 #include "tgetuserconnectioninfolistreplydata.h"
 #include "tgetuserconnectioninfolistrequestdata.h"
 #include "tgetuserinfoadminreplydata.h"

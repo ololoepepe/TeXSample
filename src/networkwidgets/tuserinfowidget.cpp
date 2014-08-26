@@ -42,8 +42,6 @@
 #include <TeXSampleCore/TeXSample>
 #include <TeXSampleCore/TGetSelfInfoReplyData>
 #include <TeXSampleCore/TGetSelfInfoRequestData>
-#include <TeXSampleCore/TGetUserAvatarReplyData>
-#include <TeXSampleCore/TGetUserAvatarRequestData>
 #include <TeXSampleCore/TGetUserInfoAdminReplyData>
 #include <TeXSampleCore/TGetUserInfoAdminRequestData>
 #include <TeXSampleCore/TGetUserInfoReplyData>
@@ -163,7 +161,6 @@ void TUserInfoWidgetPrivate::createAvatarButton(QHBoxLayout *hlt, bool readOnly)
           }
           connect(tbtnAvatar, SIGNAL(clicked()), this, SLOT(tbtnAvatarClicked()));
           resetAvatar();
-          editAvatar = false;
         vlt->addWidget(tbtnAvatar);
     hlt->addWidget(gbox);
 
@@ -385,12 +382,9 @@ TIdList TUserInfoWidgetPrivate::groups() const
 
 void TUserInfoWidgetPrivate::init()
 {
-    alwaysRequestAvatar = false;
     cache = 0;
     client = 0;
     model = 0;
-    editAvatar = false;
-    containsAvatar = false;
     valid = false;
     cboxActive = 0;
     cboxChangeEmail = 0;
@@ -734,7 +728,7 @@ void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
 {
     checkChangeEmailInputs();
     checkChangePasswordInputs();
-    if (TUserInfoWidget::ShowMode == Mode && !containsAvatar)
+    if (TUserInfoWidget::ShowMode == Mode)
         tbtnAvatar->setEnabled(client && authorized);
     if (cmboxAccessLevel && TUserInfoWidget::ShowMode != Mode) {
         foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
@@ -781,44 +775,15 @@ void TUserInfoWidgetPrivate::resetAvatar(const QImage &image)
             tbtnClearAvatar->setEnabled(false);
     }
     if (TUserInfoWidget::ShowMode == Mode) {
-        if (containsAvatar) {
-            tbtnAvatar->setToolTip(!avatar.isNull() ? tr("Click to see the picture in full size", "tbtn toolTip") :
-                                                      QString());
-            tbtnAvatar->setEnabled(!avatar.isNull());
-        } else {
-            tbtnAvatar->setToolTip(!avatar.isNull() ? tr("Click to see the avatar", "tbtn toolTip") : QString());
-            tbtnAvatar->setEnabled(client);
-        }
+        tbtnAvatar->setToolTip(!avatar.isNull() ? tr("Click to see the picture in full size", "tbtn toolTip") :
+                                                  QString());
+        tbtnAvatar->setEnabled(!avatar.isNull());
     }
-    editAvatar = true;
 }
 
 void TUserInfoWidgetPrivate::tbtnAvatarClicked()
 {
     if (TUserInfoWidget::ShowMode == Mode) {
-        if (!containsAvatar) {
-            if (!client)
-                return;
-            TGetUserAvatarRequestData data;
-            data.setIdentifier(id);
-            TReply r = client->performOperation(TOperation::GetUserAvatar, data, q_func());
-            if (!r) {
-                QMessageBox msg(q_func());
-                msg.setWindowTitle(tr("Failed to get avatar", "msgbox windowTitle"));
-                msg.setIcon(QMessageBox::Critical);
-                msg.setText(tr("Failed to get user avatar from server. The following error occured:", "msgbox text"));
-                msg.setInformativeText(r.message());
-                msg.setStandardButtons(QMessageBox::Ok);
-                msg.exec();
-                return;
-            }
-            avatar = r.data().value<TGetUserAvatarReplyData>().avatar();
-            containsAvatar = true;
-            if (model)
-                model->updateUserAvatar(id, avatar);
-            if (cache)
-                cache->setData(TOperation::GetUserAvatar, r.requestDateTime(), r.data(), id);
-        }
         BDialog dlg(q_func());
           dlg.setWindowTitle(tr("Avatar:", "dlg windowTitle") + " " + ledtLogin->text());
           dlg.addButton(QDialogButtonBox::Close, SLOT(close()));
@@ -915,11 +880,6 @@ bool TUserInfoWidget::showConfirmEmailChangeDialog(TNetworkClient *client, QWidg
 
 /*============================== Public methods ============================*/
 
-bool TUserInfoWidget::alwaysRequestAvatar() const
-{
-    return d_func()->alwaysRequestAvatar;
-}
-
 TAbstractCache *TUserInfoWidget::cache() const
 {
     return d_func()->cache;
@@ -954,9 +914,7 @@ QVariant TUserInfoWidget::createRequestData() const
         TEditUserRequestData data;
         data.setAccessLevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
         data.setActive(d->cboxActive->isChecked());
-        if (d->editAvatar)
-            data.setAvatar(d->avatar);
-        data.setEditAvatar(d->editAvatar);
+        data.setAvatar(d->avatar);
         data.setEditEmail(d->cboxChangeEmail->isChecked());
         data.setEditPassword(d->cboxChangePassword->isChecked());
         if (d->cboxChangeEmail->isChecked())
@@ -973,9 +931,7 @@ QVariant TUserInfoWidget::createRequestData() const
     }
     case EditSelfMode: {
         TEditSelfRequestData data;
-        if (d->editAvatar)
-            data.setAvatar(d->avatar);
-        data.setEditAvatar(d->editAvatar);
+        data.setAvatar(d->avatar);
         data.setName(d->ledtName->text());
         data.setPatronymic(d->ledtPatronymic->text());
         data.setSurname(d->ledtSurname->text());
@@ -1049,9 +1005,7 @@ void TUserInfoWidget::restoreState(const QByteArray &state)
     if (RegisterMode == d->Mode)
         d->ledtInvite->setText(m.value("invite_code").toString());
     d->avatarFileName = m.value("avatar_file_name").toString();
-    d->containsAvatar = m.value("contains_avatar").toBool();
-    if (d->containsAvatar)
-        d->resetAvatar(m.value("avatar").value<QImage>());
+    d->resetAvatar(m.value("avatar").value<QImage>());
     d->ledtEmail1->setText(m.value("email").toString());
     d->ledtEmail2->clear();
     d->ledtLogin->setText(m.value("login").toString());
@@ -1082,10 +1036,8 @@ QByteArray TUserInfoWidget::saveState() const
     }
     if (RegisterMode == d->Mode)
         m.insert("invite_code", d->ledtInvite->text());
-    m.insert("contains_avatar", d->containsAvatar);
     m.insert("avatar_file_name", d->avatarFileName);
-    if (d->containsAvatar)
-        m.insert("avatar", d->avatar);
+    m.insert("avatar", d->avatar);
     m.insert("email", d->ledtEmail1->text());
     m.insert("login", d->ledtLogin->text());
     m.insert("name", d->ledtName->text());
@@ -1093,11 +1045,6 @@ QByteArray TUserInfoWidget::saveState() const
     m.insert("patronymic", d->ledtPatronymic->text());
     m.insert("surname", d->ledtSurname->text());
     return BeQt::serialize(m);
-}
-
-void TUserInfoWidget::setAlwaysRequestAvatar(bool enabled)
-{
-    d_func()->alwaysRequestAvatar = enabled;
 }
 
 void TUserInfoWidget::setCache(TAbstractCache *cache)
@@ -1126,11 +1073,11 @@ bool TUserInfoWidget::setUser(quint64 userId)
     B_D(TUserInfoWidget);
     if (AddMode == d->Mode || RegisterMode == d->Mode || !d->model)
         return false;
+    TUserInfo info = d->model->userInfo(userId);
     if (d->client && d->client->isAuthorized()) {
         QVariant requestData;
         QString op;
         bool admin = d->client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
-        bool avatar = (EditMode == d->Mode || EditSelfMode == d->Mode || d->alwaysRequestAvatar);
         if (EditSelfMode == d->Mode) {
             TGetSelfInfoRequestData request;
             op = TOperation::GetSelfInfo;
@@ -1138,18 +1085,15 @@ bool TUserInfoWidget::setUser(quint64 userId)
         } else if (admin) {
             TGetUserInfoAdminRequestData request;
             request.setIdentifier(userId);
-            request.setIncludeAvatar(avatar);
             op = TOperation::GetUserInfoAdmin;
             requestData = request;
         } else {
             TGetUserInfoRequestData request;
             request.setIdentifier(userId);
-            request.setIncludeAvatar(avatar);
             op = TOperation::GetUserInfo;
             requestData = request;
         }
-        QDateTime dt = d->cache ? d->cache->lastRequestDateTime(op) : QDateTime();
-        TReply reply = d->client->performOperation(op, requestData, dt);
+        TReply reply = d->client->performOperation(op, requestData, info.lastModificationDateTime());
         if (!reply.success()) {
             QMessageBox msg(this);
             msg.setWindowTitle(tr("Getting user info failed", "msgbox windowTitle"));
@@ -1162,7 +1106,6 @@ bool TUserInfoWidget::setUser(quint64 userId)
             return false;
         }
         if (!reply.cacheUpToDate()) {
-            TUserInfo info;
             if (EditSelfMode == d->Mode) {
                 info = reply.data().value<TGetSelfInfoReplyData>().userInfo();
             } else {
@@ -1170,14 +1113,13 @@ bool TUserInfoWidget::setUser(quint64 userId)
                                reply.data().value<TGetUserInfoReplyData>().userInfo();
             }
             if (d->model->userInfo(userId).isValid())
-                d->model->updateUser(userId, info, avatar);
+                d->model->updateUser(userId, info);
             else
                 d->model->addUser(info);
             if (d->cache)
                 d->cache->setData(op, reply.requestDateTime(), reply.data());
         }
     }
-    TUserInfo info = d->model->userInfo(userId);
     d->id = info.id();
     if (d->ledtLogin)
         d->ledtLogin->setText(info.login());
@@ -1201,7 +1143,6 @@ bool TUserInfoWidget::setUser(quint64 userId)
         d->lblLastModificationDateTime->setText(
                     info.lastModificationDateTime().toLocalTime().toString(TUserInfoWidgetPrivate::DateTimeFormat));
     }
-    d->containsAvatar = info.containsAvatar();
     d->avatarFileName.clear();
     d->resetAvatar(info.avatar());
     d->setGroups(info.groups());

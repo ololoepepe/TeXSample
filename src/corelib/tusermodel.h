@@ -37,6 +37,7 @@ class QVariant;
 #include <BBase>
 
 #include <QAbstractTableModel>
+#include <QDateTime>
 #include <QModelIndex>
 
 /*============================================================================
@@ -51,19 +52,22 @@ public:
     explicit TUserModel(QObject *parent = 0);
     ~TUserModel();
 public:
-    virtual void addUser(const TUserInfo &user);
-    virtual void addUsers(const TUserInfoList &userList);
+    void addUser(const TUserInfo &user);
+    void addUsers(const TUserInfoList &userList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual void removeUser(quint64 id);
-    virtual void removeUsers(const TIdList &idList);
+    QDateTime lastUpdateDateTime() const;
+    void removeUser(quint64 id);
+    void removeUsers(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual void updateUser(quint64 userId, const TUserInfo &newInfo, bool updateAvatar);
-    virtual void updateUserAvatar(quint64 userId, const QImage &avatar);
-    virtual quint64 userIdAt(int index) const;
-    virtual TUserInfo userInfo(quint64 id) const;
-    virtual TUserInfo userInfoAt(int index) const;
+    void update(const TUserInfoList &newUsers, const TIdList &deletedUsers,
+                const QDateTime &updateDateTime = QDateTime());
+    void update(const TUserInfoList &newUsers, const QDateTime &updateDateTime = QDateTime());
+    void updateUser(quint64 userId, const TUserInfo &newInfo);
+    quint64 userIdAt(int index) const;
+    TUserInfo userInfo(quint64 id) const;
+    TUserInfo userInfoAt(int index) const;
 protected:
     virtual bool avatarStoredSeparately() const;
     virtual QImage loadAvatar(quint64 userId) const;

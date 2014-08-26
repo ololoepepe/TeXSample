@@ -77,7 +77,6 @@ public:
 public:
     const TUserInfoWidget::Mode Mode;
 public:
-    bool alwaysRequestAvatar;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
@@ -89,8 +88,6 @@ public:
     TAbstractCache *cache;
     TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
-    bool containsAvatar;
-    bool editAvatar;
     BEditGroup *edtgrpEmail;
     quint64 id;
     BInputField *inputEmail1;

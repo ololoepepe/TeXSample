@@ -824,21 +824,6 @@
         <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
     </message>
     <message>
-        <source>Click to see the avatar</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Щелкните чтобы посмотреть аватар</translation>
-    </message>
-    <message>
-        <source>Failed to get avatar</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Загрузка аватара не удалось</translation>
-    </message>
-    <message>
-        <source>Failed to get user avatar from server. The following error occured:</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось загрузить аватар с сервера. Произошла следующая ошибка:</translation>
-    </message>
-    <message>
         <source>Avatar:</source>
         <comment>dlg windowTitle</comment>
         <translation>Аватар:</translation>
@@ -965,11 +950,6 @@
         <source>Last modified</source>
         <comment>headerData</comment>
         <translation>Последнее изменение</translation>
-    </message>
-    <message>
-        <source>Avatar present</source>
-        <comment>headerData</comment>
-        <translation>Аватар присутствует</translation>
     </message>
 </context>
 <context>

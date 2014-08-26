@@ -28,11 +28,10 @@ class BVersion;
 
 class QDataStream;
 class QDebug;
-class QString;
 class QUrl;
 class QVariant;
 
-#include "tglobal.h"
+#include "tnamespace.h"
 
 #include <BBase>
 #include <BeQt>
@@ -52,13 +51,13 @@ public:
     ~TSetLatestAppVersionRequestData();
 public:
     void clear();
-    QString clientName() const;
+    Texsample::ClientType clientType() const;
     QUrl downloadUrl() const;
     bool isValid() const;
     BeQt::OSType os() const;
     bool portable() const;
     BeQt::ProcessorArchitecture processorArchitecture() const;
-    void setClientName(const QString &clientName);
+    void setClientType(Texsample::ClientType type);
     void setDownloadUrl(const QUrl &url);
     void setOs(BeQt::OSType os);
     void setPortable(bool portable);
