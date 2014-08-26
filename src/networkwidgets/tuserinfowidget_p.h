@@ -25,8 +25,8 @@
 
 class TAbstractCache;
 class TGroupInfoList;
+class TGroupListWidget;
 class TIdList;
-class TListWidget;
 class TNetworkClient;
 class TServiceList;
 class TServiceWidget;
@@ -89,6 +89,7 @@ public:
     TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
     BEditGroup *edtgrpEmail;
+    TGroupListWidget *glwgt;
     quint64 id;
     BInputField *inputEmail1;
     BInputField *inputEmail2;
@@ -107,7 +108,6 @@ public:
     QLineEdit *ledtName;
     QLineEdit *ledtPatronymic;
     QLineEdit *ledtSurname;
-    TListWidget *lstwgtGroups;
     TUserModel *model;
     QMap<QString, bool> occupiedEmails;
     QMap<QString, bool> occupiedLogins;
@@ -137,10 +137,7 @@ public:
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
     void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
-    TGroupInfoList groupInfos() const;
-    TIdList groups() const;
     void init();
-    void setGroups(const TGroupInfoList &list);
 public Q_SLOTS:
     void changeEmail();
     void changePassword();

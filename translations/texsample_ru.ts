@@ -96,6 +96,34 @@
     </message>
 </context>
 <context>
+    <name>TGroupListWidgetPrivate</name>
+    <message>
+        <source>Add...</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Добавить...</translation>
+    </message>
+    <message>
+        <source>Remove selected</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Удалить выделенное</translation>
+    </message>
+    <message>
+        <source>Clear list</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Очистить список</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вверх</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вниз</translation>
+    </message>
+</context>
+<context>
     <name>TGroupModel</name>
     <message>
         <source>ID</source>

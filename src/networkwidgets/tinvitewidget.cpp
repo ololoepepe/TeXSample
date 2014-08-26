@@ -23,8 +23,6 @@
 #include "tinvitewidget.h"
 #include "tinvitewidget_p.h"
 
-#include "tlistwidget.h"
-
 #include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TDeleteInvitesReplyData>
@@ -45,6 +43,7 @@
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleNetwork/TNetworkClient>
+#include <TeXSampleWidgets/TGroupListWidget>
 #include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
@@ -317,34 +316,20 @@ void TInviteWidgetPrivate::generateInvites()
           vlt->addWidget(gbox);
           gbox = new QGroupBox(tr("Groups", "gbox title"));
             hlt = new QHBoxLayout(gbox);
-              TListWidget *lstwgt = new TListWidget;
-                lstwgt->setButtonsVisible(true);
-                lstwgt->setReadOnly(true);
-                if (lstwgt) {
-                    QList<TListWidget::Item> list;
-                    foreach (const TGroupInfo &group, client->userInfo().availableGroups()) {
-                        TListWidget::Item item;
-                        item.text = group.name();
-                        item.data = group.id();
-                        list << item;
-                    }
-                    lstwgt->setAvailableItems(list);
-                }
-              hlt->addWidget(lstwgt);
+              TGroupListWidget *glwgt = new TGroupListWidget;
+                glwgt->setAvailableGroups(client->userInfo().availableGroups());
+              hlt->addWidget(glwgt);
           vlt->addWidget(gbox);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
-    TIdList groups;
-    foreach (int i, bRangeD(0, lstwgt->itemCount() - 1))
-        groups << lstwgt->itemData(i).toULongLong();
     TGenerateInvitesRequestData data;
     data.setAccessLevel(cmboxAccessLevel->itemData(cmboxAccessLevel->currentIndex()).toInt());
     data.setCount(quint16(sbox->value()));
     data.setExpirationDateTime(dtedt->dateTime());
-    data.setGroups(groups);
+    data.setGroups(glwgt->groupIds());
     data.setServices(swgt->services());
     if (!data.isValid())
         return;

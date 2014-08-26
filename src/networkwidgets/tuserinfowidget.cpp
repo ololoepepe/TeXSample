@@ -23,8 +23,6 @@
 #include "tuserinfowidget.h"
 #include "tuserinfowidget_p.h"
 
-#include "tlistwidget.h"
-
 #include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TAddUserRequestData>
@@ -57,6 +55,7 @@
 #include <TeXSampleCore/TUserModel>
 #include <TeXSampleNetwork/TNetworkClient>
 #include <TeXSampleWidgets/TConfirmationWidget>
+#include <TeXSampleWidgets/TGroupListWidget>
 #include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
@@ -220,10 +219,10 @@ void TUserInfoWidgetPrivate::createGroupsSection(QVBoxLayout *vlt, bool readOnly
 {
     QGroupBox *gbox = new QGroupBox(tr("Groups", "gbox title"));
       QHBoxLayout *hlt = new QHBoxLayout(gbox);
-        lstwgtGroups = new TListWidget;
-          lstwgtGroups->setReadOnly(true);
-          lstwgtGroups->setButtonsVisible(!readOnly);
-        hlt->addWidget(lstwgtGroups);
+        glwgt = new TGroupListWidget;
+          glwgt->setReadOnly(readOnly);
+          glwgt->setButtonsVisible(!readOnly);
+        hlt->addWidget(glwgt);
     vlt->addWidget(gbox);
 }
 
@@ -354,30 +353,6 @@ void TUserInfoWidgetPrivate::createServicesSection(QHBoxLayout *hlt, bool readOn
     hlt->addWidget(gbox);
 }
 
-TGroupInfoList TUserInfoWidgetPrivate::groupInfos() const
-{
-    TGroupInfoList list;
-    if (!lstwgtGroups)
-        return list;
-    foreach (int i, bRangeD(0, lstwgtGroups->itemCount() - 1)) {
-        TGroupInfo info;
-        info.setId(lstwgtGroups->itemData(i).toULongLong());
-        info.setName(lstwgtGroups->itemText(i));
-        list << info;
-    }
-    return list;
-}
-
-TIdList TUserInfoWidgetPrivate::groups() const
-{
-    TIdList list;
-    if (!lstwgtGroups)
-        return list;
-    foreach (int i, bRangeD(0, lstwgtGroups->itemCount() - 1))
-        list << lstwgtGroups->itemData(i).toULongLong();
-    return list;
-}
-
 void TUserInfoWidgetPrivate::init()
 {
     cache = 0;
@@ -406,7 +381,7 @@ void TUserInfoWidgetPrivate::init()
     ledtName = 0;
     ledtPatronymic = 0;
     ledtSurname = 0;
-    lstwgtGroups = 0;
+    glwgt = 0;
     pwdgrp = 0;
     pwdwgt1 = 0;
     pwdwgt2 = 0;
@@ -500,20 +475,6 @@ void TUserInfoWidgetPrivate::init()
     checkInputs();
     checkChangeEmailInputs();
     checkChangePasswordInputs();
-}
-
-void TUserInfoWidgetPrivate::setGroups(const TGroupInfoList &list)
-{
-    if (!lstwgtGroups)
-        return;
-    QList<TListWidget::Item> ilist;
-    foreach (const TGroupInfo &groupInfo, list) {
-        TListWidget::Item item;
-        item.text = groupInfo.name();
-        item.data = groupInfo.id();
-        ilist << item;
-    }
-    lstwgtGroups->setItems(ilist);
 }
 
 /*============================== Public slots ==============================*/
@@ -717,19 +678,8 @@ void TUserInfoWidgetPrivate::clientAuthorizedChanged(bool authorized)
                 cmboxAccessLevel->setCurrentIndex(ind - 1);
         }
     }
-    if (lstwgtGroups) {
-        lstwgtGroups->clear();
-        QList<TListWidget::Item> list;
-        if (client && client->isAuthorized()) {
-            foreach (const TGroupInfo &group, client->userInfo().availableGroups()) {
-                TListWidget::Item item;
-                item.text = group.name();
-                item.data = group.id();
-                list << item;
-            }
-        }
-        lstwgtGroups->setAvailableItems(list);
-    }
+    if (glwgt && TUserInfoWidget::ShowMode != Mode)
+        glwgt->setAvailableGroups(client->userInfo().availableGroups());
     if (srvwgt) {
         if (client && client->isAuthorized())
             srvwgt->setAvailableServices(client->userInfo().availableServices());
@@ -879,7 +829,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setAccessLevel(TAccessLevel(d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt()));
         data.setAvatar(d->avatar);
         data.setEmail(d->ledtEmail1->text());
-        data.setGroups(d->groups());
+        data.setGroups(d->glwgt->groupIds());
         data.setLogin(d->ledtLogin->text());
         data.setName(d->ledtName->text());
         data.setPassword(Texsample::encryptPassword(d->pwdwgt1->openPassword()));
@@ -897,7 +847,7 @@ QVariant TUserInfoWidget::createRequestData() const
         data.setEditPassword(d->cboxChangePassword->isChecked());
         if (d->cboxChangeEmail->isChecked())
             data.setEmail(d->ledtEmail1->text());
-        data.setGroups(d->groups());
+        data.setGroups(d->glwgt->groupIds());
         data.setIdentifier(d->id);
         data.setName(d->ledtName->text());
         if (d->cboxChangePassword->isChecked())
@@ -977,7 +927,7 @@ void TUserInfoWidget::restoreState(const QByteArray &state)
     QVariantMap m = BeQt::deserialize(state).toMap();
     if (AddMode == d->Mode) {
         d->cmboxAccessLevel->setCurrentIndex(d->cmboxAccessLevel->findData(m.value("access_level").toInt()));
-        d->setGroups(m.value("groups").value<TGroupInfoList>());
+        d->glwgt->setGroups(m.value("groups").value<TGroupInfoList>());
         d->srvwgt->setServices(m.value("available_services").value<TServiceList>());
     }
     if (RegisterMode == d->Mode)
@@ -1009,7 +959,7 @@ QByteArray TUserInfoWidget::saveState() const
     QVariantMap m;
     if (AddMode == d->Mode) {
         m.insert("access_level", d->cmboxAccessLevel->itemData(d->cmboxAccessLevel->currentIndex()).toInt());
-        m.insert("groups", d->groupInfos());
+        m.insert("groups", d->glwgt->groups());
         m.insert("available_services", d->srvwgt->services());
     }
     if (RegisterMode == d->Mode)
@@ -1123,7 +1073,9 @@ bool TUserInfoWidget::setUser(quint64 userId)
     }
     d->avatarFileName.clear();
     d->resetAvatar(info.avatar());
-    d->setGroups(info.groups());
+    if (ShowMode == d->Mode)
+        d->glwgt->setAvailableGroups(info.groups());
+    d->glwgt->setGroups(info.groups());
     d->srvwgt->setServices(info.availableServices());
     d->checkInputs();
     return info.isValid();
