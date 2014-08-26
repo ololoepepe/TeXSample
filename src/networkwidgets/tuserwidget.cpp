@@ -94,40 +94,47 @@ int TUserProxyModel::columnCount(const QModelIndex &) const
 QVariant TUserProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role && Qt::DecorationRole != role
-                             && Qt::CheckStateRole != role) || index.column() > 2)
+                             && Qt::CheckStateRole != role) || index.column() > 2) {
+        return QVariant();
+    }
+    TUserModel *model = qobject_cast<TUserModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TUserInfo info = model->userInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
     switch (index.column()) {
     case 0: {
-    switch (role) {
-    case Qt::DecorationRole: {
-        //Avatar
-        QPixmap p = QPixmap::fromImage(sourceModel()->data(sourceModel()->index(index.row(), 11)).value<QImage>());
-        if (p.isNull())
+        switch (role) {
+        case Qt::DecorationRole: {
+            //Avatar
+            QPixmap p = QPixmap::fromImage(info.avatar());
+            if (p.isNull())
+                return QVariant();
+            return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        case Qt::CheckStateRole: {
+            //Active
+            return info.active() ? Qt::Checked : Qt::Unchecked;
+        }
+        default: {
             return QVariant();
-        return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    case Qt::CheckStateRole: {
-        //Active
-        return sourceModel()->data(sourceModel()->index(index.row(), 3)).toBool() ? Qt::Checked : Qt::Unchecked;
-    }
-    default: {
-        return QVariant();
-    }
-    }
+        }
+        }
     }
     case 1: {
         if (Qt::DisplayRole != role)
             return QVariant();
-        return sourceModel()->data(sourceModel()->index(index.row(), 1)); //Login
+        return info.login(); //Login
     }
     case 2: {
-        //Name [+ Patronymic] + Surname
+        //Name [+ Patronymic] [+ Surname]
         if (Qt::DisplayRole != role)
             return QVariant();
-        QString name = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
-        QString patronymic = sourceModel()->data(sourceModel()->index(index.row(), 6)).toString();
-        QString surname = sourceModel()->data(sourceModel()->index(index.row(), 7)).toString();
-        return name + (!patronymic.isEmpty() ? (" " + patronymic) : QString()) + " " + surname;
+        QString name = info.name();
+        QString patronymic = info.patronymic();
+        QString surname = info.surname();
+        return name + (!patronymic.isEmpty() ? " " : "") + patronymic + (!surname.isEmpty() ? " " : "") + surname;
     }
     default: {
         return QVariant();

@@ -102,15 +102,18 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
-    if (Qt::ToolTipRole == role) {
-        QString code = sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>().toString(true);
-        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 6)).toString();
-        return code + " [" + ownerLogin + "]";
-    }
+    TInviteModel *model = qobject_cast<TInviteModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TInviteInfo info = model->inviteInfoAt(index.row());
+    if (!info.isValid())
+        return QVariant();
+    if (Qt::ToolTipRole == role)
+        return info.code().toString(true) + " [" + info.ownerLogin() + "]"; //Code + OwnerLogin
     switch (index.column()) {
     case 0:
         //Expiration date
-        return sourceModel()->data(sourceModel()->index(index.row(), 7)).toDateTime().toString("dd MMMM yyyy hh:mm");
+        return info.expirationDateTime().toString("dd MMMM yyyy hh:mm");
     default:
         return QVariant();
     }

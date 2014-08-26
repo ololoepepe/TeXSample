@@ -91,14 +91,17 @@ QVariant TGroupProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
-    if (Qt::ToolTipRole == role) {
-        QString name = sourceModel()->data(sourceModel()->index(index.row(), 1)).toString();
-        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 3)).toString();
-        return name + " [" + ownerLogin + "]";
-    }
+    TGroupModel *model = qobject_cast<TGroupModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TGroupInfo info = model->groupInfoAt(index.row());
+    if (!info.isValid())
+        return QVariant();
+    if (Qt::ToolTipRole == role)
+        return info.name() + " [" + info.ownerLogin() + "]"; //Name + OwnerLogin
     switch (index.column()) {
     case 0:
-        return sourceModel()->data(sourceModel()->index(index.row(), 1)); //Name
+        return info.name(); //Name
     default:
         return QVariant();
     }
