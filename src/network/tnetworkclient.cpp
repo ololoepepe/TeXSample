@@ -28,6 +28,8 @@ class QWidget;
 #include <TeXSampleCore/TAuthorizeRequestData>
 #include <TeXSampleCore/TClientInfo>
 #include <TeXSampleCore/TeXSample>
+#include <TeXSampleCore/TGroupInfo>
+#include <TeXSampleCore/TGroupInfoList>
 #include <TeXSampleCore/TOperation>
 #include <TeXSampleCore/TReply>
 #include <TeXSampleCore/TRequest>
@@ -47,7 +49,6 @@ class QWidget;
 #include <QList>
 #include <QMetaObject>
 #include <QObject>
-#include <QScopedPointer>
 #include <QTimer>
 #include <QVariant>
 
@@ -85,6 +86,7 @@ void TNetworkClientPrivate::init()
     connect(&pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
     caching = false;
     connection = new BNetworkConnection(BGenericSocket::TcpSocket, this);
+    connection->setLoggingMode(BNetworkConnection::NoLogging);
     connect(connection, SIGNAL(connected()), this, SLOT(connected()));
     connect(connection, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(connection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
@@ -111,6 +113,7 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     bool scopedConnection = !connection;
     if (scopedConnection) {
         connection = new BNetworkConnection(BGenericSocket::TcpSocket);
+        connection->setLoggingMode(this->connection->loggingMode());
         connection->connectToHost(hostName, Texsample::MainPort);
         QString msg;
         if (!waitForConnected(connection, parentWidget, &msg)) {
@@ -122,19 +125,18 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     request.setLocale(BApplicationBase::locale());
     request.setCachingEnabled(caching);
     request.setLastRequestDateTime(lastRequestDateTime);
-    QScopedPointer<BNetworkOperation> op(connection->sendRequest(operation, request));
+    BNetworkOperation *op(connection->sendRequest(operation, request));
+    op->setAutoDelete(true);
     QString msg;
-    if (!waitForFinished(op.data(), timeout, parentWidget, &msg)) {
+    if (!waitForFinished(op, timeout, parentWidget, &msg)) {
         if (scopedConnection)
-            delete connection;
+            connection->deleteLater();
         else
             connection->close();
-        if (op->isError())
-            op.take(); //NOTE: Required to prevent double deletion when autoDelete is set to true
         return TReply(msg);
     }
     if (scopedConnection)
-        delete connection;
+        connection->deleteLater();
     if (op->isError())
         return TReply(tr("Operation error", "error"));
     return op->variantData().value<TReply>();
@@ -303,6 +305,16 @@ bool TNetworkClient::defaultWaitForFinishedFunction(BNetworkOperation *op, int t
 
 /*============================== Public methods ============================*/
 
+void TNetworkClient::addAvailableGroup(const TGroupInfo &groupInfo)
+{
+    if (!groupInfo.isValid())
+        return;
+    TUserInfo &info = d_func()->userInfo;
+    TGroupInfoList list = info.availableGroups();
+    list << groupInfo;
+    info.setAvailableGroups(list);
+}
+
 bool TNetworkClient::cachingEnabled() const
 {
     return d_func()->caching;
@@ -327,6 +339,11 @@ bool TNetworkClient::isValid(bool anonymous) const
 {
     return !d_func()->hostName.isEmpty()
             && (anonymous || (!d_func()->login.isEmpty() && !d_func()->password.isEmpty()));
+}
+
+BNetworkConnection::LoggingMode TNetworkClient::loggingMode() const
+{
+    return d_func()->connection->loggingMode();
 }
 
 QString TNetworkClient::login() const
@@ -400,6 +417,21 @@ int TNetworkClient::pingTimeout() const
     return d_func()->pingTimeout;
 }
 
+void TNetworkClient::removeAvailableGroup(quint64 groupId)
+{
+    if (!groupId)
+        return;
+    TUserInfo &info = d_func()->userInfo;
+    TGroupInfoList list = info.availableGroups();
+    foreach (int i, bRangeR(list.size() - 1, 0)) {
+        if (list.at(i).id() == groupId) {
+            list.removeAt(i);
+            break;
+        }
+    }
+    info.setAvailableGroups(list);
+}
+
 void TNetworkClient::setCachingEnabled(bool enabled)
 {
     d_func()->caching = enabled;
@@ -418,6 +450,11 @@ void TNetworkClient::setHostName(const QString &hostName)
         Q_EMIT validityChanged(!bvalid);
     if (bvalida != isValid(true))
         Q_EMIT anonymousValidityChanged(!bvalida);
+}
+
+void TNetworkClient::setLoggingMode(BNetworkConnection::LoggingMode mode)
+{
+    d_func()->connection->setLoggingMode(mode);
 }
 
 void TNetworkClient::setLogin(const QString &login)

@@ -50,7 +50,6 @@ public:
     TGroupInfoList availableGroups;
     TServiceList availableServices;
     QImage avatar;
-    bool containsAvatar;
     QString email;
     TGroupInfoList groups;
     quint64 id;
@@ -91,7 +90,6 @@ TUserInfoPrivate::~TUserInfoPrivate()
 void TUserInfoPrivate::init()
 {
     active = true;
-    containsAvatar = false;
     id = 0;
     lastModificationDateTime.setTimeSpec(Qt::UTC);
     registrationDateTime.setTimeSpec(Qt::UTC);
@@ -148,11 +146,6 @@ QImage TUserInfo::avatar() const
     return d_func()->avatar;
 }
 
-bool TUserInfo::containsAvatar() const
-{
-    return d_func()->containsAvatar;
-}
-
 void TUserInfo::clear()
 {
     B_D(TUserInfo);
@@ -161,7 +154,6 @@ void TUserInfo::clear()
     d->availableGroups.clear();
     d->availableServices.clear();
     d->avatar = QImage();
-    d->containsAvatar = false;
     d->email.clear();
     d->id = 0;
     d->lastModificationDateTime = QDateTime().toUTC();
@@ -244,12 +236,6 @@ void TUserInfo::setAvailableServices(const TServiceList &services)
 void TUserInfo::setAvatar(const QImage &avatar)
 {
     d_func()->avatar = Texsample::testAvatar(avatar) ? avatar : QImage();
-    d_func()->containsAvatar = true;
-}
-
-void TUserInfo::setContainsAvatar(bool contains)
-{
-    d_func()->containsAvatar = contains;
 }
 
 void TUserInfo::setEmail(const QString &email)
@@ -315,7 +301,6 @@ TUserInfo &TUserInfo::operator =(const TUserInfo &other)
     d->availableGroups = dd->availableGroups;
     d->availableServices = dd->availableServices;
     d->avatar = dd->avatar;
-    d->containsAvatar = dd->containsAvatar;
     d->email = dd->email;
     d->groups = dd->groups;
     d->id = dd->id;
@@ -333,9 +318,9 @@ bool TUserInfo::operator ==(const TUserInfo &other) const
     const B_D(TUserInfo);
     const TUserInfoPrivate *dd = other.d_func();
     return d->accessLevel == dd->accessLevel && d->active == dd->active && d->availableGroups == dd->availableGroups
-            && d->availableServices == dd->availableServices && d->avatar == dd->avatar
-            && d->containsAvatar == dd->containsAvatar && d->email == dd->email && d->groups == dd->groups
-            && d->id == dd->id && d->lastModificationDateTime == dd->lastModificationDateTime && d->login == dd->login
+            && d->availableServices == dd->availableServices && d->avatar == dd->avatar && d->email == dd->email
+            && d->groups == dd->groups && d->id == dd->id
+            && d->lastModificationDateTime == dd->lastModificationDateTime && d->login == dd->login
             && d->name == dd->name && d->patronymic == dd->patronymic
             && d->registrationDateTime == dd->registrationDateTime && d->surname == dd->surname;
 }
@@ -361,7 +346,6 @@ QDataStream &operator <<(QDataStream &stream, const TUserInfo &info)
     m.insert("available_groups", d->availableGroups);
     m.insert("available_services", d->availableServices);
     m.insert("avatar", d->avatar);
-    m.insert("contains_avatar", d->containsAvatar);
     m.insert("email", d->email);
     m.insert("groups", d->groups);
     m.insert("id", d->id);
@@ -385,7 +369,6 @@ QDataStream &operator >>(QDataStream &stream, TUserInfo &info)
     d->availableGroups = m.value("available_groups").value<TGroupInfoList>();
     d->availableServices = m.value("available_services").value<TServiceList>();
     d->avatar = m.value("avatar").value<QImage>();
-    d->containsAvatar = m.value("contains_avatar").toBool();
     d->email = m.value("email").toString();
     d->groups = m.value("groups").value<TGroupInfoList>();
     d->id = m.value("id").toULongLong();

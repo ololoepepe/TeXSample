@@ -48,7 +48,9 @@ protected:
 public:
     bool hasValidInput() const;
     TAuthorInfo info() const;
+    bool isReadOnly() const;
     void setInfo(const TAuthorInfo &info);
+    void setReadOnly(bool ro);
 Q_SIGNALS:
     void inputValidityChanged(bool valid);
 private:

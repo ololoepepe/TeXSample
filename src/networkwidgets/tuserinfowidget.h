@@ -62,7 +62,8 @@ public:
     explicit TUserInfoWidget(Mode mode, QWidget *parent = 0);
     ~TUserInfoWidget();
 public:
-    bool alwaysRequestAvatar() const;
+    static bool showConfirmEmailChangeDialog(TNetworkClient *client, QWidget *parent = 0);
+public:
     TAbstractCache *cache() const;
     TNetworkClient *client() const;
     QVariant createRequestData() const;
@@ -75,7 +76,6 @@ public:
     void restoreState(const QByteArray &state);
     QByteArray savePasswordWidgetState() const;
     QByteArray saveState() const;
-    void setAlwaysRequestAvatar(bool enabled);
     void setCache(TAbstractCache *cache);
     void setClient(TNetworkClient *client);
     bool setUser(quint64 userId);

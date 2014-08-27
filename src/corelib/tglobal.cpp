@@ -31,6 +31,7 @@
 #include "reply/tcheckemailavailabilityreplydata.h"
 #include "reply/tcheckloginavailabilityreplydata.h"
 #include "reply/tcompiletexprojectreplydata.h"
+#include "reply/tconfirmemailchangereplydata.h"
 #include "reply/tconfirmregistrationreplydata.h"
 #include "reply/tdeletegroupreplydata.h"
 #include "reply/tdeleteinvitesreplydata.h"
@@ -55,7 +56,6 @@
 #include "reply/tgetsamplesourcereplydata.h"
 #include "reply/tgetselfinforeplydata.h"
 #include "reply/tgetserverstatereplydata.h"
-#include "reply/tgetuseravatarreplydata.h"
 #include "reply/tgetuserconnectioninfolistreplydata.h"
 #include "reply/tgetuserinfoadminreplydata.h"
 #include "reply/tgetuserinfolistadminreplydata.h"
@@ -78,6 +78,7 @@
 #include "request/tcheckemailavailabilityrequestdata.h"
 #include "request/tcheckloginavailabilityrequestdata.h"
 #include "request/tcompiletexprojectrequestdata.h"
+#include "request/tconfirmemailchangerequestdata.h"
 #include "request/tconfirmregistrationrequestdata.h"
 #include "request/tdeletegrouprequestdata.h"
 #include "request/tdeleteinvitesrequestdata.h"
@@ -102,7 +103,6 @@
 #include "request/tgetsamplesourcerequestdata.h"
 #include "request/tgetselfinforequestdata.h"
 #include "request/tgetserverstaterequestdata.h"
-#include "request/tgetuseravatarrequestdata.h"
 #include "request/tgetuserconnectioninfolistrequestdata.h"
 #include "request/tgetuserinfoadminrequestdata.h"
 #include "request/tgetuserinfolistadminrequestdata.h"
@@ -183,6 +183,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityReplyData>();
     qRegisterMetaType<TCompileTexProjectReplyData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectReplyData>();
+    qRegisterMetaType<TConfirmEmailChangeReplyData>();
+    qRegisterMetaTypeStreamOperators<TConfirmEmailChangeReplyData>();
     qRegisterMetaType<TConfirmRegistrationReplyData>();
     qRegisterMetaTypeStreamOperators<TConfirmRegistrationReplyData>();
     qRegisterMetaType<TDeleteGroupReplyData>();
@@ -231,8 +233,6 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetSelfInfoReplyData>();
     qRegisterMetaType<TGetServerStateReplyData>();
     qRegisterMetaTypeStreamOperators<TGetServerStateReplyData>();
-    qRegisterMetaType<TGetUserAvatarReplyData>();
-    qRegisterMetaTypeStreamOperators<TGetUserAvatarReplyData>();
     qRegisterMetaType<TGetUserConnectionInfoListReplyData>();
     qRegisterMetaTypeStreamOperators<TGetUserConnectionInfoListReplyData>();
     qRegisterMetaType<TGetUserInfoAdminReplyData>();
@@ -278,6 +278,8 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TCheckLoginAvailabilityRequestData>();
     qRegisterMetaType<TCompileTexProjectRequestData>();
     qRegisterMetaTypeStreamOperators<TCompileTexProjectRequestData>();
+    qRegisterMetaType<TConfirmEmailChangeRequestData>();
+    qRegisterMetaTypeStreamOperators<TConfirmEmailChangeRequestData>();
     qRegisterMetaType<TConfirmRegistrationRequestData>();
     qRegisterMetaTypeStreamOperators<TConfirmRegistrationRequestData>();
     qRegisterMetaType<TDeleteGroupRequestData>();
@@ -326,8 +328,6 @@ void tRegister()
     qRegisterMetaTypeStreamOperators<TGetSelfInfoRequestData>();
     qRegisterMetaType<TGetServerStateRequestData>();
     qRegisterMetaTypeStreamOperators<TGetServerStateRequestData>();
-    qRegisterMetaType<TGetUserAvatarRequestData>();
-    qRegisterMetaTypeStreamOperators<TGetUserAvatarRequestData>();
     qRegisterMetaType<TGetUserConnectionInfoListRequestData>();
     qRegisterMetaTypeStreamOperators<TGetUserConnectionInfoListRequestData>();
     qRegisterMetaType<TGetUserInfoAdminRequestData>();
@@ -430,5 +430,5 @@ void tRegister()
 
 const char *tVersion()
 {
-    return "2.0.0-beta5";
+    return "2.0.0-beta6";
 }

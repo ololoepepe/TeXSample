@@ -50,12 +50,10 @@ public:
 public:
     QImage avatar() const;
     void clear();
-    bool editAvatar() const;
     QString name() const;
     QString patronymic() const;
     bool isValid() const;
     void setAvatar(const QImage &avatar);
-    void setEditAvatar(bool edit);
     void setName(const QString &name);
     void setPatronymic(const QString &patronymic);
     void setSurname(const QString &surname);

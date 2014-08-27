@@ -40,8 +40,12 @@ class TCompileTexProjectReplyDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TCompileTexProjectReplyData)
 public:
+    int dvipsExitCode;
+    QString dvipsOutput;
     int exitCode;
     TBinaryFileList files;
+    int makeindexExitCode;
+    QString makeindexOutput;
     QString output;
 public:
     explicit TCompileTexProjectReplyDataPrivate(TCompileTexProjectReplyData *q);
@@ -102,6 +106,16 @@ TCompileTexProjectReplyData::~TCompileTexProjectReplyData()
 
 /*============================== Public methods ============================*/
 
+int TCompileTexProjectReplyData::dvipsExitCode() const
+{
+    return d_func()->dvipsExitCode;
+}
+
+QString TCompileTexProjectReplyData::dvipsOutput() const
+{
+    return d_func()->dvipsOutput;
+}
+
 int TCompileTexProjectReplyData::exitCode() const
 {
     return d_func()->exitCode;
@@ -112,9 +126,29 @@ const TBinaryFileList &TCompileTexProjectReplyData::files() const
     return d_func()->files;
 }
 
+int TCompileTexProjectReplyData::makeindexExitCode() const
+{
+    return d_func()->makeindexExitCode;
+}
+
+QString TCompileTexProjectReplyData::makeindexOutput() const
+{
+    return d_func()->makeindexOutput;
+}
+
 QString TCompileTexProjectReplyData::output() const
 {
     return d_func()->output;
+}
+
+void TCompileTexProjectReplyData::setDvipsExitCode(int code)
+{
+    d_func()->dvipsExitCode = code;
+}
+
+void TCompileTexProjectReplyData::setDvipsOutput(const QString &output)
+{
+    d_func()->dvipsOutput = output;
 }
 
 void TCompileTexProjectReplyData::setExitCode(int code)
@@ -125,6 +159,16 @@ void TCompileTexProjectReplyData::setExitCode(int code)
 void TCompileTexProjectReplyData::setFiles(const TBinaryFileList &files)
 {
     d_func()->files = files;
+}
+
+void TCompileTexProjectReplyData::setMakeindexExitCode(int code)
+{
+    d_func()->makeindexExitCode = code;
+}
+
+void TCompileTexProjectReplyData::setMakeindexOutput(const QString &output)
+{
+    d_func()->makeindexOutput = output;
 }
 
 void TCompileTexProjectReplyData::setOutput(const QString &output)
@@ -138,8 +182,12 @@ TCompileTexProjectReplyData &TCompileTexProjectReplyData::operator =(const TComp
 {
     B_D(TCompileTexProjectReplyData);
     const TCompileTexProjectReplyDataPrivate *dd = other.d_func();
+    d->dvipsExitCode = dd->dvipsExitCode;
+    d->dvipsOutput = dd->dvipsOutput;
     d->exitCode = dd->exitCode;
     d->files = dd->files;
+    d->makeindexExitCode = dd->makeindexExitCode;
+    d->makeindexOutput = dd->makeindexOutput;
     d->output = dd->output;
     return *this;
 }
@@ -148,7 +196,9 @@ bool TCompileTexProjectReplyData::operator ==(const TCompileTexProjectReplyData 
 {
     const B_D(TCompileTexProjectReplyData);
     const TCompileTexProjectReplyDataPrivate *dd = other.d_func();
-    return d->exitCode == dd->exitCode && d->files == dd->files && d->output == dd->output;
+    return d->dvipsExitCode == dd->dvipsExitCode && d->dvipsOutput == dd->dvipsOutput && d->exitCode == dd->exitCode
+            && d->files == dd->files && d->makeindexExitCode == dd->makeindexExitCode
+            && d->makeindexOutput == dd->makeindexOutput && d->output == dd->output;
 }
 
 bool TCompileTexProjectReplyData::operator !=(const TCompileTexProjectReplyData &other) const
@@ -167,9 +217,13 @@ QDataStream &operator <<(QDataStream &stream, const TCompileTexProjectReplyData 
 {
     const TCompileTexProjectReplyDataPrivate *d = data.d_func();
     QVariantMap m;
+    m.insert("dvips_exit_code", d->dvipsExitCode);
+    m.insert("dvips_output", d->dvipsOutput);
     m.insert("exit_code", d->exitCode);
     m.insert("files", d->files);
-    m.insert("ouptut", d->output);
+    m.insert("makeindex_exit_code", d->makeindexExitCode);
+    m.insert("makeindex_output", d->makeindexOutput);
+    m.insert("output", d->output);
     stream << m;
     return stream;
 }
@@ -179,8 +233,12 @@ QDataStream &operator >>(QDataStream &stream, TCompileTexProjectReplyData &data)
     TCompileTexProjectReplyDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
+    d->dvipsExitCode = m.value("dvips_exit_code").toInt();
+    d->dvipsOutput = m.value("dvips_output").toString();
     d->exitCode = m.value("exit_code").toInt();
     d->files = m.value("files").value<TBinaryFileList>();
+    d->makeindexExitCode = m.value("makeindex_exit_code").toInt();
+    d->makeindexOutput = m.value("makeindex_output").toString();
     d->output = m.value("output").toString();
     return stream;
 }

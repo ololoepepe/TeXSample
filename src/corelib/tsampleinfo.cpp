@@ -407,7 +407,7 @@ QDataStream &operator >>(QDataStream &stream, TSampleInfo &info)
     stream >> m;
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->creationDateTime = m.value("creation_date_time").toDateTime().toUTC();
-    d->description = m.value("descrtiption").toString();
+    d->description = m.value("description").toString();
     d->extraSourceFiles = m.value("extra_source_files").value<TFileInfoList>();
     d->id = m.value("id").toULongLong();
     d->lastModificationDateTime = m.value("last_modification_date_time").toDateTime().toUTC();

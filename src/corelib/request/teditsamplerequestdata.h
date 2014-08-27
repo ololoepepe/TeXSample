@@ -55,11 +55,13 @@ public:
     void clear();
     QString description() const;
     bool editProject() const;
+    quint64 id() const;
     bool isValid() const;
     TTexProject project() const;
     void setAuthors(const TAuthorInfoList &authors);
     void setDescritpion(const QString &description);
     void setEditProject(bool edit);
+    void setId(quint64 id);
     void setProject(const TTexProject &project);
     void setTags(const QStringList &tags);
     void setTitle(const QString &title);

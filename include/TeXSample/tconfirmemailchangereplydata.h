@@ -1,0 +1,1 @@
+#include "../../src/corelib/reply/tconfirmemailchangereplydata.h"

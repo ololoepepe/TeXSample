@@ -42,7 +42,6 @@ class TEditSelfRequestDataPrivate : public BBasePrivate
     B_DECLARE_PUBLIC(TEditSelfRequestData)
 public:
     QImage avatar;
-    bool editAvatar;
     QString name;
     QString patronymic;
     QString surname;
@@ -76,7 +75,7 @@ TEditSelfRequestDataPrivate::~TEditSelfRequestDataPrivate()
 
 void TEditSelfRequestDataPrivate::init()
 {
-    editAvatar = false;
+    //
 }
 
 /*============================================================================
@@ -114,15 +113,9 @@ void TEditSelfRequestData::clear()
 {
     B_D(TEditSelfRequestData);
     d->avatar = QImage();
-    d->editAvatar = false;
     d->name.clear();
     d->patronymic.clear();
     d->surname.clear();
-}
-
-bool TEditSelfRequestData::editAvatar() const
-{
-    return d_func()->editAvatar;
 }
 
 QString TEditSelfRequestData::name() const
@@ -143,11 +136,6 @@ bool TEditSelfRequestData::isValid() const
 void TEditSelfRequestData::setAvatar(const QImage &avatar)
 {
     d_func()->avatar = Texsample::testAvatar(avatar) ? avatar : QImage();
-}
-
-void TEditSelfRequestData::setEditAvatar(bool edit)
-{
-    d_func()->editAvatar = edit;
 }
 
 void TEditSelfRequestData::setName(const QString &name)
@@ -177,7 +165,6 @@ TEditSelfRequestData &TEditSelfRequestData::operator =(const TEditSelfRequestDat
     B_D(TEditSelfRequestData);
     const TEditSelfRequestDataPrivate *dd = other.d_func();
     d->avatar = dd->avatar;
-    d->editAvatar = dd->editAvatar;
     d->name = dd->name;
     d->patronymic = dd->patronymic;
     d->surname = dd->surname;
@@ -188,8 +175,8 @@ bool TEditSelfRequestData::operator ==(const TEditSelfRequestData &other) const
 {
     const B_D(TEditSelfRequestData);
     const TEditSelfRequestDataPrivate *dd = other.d_func();
-    return d->avatar == dd->avatar && d->editAvatar == dd->editAvatar && d->name == dd->name
-            && d->patronymic == dd->patronymic && d->surname == dd->surname;
+    return d->avatar == dd->avatar && d->name == dd->name && d->patronymic == dd->patronymic
+            && d->surname == dd->surname;
 }
 
 bool TEditSelfRequestData::operator !=(const TEditSelfRequestData &other) const
@@ -208,9 +195,7 @@ QDataStream &operator <<(QDataStream &stream, const TEditSelfRequestData &data)
 {
     const TEditSelfRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    if (d->editAvatar)
-        m.insert("avatar", d->avatar);
-    m.insert("edit_avatar", d->editAvatar);
+    m.insert("avatar", d->avatar);
     m.insert("name", d->name);
     m.insert("patronymic", d->patronymic);
     m.insert("surname", d->surname);
@@ -224,7 +209,6 @@ QDataStream &operator >>(QDataStream &stream, TEditSelfRequestData &data)
     QVariantMap m;
     stream >> m;
     d->avatar = m.value("avatar").value<QImage>();
-    d->editAvatar = m.value("edit_avatar").toBool();
     d->name = m.value("name").toString();
     d->patronymic = m.value("patronymic").toString();
     d->surname = m.value("surname").toString();

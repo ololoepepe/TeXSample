@@ -65,6 +65,7 @@ public:
     ~TAccessLevel();
 public:
     bool isValid() const;
+    AccessLevel level() const;
     QString toString() const;
     QString toStringNoTr() const;
 public:

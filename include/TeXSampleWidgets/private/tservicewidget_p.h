@@ -1,0 +1,1 @@
+#include "../../../src/widgets/tservicewidget_p.h"

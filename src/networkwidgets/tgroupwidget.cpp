@@ -91,14 +91,17 @@ QVariant TGroupProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
-    if (Qt::ToolTipRole == role) {
-        QString name = sourceModel()->data(sourceModel()->index(index.row(), 1)).toString();
-        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 3)).toString();
-        return name + " [" + ownerLogin + "]";
-    }
+    TGroupModel *model = qobject_cast<TGroupModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TGroupInfo info = model->groupInfoAt(index.row());
+    if (!info.isValid())
+        return QVariant();
+    if (Qt::ToolTipRole == role)
+        return info.name() + " [" + info.ownerLogin() + "]"; //Name + OwnerLogin
     switch (index.column()) {
     case 0:
-        return sourceModel()->data(sourceModel()->index(index.row(), 0)); //Name
+        return info.name(); //Name
     default:
         return QVariant();
     }
@@ -174,8 +177,7 @@ void TGroupWidgetPrivate::updateGroupList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::ModeratorLevel))
         return;
     TGetGroupInfoListRequestData request;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetGroupInfoList) : QDateTime();
-    TReply reply = client->performOperation(TOperation::GetGroupInfoList, request, dt);
+    TReply reply = client->performOperation(TOperation::GetGroupInfoList, request, Model->lastUpdateDateTime());
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating group list failed", "msgbox windowTitle"));
@@ -188,10 +190,11 @@ void TGroupWidgetPrivate::updateGroupList()
         return;
     }
     TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
-    Model->removeGroups(data.deletedGroups());
-    Model->addGroups(data.newGroups());
-    if (cache && !reply.cacheUpToDate())
+    Model->update(data.newGroups(), data.deletedGroups(), reply.requestDateTime());
+    if (cache && !reply.cacheUpToDate()) {
+        cache->removeData(TOperation::GetGroupInfoList, data.deletedGroups());
         cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);
+    }
 }
 
 /*============================== Public slots ==============================*/
@@ -206,6 +209,7 @@ void TGroupWidgetPrivate::addGroup()
         QFormLayout *flt = new QFormLayout(wgt);
           BLineEdit *ledtName = new BLineEdit;
             ledtName->setValidator(new QRegExpValidator(QRegExp(".+"), ledtName));
+            ledtName->checkValidity();
           flt->addRow(tr("Name:", "lbl text"), ledtName);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(ledtName->hasAcceptableInput());
@@ -230,7 +234,11 @@ void TGroupWidgetPrivate::addGroup()
         msg.exec();
         return;
     }
-    Model->addGroup(r.data().value<TAddGroupReplyData>().groupInfo());
+    TGroupInfo info = r.data().value<TAddGroupReplyData>().groupInfo();
+    client->addAvailableGroup(info);
+    Model->addGroup(info);
+    if (cache)
+        cache->setData(TOperation::AddGroup, r.requestDateTime(), r.data());
 }
 
 void TGroupWidgetPrivate::clientAuthorizedChanged(bool authorized)
@@ -266,7 +274,10 @@ void TGroupWidgetPrivate::deleteGroup()
         msg.exec();
         return;
     }
+    client->removeAvailableGroup(info.id());
     Model->removeGroup(info.id());
+    if (cache)
+        cache->removeData(TOperation::DeleteGroup, info.id());
 }
 
 void TGroupWidgetPrivate::editGroup(QModelIndex index)
@@ -313,6 +324,8 @@ void TGroupWidgetPrivate::editGroup(QModelIndex index)
         return;
     }
     Model->updateGroup(info.id(), r.data().value<TEditGroupReplyData>().groupInfo());
+    if (cache)
+        cache->setData(TOperation::EditGroup, r.requestDateTime(), r.data(), info.id());
 }
 
 void TGroupWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
@@ -324,7 +337,8 @@ void TGroupWidgetPrivate::selectionChanged(const QItemSelection &selected, const
     b = b && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel);
     TGroupInfo info = Model->groupInfoAt(ind.row());
     b = b && info.isValid();
-    b = b && client->userInfo().availableGroups().contains(info);
+    b = b && (client->userInfo().availableGroups().contains(info)
+              || client->userInfo().accessLevel().level() >= TAccessLevel::SuperuserLevel);
     actEdit->setEnabled(b);
     actDelete->setEnabled(b);
 }

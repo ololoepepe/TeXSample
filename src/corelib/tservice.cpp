@@ -81,19 +81,27 @@ void TServicePrivate::init()
 
 QString TService::serviceToString(Service srv)
 {
-    return tr(serviceToStringNoTr(srv).toUtf8().constData());
+    switch (srv) {
+    case TexsampleService:
+        return tr("TeXSample");
+    case CloudlabService:
+        return tr("CloudLab");
+    case NoService:
+    default:
+        return tr("No");
+    }
 }
 
 QString TService::serviceToStringNoTr(Service srv)
 {
     switch (srv) {
     case TexsampleService:
-        return QT_TRANSLATE_NOOP("TService", "TeXSample");
+        return "TeXSample";
     case CloudlabService:
-        return QT_TRANSLATE_NOOP("TService", "CloudLab");
+        return "CloudLab";
     case NoService:
     default:
-        return QT_TRANSLATE_NOOP("TService", "No");
+        return "No";
     }
 }
 

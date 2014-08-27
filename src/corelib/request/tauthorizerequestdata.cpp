@@ -140,8 +140,8 @@ void TAuthorizeRequestData::setClientInfo(const TClientInfo &info)
 
 void TAuthorizeRequestData::setIdentifier(const QString &identifier)
 {
-    d_func()->identifier = (Texsample::testLogin(identifier) || Texsample::testPassword(identifier)) ? identifier :
-                                                                                                       QString();
+    d_func()->identifier = (Texsample::testLogin(identifier) || Texsample::testEmail(identifier)) ? identifier :
+                                                                                                    QString();
 }
 
 void TAuthorizeRequestData::setPassword(const QByteArray &password)

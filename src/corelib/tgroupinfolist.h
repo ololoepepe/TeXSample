@@ -37,7 +37,11 @@
 class T_CORE_EXPORT TGroupInfoList : public QList<TGroupInfo>
 {
 public:
+    using QList<TGroupInfo>::contains;
+public:
     QStringList names() const;
+public:
+    bool contains(quint64 groupId) const;
 public:
     operator QVariant() const;
 };

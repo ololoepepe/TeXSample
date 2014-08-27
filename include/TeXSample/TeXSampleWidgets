@@ -1,11 +1,12 @@
 #ifndef TSMP_TEXSAMPLEWIDGETS_MODULE_H
 #define TSMP_TEXSAMPLEWIDGETS_MODULE_H
 
-#include "tabstractlistwidgetitemdelegate.h"
 #include "tapplication.h"
-#include "tauthorinfolistwidgetitemdelegate.h"
 #include "tauthorinfowidget.h"
-#include "tlistwidget.h"
+#include "tauthorlistwidget.h"
+#include "tconfirmationwidget.h"
+#include "tgrouplistwidget.h"
+#include "tservicewidget.h"
 #include "ttagwidget.h"
 
 #endif //TSMP_TEXSAMPLEWIDGETS_MODULE_H

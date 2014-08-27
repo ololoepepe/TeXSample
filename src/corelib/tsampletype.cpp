@@ -90,21 +90,27 @@ QList<TSampleType> TSampleType::allTypes()
 
 QString TSampleType::sampleTypeToString(TSampleType type, bool singular)
 {
-    return tr(sampleTypeToStringNoTr(type, singular).toUtf8().constData());
+    switch (type) {
+    case Unverified:
+        return singular ? tr("Unverified", "singular") : tr("Unverified", "plural");
+    case Approved:
+        return singular ? tr("Approved", "singular") : tr("Approved", "plural");
+    case Rejected:
+        return singular ? tr("Rejected", "singular") : tr("Rejected", "plural");
+    default:
+        return "";
+    }
 }
 
-QString TSampleType::sampleTypeToStringNoTr(TSampleType type, bool singular)
+QString TSampleType::sampleTypeToStringNoTr(TSampleType type, bool)
 {
     switch (type) {
     case Unverified:
-        return singular ? QT_TRANSLATE_NOOP("TSampleType singular", "Unverified") :
-                          QT_TRANSLATE_NOOP("TSampleType plural", "Unverified");
+        return "Unverified";
     case Approved:
-        return singular ? QT_TRANSLATE_NOOP("TSampleType singular", "Approved") :
-                          QT_TRANSLATE_NOOP("TSampleType plural", "Approved");
+        return "Approved";
     case Rejected:
-        return singular ? QT_TRANSLATE_NOOP("TSampleType singular", "Rejected") :
-                          QT_TRANSLATE_NOOP("TSampleType plural", "Rejected");
+        return "Rejected";
     default:
         return "";
     }

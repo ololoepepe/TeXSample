@@ -94,40 +94,47 @@ int TUserProxyModel::columnCount(const QModelIndex &) const
 QVariant TUserProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role && Qt::DecorationRole != role
-                             && Qt::CheckStateRole != role) || index.column() > 2)
+                             && Qt::CheckStateRole != role) || index.column() > 2) {
+        return QVariant();
+    }
+    TUserModel *model = qobject_cast<TUserModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TUserInfo info = model->userInfoAt(index.row());
+    if (!info.isValid())
         return QVariant();
     switch (index.column()) {
     case 0: {
-    switch (role) {
-    case Qt::DecorationRole: {
-        //Avatar
-        QPixmap p = QPixmap::fromImage(sourceModel()->data(sourceModel()->index(index.row(), 12)).value<QImage>());
-        if (p.isNull())
+        switch (role) {
+        case Qt::DecorationRole: {
+            //Avatar
+            QPixmap p = QPixmap::fromImage(info.avatar());
+            if (p.isNull())
+                return QVariant();
+            return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        case Qt::CheckStateRole: {
+            //Active
+            return info.active() ? Qt::Checked : Qt::Unchecked;
+        }
+        default: {
             return QVariant();
-        return p.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    case Qt::CheckStateRole: {
-        //Active
-        return sourceModel()->data(sourceModel()->index(index.row(), 3)).toBool() ? Qt::Checked : Qt::Unchecked;
-    }
-    default: {
-        return QVariant();
-    }
-    }
+        }
+        }
     }
     case 1: {
         if (Qt::DisplayRole != role)
             return QVariant();
-        return sourceModel()->data(sourceModel()->index(index.row(), 1)); //Login
+        return info.login(); //Login
     }
     case 2: {
-        //Name [+ Patronymic] + Surname
+        //Name [+ Patronymic] [+ Surname]
         if (Qt::DisplayRole != role)
             return QVariant();
-        QString name = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
-        QString patronymic = sourceModel()->data(sourceModel()->index(index.row(), 6)).toString();
-        QString surname = sourceModel()->data(sourceModel()->index(index.row(), 7)).toString();
-        return name + (!patronymic.isEmpty() ? (" " + patronymic) : QString()) + " " + surname;
+        QString name = info.name();
+        QString patronymic = info.patronymic();
+        QString surname = info.surname();
+        return name + (!patronymic.isEmpty() ? " " : "") + patronymic + (!surname.isEmpty() ? " " : "") + surname;
     }
     default: {
         return QVariant();
@@ -172,7 +179,6 @@ TUserWidgetPrivate::~TUserWidgetPrivate()
 
 void TUserWidgetPrivate::init()
 {
-    alwaysRequestAvatar = false;
     cache = 0;
     client = 0;
     proxyModel = new TUserProxyModel(this);
@@ -208,8 +214,7 @@ void TUserWidgetPrivate::updateUserList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
         return;
     TGetUserInfoListAdminRequestData request;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetUserInfoListAdmin) : QDateTime();
-    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, dt);
+    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, Model->lastUpdateDateTime());
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating user list failed", "msgbox windowTitle"));
@@ -222,8 +227,7 @@ void TUserWidgetPrivate::updateUserList()
         return;
     }
     TGetUserInfoListAdminReplyData data = reply.data().value<TGetUserInfoListAdminReplyData>();
-    Model->removeUsers(data.deletedUsers());
-    Model->addUsers(data.newUsers());
+    Model->update(data.newUsers(), data.deletedUsers(), reply.requestDateTime());
     if (cache)
         cache->setData(TOperation::GetUserInfoListAdmin, reply.requestDateTime(), data);
 }
@@ -324,7 +328,6 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
       TUserInfoWidget *wgt = new TUserInfoWidget(TUserInfoWidget::EditMode);
         wgt->setModel(Model);
         wgt->setClient(client);
-        wgt->setAlwaysRequestAvatar(alwaysRequestAvatar);
         wgt->setUser(userId);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()))->setEnabled(wgt->hasValidInput());
@@ -348,7 +351,7 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         msg.exec();
         return;
     }
-    Model->updateUser(userId, r.data().value<TEditUserReplyData>().userInfo(), data.editAvatar());
+    Model->updateUser(userId, r.data().value<TEditUserReplyData>().userInfo());
     if (cache)
         cache->setData(TOperation::EditUser, r.requestDateTime(), r.data());
 }
@@ -385,11 +388,6 @@ TUserWidget::~TUserWidget()
 
 /*============================== Public methods ============================*/
 
-bool TUserWidget::alwaysRequestAvatar() const
-{
-    return d_func()->alwaysRequestAvatar;
-}
-
 TAbstractCache *TUserWidget::cache() const
 {
     return d_func()->cache;
@@ -398,11 +396,6 @@ TAbstractCache *TUserWidget::cache() const
 TNetworkClient *TUserWidget::client() const
 {
     return d_func()->client;
-}
-
-void TUserWidget::setAlwaysRequestAvatar(bool enabled)
-{
-    d_func()->alwaysRequestAvatar = enabled;
 }
 
 void TUserWidget::setCache(TAbstractCache *cache)

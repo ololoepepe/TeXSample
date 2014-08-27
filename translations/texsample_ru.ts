@@ -5,39 +5,53 @@
     <name>TAccessLevel</name>
     <message>
         <source>User</source>
+        <comment>singular</comment>
         <translation>Пользователь</translation>
     </message>
     <message>
         <source>Users</source>
+        <comment>plural</comment>
         <translation>Пользователи</translation>
     </message>
     <message>
         <source>Moderator</source>
+        <comment>singular</comment>
         <translation>Модератор</translation>
     </message>
     <message>
         <source>Moderators</source>
+        <comment>plural</comment>
         <translation>Модераторы</translation>
     </message>
     <message>
-        <source>Administrators</source>
-        <translation>Администраторы</translation>
-    </message>
-    <message>
         <source>Administrator</source>
+        <comment>singular</comment>
         <translation>Администратор</translation>
     </message>
     <message>
-        <source>No</source>
-        <translation>Нет</translation>
+        <source>Administrators</source>
+        <comment>plural</comment>
+        <translation>Администраторы</translation>
     </message>
     <message>
         <source>Superuser</source>
+        <comment>singular</comment>
         <translation>Суперпользователь</translation>
     </message>
     <message>
         <source>Superusers</source>
+        <comment>plural</comment>
         <translation>Суперпользователи</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <comment>singular</comment>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <comment>plural</comment>
+        <translation>Нет</translation>
     </message>
 </context>
 <context>
@@ -74,11 +88,82 @@
     </message>
 </context>
 <context>
+    <name>TAuthorListWidgetPrivate</name>
+    <message>
+        <source>Add...</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Добавить...</translation>
+    </message>
+    <message>
+        <source>Remove selected</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Удалить выделенное</translation>
+    </message>
+    <message>
+        <source>Clear list</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Очистить список</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вверх</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вниз</translation>
+    </message>
+    <message>
+        <source>Adding author</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Добавление автора</translation>
+    </message>
+    <message>
+        <source>Author info</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Информация об авторе</translation>
+    </message>
+    <message>
+        <source>Editing author</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Редактирование автора</translation>
+    </message>
+</context>
+<context>
     <name>TConfirmationWidgetPrivate</name>
     <message>
         <source>Code:</source>
         <comment>lbl text</comment>
         <translation>Код:</translation>
+    </message>
+</context>
+<context>
+    <name>TGroupListWidgetPrivate</name>
+    <message>
+        <source>Add...</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Добавить...</translation>
+    </message>
+    <message>
+        <source>Remove selected</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Удалить выделенное</translation>
+    </message>
+    <message>
+        <source>Clear list</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Очистить список</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вверх</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вниз</translation>
     </message>
 </context>
 <context>
@@ -283,11 +368,6 @@
         <translation>Количество:</translation>
     </message>
     <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
-    </message>
-    <message>
         <source>Groups</source>
         <comment>gbox title</comment>
         <translation>Группы</translation>
@@ -317,63 +397,43 @@
         <comment>msgbox text</comment>
         <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
     </message>
-</context>
-<context>
-    <name>TLabType plural</name>
     <message>
-        <source>Desktop applications</source>
-        <translation>Настольные приложения</translation>
-    </message>
-    <message>
-        <source>Web applications</source>
-        <translation>Веб-приложения</translation>
-    </message>
-    <message>
-        <source>External URLs</source>
-        <translation>Внешние ссылки</translation>
+        <source>Services</source>
+        <comment>gbox title</comment>
+        <translation>Сервисы</translation>
     </message>
 </context>
 <context>
-    <name>TLabType singular</name>
+    <name>TLabType</name>
     <message>
         <source>Desktop application</source>
+        <comment>singular</comment>
         <translation>Настольное приложение</translation>
     </message>
     <message>
+        <source>Desktop applications</source>
+        <comment>plural</comment>
+        <translation>Настольные приложения</translation>
+    </message>
+    <message>
         <source>Web application</source>
+        <comment>singular</comment>
         <translation>Веб-приложение</translation>
     </message>
     <message>
+        <source>Web applications</source>
+        <comment>plural</comment>
+        <translation>Веб-приложения</translation>
+    </message>
+    <message>
         <source>External URL</source>
+        <comment>singular</comment>
         <translation>Внешняя ссылка</translation>
     </message>
-</context>
-<context>
-    <name>TListWidgetPrivate</name>
     <message>
-        <source>Add...</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Добавить...</translation>
-    </message>
-    <message>
-        <source>Remove selected</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Удалить выделенное</translation>
-    </message>
-    <message>
-        <source>Clear list</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Очистить список</translation>
-    </message>
-    <message>
-        <source>Move up</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Переместить вверх</translation>
-    </message>
-    <message>
-        <source>Move down</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Переместить вниз</translation>
+        <source>External URLs</source>
+        <comment>plural</comment>
+        <translation>Внешние ссылки</translation>
     </message>
 </context>
 <context>
@@ -415,11 +475,6 @@
         <source>Null connection pointer</source>
         <comment>error</comment>
         <translation>Нулевой указатель на соединение</translation>
-    </message>
-    <message>
-        <source>Operation timed out</source>
-        <comment>error</comment>
-        <translation type="obsolete">Время ожидания завершения операции истекло</translation>
     </message>
     <message>
         <source>Invalid parameter (internal error)</source>
@@ -531,33 +586,36 @@
     </message>
 </context>
 <context>
-    <name>TSampleType plural</name>
+    <name>TSampleType</name>
     <message>
         <source>Unverified</source>
+        <comment>singular</comment>
+        <translation>Непроверенный</translation>
+    </message>
+    <message>
+        <source>Unverified</source>
+        <comment>plural</comment>
         <translation>Непроверенные</translation>
     </message>
     <message>
         <source>Approved</source>
+        <comment>singular</comment>
+        <translation>Утверждённый</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <comment>plural</comment>
         <translation>Утверждённые</translation>
     </message>
     <message>
         <source>Rejected</source>
-        <translation>Отклонённые</translation>
-    </message>
-</context>
-<context>
-    <name>TSampleType singular</name>
-    <message>
-        <source>Unverified</source>
-        <translation>Непроверенный</translation>
-    </message>
-    <message>
-        <source>Approved</source>
-        <translation>Утверждённый</translation>
+        <comment>singular</comment>
+        <translation>Отклонённый</translation>
     </message>
     <message>
         <source>Rejected</source>
-        <translation>Отклонённый</translation>
+        <comment>plural</comment>
+        <translation>Отклонённые</translation>
     </message>
 </context>
 <context>
@@ -573,6 +631,14 @@
     <message>
         <source>CloudLab</source>
         <translation>CloudLab</translation>
+    </message>
+</context>
+<context>
+    <name>TServiceWidgetPrivate</name>
+    <message>
+        <source>Access to</source>
+        <comment>lbl text</comment>
+        <translation>Доступ к</translation>
     </message>
 </context>
 <context>
@@ -594,6 +660,31 @@
         <source>Failed to get user info. The following error occured:</source>
         <comment>msgbox text</comment>
         <translation>Не удалось получить информацию о пользователе. Произошла следующая ошибка:</translation>
+    </message>
+    <message>
+        <source>E-mail change confirmation</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Подтверждение смены адреса эл.почты</translation>
+    </message>
+    <message>
+        <source>E-mail change confirmed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Смена адреса эл. почты подтверждена</translation>
+    </message>
+    <message>
+        <source>You have successfully confirmed your e-mail change</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно подтвердили смену своего адреса эл.почты</translation>
+    </message>
+    <message>
+        <source>E-mail change confirmation error</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Ошибка подтверждения смены адреса эл. почты</translation>
+    </message>
+    <message>
+        <source>Failed to confirm e-mail change due to the following error:</source>
+        <comment>msgbox text</comment>
+        <translation>Не удалось подтвердить смену адреса эл. почты из-за следующей ошибки:</translation>
     </message>
 </context>
 <context>
@@ -709,11 +800,6 @@
         <translation>Дата регистрации:</translation>
     </message>
     <message>
-        <source>Access to</source>
-        <comment>lbl text</comment>
-        <translation>Доступ к</translation>
-    </message>
-    <message>
         <source>Security</source>
         <comment>gbox title</comment>
         <translation>Безопасность</translation>
@@ -784,21 +870,6 @@
         <translation>Щелкните чтобы посмотреть картинку в полном размере</translation>
     </message>
     <message>
-        <source>Click to see the avatar</source>
-        <comment>tbtn toolTip</comment>
-        <translation>Щелкните чтобы посмотреть аватар</translation>
-    </message>
-    <message>
-        <source>Failed to get avatar</source>
-        <comment>msgbox windowTitle</comment>
-        <translation>Загрузка аватара не удалось</translation>
-    </message>
-    <message>
-        <source>Failed to get user avatar from server. The following error occured:</source>
-        <comment>msgbox text</comment>
-        <translation>Не удалось загрузить аватар с сервера. Произошла следующая ошибка:</translation>
-    </message>
-    <message>
         <source>Avatar:</source>
         <comment>dlg windowTitle</comment>
         <translation>Аватар:</translation>
@@ -832,6 +903,36 @@
         <source>Services</source>
         <comment>gbox title</comment>
         <translation>Сервисы</translation>
+    </message>
+    <message>
+        <source>E-mail changed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Адрес эл. почты изменен</translation>
+    </message>
+    <message>
+        <source>Password changed</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Пароль изменен</translation>
+    </message>
+    <message>
+        <source>You have successfully changed your password</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно изменили свой пароль</translation>
+    </message>
+    <message>
+        <source>You have successfully changed your e-mail. Confirmation code was sent to your new e-mail.Please, click OK and enter that code to finish e-mail change</source>
+        <comment>msgbox text</comment>
+        <translation>Вы успешно изменили свой адрес эл. почты. Код подтверждения был выслан на вашу новую эл. почту. Нажмите ОК и введите этот код, чтобы завершить смену адреса эл. почты</translation>
+    </message>
+    <message>
+        <source>New e-mail:</source>
+        <comment>lbl text</comment>
+        <translation>Новая эл. почта:</translation>
+    </message>
+    <message>
+        <source>New password:</source>
+        <comment>lbl text</comment>
+        <translation>Новый пароль:</translation>
     </message>
 </context>
 <context>
@@ -905,11 +1006,6 @@
         <source>Last modified</source>
         <comment>headerData</comment>
         <translation>Последнее изменение</translation>
-    </message>
-    <message>
-        <source>Avatar present</source>
-        <comment>headerData</comment>
-        <translation>Аватар присутствует</translation>
     </message>
 </context>
 <context>

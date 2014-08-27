@@ -9,6 +9,7 @@ HEADERS += \
     $${PWD}/tcheckemailavailabilityreplydata.h \
     $${PWD}/tcheckloginavailabilityreplydata.h \
     $${PWD}/tcompiletexprojectreplydata.h \
+    $${PWD}/tconfirmemailchangereplydata.h \
     $${PWD}/tconfirmregistrationreplydata.h \
     $${PWD}/tdeletegroupreplydata.h \
     $${PWD}/tdeleteinvitesreplydata.h \
@@ -33,7 +34,6 @@ HEADERS += \
     $${PWD}/tgetsamplesourcereplydata.h \
     $${PWD}/tgetselfinforeplydata.h \
     $${PWD}/tgetserverstatereplydata.h \
-    $${PWD}/tgetuseravatarreplydata.h \
     $${PWD}/tgetuserconnectioninfolistreplydata.h \
     $${PWD}/tgetuserinfoadminreplydata.h \
     $${PWD}/tgetuserinfolistadminreplydata.h \
@@ -58,6 +58,7 @@ SOURCES += \
     $${PWD}/tcheckemailavailabilityreplydata.cpp \
     $${PWD}/tcheckloginavailabilityreplydata.cpp \
     $${PWD}/tcompiletexprojectreplydata.cpp \
+    $${PWD}/tconfirmemailchangereplydata.cpp \
     $${PWD}/tconfirmregistrationreplydata.cpp \
     $${PWD}/tdeletegroupreplydata.cpp \
     $${PWD}/tdeleteinvitesreplydata.cpp \
@@ -82,7 +83,6 @@ SOURCES += \
     $${PWD}/tgetsamplesourcereplydata.cpp \
     $${PWD}/tgetselfinforeplydata.cpp \
     $${PWD}/tgetserverstatereplydata.cpp \
-    $${PWD}/tgetuseravatarreplydata.cpp \
     $${PWD}/tgetuserconnectioninfolistreplydata.cpp \
     $${PWD}/tgetuserinfoadminreplydata.cpp \
     $${PWD}/tgetuserinfolistadminreplydata.cpp \

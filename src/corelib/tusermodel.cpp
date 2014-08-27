@@ -49,8 +49,9 @@ class TUserModelPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TUserModel)
 public:
-    TUserInfoList users;
+    QDateTime lastUpdateDateTime;
     QMap<quint64, TUserInfo *> map;
+    TUserInfoList users;
 public:
     explicit TUserModelPrivate(TUserModel *q);
     ~TUserModelPrivate();
@@ -93,7 +94,7 @@ int TUserModelPrivate::indexOf(quint64 id) const
 
 void TUserModelPrivate::init()
 {
-    //
+    lastUpdateDateTime.setTimeSpec(Qt::UTC);
 }
 
 /*============================================================================
@@ -128,10 +129,17 @@ void TUserModel::addUsers(const TUserInfoList &userList)
     TUserInfoList list = userList;
     foreach (int i, bRangeR(list.size() - 1, 0)) {
         const TUserInfo &info = list.at(i);
-        if (!info.isValid())
+        if (d->map.contains(info.id())) {
+            if (info.lastModificationDateTime() > d->map.value(info.id())->lastModificationDateTime()) {
+                int row = d->indexOf(info.id());
+                d->users[row] = info;
+                d->map.insert(info.id(), &d->users[row]);
+                Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
+            }
             list.removeAt(i);
-        else if (d->map.contains(info.id()))
-            removeUser(info.id());
+        } else if (!info.isValid()) {
+            list.removeAt(i);
+        }
     }
     if (list.isEmpty())
         return;
@@ -150,12 +158,12 @@ void TUserModel::addUsers(const TUserInfoList &userList)
 
 int TUserModel::columnCount(const QModelIndex &) const
 {
-    return 15;
+    return 14;
 }
 
 QVariant TUserModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.column() > 14 || Qt::DisplayRole != role)
+    if (!index.isValid() || index.column() > columnCount() - 1 || Qt::DisplayRole != role)
         return QVariant();
     TUserInfo info = userInfoAt(index.row());
     if (!info.isValid())
@@ -184,15 +192,13 @@ QVariant TUserModel::data(const QModelIndex &index, int role) const
     case 10:
         return info.availableGroups();
     case 11:
-        return info.containsAvatar();
-    case 12:
         if (avatarStoredSeparately())
-            return info.containsAvatar() ? loadAvatar(info.id()) : QImage();
+            return loadAvatar(info.id());
         else
             return info.avatar();
-    case 13:
+    case 12:
         return info.registrationDateTime();
-    case 14:
+    case 13:
         return info.lastModificationDateTime();
     default:
         return QVariant();
@@ -227,16 +233,19 @@ QVariant TUserModel::headerData(int section, Qt::Orientation orientation, int ro
     case 10:
         return tr("Available groups", "headerData");
     case 11:
-        return tr("Avatar present", "headerData");
-    case 12:
         return tr("Avatar", "headerData");
-    case 13:
+    case 12:
         return tr("Registration date", "headerData");
-    case 14:
+    case 13:
         return tr("Last modified", "headerData");
     default:
         return QVariant();
     }
+}
+
+QDateTime TUserModel::lastUpdateDateTime() const
+{
+    return d_func()->lastUpdateDateTime;
 }
 
 void TUserModel::removeUser(quint64 id)
@@ -263,36 +272,30 @@ int TUserModel::rowCount(const QModelIndex &) const
     return d_func()->users.size();
 }
 
-void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo, bool updateAvatar)
+void TUserModel::update(const TUserInfoList &newUsers, const TIdList &deletedUsers, const QDateTime &updateDateTime)
+{
+    removeUsers(deletedUsers);
+    addUsers(newUsers);
+    d_func()->lastUpdateDateTime = updateDateTime.toUTC();
+}
+
+void TUserModel::update(const TUserInfoList &newUsers, const QDateTime &updateDateTime)
+{
+    update(newUsers, TIdList(), updateDateTime);
+}
+
+void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo)
 {
     TUserInfo *info = d_func()->map.value(userId);
     if (!info)
         return;
     int row = d_func()->indexOf(userId);
-    QImage avatar = info->avatar();
     *info = newInfo;
-    if (!updateAvatar)
-        info->setAvatar(avatar);
-    if (updateAvatar && avatarStoredSeparately()) {
+    if (avatarStoredSeparately()) {
         saveAvatar(userId, newInfo.avatar());
         info->setAvatar(QImage());
     }
-    emit dataChanged(index(row, 0), index(row, 14));
-}
-
-void TUserModel::updateUserAvatar(quint64 userId, const QImage &avatar)
-{
-    TUserInfo *info = d_func()->map.value(userId);
-    if (!info)
-        return;
-    info->setContainsAvatar(true);
-    if (avatarStoredSeparately()) {
-        saveAvatar(userId, avatar);
-    } else {
-        info->setAvatar(avatar);
-    }
-    int row = d_func()->indexOf(userId);
-    emit dataChanged(index(row, 11), index(row, 12));
+    Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
 }
 
 quint64 TUserModel::userIdAt(int index) const

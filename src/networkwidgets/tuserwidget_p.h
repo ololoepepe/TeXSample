@@ -70,7 +70,6 @@ public:
     QAction *actAdd;
     QAction *actDelete;
     QAction *actEdit;
-    bool alwaysRequestAvatar;
     TAbstractCache *cache;
     TNetworkClient *client;
     TUserProxyModel *proxyModel;

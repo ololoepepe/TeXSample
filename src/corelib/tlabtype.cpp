@@ -80,21 +80,28 @@ void TLabTypePrivate::init()
 
 QString TLabType::labTypeToString(LabType type, bool singular)
 {
-    return tr(labTypeToStringNoTr(type, singular).toUtf8().constData());
+    switch (type) {
+    case DesktopApplication:
+        return singular ? tr("Desktop application", "singular") : tr("Desktop applications", "plural");
+    case WebApplication:
+        return singular ? tr("Web application", "singular") : tr("Web applications", "plural");
+    case Url:
+        return singular ? tr("External URL", "singular") : tr("External URLs", "plural");
+    case NoType:
+    default:
+        return "";
+    }
 }
 
 QString TLabType::labTypeToStringNoTr(LabType type, bool singular)
 {
     switch (type) {
     case DesktopApplication:
-        return singular ? QT_TRANSLATE_NOOP("TLabType singular", "Desktop application") :
-                          QT_TRANSLATE_NOOP("TLabType plural", "Desktop applications");
+        return singular ? "Desktop application" : "Desktop applications";
     case WebApplication:
-        return singular ? QT_TRANSLATE_NOOP("TLabType singular", "Web application") :
-                          QT_TRANSLATE_NOOP("TLabType plural", "Web applications");
+        return singular ? "Web application" : "Web applications";
     case Url:
-        return singular ? QT_TRANSLATE_NOOP("TLabType singular", "External URL") :
-                          QT_TRANSLATE_NOOP("TLabType plural", "External URLs");
+        return singular ? "External URL" : "External URLs";
     case NoType:
     default:
         return "";

@@ -107,7 +107,7 @@ bool TSubscribeRequestData::isValid() const
     return true;
 }
 
-void TSubscribeRequestData::setSubscribedTLog(bool subscribed)
+void TSubscribeRequestData::setSubscribedToLog(bool subscribed)
 {
     d_func()->subscribedToLog = subscribed;
 }

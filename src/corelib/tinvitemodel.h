@@ -36,6 +36,7 @@ class QVariant;
 #include <BBase>
 
 #include <QAbstractTableModel>
+#include <QDateTime>
 #include <QModelIndex>
 
 /*============================================================================
@@ -50,16 +51,20 @@ public:
     explicit TInviteModel(QObject *parent = 0);
     ~TInviteModel();
 public:
-    virtual void addInvite(const TInviteInfo &invite);
-    virtual void addInvites(const TInviteInfoList &inviteList);
+    void addInvite(const TInviteInfo &invite);
+    void addInvites(const TInviteInfoList &inviteList);
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual TInviteInfo inviteInfo(quint64 id) const;
-    virtual TInviteInfo inviteInfoAt(int index) const;
-    virtual void removeInvite(quint64 id);
-    virtual void removeInvites(const TIdList &idList);
+    TInviteInfo inviteInfo(quint64 id) const;
+    TInviteInfo inviteInfoAt(int index) const;
+    QDateTime lastUpdateDateTime() const;
+    void removeInvite(quint64 id);
+    void removeInvites(const TIdList &idList);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    void update(const TInviteInfoList &newInvites, const TIdList &deletedInvites,
+                const QDateTime &updateDateTime = QDateTime());
+    void update(const TInviteInfoList &newInvites, const QDateTime &updateDateTime = QDateTime());
 private:
     Q_DISABLE_COPY(TInviteModel)
 };

@@ -42,6 +42,17 @@ QStringList TGroupInfoList::names() const
     return sl;
 }
 
+/*============================== Public methods ============================*/
+
+bool TGroupInfoList::contains(quint64 groupId) const
+{
+    foreach (const TGroupInfo &gi, *this) {
+        if (gi.id() == groupId)
+            return true;
+    }
+    return false;
+}
+
 /*============================== Public operators ==========================*/
 
 TGroupInfoList::operator QVariant() const

@@ -1,0 +1,1 @@
+#include "../../../src/widgets/tauthorlistwidget_p.h"

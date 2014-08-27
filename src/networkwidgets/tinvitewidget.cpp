@@ -23,8 +23,6 @@
 #include "tinvitewidget.h"
 #include "tinvitewidget_p.h"
 
-#include "tlistwidget.h"
-
 #include <TeXSampleCore/TAbstractCache>
 #include <TeXSampleCore/TAccessLevel>
 #include <TeXSampleCore/TDeleteInvitesReplyData>
@@ -45,6 +43,8 @@
 #include <TeXSampleCore/TServiceList>
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleNetwork/TNetworkClient>
+#include <TeXSampleWidgets/TGroupListWidget>
+#include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
 #include <BDialog>
@@ -102,15 +102,18 @@ QVariant TInviteProxyModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || (Qt::DisplayRole != role && Qt::ToolTipRole != role) || index.column() > 1)
         return QVariant();
-    if (Qt::ToolTipRole == role) {
-        QString code = sourceModel()->data(sourceModel()->index(index.row(), 1)).value<BUuid>().toString(true);
-        QString ownerLogin = sourceModel()->data(sourceModel()->index(index.row(), 5)).toString();
-        return code + " [" + ownerLogin + "]";
-    }
+    TInviteModel *model = qobject_cast<TInviteModel *>(sourceModel());
+    if (!model)
+        return QVariant();
+    TInviteInfo info = model->inviteInfoAt(index.row());
+    if (!info.isValid())
+        return QVariant();
+    if (Qt::ToolTipRole == role)
+        return info.code().toString(true) + " [" + info.ownerLogin() + "]"; //Code + OwnerLogin
     switch (index.column()) {
     case 0:
         //Expiration date
-        return sourceModel()->data(sourceModel()->index(index.row(), 7)).toDateTime().toString("dd MMMM yyyy hh:mm");
+        return info.expirationDateTime().toString("dd MMMM yyyy hh:mm");
     default:
         return QVariant();
     }
@@ -187,8 +190,7 @@ void TInviteWidgetPrivate::updateInviteList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
         return;
     TGetInviteInfoListRequestData request;
-    QDateTime dt = cache ? cache->lastRequestDateTime(TOperation::GetInviteInfoList) : QDateTime();
-    TReply reply = client->performOperation(TOperation::GetInviteInfoList, request, dt);
+    TReply reply = client->performOperation(TOperation::GetInviteInfoList, request, Model->lastUpdateDateTime());
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating invite list failed", "msgbox windowTitle"));
@@ -201,10 +203,11 @@ void TInviteWidgetPrivate::updateInviteList()
         return;
     }
     TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
-    Model->removeInvites(data.deletedInvites());
-    Model->addInvites(data.newInvites());
-    if (cache && !reply.cacheUpToDate())
+    Model->update(data.newInvites(), data.deletedInvites(), reply.requestDateTime());
+    if (cache && !reply.cacheUpToDate()) {
+        cache->removeData(TOperation::GetInviteInfoList, data.deletedInvites());
         cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);
+    }
 }
 
 /*============================== Public slots ==============================*/
@@ -268,7 +271,10 @@ void TInviteWidgetPrivate::deleteInvites()
         msg.exec();
         return;
     }
-    Model->removeInvites(r.data().value<TDeleteInvitesReplyData>().identifiers());
+    TIdList ids = r.data().value<TDeleteInvitesReplyData>().identifiers();
+    Model->removeInvites(ids);
+    if (cache)
+        cache->removeData(TOperation::DeleteInvites, ids);
 }
 
 void TInviteWidgetPrivate::generateInvites()
@@ -301,49 +307,30 @@ void TInviteWidgetPrivate::generateInvites()
               sbox->setMaximum(maxInviteCount ? maxInviteCount : quint16(USHRT_MAX));
               sbox->setValue(1);
             flt->addRow(tr("Count:", "lbl text"), sbox);
-            QMap<TService, QCheckBox *> cboxMap;
-            foreach (const TService &service, TServiceList::allServices()) {
-                QCheckBox *cbox = new QCheckBox;
-                  cbox->setEnabled(client->userInfo().availableServices().contains(service));
-                flt->addRow(tr("Access to", "lbl text") + " " + service.toString() + ":", cbox);
-                cboxMap.insert(service, cbox);
-            }
           vlt->addLayout(flt);
-          QGroupBox *gbox = new QGroupBox(tr("Groups", "gbox title"));
+          QGroupBox *gbox = new QGroupBox(tr("Services", "gbox title"));
             QHBoxLayout *hlt = new QHBoxLayout(gbox);
-              TListWidget *lstwgt = new TListWidget;
-                lstwgt->setButtonsVisible(true);
-                lstwgt->setReadOnly(true);
-                if (lstwgt) {
-                    QList<TListWidget::Item> list;
-                    foreach (const TGroupInfo &group, client->userInfo().availableGroups()) {
-                        TListWidget::Item item;
-                        item.text = group.name();
-                        item.data = group.id();
-                        list << item;
-                    }
-                    lstwgt->setAvailableItems(list);
-                }
-              hlt->addWidget(lstwgt);
+              TServiceWidget *swgt = new TServiceWidget;
+                swgt->setAvailableServices(client->userInfo().availableServices());
+              hlt->addWidget(swgt);
+          vlt->addWidget(gbox);
+          gbox = new QGroupBox(tr("Groups", "gbox title"));
+            hlt = new QHBoxLayout(gbox);
+              TGroupListWidget *glwgt = new TGroupListWidget;
+                glwgt->setAvailableGroups(client->userInfo().availableGroups());
+              hlt->addWidget(glwgt);
           vlt->addWidget(gbox);
       dlg.setWidget(wgt);
       dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
-    TServiceList services;
-    foreach (const TService &service, cboxMap.keys())
-        if (cboxMap.value(service)->isChecked())
-            services << service;
-    TIdList groups;
-    foreach (int i, bRangeD(0, lstwgt->itemCount() - 1))
-        groups << lstwgt->itemData(i).toULongLong();
     TGenerateInvitesRequestData data;
     data.setAccessLevel(cmboxAccessLevel->itemData(cmboxAccessLevel->currentIndex()).toInt());
     data.setCount(quint16(sbox->value()));
     data.setExpirationDateTime(dtedt->dateTime());
-    data.setGroups(groups);
-    data.setServices(services);
+    data.setGroups(glwgt->groupIds());
+    data.setServices(swgt->services());
     if (!data.isValid())
         return;
     TReply r = client->performOperation(TOperation::GenerateInvites, data, q_func());
@@ -359,6 +346,8 @@ void TInviteWidgetPrivate::generateInvites()
         return;
     }
     Model->addInvites(r.data().value<TGenerateInvitesReplyData>().generatedInvites());
+    if (cache)
+        cache->setData(TOperation::GenerateInvites, r.requestDateTime(), r.data());
 }
 
 void TInviteWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)

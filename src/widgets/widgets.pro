@@ -11,23 +11,27 @@ include(../module.pri)
 DEFINES += TSMP_BUILD_WIDGETS_LIB
 
 HEADERS += \
-    tabstractlistwidgetitemdelegate.h \
     tapplication.h \
-    tauthorinfolistwidgetitemdelegate.h \
-    tauthorinfolistwidgetitemdelegate_p.h \
     tauthorinfowidget.h \
     tauthorinfowidget_p.h \
-    tlistwidget_p.h \
-    tlistwidget.h \
+    tauthorlistwidget.h \
+    tauthorlistwidget_p.h \
+    tconfirmationwidget.h \
+    tconfirmationwidget_p.h \
+    tgrouplistwidget.h \
+    tgrouplistwidget_p.h \
+    tservicewidget.h \
+    tservicewidget_p.h \
     ttagwidget.h \
     ttagwidget_p.h
 
 SOURCES += \
-    tabstractlistwidgetitemdelegate.cpp \
     tapplication.cpp \
-    tauthorinfolistwidgetitemdelegate.cpp \
     tauthorinfowidget.cpp \
-    tlistwidget.cpp \
+    tauthorlistwidget.cpp \
+    tconfirmationwidget.cpp \
+    tgrouplistwidget.cpp \
+    tservicewidget.cpp \
     ttagwidget.cpp
 
 contains(TSMP_CONFIG, builtin_resources) {

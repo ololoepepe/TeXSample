@@ -21,6 +21,8 @@
 
 #include "tsetlatestappversionrequestdata.h"
 
+#include "tnamespace.h"
+
 #include <BBase>
 #include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
@@ -29,7 +31,6 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QList>
-#include <QString>
 #include <QUrl>
 #include <QVariant>
 #include <QVariantMap>
@@ -42,7 +43,7 @@ class TSetLatestAppVersionRequestDataPrivate : public BBasePrivate
 {
     B_DECLARE_PUBLIC(TSetLatestAppVersionRequestData)
 public:
-    QString clientName;
+    Texsample::ClientType clientType;
     QUrl downloadUrl;
     BeQt::OSType os;
     bool portable;
@@ -79,6 +80,7 @@ TSetLatestAppVersionRequestDataPrivate::~TSetLatestAppVersionRequestDataPrivate(
 
 void TSetLatestAppVersionRequestDataPrivate::init()
 {
+    clientType = Texsample::UnknownClient;
     os = BeQt::UnknownOS;
     portable = false;
     processorArchitecture = BeQt::UnknownArchitecture;
@@ -113,7 +115,7 @@ TSetLatestAppVersionRequestData::~TSetLatestAppVersionRequestData()
 void TSetLatestAppVersionRequestData::clear()
 {
     B_D(TSetLatestAppVersionRequestData);
-    d->clientName.clear();
+    d->clientType = Texsample::UnknownClient;
     d->downloadUrl.clear();
     d->os = BeQt::UnknownOS;
     d->portable = false;
@@ -121,9 +123,9 @@ void TSetLatestAppVersionRequestData::clear()
     d->version.clear();
 }
 
-QString TSetLatestAppVersionRequestData::clientName() const
+Texsample::ClientType TSetLatestAppVersionRequestData::clientType() const
 {
-    return d_func()->clientName;
+    return d_func()->clientType;
 }
 
 QUrl TSetLatestAppVersionRequestData::downloadUrl() const
@@ -134,7 +136,7 @@ QUrl TSetLatestAppVersionRequestData::downloadUrl() const
 bool TSetLatestAppVersionRequestData::isValid() const
 {
     const B_D(TSetLatestAppVersionRequestData);
-    return !d->clientName.isEmpty() && d->downloadUrl.isValid() && (BeQt::UnknownOS != d->os)
+    return Texsample::UnknownClient != d->clientType && d->downloadUrl.isValid() && (BeQt::UnknownOS != d->os)
             && (BeQt::UnknownArchitecture != d->processorArchitecture) && d->version.isValid();
 }
 
@@ -153,9 +155,10 @@ BeQt::ProcessorArchitecture TSetLatestAppVersionRequestData::processorArchitectu
     return d_func()->processorArchitecture;
 }
 
-void TSetLatestAppVersionRequestData::setClientName(const QString &clientName)
+void TSetLatestAppVersionRequestData::setClientType(Texsample::ClientType type)
 {
-    d_func()->clientName = clientName;
+    d_func()->clientType = enum_cast<Texsample::ClientType>(type, Texsample::UnknownClient,
+                                                            Texsample::TexsampleConsole);
 }
 
 void TSetLatestAppVersionRequestData::setDownloadUrl(const QUrl &url)
@@ -194,7 +197,7 @@ TSetLatestAppVersionRequestData &TSetLatestAppVersionRequestData::operator =(con
 {
     B_D(TSetLatestAppVersionRequestData);
     const TSetLatestAppVersionRequestDataPrivate *dd = other.d_func();
-    d->clientName = dd->clientName;
+    d->clientType = dd->clientType;
     d->downloadUrl = dd->downloadUrl;
     d->os = dd->os;
     d->portable = dd->portable;
@@ -207,7 +210,7 @@ bool TSetLatestAppVersionRequestData::operator ==(const TSetLatestAppVersionRequ
 {
     const B_D(TSetLatestAppVersionRequestData);
     const TSetLatestAppVersionRequestDataPrivate *dd = other.d_func();
-    return d->clientName == dd->clientName && d->downloadUrl == dd->downloadUrl && d->os == dd->os
+    return d->clientType == dd->clientType && d->downloadUrl == dd->downloadUrl && d->os == dd->os
             && d->portable == dd->portable && d->processorArchitecture == dd->processorArchitecture
             && d->version == dd->version;
 }
@@ -228,7 +231,7 @@ QDataStream &operator <<(QDataStream &stream, const TSetLatestAppVersionRequestD
 {
     const TSetLatestAppVersionRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("client_name", d->clientName);
+    m.insert("client_type", int(d->clientType));
     m.insert("download_url", d->downloadUrl);
     m.insert("os", int(d->os));
     m.insert("portable", d->portable);
@@ -243,7 +246,8 @@ QDataStream &operator >>(QDataStream &stream, TSetLatestAppVersionRequestData &d
     TSetLatestAppVersionRequestDataPrivate *d = data.d_func();
     QVariantMap m;
     stream >> m;
-    d->clientName = m.value("client_name").toString();
+    d->clientType = enum_cast<Texsample::ClientType>(m.value("client_type"), Texsample::UnknownClient,
+                                                     Texsample::TexsampleConsole);
     d->downloadUrl = m.value("download_url").toUrl();
     static const QList<BeQt::OSType> Os = QList<BeQt::OSType>() << BeQt::UnknownOS << BeQt::UnixOS << BeQt::WindowsOS
                                                                 << BeQt::LinuxOS << BeQt::MacOS;

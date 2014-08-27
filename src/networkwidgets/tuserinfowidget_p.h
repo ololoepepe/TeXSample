@@ -25,10 +25,11 @@
 
 class TAbstractCache;
 class TGroupInfoList;
+class TGroupListWidget;
 class TIdList;
-class TListWidget;
 class TNetworkClient;
 class TServiceList;
+class TServiceWidget;
 class TUserModel;
 
 class BEditGroup;
@@ -77,21 +78,18 @@ public:
 public:
     const TUserInfoWidget::Mode Mode;
 public:
-    bool alwaysRequestAvatar;
     QImage avatar;
     QString avatarFileName;
     QPushButton *btnChangeEmail;
     QPushButton *btnChangePassword;
     QCheckBox *cboxActive;
-    QMap<TService, QCheckBox *> cboxServiceMap;
     QCheckBox *cboxChangeEmail;
     QCheckBox *cboxChangePassword;
     TAbstractCache *cache;
     TNetworkClient *client;
     QComboBox *cmboxAccessLevel;
-    bool containsAvatar;
-    bool editAvatar;
     BEditGroup *edtgrpEmail;
+    TGroupListWidget *glwgt;
     quint64 id;
     BInputField *inputEmail1;
     BInputField *inputEmail2;
@@ -110,7 +108,6 @@ public:
     QLineEdit *ledtName;
     QLineEdit *ledtPatronymic;
     QLineEdit *ledtSurname;
-    TListWidget *lstwgtGroups;
     TUserModel *model;
     QMap<QString, bool> occupiedEmails;
     QMap<QString, bool> occupiedLogins;
@@ -118,6 +115,7 @@ public:
     BPasswordWidget *pwdwgt1;
     BPasswordWidget *pwdwgt2;
     BPasswordWidget *pwdwgtOld;
+    TServiceWidget *srvwgt;
     QToolButton *tbtnAvatar;
     QToolButton *tbtnCheckEmail;
     QToolButton *tbtnCheckLogin;
@@ -139,12 +137,7 @@ public:
     void createPasswordGroup(QFormLayout *flt, EditGroupMode mode = NormalMode);
     void createRegistrationDateTimeField(QFormLayout *flt);
     void createServicesSection(QHBoxLayout *hlt, bool readOnly = false);
-    TGroupInfoList groupInfos() const;
-    TIdList groups() const;
     void init();
-    TServiceList services() const;
-    void setGroups(const TGroupInfoList &list);
-    void setServices(const TServiceList &list);
 public Q_SLOTS:
     void changeEmail();
     void changePassword();
