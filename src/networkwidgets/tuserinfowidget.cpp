@@ -388,6 +388,7 @@ void TUserInfoWidgetPrivate::init()
     pwdwgt1 = 0;
     pwdwgt2 = 0;
     pwdwgtOld = 0;
+    srvwgt = 0;
     tbtnAvatar = 0;
     tbtnCheckEmail = 0;
     tbtnCheckLogin = 0;

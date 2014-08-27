@@ -88,6 +88,49 @@
     </message>
 </context>
 <context>
+    <name>TAuthorListWidgetPrivate</name>
+    <message>
+        <source>Add...</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Добавить...</translation>
+    </message>
+    <message>
+        <source>Remove selected</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Удалить выделенное</translation>
+    </message>
+    <message>
+        <source>Clear list</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Очистить список</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вверх</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <comment>tbtnt toolTip</comment>
+        <translation>Переместить вниз</translation>
+    </message>
+    <message>
+        <source>Adding author</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Добавление автора</translation>
+    </message>
+    <message>
+        <source>Author info</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Информация об авторе</translation>
+    </message>
+    <message>
+        <source>Editing author</source>
+        <comment>dlg windowTitle</comment>
+        <translation>Редактирование автора</translation>
+    </message>
+</context>
+<context>
     <name>TConfirmationWidgetPrivate</name>
     <message>
         <source>Code:</source>
@@ -391,34 +434,6 @@
         <source>External URLs</source>
         <comment>plural</comment>
         <translation>Внешние ссылки</translation>
-    </message>
-</context>
-<context>
-    <name>TListWidgetPrivate</name>
-    <message>
-        <source>Add...</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Добавить...</translation>
-    </message>
-    <message>
-        <source>Remove selected</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Удалить выделенное</translation>
-    </message>
-    <message>
-        <source>Clear list</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Очистить список</translation>
-    </message>
-    <message>
-        <source>Move up</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Переместить вверх</translation>
-    </message>
-    <message>
-        <source>Move down</source>
-        <comment>tbtnt toolTip</comment>
-        <translation>Переместить вниз</translation>
     </message>
 </context>
 <context>

@@ -116,6 +116,15 @@ void TAuthorInfo::clear()
     d->surname.clear();
 }
 
+QString TAuthorInfo::fullName() const
+{
+    const B_D(TAuthorInfo);
+    if (!isValid())
+        return "";
+    return d->name + (!d->patronymic.isEmpty() ? " " : "") + d->patronymic
+            + (!d->surname.isEmpty() ? " " : "") + d->surname;
+}
+
 bool TAuthorInfo::isValid() const
 {
     const B_D(TAuthorInfo);

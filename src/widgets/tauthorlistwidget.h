@@ -19,12 +19,12 @@
 **
 ****************************************************************************/
 
-#ifndef TAUTHORINFOWIDGET_H
-#define TAUTHORINFOWIDGET_H
+#ifndef TAUTHORLISTWIDGET_H
+#define TAUTHORLISTWIDGET_H
 
-class TAuthorInfoWidgetPrivate;
+class TAuthorListWidgetPrivate;
 
-class TAuthorInfo;
+class TAuthorInfoList;
 
 #include <TeXSampleCore/TeXSampleGlobal>
 
@@ -33,29 +33,30 @@ class TAuthorInfo;
 #include <QWidget>
 
 /*============================================================================
-================================ TAuthorInfoWidget ===========================
+================================ TAuthorListWidget ===========================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TAuthorInfoWidget : public QWidget, public BBaseObject
+class T_WIDGETS_EXPORT TAuthorListWidget : public QWidget, public BBaseObject
 {
     Q_OBJECT
-    B_DECLARE_PRIVATE(TAuthorInfoWidget)
+    B_DECLARE_PRIVATE(TAuthorListWidget)
 public:
-    explicit TAuthorInfoWidget(QWidget *parent = 0);
-    ~TAuthorInfoWidget();
+    explicit TAuthorListWidget(QWidget *parent = 0);
+    ~TAuthorListWidget();
 protected:
-    explicit TAuthorInfoWidget(TAuthorInfoWidgetPrivate &d, QWidget *parent = 0);
+    explicit TAuthorListWidget(TAuthorListWidgetPrivate &d, QWidget *parent = 0);
 public:
-    bool hasValidInput() const;
-    TAuthorInfo info() const;
+    TAuthorInfoList availableAuthors() const;
+    bool buttonsVisible() const;
+    TAuthorInfoList authors() const;
     bool isReadOnly() const;
-    void setInfo(const TAuthorInfo &info);
+    void setAvailableAuthors(const TAuthorInfoList &list);
+    void setButtonsVisible(bool b);
+    void setAuthors(const TAuthorInfoList &list);
     void setReadOnly(bool ro);
-Q_SIGNALS:
-    void inputValidityChanged(bool valid);
 private:
-    Q_DISABLE_COPY(TAuthorInfoWidget)
+    Q_DISABLE_COPY(TAuthorListWidget)
 };
 
-#endif // TAUTHORINFOWIDGET_H
+#endif // TAUTHORLISTWIDGET_H
 

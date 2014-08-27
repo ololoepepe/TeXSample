@@ -31,6 +31,7 @@
 #include <BGuiTools>
 
 #include <QCheckBox>
+#include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
 #include <QList>

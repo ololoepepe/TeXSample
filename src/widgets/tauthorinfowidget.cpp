@@ -84,7 +84,7 @@ void TAuthorInfoWidgetPrivate::initLineEdit(BLineEdit *&ledt, int maximimTextLen
     ledt->setValidator(new QRegExpValidator(QRegExp(s), this));
     ledt->checkValidity();
     connect(ledt, SIGNAL(textChanged(QString)), this, SLOT(checkInputs()));
-    BInputField *input = new BInputField;
+    BInputField *input = new BInputField(required ? BInputField::ShowAlways : BInputField::ShowNever);
     input->setValid(ledt->hasAcceptableInput());
     connect(ledt, SIGNAL(inputValidityChanged(bool)), input, SLOT(setValid(bool)));
     input->addWidget(ledt);
@@ -159,6 +159,11 @@ TAuthorInfo TAuthorInfoWidget::info() const
     return info;
 }
 
+bool TAuthorInfoWidget::isReadOnly() const
+{
+    return d_func()->ledtName->isReadOnly();
+}
+
 void TAuthorInfoWidget::setInfo(const TAuthorInfo &info)
 {
     B_D(TAuthorInfoWidget);
@@ -168,4 +173,17 @@ void TAuthorInfoWidget::setInfo(const TAuthorInfo &info)
     d->ledtPost->setText(info.post());
     d->ledtRole->setText(info.role());
     d->ledtSurname->setText(info.surname());
+}
+
+void TAuthorInfoWidget::setReadOnly(bool ro)
+{
+    B_D(TAuthorInfoWidget);
+    d->ledtName->setReadOnly(ro);
+    BInputField *input = qobject_cast<BInputField *>(d->ledtName->parentWidget());
+    input->setShowStyle(ro ? BInputField::ShowNever : BInputField::ShowAlways);
+    d->ledtOrganization->setReadOnly(ro);
+    d->ledtPatronymic->setReadOnly(ro);
+    d->ledtPost->setReadOnly(ro);
+    d->ledtRole->setReadOnly(ro);
+    d->ledtSurname->setReadOnly(ro);
 }

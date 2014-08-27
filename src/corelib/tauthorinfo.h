@@ -48,6 +48,7 @@ public:
     ~TAuthorInfo();
 public:
     void clear();
+    QString fullName() const;
     bool isValid() const;
     QString name() const;
     QString organization() const;
