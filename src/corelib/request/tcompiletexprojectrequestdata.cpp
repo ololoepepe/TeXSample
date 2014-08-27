@@ -146,7 +146,7 @@ bool TCompileTexProjectRequestData::dvipsEnabled() const
 bool TCompileTexProjectRequestData::isValid() const
 {
     const B_D(TCompileTexProjectRequestData);
-    return d->codec && d->compiler.isValid();
+    return d->codec && d->compiler.isValid() && d->project.isValid();
 }
 
 bool TCompileTexProjectRequestData::makeindexEnabled() const
@@ -240,7 +240,6 @@ QDataStream &operator <<(QDataStream &stream, const TCompileTexProjectRequestDat
 {
     const TCompileTexProjectRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    stream << m;
     m.insert("codec_name", d->codec ? d->codec->name() : QByteArray());
     m.insert("commands", d->commands);
     m.insert("compiler", d->compiler);
@@ -248,6 +247,7 @@ QDataStream &operator <<(QDataStream &stream, const TCompileTexProjectRequestDat
     m.insert("makeindex_enabled", d->makeindexEnabled);
     m.insert("options", d->options);
     m.insert("project", d->project);
+    stream << m;
     return stream;
 }
 

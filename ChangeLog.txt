@@ -13,6 +13,7 @@
     * Change main port to 9045
     * Add network and networkwidgets modules
     * Add TNetworkClient class
+    * Add new GUI classes
     * Get rid of native Mac OS library format (Frameworks) - use UNIX-style libs
     * Use Qt coding style, sort includes, class members, etc.
     * Fix warnings for Qt4 when adding "concurrent" and "widgets" modules

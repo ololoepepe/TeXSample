@@ -94,11 +94,11 @@ void TBinaryFilePrivate::init()
 
 /*============================== Public constructors =======================*/
 
-TBinaryFile::TBinaryFile(const QString &fileaName, const QString &subpath) :
+TBinaryFile::TBinaryFile(const QString &fileName, const QString &subpath) :
     BBase(*new TBinaryFilePrivate(this))
 {
     d_func()->init();
-    load(fileaName, subpath);
+    load(fileName, subpath);
 }
 
 TBinaryFile::TBinaryFile(const TBinaryFile &other) :
@@ -154,7 +154,7 @@ bool TBinaryFile::load(const QString &fileName, const QString &subpath)
     }
     setFileName(fileName);
     d_func()->subpath = subpath;
-    return ok;
+    return true;
 }
 
 bool TBinaryFile::mayBeExecutable() const

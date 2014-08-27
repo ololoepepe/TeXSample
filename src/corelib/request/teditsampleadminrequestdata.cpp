@@ -48,6 +48,7 @@ public:
     TAuthorInfoList authors;
     QString description;
     bool editProject;
+    quint64 id;
     TTexProject project;
     quint8 rating;
     QString remark;
@@ -85,6 +86,7 @@ TEditSampleAdminRequestDataPrivate::~TEditSampleAdminRequestDataPrivate()
 void TEditSampleAdminRequestDataPrivate::init()
 {
     editProject = false;
+    id = 0;
     rating = 0;
 }
 
@@ -130,6 +132,7 @@ void TEditSampleAdminRequestData::clear()
     d->authors.clear();
     d->description.clear();
     d->editProject = false;
+    d->id = 0;
     d->project.clear();
     d->rating = 0;
     d->remark.clear();
@@ -148,10 +151,15 @@ bool TEditSampleAdminRequestData::editProject() const
     return d_func()->editProject;
 }
 
+quint64 TEditSampleAdminRequestData::id() const
+{
+    return d_func()->id;
+}
+
 bool TEditSampleAdminRequestData::isValid() const
 {
     const B_D(TEditSampleAdminRequestData);
-    return (!d->editProject || d->project.isValid()) && !d->title.isEmpty();
+    return d->id && (!d->editProject || d->project.isValid()) && !d->title.isEmpty();
 }
 
 TTexProject TEditSampleAdminRequestData::project() const
@@ -182,6 +190,11 @@ void TEditSampleAdminRequestData::setDescritpion(const QString &description)
 void TEditSampleAdminRequestData::setEditProject(bool edit)
 {
     d_func()->editProject = edit;
+}
+
+void TEditSampleAdminRequestData::setId(quint64 id)
+{
+    d_func()->id = id;
 }
 
 void TEditSampleAdminRequestData::setProject(const TTexProject &project)
@@ -235,6 +248,7 @@ TEditSampleAdminRequestData &TEditSampleAdminRequestData::operator =(const TEdit
     d->authors = dd->authors;
     d->description = dd->description;
     d->editProject = dd->editProject;
+    d->id = dd->id;
     d->project = dd->project;
     d->rating = dd->rating;
     d->remark = dd->remark;
@@ -249,8 +263,8 @@ bool TEditSampleAdminRequestData::operator ==(const TEditSampleAdminRequestData 
     const B_D(TEditSampleAdminRequestData);
     const TEditSampleAdminRequestDataPrivate *dd = other.d_func();
     return d->authors == dd->authors && d->description == dd->description && d->editProject == dd->editProject
-            && d->project == dd->project && d->rating == dd->rating && d->remark == dd->remark && d->tags == dd->tags
-            && d->title == dd->title && d->type == dd->type;
+            && d->id == dd->id && d->project == dd->project && d->rating == dd->rating && d->remark == dd->remark
+            && d->tags == dd->tags && d->title == dd->title && d->type == dd->type;
 }
 
 bool TEditSampleAdminRequestData::operator !=(const TEditSampleAdminRequestData &other) const
@@ -272,6 +286,7 @@ QDataStream &operator <<(QDataStream &stream, const TEditSampleAdminRequestData 
     m.insert("authors", d->authors);
     m.insert("description", d->description);
     m.insert("edit_project", d->editProject);
+    m.insert("id", d->id);
     m.insert("project", d->project);
     m.insert("rating", d->rating);
     m.insert("remark", d->remark);
@@ -290,6 +305,7 @@ QDataStream &operator >>(QDataStream &stream, TEditSampleAdminRequestData &data)
     d->authors = m.value("authors").value<TAuthorInfoList>();
     d->description = m.value("description").toString();
     d->editProject = m.value("edit_project").toBool();
+    d->id = m.value("id").toULongLong();
     d->project = m.value("project").value<TTexProject>();
     d->rating = m.value("rating").toUInt();
     d->remark = m.value("remark").toString();

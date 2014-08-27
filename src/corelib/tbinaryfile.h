@@ -44,7 +44,7 @@ class T_CORE_EXPORT TBinaryFile : BBase
 {
     B_DECLARE_PRIVATE(TBinaryFile)
 public:
-    explicit TBinaryFile(const QString &fileaName = QString(), const QString &subpath = QString());
+    explicit TBinaryFile(const QString &fileName = QString(), const QString &subpath = QString());
     TBinaryFile(const TBinaryFile &other);
     ~TBinaryFile();
 public:

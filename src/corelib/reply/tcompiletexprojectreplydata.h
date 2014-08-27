@@ -49,11 +49,19 @@ public:
     TCompileTexProjectReplyData(const TCompileTexProjectReplyData &other);
     ~TCompileTexProjectReplyData();
 public:
+    int dvipsExitCode() const;
+    QString dvipsOutput() const;
     int exitCode() const;
     const TBinaryFileList &files() const;
+    int makeindexExitCode() const;
+    QString makeindexOutput() const;
     QString output() const;
+    void setDvipsExitCode(int code);
+    void setDvipsOutput(const QString &output);
     void setExitCode(int code);
     void setFiles(const TBinaryFileList &files);
+    void setMakeindexExitCode(int code);
+    void setMakeindexOutput(const QString &output);
     void setOutput(const QString &output);
 public:
     TCompileTexProjectReplyData &operator =(const TCompileTexProjectReplyData &other);

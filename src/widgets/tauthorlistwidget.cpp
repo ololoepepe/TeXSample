@@ -320,7 +320,9 @@ void TAuthorListWidget::setAuthors(const TAuthorInfoList &list)
 {
     B_D(TAuthorListWidget);
     d->lstwgt->clear();
-    foreach (const TAuthorInfo &a, list) {
+    TAuthorInfoList nlist = list;
+    bRemoveDuplicates(nlist);
+    foreach (const TAuthorInfo &a, nlist) {
         if (!a.isValid())
             continue;
         d->addItem(a);

@@ -57,6 +57,7 @@ public:
     void clear();
     QString description() const;
     bool editProject() const;
+    quint64 id() const;
     bool isValid() const;
     TTexProject project() const;
     quint8 rating() const;
@@ -64,6 +65,7 @@ public:
     void setAuthors(const TAuthorInfoList &authors);
     void setDescritpion(const QString &description);
     void setEditProject(bool edit);
+    void setId(quint64 id);
     void setProject(const TTexProject &project);
     void setRating(quint8 rating);
     void setTags(const QStringList &tags);
