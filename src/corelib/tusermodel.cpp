@@ -156,6 +156,22 @@ void TUserModel::addUsers(const TUserInfoList &userList)
     endInsertRows();
 }
 
+void TUserModel::clear()
+{
+    B_D(TUserModel);
+    d->lastUpdateDateTime = QDateTime().toUTC();
+    if (d->users.isEmpty())
+        return;
+    d->map.clear();
+    beginRemoveRows(QModelIndex(), 0, d->users.size() - 1);
+    if (avatarStoredSeparately()) {
+        foreach (const TUserInfo &info, d->users)
+            removeAvatar(info.id());
+    }
+    d->users.clear();
+    endRemoveRows();
+}
+
 int TUserModel::columnCount(const QModelIndex &) const
 {
     return 14;

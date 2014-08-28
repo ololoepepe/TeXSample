@@ -1075,6 +1075,21 @@
         <comment>msgbox text</comment>
         <translation>Не удалось обновить список пользователей. Произошла следующая ошибка:</translation>
     </message>
+    <message>
+        <source>Deleting user</source>
+        <comment>msgbox windowTitle</comment>
+        <translation>Удаление пользователя</translation>
+    </message>
+    <message>
+        <source>You are going to delete a user. Are you REALLY sure?</source>
+        <comment>msgbox text</comment>
+        <translation>Вы собираетесь удалить пользователя. Вы ДЕЙСТВИТЕЛЬНО уверены?</translation>
+    </message>
+    <message>
+        <source>All groups, samples, labs, invite codes etc. owned by this user will be deleted!</source>
+        <comment>msgbox informativeText</comment>
+        <translation>Все группы, сэмплы, лаб. работы, инвайт-коды и т.д., чьим владельцем является этот пользователь, будут удалены!</translation>
+    </message>
 </context>
 <context>
     <name>Texsample</name>

@@ -291,6 +291,16 @@ void TUserWidgetPrivate::deleteUser()
     quint64 userId = Model->userIdAt(index.row());
     if (!userId)
         return;
+    QMessageBox msg(q_func());
+    msg.setWindowTitle(tr("Deleting user", "msgbox windowTitle"));
+    msg.setIcon(QMessageBox::Question);
+    msg.setText(tr("You are going to delete a user. Are you REALLY sure?", "msgbox text"));
+    msg.setInformativeText(tr("All groups, samples, labs, invite codes etc. owned by this user will be deleted!",
+                              "msgbox informativeText"));
+    msg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msg.setDefaultButton(QMessageBox::Ok);
+    if (msg.exec() != QMessageBox::Ok)
+        return;
     TDeleteUserRequestData data;
     data.setIdentifier(userId);
     TReply r = client->performOperation(TOperation::DeleteUser, data, q_func());
@@ -362,11 +372,11 @@ void TUserWidgetPrivate::selectionChanged(const QItemSelection &selected, const 
     QModelIndex ind = b ? proxyModel->mapToSource(selected.first().indexes().first()) : QModelIndex();
     b = b && ind.isValid();
     b = b && client && client->isAuthorized();
-    b = b && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::AdminLevel);
+    b = b && client->userInfo().accessLevel().level() >= TAccessLevel::AdminLevel;
     TUserInfo info = Model->userInfoAt(ind.row());
     b = b && info.isValid();
     actEdit->setEnabled(b);
-    actDelete->setEnabled(b);
+    actDelete->setEnabled(b && client && client->userInfo().accessLevel().level() >= TAccessLevel::SuperuserLevel);
 }
 
 /*============================================================================

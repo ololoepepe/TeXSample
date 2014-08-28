@@ -54,6 +54,7 @@ public:
 public:
     void addUser(const TUserInfo &user);
     void addUsers(const TUserInfoList &userList);
+    void clear();
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;

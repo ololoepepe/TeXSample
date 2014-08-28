@@ -53,6 +53,7 @@ public:
 public:
     void addGroup(const TGroupInfo &group);
     void addGroups(const TGroupInfoList &groupList);
+    void clear();
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     TGroupInfo groupInfo(quint64 id) const;
