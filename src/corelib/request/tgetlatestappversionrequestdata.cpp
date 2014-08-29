@@ -154,7 +154,7 @@ QDataStream &operator <<(QDataStream &stream, const TGetLatestAppVersionRequestD
 {
     const TGetLatestAppVersionRequestDataPrivate *d = data.d_func();
     QVariantMap m;
-    m.insert("clien_info", d->clientInfo);
+    m.insert("client_info", d->clientInfo);
     stream << m;
     return stream;
 }

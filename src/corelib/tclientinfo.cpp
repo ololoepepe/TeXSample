@@ -262,7 +262,7 @@ QDataStream &operator <<(QDataStream &stream, const TClientInfo &info)
     m.insert("os", d->os);
     m.insert("os_type", int(d->osType));
     m.insert("portable", d->portable);
-    m.insert("proecessor_architecture", int(d->processorArchitecture));
+    m.insert("processor_architecture", int(d->processorArchitecture));
     m.insert("qt_version", d->qtVersion);
     m.insert("texsample_version", d->texsampleVersion);
     stream << m;
