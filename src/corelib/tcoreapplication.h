@@ -28,7 +28,9 @@
 
 #include <QString>
 
-#define tApp (static_cast<TCoreApplication *>(BApplicationBase::binstance()))
+#if !defined(tApp)
+#   define tApp (static_cast<TCoreApplication *>(BApplicationBase::binstance()))
+#endif
 #if defined(bApp)
 #   undef bApp
 #endif

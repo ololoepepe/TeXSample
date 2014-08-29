@@ -214,7 +214,8 @@ void TUserWidgetPrivate::updateUserList()
     if (!Model || !client || client->userInfo().accessLevel() < TAccessLevel(TAccessLevel::AdminLevel))
         return;
     TGetUserInfoListAdminRequestData request;
-    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, Model->lastUpdateDateTime());
+    TReply reply = client->performOperation(TOperation::GetUserInfoListAdmin, request, Model->lastUpdateDateTime(),
+                                            5 * BeQt::Minute);
     if (!reply.success()) {
         QMessageBox msg(q_func());
         msg.setWindowTitle(tr("Updating user list failed", "msgbox windowTitle"));

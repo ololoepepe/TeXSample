@@ -40,7 +40,6 @@ public:
     virtual ~TAbstractCache();
 public:
     virtual QVariant data(const QString &operation, const QVariant &id = QVariant()) const = 0;
-    virtual QDateTime lastRequestDateTime(const QString &operation, const QVariant &id = QVariant()) const = 0;
     virtual void removeData(const QString &operation, const QVariant &id = QVariant()) = 0;
     virtual void setData(const QString &operation, const QDateTime &requestDateTime,
                          const QVariant &data = QVariant(), const QVariant &id = QVariant()) = 0;

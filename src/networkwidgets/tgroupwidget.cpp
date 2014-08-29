@@ -191,10 +191,8 @@ void TGroupWidgetPrivate::updateGroupList()
     }
     TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
     Model->update(data.newGroups(), data.deletedGroups(), reply.requestDateTime());
-    if (cache && !reply.cacheUpToDate()) {
-        cache->removeData(TOperation::GetGroupInfoList, data.deletedGroups());
+    if (cache && !reply.cacheUpToDate())
         cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);
-    }
 }
 
 /*============================== Public slots ==============================*/
