@@ -133,6 +133,10 @@ void TUserModel::addUsers(const TUserInfoList &userList)
             if (info.lastModificationDateTime() > d->map.value(info.id())->lastModificationDateTime()) {
                 int row = d->indexOf(info.id());
                 d->users[row] = info;
+                if (avatarStoredSeparately()) {
+                    saveAvatar(info.id(), info.avatar());
+                    d->users[row].setAvatar(QImage());
+                }
                 d->map.insert(info.id(), &d->users[row]);
                 Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
             }
