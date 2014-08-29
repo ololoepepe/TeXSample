@@ -191,10 +191,8 @@ void TGroupWidgetPrivate::updateGroupList()
     }
     TGetGroupInfoListReplyData data = reply.data().value<TGetGroupInfoListReplyData>();
     Model->update(data.newGroups(), data.deletedGroups(), reply.requestDateTime());
-    if (cache && !reply.cacheUpToDate()) {
-        cache->removeData(TOperation::GetGroupInfoList, data.deletedGroups());
+    if (cache && !reply.cacheUpToDate())
         cache->setData(TOperation::GetGroupInfoList, reply.requestDateTime(), data);
-    }
 }
 
 /*============================== Public slots ==============================*/
@@ -216,6 +214,7 @@ void TGroupWidgetPrivate::addGroup()
         connect(ledtName, SIGNAL(inputValidityChanged(bool)),
                 dlg.button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
+    dlg.resize(400, 0);
     if (dlg.exec() != QDialog::Accepted)
         return;
     TAddGroupRequestData data;
@@ -304,6 +303,7 @@ void TGroupWidgetPrivate::editGroup(QModelIndex index)
         connect(ledtName, SIGNAL(inputValidityChanged(bool)),
                 dlg.button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
       dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
+    dlg.resize(400, 0);
     if (dlg.exec() != QDialog::Accepted)
         return;
     TEditGroupRequestData data;

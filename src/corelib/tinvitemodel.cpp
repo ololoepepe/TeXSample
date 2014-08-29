@@ -150,6 +150,18 @@ void TInviteModel::addInvites(const TInviteInfoList &inviteList)
     endInsertRows();
 }
 
+void TInviteModel::clear()
+{
+    B_D(TInviteModel);
+    d->lastUpdateDateTime = QDateTime().toUTC();
+    if (d->invites.isEmpty())
+        return;
+    d->map.clear();
+    beginRemoveRows(QModelIndex(), 0, d->invites.size() - 1);
+    d->invites.clear();
+    endRemoveRows();
+}
+
 int TInviteModel::columnCount(const QModelIndex &) const
 {
     return 9;

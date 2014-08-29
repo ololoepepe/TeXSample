@@ -77,7 +77,9 @@ TCompileTexProjectReplyDataPrivate::~TCompileTexProjectReplyDataPrivate()
 
 void TCompileTexProjectReplyDataPrivate::init()
 {
-    exitCode = 0;
+    dvipsExitCode = -1;
+    exitCode = -1;
+    makeindexExitCode = -1;
 }
 
 /*============================================================================

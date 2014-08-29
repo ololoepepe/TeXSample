@@ -149,6 +149,18 @@ void TGroupModel::addGroups(const TGroupInfoList &groupList)
     endInsertRows();
 }
 
+void TGroupModel::clear()
+{
+    B_D(TGroupModel);
+    d->lastUpdateDateTime = QDateTime().toUTC();
+    if (d->groups.isEmpty())
+        return;
+    d->map.clear();
+    beginRemoveRows(QModelIndex(), 0, d->groups.size() - 1);
+    d->groups.clear();
+    endRemoveRows();
+}
+
 int TGroupModel::columnCount(const QModelIndex &) const
 {
     return 6;

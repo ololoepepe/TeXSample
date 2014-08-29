@@ -204,10 +204,8 @@ void TInviteWidgetPrivate::updateInviteList()
     }
     TGetInviteInfoListReplyData data = reply.data().value<TGetInviteInfoListReplyData>();
     Model->update(data.newInvites(), data.deletedInvites(), reply.requestDateTime());
-    if (cache && !reply.cacheUpToDate()) {
-        cache->removeData(TOperation::GetInviteInfoList, data.deletedInvites());
+    if (cache && !reply.cacheUpToDate())
         cache->setData(TOperation::GetInviteInfoList, reply.requestDateTime(), data);
-    }
 }
 
 /*============================== Public slots ==============================*/
