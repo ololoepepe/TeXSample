@@ -367,10 +367,10 @@ void TUserWidgetPrivate::editUser(QModelIndex index)
         cache->setData(TOperation::EditUser, r.requestDateTime(), r.data());
 }
 
-void TUserWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
+void TUserWidgetPrivate::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    bool b = !selected.isEmpty() && !selected.first().indexes().isEmpty();
-    QModelIndex ind = b ? proxyModel->mapToSource(selected.first().indexes().first()) : QModelIndex();
+    bool b = !view->selectionModel()->selectedRows().isEmpty();
+    QModelIndex ind = b ? proxyModel->mapToSource(view->selectionModel()->selectedRows().first()) : QModelIndex();
     b = b && ind.isValid();
     b = b && client && client->isAuthorized();
     b = b && client->userInfo().accessLevel().level() >= TAccessLevel::AdminLevel;

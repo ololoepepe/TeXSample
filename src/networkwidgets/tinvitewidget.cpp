@@ -318,12 +318,12 @@ void TInviteWidgetPrivate::generateInvites()
         cache->setData(TOperation::GenerateInvites, r.requestDateTime(), r.data());
 }
 
-void TInviteWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
+void TInviteWidgetPrivate::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    bool b = !selected.isEmpty();
+    bool b = !view->selectionModel()->selectedRows().isEmpty();
     actCopy->setEnabled(b);
     actDelete->setEnabled(b && client);
-    actInfo->setEnabled(selected.size() == 1);
+    actInfo->setEnabled(view->selectionModel()->selectedRows().size() == 1);
 }
 
 void TInviteWidgetPrivate::showInfo()

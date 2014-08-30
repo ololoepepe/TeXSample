@@ -328,10 +328,10 @@ void TGroupWidgetPrivate::editGroup(QModelIndex index)
         cache->setData(TOperation::EditGroup, r.requestDateTime(), r.data(), info.id());
 }
 
-void TGroupWidgetPrivate::selectionChanged(const QItemSelection &selected, const QItemSelection &)
+void TGroupWidgetPrivate::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    bool b = !selected.isEmpty() && !selected.first().indexes().isEmpty();
-    QModelIndex ind = b ? proxyModel->mapToSource(selected.first().indexes().first()) : QModelIndex();
+    bool b = !view->selectionModel()->selectedRows().isEmpty();
+    QModelIndex ind = b ? proxyModel->mapToSource(view->selectionModel()->selectedRows().first()) : QModelIndex();
     b = b && ind.isValid();
     b = b && client && client->isAuthorized();
     b = b && client->userInfo().accessLevel() >= TAccessLevel(TAccessLevel::ModeratorLevel);
