@@ -81,6 +81,7 @@ public:
     void addAvailableGroup(const TGroupInfo &groupInfo);
     bool cachingEnabled() const;
     QString hostName() const;
+    void installRequestHandler(const QString &operation, BNetworkConnection::ExternalHandler handler);
     bool isAuthorized() const;
     bool isConnected() const;
     bool isValid(bool anonymous = false) const;
