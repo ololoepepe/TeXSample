@@ -20,6 +20,8 @@ HEADERS += \
     tconfirmationwidget_p.h \
     tgrouplistwidget.h \
     tgrouplistwidget_p.h \
+    tinviteinfowidget.h \
+    tinviteinfowidget_p.h \
     tservicewidget.h \
     tservicewidget_p.h \
     ttagwidget.h \
@@ -31,6 +33,7 @@ SOURCES += \
     tauthorlistwidget.cpp \
     tconfirmationwidget.cpp \
     tgrouplistwidget.cpp \
+    tinviteinfowidget.cpp \
     tservicewidget.cpp \
     ttagwidget.cpp
 

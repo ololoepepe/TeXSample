@@ -70,6 +70,7 @@ public:
     QAction *actCopy;
     QAction *actDelete;
     QAction *actGenerate;
+    QAction *actInfo;
     TAbstractCache *cache;
     TNetworkClient *client;
     quint16 maxInviteCount;
@@ -87,6 +88,7 @@ public Q_SLOTS:
     void deleteInvites();
     void generateInvites();
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void showInfo();
 private:
     Q_DISABLE_COPY(TInviteWidgetPrivate)
 };

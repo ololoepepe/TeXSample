@@ -19,48 +19,59 @@
 **
 ****************************************************************************/
 
-#ifndef TAUTHORINFOWIDGET_P_H
-#define TAUTHORINFOWIDGET_P_H
+#ifndef TINVITEINFOWIDGET_P_H
+#define TINVITEINFOWIDGET_P_H
 
-class QFormLayout;
-class BLineEdit;
+class TGroupListWidget;
+class TServiceWidget;
 
-#include "tauthorinfowidget.h"
+class QComboBox;
+class QDateTimeEdit;
+class QGroupBox;
+class QLabel;
+class QSpinBox;
 
-#include <TeXSampleCore/TeXSampleGlobal>
+#include "tinviteinfowidget.h"
+
+#include <TeXSampleCore/TAccessLevel>
 
 #include <BeQtCore/private/bbaseobject_p.h>
 
+#include <QList>
 #include <QObject>
 
 /*============================================================================
-================================ TAuthorInfoWidgetPrivate ====================
+================================ TInviteInfoWidgetPrivate ====================
 ============================================================================*/
 
-class T_WIDGETS_EXPORT TAuthorInfoWidgetPrivate : public BBaseObjectPrivate
+class T_WIDGETS_EXPORT TInviteInfoWidgetPrivate : public BBaseObjectPrivate
 {
     Q_OBJECT
-    B_DECLARE_PUBLIC(TAuthorInfoWidget)
+    B_DECLARE_PUBLIC(TInviteInfoWidget)
 public:
-    QFormLayout *flt;
-    BLineEdit *ledtName;
-    BLineEdit *ledtOrganization;
-    BLineEdit *ledtPatronymic;
-    BLineEdit *ledtPost;
-    BLineEdit *ledtRole;
-    BLineEdit *ledtSurname;
+    QList<TAccessLevel> availableAccessLevels;
+    QComboBox *cmboxAccessLevel;
+    QDateTimeEdit *dtedtExpires;
+    QGroupBox *gboxServices;
+    QGroupBox *gboxGroups;
+    TGroupListWidget *glwgt;
+    QLabel *lblCode;
+    QLabel *lblCreationDateTime;
+    QLabel *lblOwnerLogin;
+    quint16 maxInviteCount;
+    bool readOnly;
+    QSpinBox *sboxCount;
+    TServiceWidget *swgt;
     bool valid;
 public:
-    explicit TAuthorInfoWidgetPrivate(TAuthorInfoWidget *q);
-    ~TAuthorInfoWidgetPrivate();
+    explicit TInviteInfoWidgetPrivate(TInviteInfoWidget *q);
+    ~TInviteInfoWidgetPrivate();
 public:
     void init();
-    void initLineEdit(BLineEdit *&ledt, int maximimTextLength, bool required = false);
 public Q_SLOTS:
-    void checkInputs();
     void retranslateUi();
 private:
-    Q_DISABLE_COPY(TAuthorInfoWidgetPrivate)
+    Q_DISABLE_COPY(TInviteInfoWidgetPrivate)
 };
 
-#endif // TAUTHORINFOWIDGET_P_H
+#endif // TINVITEINFOWIDGET_P_H

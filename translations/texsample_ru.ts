@@ -273,6 +273,49 @@
     </message>
 </context>
 <context>
+    <name>TInviteInfoWidgetPrivate</name>
+    <message>
+        <source>Code:</source>
+        <comment>lbl text</comment>
+        <translation>Код:</translation>
+    </message>
+    <message>
+        <source>Owner login:</source>
+        <comment>lbl text</comment>
+        <translation>Логин владельца:</translation>
+    </message>
+    <message>
+        <source>Access level:</source>
+        <comment>lbl text</comment>
+        <translation>Уровень доступа:</translation>
+    </message>
+    <message>
+        <source>Creation date:</source>
+        <comment>lbl text</comment>
+        <translation>Дата создания:</translation>
+    </message>
+    <message>
+        <source>Expiration date:</source>
+        <comment>lbl text</comment>
+        <translation>Действует до:</translation>
+    </message>
+    <message>
+        <source>Count:</source>
+        <comment>lbl text</comment>
+        <translation>Количество:</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <comment>gbox title</comment>
+        <translation>Сервисы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <comment>gbox title</comment>
+        <translation>Группы</translation>
+    </message>
+</context>
+<context>
     <name>TInviteModel</name>
     <message>
         <source>ID</source>
@@ -358,21 +401,6 @@
         <translation>Генерирование инвайтов</translation>
     </message>
     <message>
-        <source>Expiration date:</source>
-        <comment>lbl text</comment>
-        <translation>Действует до:</translation>
-    </message>
-    <message>
-        <source>Count:</source>
-        <comment>lbl text</comment>
-        <translation>Количество:</translation>
-    </message>
-    <message>
-        <source>Groups</source>
-        <comment>gbox title</comment>
-        <translation>Группы</translation>
-    </message>
-    <message>
         <source>Generating invites failed</source>
         <comment>msgbox windowTitle</comment>
         <translation>Генерирование инвайтов не удалось</translation>
@@ -398,9 +426,14 @@
         <translation>Не удалось обновить список инвайтов. Произошла следующая ошибка:</translation>
     </message>
     <message>
-        <source>Services</source>
-        <comment>gbox title</comment>
-        <translation>Сервисы</translation>
+        <source>Info...</source>
+        <comment>act text</comment>
+        <translation>Информация...</translation>
+    </message>
+    <message>
+        <source>Invite info</source>
+        <comment>dlg windowTitle</comment>
+        <translation></translation>
     </message>
 </context>
 <context>

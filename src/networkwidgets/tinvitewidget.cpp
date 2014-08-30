@@ -44,24 +44,17 @@
 #include <TeXSampleCore/TUserInfo>
 #include <TeXSampleNetwork/TNetworkClient>
 #include <TeXSampleWidgets/TGroupListWidget>
+#include <TeXSampleWidgets/TInviteInfoWidget>
 #include <TeXSampleWidgets/TServiceWidget>
 
 #include <BApplication>
 #include <BDialog>
 #include <BeQt>
-#include <BGuiTools>
 #include <BUuid>
 
 #include <QAction>
-#include <QApplication>
-#include <QCheckBox>
 #include <QClipboard>
-#include <QComboBox>
-#include <QDateTime>
-#include <QDateTimeEdit>
 #include <QDialogButtonBox>
-#include <QFormLayout>
-#include <QGroupBox>
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QItemSelectionModel>
@@ -69,7 +62,6 @@
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
-#include <QSpinBox>
 #include <QString>
 #include <QTableView>
 #include <QToolBar>
@@ -176,6 +168,9 @@ void TInviteWidgetPrivate::init()
         actGenerate = tbar->addAction(BApplication::icon("edit_add"), tr("Generate invites...", "act text"),
                                       this, SLOT(generateInvites()));
           actGenerate->setEnabled(false);
+        actInfo = tbar->addAction(BApplication::icon("messagebox_info"), tr("Info...", "act text"),
+                                  this, SLOT(showInfo()));
+          actInfo->setEnabled(false);
         actCopy = tbar->addAction(BApplication::icon("editcopy"), tr("Copy selected invite codes to clipboard",
                                                                      "act text"), this, SLOT(copyInvites()));
           actCopy->setEnabled(false);
@@ -233,7 +228,7 @@ void TInviteWidgetPrivate::copyInvites()
     }
     if (list.isEmpty())
         return;
-    QApplication::clipboard()->setText(list.join("\n"));
+    BApplication::clipboard()->setText(list.join("\n"));
     BeQt::waitNonBlocking(100);
     QString s = (list.size() > 1) ? tr("Invites were copied to clipboard", "toolTip") :
                                     tr("Invite was copied to clipboard", "toolTip");
@@ -282,53 +277,28 @@ void TInviteWidgetPrivate::generateInvites()
         return;
     BDialog dlg(q_func());
     dlg.setWindowTitle(tr("Generating invites", "dlg windowTitle"));
-      QWidget *wgt = new QWidget;
-        QVBoxLayout *vlt = new QVBoxLayout(wgt);
-          QFormLayout *flt = new QFormLayout;
-            QComboBox *cmboxAccessLevel = new QComboBox;
-              foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
-                  cmboxAccessLevel->addItem(lvl.toString(), int(lvl));
-                  BGuiTools::setItemEnabled(cmboxAccessLevel, cmboxAccessLevel->count() - 1,
-                                            lvl <= client->userInfo().accessLevel());
-              }
-              if (cmboxAccessLevel->count())
-                cmboxAccessLevel->setCurrentIndex(0);
-            flt->addRow("Access level:", cmboxAccessLevel);
-            QDateTimeEdit *dtedt = new QDateTimeEdit;
-              dtedt->setMinimumDateTime(QDateTime::currentDateTime().addDays(1));
-              dtedt->setDateTime(QDateTime::currentDateTime().addDays(3));
-              dtedt->setDisplayFormat("dd MMMM yyyy hh:mm");
-              dtedt->setCalendarPopup(true);
-            flt->addRow(tr("Expiration date:", "lbl text"), dtedt);
-            QSpinBox *sbox = new QSpinBox;
-              sbox->setMinimum(1);
-              sbox->setMaximum(maxInviteCount ? maxInviteCount : quint16(USHRT_MAX));
-              sbox->setValue(1);
-            flt->addRow(tr("Count:", "lbl text"), sbox);
-          vlt->addLayout(flt);
-          QGroupBox *gbox = new QGroupBox(tr("Services", "gbox title"));
-            QHBoxLayout *hlt = new QHBoxLayout(gbox);
-              TServiceWidget *swgt = new TServiceWidget;
-                swgt->setAvailableServices(client->userInfo().availableServices());
-              hlt->addWidget(swgt);
-          vlt->addWidget(gbox);
-          gbox = new QGroupBox(tr("Groups", "gbox title"));
-            hlt = new QHBoxLayout(gbox);
-              TGroupListWidget *glwgt = new TGroupListWidget;
-                glwgt->setAvailableGroups(client->userInfo().availableGroups());
-              hlt->addWidget(glwgt);
-          vlt->addWidget(gbox);
-      dlg.setWidget(wgt);
-      dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
-      dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
+    TInviteInfoWidget *iiwgt = new TInviteInfoWidget;
+    QList<TAccessLevel> levels;
+    foreach (const TAccessLevel &lvl, TAccessLevel::allAccessLevels()) {
+        if (lvl > client->userInfo().accessLevel())
+            break;
+        levels << lvl;
+    }
+    iiwgt->setAvailableAccessLevels(levels);
+    iiwgt->setMaxInviteCount(maxInviteCount);
+    iiwgt->setAvailableServices(client->userInfo().availableServices());
+    iiwgt->setAvailableGroups(client->userInfo().availableGroups());
+    dlg.setWidget(iiwgt);
+    dlg.addButton(QDialogButtonBox::Ok, SLOT(accept()));
+    dlg.addButton(QDialogButtonBox::Cancel, SLOT(reject()));
     if (dlg.exec() != QDialog::Accepted)
         return;
     TGenerateInvitesRequestData data;
-    data.setAccessLevel(cmboxAccessLevel->itemData(cmboxAccessLevel->currentIndex()).toInt());
-    data.setCount(quint16(sbox->value()));
-    data.setExpirationDateTime(dtedt->dateTime());
-    data.setGroups(glwgt->groupIds());
-    data.setServices(swgt->services());
+    data.setAccessLevel(iiwgt->accessLevel());
+    data.setCount(iiwgt->count());
+    data.setExpirationDateTime(iiwgt->expirationDateTime());
+    data.setGroups(iiwgt->groupIds());
+    data.setServices(iiwgt->services());
     if (!data.isValid())
         return;
     TReply r = client->performOperation(TOperation::GenerateInvites, data, q_func());
@@ -353,6 +323,28 @@ void TInviteWidgetPrivate::selectionChanged(const QItemSelection &selected, cons
     bool b = !selected.isEmpty();
     actCopy->setEnabled(b);
     actDelete->setEnabled(b && client);
+    actInfo->setEnabled(selected.size() == 1);
+}
+
+void TInviteWidgetPrivate::showInfo()
+{
+    QItemSelectionModel *sel = view->selectionModel();
+    if (sel->selectedRows().size() != 1)
+        return;
+    QModelIndex index = sel->selectedRows().first();
+    if (!index.isValid())
+        return;
+    TInviteInfo info = Model->inviteInfoAt(proxyModel->mapToSource(index).row());
+    if (!info.isValid())
+        return;
+    BDialog dlg(q_func());
+    dlg.setWindowTitle(tr("Invite info", "dlg windowTitle"));
+    TInviteInfoWidget *iiwgt = new TInviteInfoWidget;
+    iiwgt->setReadOnly(true);
+    iiwgt->setInfo(info);
+    dlg.setWidget(iiwgt);
+    dlg.addButton(QDialogButtonBox::Close, SLOT(close()));
+    dlg.exec();
 }
 
 /*============================================================================

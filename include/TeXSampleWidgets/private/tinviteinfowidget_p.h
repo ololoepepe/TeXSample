@@ -1,0 +1,1 @@
+#include "../../../src/widgets/tinviteinfowidget_p.h"
