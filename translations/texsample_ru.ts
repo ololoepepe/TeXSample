@@ -433,7 +433,7 @@
     <message>
         <source>Invite info</source>
         <comment>dlg windowTitle</comment>
-        <translation></translation>
+        <translation>Информация об инвайт-коде</translation>
     </message>
 </context>
 <context>
