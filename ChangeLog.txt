@@ -1,4 +1,4 @@
-=== TeXSample 2.0.0 (xx Xxxxx 2014) ===
+=== TeXSample 2.0.0 (02 September 2014) ===
     * Change copyright owner
     * Use BeQt 4.0.0
     * Add GPL headers to files
