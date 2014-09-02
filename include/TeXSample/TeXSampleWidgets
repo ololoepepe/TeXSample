@@ -6,6 +6,7 @@
 #include "tauthorlistwidget.h"
 #include "tconfirmationwidget.h"
 #include "tgrouplistwidget.h"
+#include "tinviteinfowidget.h"
 #include "tservicewidget.h"
 #include "ttagwidget.h"
 

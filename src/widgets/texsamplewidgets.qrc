@@ -20,5 +20,7 @@
         <file>icons/network.svgz</file>
         <file>icons/edit.png</file>
         <file>icons/edit.svgz</file>
+        <file>icons/messagebox_info.png</file>
+        <file>icons/messagebox_info.svgz</file>
     </qresource>
 </RCC>

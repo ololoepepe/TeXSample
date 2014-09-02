@@ -273,7 +273,7 @@ QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info)
     m.insert("code", d->code);
     m.insert("creation_date_time", d->creationDT);
     m.insert("expiration_date_time", d->expirationDT);
-    m.insert("grouops", d->groups);
+    m.insert("groups", d->groups);
     m.insert("id", d->id);
     m.insert("owner_id", d->ownerId);
     m.insert("owner_login", d->ownerLogin);

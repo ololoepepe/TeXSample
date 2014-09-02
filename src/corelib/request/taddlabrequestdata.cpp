@@ -155,9 +155,37 @@ bool TAddLabRequestData::isValid() const
     const B_D(TAddLabRequestData);
     if (d->dataList.isEmpty())
         return false;
+    bool osLinux = false;
+    bool osMac = false;
+    bool osWin = false;
+    bool osNo = false;
     foreach (const TLabData &data, d->dataList) {
         if (!data.isValid())
             return false;
+        switch (data.os()) {
+        case BeQt::LinuxOS:
+            if (osLinux)
+                return false;
+            osLinux = true;
+            break;
+        case BeQt::MacOS:
+            if (osMac)
+                return false;
+            osMac = true;
+            break;
+        case BeQt::WindowsOS:
+            if (osWin)
+                return false;
+            osWin = true;
+            break;
+        case BeQt::UnknownOS:
+            if (osNo)
+                return false;
+            osNo = true;
+            break;
+        default:
+            return false;
+        }
     }
     return !d->title.isEmpty();
 }

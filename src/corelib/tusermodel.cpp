@@ -34,6 +34,7 @@
 
 #include <QAbstractTableModel>
 #include <QDateTime>
+#include <QDebug>
 #include <QImage>
 #include <QMap>
 #include <QModelIndex>
@@ -306,14 +307,13 @@ void TUserModel::update(const TUserInfoList &newUsers, const QDateTime &updateDa
 
 void TUserModel::updateUser(quint64 userId, const TUserInfo &newInfo)
 {
-    TUserInfo *info = d_func()->map.value(userId);
-    if (!info)
-        return;
     int row = d_func()->indexOf(userId);
-    *info = newInfo;
+    if (row < 0)
+        return;
+    d_func()->users[row] = newInfo;
     if (avatarStoredSeparately()) {
         saveAvatar(userId, newInfo.avatar());
-        info->setAvatar(QImage());
+        d_func()->users[row].setAvatar(QImage());
     }
     Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1));
 }

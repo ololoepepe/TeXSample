@@ -235,7 +235,7 @@ void TUserInfo::setAvailableServices(const TServiceList &services)
 
 void TUserInfo::setAvatar(const QImage &avatar)
 {
-    d_func()->avatar = Texsample::testAvatar(avatar) ? avatar : QImage();
+    d_func()->avatar = avatar;
 }
 
 void TUserInfo::setEmail(const QString &email)

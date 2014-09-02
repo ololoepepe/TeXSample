@@ -325,6 +325,11 @@ QString TNetworkClient::hostName() const
     return d_func()->hostName;
 }
 
+void TNetworkClient::installRequestHandler(const QString &operation, BNetworkConnection::ExternalHandler handler)
+{
+    d_func()->connection->installRequestHandler(operation, handler);
+}
+
 bool TNetworkClient::isAuthorized() const
 {
     return (AuthorizedState == d_func()->state);
