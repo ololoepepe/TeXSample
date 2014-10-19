@@ -61,9 +61,9 @@ public:
     bool operator !=(const TRecoverAccountRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TRecoverAccountRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TRecoverAccountRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TRecoverAccountRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TRecoverAccountRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TRecoverAccountRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TRecoverAccountRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TRecoverAccountRequestData)

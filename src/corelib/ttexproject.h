@@ -70,9 +70,9 @@ public:
     bool operator ==(const TTexProject &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TTexProject &project);
-    friend QDataStream &operator >>(QDataStream &stream, TTexProject &project);
-    friend QDebug operator <<(QDebug dbg, const TTexProject &project);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TTexProject &project);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TTexProject &project);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TTexProject &project);
 };
 
 Q_DECLARE_METATYPE(TTexProject)

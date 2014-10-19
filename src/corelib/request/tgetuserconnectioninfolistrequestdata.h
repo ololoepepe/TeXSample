@@ -66,9 +66,10 @@ public:
     bool operator !=(const TGetUserConnectionInfoListRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TGetUserConnectionInfoListRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TGetUserConnectionInfoListRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TGetUserConnectionInfoListRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream,
+                                                  const TGetUserConnectionInfoListRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TGetUserConnectionInfoListRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TGetUserConnectionInfoListRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TGetUserConnectionInfoListRequestData)

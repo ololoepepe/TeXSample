@@ -71,9 +71,9 @@ public:
     operator quint64() const;
     operator QString() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TUserIdentifier &identificator);
-    friend QDataStream &operator >>(QDataStream &stream, TUserIdentifier &identificator);
-    friend QDebug operator <<(QDebug dbg, const TUserIdentifier &identificator);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TUserIdentifier &identificator);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TUserIdentifier &identificator);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TUserIdentifier &identificator);
 };
 
 Q_DECLARE_METATYPE(TUserIdentifier)

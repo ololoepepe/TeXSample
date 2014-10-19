@@ -60,9 +60,9 @@ public:
     bool operator !=(const TChangeEmailRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TChangeEmailRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TChangeEmailRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TChangeEmailRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TChangeEmailRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TChangeEmailRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TChangeEmailRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TChangeEmailRequestData)

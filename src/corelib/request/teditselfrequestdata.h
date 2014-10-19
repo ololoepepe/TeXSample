@@ -64,9 +64,9 @@ public:
     bool operator !=(const TEditSelfRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TEditSelfRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TEditSelfRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TEditSelfRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TEditSelfRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TEditSelfRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TEditSelfRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TEditSelfRequestData)

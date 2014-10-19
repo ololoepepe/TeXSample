@@ -69,9 +69,9 @@ public:
     bool operator ==(const TBinaryFile &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TBinaryFile &file);
-    friend QDataStream &operator >>(QDataStream &stream, TBinaryFile &file);
-    friend QDebug operator <<(QDebug dbg, const TBinaryFile &file);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TBinaryFile &file);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TBinaryFile &file);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TBinaryFile &file);
 };
 
 Q_DECLARE_METATYPE(TBinaryFile)

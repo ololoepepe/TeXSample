@@ -1,6 +1,6 @@
-VERSION = 2.0.0
+VERSION = 2.1.0
 VER_MAJ = 2
-VER_MIN = 0
+VER_MIN = 1
 VER_PAT = 0
 
 #Gets module short name, for example "core", "widgets", etc.

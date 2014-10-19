@@ -56,9 +56,9 @@ public:
     bool operator !=(const TAuthorizeReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TAuthorizeReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TAuthorizeReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TAuthorizeReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TAuthorizeReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TAuthorizeReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TAuthorizeReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TAuthorizeReplyData)

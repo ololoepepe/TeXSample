@@ -60,9 +60,9 @@ public:
     bool operator !=(const TLogRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TLogRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TLogRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TLogRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TLogRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TLogRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TLogRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TLogRequestData)

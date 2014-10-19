@@ -25,9 +25,11 @@
 #include "tfileinfolist.h"
 #include "tidlist.h"
 #include "tlabdatainfolist.h"
+#include "tlabtype.h"
 #include "tnamespace.h"
 
 #include <BBase>
+#include <BeQt>
 #include <BeQtCore/private/bbase_p.h>
 #include <BTextTools>
 
@@ -265,6 +267,15 @@ void TLabInfo::setTags(const QStringList &list)
 void TLabInfo::setTitle(const QString &title)
 {
     d_func()->title = Texsample::testLabTitle(title) ? title : QString();
+}
+
+int TLabInfo::size(BeQt::OSType os) const
+{
+    foreach (const TLabDataInfo &ldi, d_func()->dataInfos) {
+        if (int(ldi.type()) != TLabType::DesktopApplication || ldi.os() == os)
+            return ldi.size();
+    }
+    return 0;
 }
 
 QStringList TLabInfo::tags() const

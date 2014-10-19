@@ -69,9 +69,9 @@ public:
     bool operator !=(const TCompileTexProjectReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TCompileTexProjectReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TCompileTexProjectReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TCompileTexProjectReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TCompileTexProjectReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TCompileTexProjectReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TCompileTexProjectReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TCompileTexProjectReplyData)

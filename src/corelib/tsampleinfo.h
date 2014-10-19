@@ -96,9 +96,9 @@ public:
     bool operator !=(const TSampleInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info);
-    friend QDataStream &operator >>(QDataStream &stream, TSampleInfo &info);
-    friend QDebug operator <<(QDebug dbg, const TSampleInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TSampleInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TSampleInfo &info);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TSampleInfo &info);
 };
 
 Q_DECLARE_METATYPE(TSampleInfo)

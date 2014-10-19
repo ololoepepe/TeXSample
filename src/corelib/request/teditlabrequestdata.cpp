@@ -173,9 +173,37 @@ bool TEditLabRequestData::isValid() const
     if (d->editData) {
         if (d->dataList.isEmpty())
             return false;
+        bool osLinux = false;
+        bool osMac = false;
+        bool osWin = false;
+        bool osNo = false;
         foreach (const TLabData &data, d->dataList) {
             if (!data.isValid())
                 return false;
+            switch (data.os()) {
+            case BeQt::LinuxOS:
+                if (osLinux || osNo)
+                    return false;
+                osLinux = true;
+                break;
+            case BeQt::MacOS:
+                if (osMac || osNo)
+                    return false;
+                osMac = true;
+                break;
+            case BeQt::WindowsOS:
+                if (osWin || osNo)
+                    return false;
+                osWin = true;
+                break;
+            case BeQt::UnknownOS:
+                if (osNo || (osLinux || osMac || osWin))
+                    return false;
+                osNo = true;
+                break;
+            default:
+                return false;
+            }
         }
     }
     return d->id && !d->title.isEmpty();
@@ -219,6 +247,11 @@ void TEditLabRequestData::setGroups(const TIdList &groups)
     d->groups = groups;
     d->groups.removeAll(0);
     bRemoveDuplicates(d->groups);
+}
+
+void TEditLabRequestData::setId(quint64 id)
+{
+    d_func()->id = id;
 }
 
 void TEditLabRequestData::setNewExtraFiles(const TBinaryFileList &extraFiles)

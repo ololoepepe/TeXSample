@@ -65,9 +65,9 @@ public:
     bool operator !=(const TRequest &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TRequest &data);
-    friend QDataStream &operator >>(QDataStream &stream, TRequest &data);
-    friend QDebug operator <<(QDebug dbg, const TRequest &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TRequest &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TRequest &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TRequest &data);
 };
 
 Q_DECLARE_METATYPE(TRequest)

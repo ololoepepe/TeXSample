@@ -71,9 +71,9 @@ public:
     operator QVariant() const;
     operator int() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TLabType &type);
-    friend QDataStream &operator >>(QDataStream &stream, TLabType &type);
-    friend QDebug operator <<(QDebug dbg, const TLabType &type);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TLabType &type);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TLabType &type);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TLabType &type);
 };
 
 Q_DECLARE_METATYPE(TLabType)

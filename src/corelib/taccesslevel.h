@@ -80,9 +80,9 @@ public:
     operator QVariant() const;
     operator int() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TAccessLevel &lvl);
-    friend QDataStream &operator >>(QDataStream &stream, TAccessLevel &lvl);
-    friend QDebug operator <<(QDebug dbg, const TAccessLevel &lvl);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TAccessLevel &lvl);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TAccessLevel &lvl);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TAccessLevel &lvl);
 };
 
 Q_DECLARE_METATYPE(TAccessLevel)

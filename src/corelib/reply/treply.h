@@ -68,9 +68,9 @@ public:
     operator QVariant() const;
     operator bool() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TReply &data);
-    friend QDataStream &operator >>(QDataStream &stream, TReply &data);
-    friend QDebug operator <<(QDebug dbg, const TReply &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TReply &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TReply &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TReply &data);
 };
 
 Q_DECLARE_METATYPE(TReply)

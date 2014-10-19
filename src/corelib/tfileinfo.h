@@ -60,9 +60,9 @@ public:
     bool operator ==(const TFileInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TFileInfo &info);
-    friend QDataStream &operator >>(QDataStream &stream, TFileInfo &info);
-    friend QDebug operator <<(QDebug dbg, const TFileInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TFileInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TFileInfo &info);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TFileInfo &info);
 };
 
 Q_DECLARE_METATYPE(TFileInfo)

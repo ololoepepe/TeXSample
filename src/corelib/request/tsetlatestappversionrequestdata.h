@@ -70,9 +70,9 @@ public:
     bool operator !=(const TSetLatestAppVersionRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TSetLatestAppVersionRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TSetLatestAppVersionRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TSetLatestAppVersionRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TSetLatestAppVersionRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TSetLatestAppVersionRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TSetLatestAppVersionRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TSetLatestAppVersionRequestData)

@@ -39,6 +39,7 @@ class QVariant;
 #include "tglobal.h"
 
 #include <BBase>
+#include <BeQt>
 
 #include <QMetaType>
 
@@ -80,6 +81,7 @@ public:
     void setSenderLogin(const QString &login);
     void setTags(const QStringList &list);
     void setTitle(const QString &title);
+    int size(BeQt::OSType os = BeQt::osType()) const;
     QStringList tags() const;
     QString title() const;
 public:
@@ -88,9 +90,9 @@ public:
     bool operator !=(const TLabInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TLabInfo &info);
-    friend QDataStream &operator >>(QDataStream &stream, TLabInfo &info);
-    friend QDebug operator <<(QDebug dbg, const TLabInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TLabInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TLabInfo &info);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TLabInfo &info);
 };
 
 Q_DECLARE_METATYPE(TLabInfo)
