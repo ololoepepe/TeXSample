@@ -126,15 +126,17 @@ TReply TNetworkClientPrivate::performOperation(BNetworkConnection *connection, c
     request.setCachingEnabled(caching);
     request.setLastRequestDateTime(lastRequestDateTime);
     BNetworkOperation *op(connection->sendRequest(operation, request));
-    op->setAutoDelete(true);
+    //op->setAutoDelete(true);
     QString msg;
     if (!waitForFinished(op, timeout, parentWidget, &msg)) {
         if (scopedConnection)
             connection->deleteLater();
         else
             connection->close();
+        op->deleteLater();
         return TReply(msg);
     }
+    op->deleteLater();
     if (scopedConnection)
         connection->deleteLater();
     if (op->isError())
