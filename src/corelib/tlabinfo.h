@@ -39,6 +39,7 @@ class QVariant;
 #include "tglobal.h"
 
 #include <BBase>
+#include <BeQt>
 
 #include <QMetaType>
 
@@ -80,6 +81,7 @@ public:
     void setSenderLogin(const QString &login);
     void setTags(const QStringList &list);
     void setTitle(const QString &title);
+    int size(BeQt::OSType os = BeQt::osType()) const;
     QStringList tags() const;
     QString title() const;
 public:
