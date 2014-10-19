@@ -164,22 +164,22 @@ bool TAddLabRequestData::isValid() const
             return false;
         switch (data.os()) {
         case BeQt::LinuxOS:
-            if (osLinux)
+            if (osLinux || osNo)
                 return false;
             osLinux = true;
             break;
         case BeQt::MacOS:
-            if (osMac)
+            if (osMac || osNo)
                 return false;
             osMac = true;
             break;
         case BeQt::WindowsOS:
-            if (osWin)
+            if (osWin || osNo)
                 return false;
             osWin = true;
             break;
         case BeQt::UnknownOS:
-            if (osNo)
+            if (osNo || (osLinux || osMac || osWin))
                 return false;
             osNo = true;
             break;

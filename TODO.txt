@@ -1,6 +1,6 @@
 === PATCH ===
 
-* Improve TAddLabRequestData/TEditLabRequestData validity checking
+[done] Improve TAddLabRequestData/TEditLabRequestData validity checking
 
 === MINOR ===
 
