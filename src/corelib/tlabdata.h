@@ -67,9 +67,9 @@ public:
     bool operator !=(const TLabData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TLabData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TLabData &data);
-    friend QDebug operator <<(QDebug dbg, const TLabData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TLabData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TLabData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TLabData &data);
 };
 
 Q_DECLARE_METATYPE(TLabData)

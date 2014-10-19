@@ -71,9 +71,9 @@ public:
     bool operator ==(const TTexFile &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TTexFile &file);
-    friend QDataStream &operator >>(QDataStream &stream, TTexFile &file);
-    friend QDebug operator <<(QDebug dbg, const TTexFile &file);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TTexFile &file);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TTexFile &file);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TTexFile &file);
 };
 
 Q_DECLARE_METATYPE(TTexFile)

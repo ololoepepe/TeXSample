@@ -72,9 +72,9 @@ public:
     operator QVariant() const;
     operator int() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TSampleType &type);
-    friend QDataStream &operator >>(QDataStream &stream, TSampleType &type);
-    friend QDebug operator <<(QDebug dbg, const TSampleType &type);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TSampleType &type);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TSampleType &type);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TSampleType &type);
 };
 
 Q_DECLARE_METATYPE(TSampleType)

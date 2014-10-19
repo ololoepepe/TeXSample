@@ -51,9 +51,9 @@ public:
     bool operator !=(const TGetServerStateRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TGetServerStateRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TGetServerStateRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TGetServerStateRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TGetServerStateRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TGetServerStateRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TGetServerStateRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TGetServerStateRequestData)

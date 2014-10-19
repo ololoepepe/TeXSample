@@ -69,6 +69,7 @@ public:
     void setDescritpion(const QString &description);
     void setEditData(bool edit);
     void setGroups(const TIdList &groups);
+    void setId(quint64 id);
     void setNewExtraFiles(const TBinaryFileList &extraFiles);
     void setTags(const QStringList &tags);
     void setTitle(const QString &title);
@@ -80,9 +81,9 @@ public:
     bool operator !=(const TEditLabRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TEditLabRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TEditLabRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TEditLabRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TEditLabRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TEditLabRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TEditLabRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TEditLabRequestData)

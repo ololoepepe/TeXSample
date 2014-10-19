@@ -54,9 +54,9 @@ public:
     bool operator !=(const TCheckEmailAvailabilityReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TCheckEmailAvailabilityReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TCheckEmailAvailabilityReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TCheckEmailAvailabilityReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TCheckEmailAvailabilityReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TCheckEmailAvailabilityReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TCheckEmailAvailabilityReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TCheckEmailAvailabilityReplyData)

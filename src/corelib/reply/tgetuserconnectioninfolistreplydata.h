@@ -30,6 +30,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -38,7 +40,7 @@ class QVariant;
 ================================ TGetUserConnectionInfoListReplyData =========
 ============================================================================*/
 
-class TGetUserConnectionInfoListReplyData : public BBase
+class T_CORE_EXPORT TGetUserConnectionInfoListReplyData : public BBase
 {
     B_DECLARE_PRIVATE(TGetUserConnectionInfoListReplyData)
 public:
@@ -54,9 +56,10 @@ public:
     bool operator !=(const TGetUserConnectionInfoListReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TGetUserConnectionInfoListReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TGetUserConnectionInfoListReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TGetUserConnectionInfoListReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream,
+                                                  const TGetUserConnectionInfoListReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TGetUserConnectionInfoListReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TGetUserConnectionInfoListReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TGetUserConnectionInfoListReplyData)

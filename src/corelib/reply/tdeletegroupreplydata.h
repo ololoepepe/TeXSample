@@ -51,9 +51,9 @@ public:
     bool operator !=(const TDeleteGroupReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TDeleteGroupReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TDeleteGroupReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TDeleteGroupReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TDeleteGroupReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TDeleteGroupReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TDeleteGroupReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TDeleteGroupReplyData)

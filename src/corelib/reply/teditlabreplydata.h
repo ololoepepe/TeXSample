@@ -56,9 +56,9 @@ public:
     bool operator !=(const TEditLabReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TEditLabReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TEditLabReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TEditLabReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TEditLabReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TEditLabReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TEditLabReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TEditLabReplyData)

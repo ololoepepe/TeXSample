@@ -56,9 +56,9 @@ public:
     bool operator !=(const TRegisterReplyData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TRegisterReplyData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TRegisterReplyData &data);
-    friend QDebug operator <<(QDebug dbg, const TRegisterReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TRegisterReplyData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TRegisterReplyData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TRegisterReplyData &data);
 };
 
 Q_DECLARE_METATYPE(TRegisterReplyData)

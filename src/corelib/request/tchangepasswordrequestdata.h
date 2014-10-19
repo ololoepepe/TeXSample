@@ -59,9 +59,9 @@ public:
     bool operator !=(const TChangePasswordRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TChangePasswordRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TChangePasswordRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TChangePasswordRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TChangePasswordRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TChangePasswordRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TChangePasswordRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TChangePasswordRequestData)

@@ -56,9 +56,9 @@ public:
     bool operator !=(const TGetSampleSourceRequestData &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TGetSampleSourceRequestData &data);
-    friend QDataStream &operator >>(QDataStream &stream, TGetSampleSourceRequestData &data);
-    friend QDebug operator <<(QDebug dbg, const TGetSampleSourceRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TGetSampleSourceRequestData &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TGetSampleSourceRequestData &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TGetSampleSourceRequestData &data);
 };
 
 Q_DECLARE_METATYPE(TGetSampleSourceRequestData)

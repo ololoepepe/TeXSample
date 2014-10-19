@@ -1,11 +1,14 @@
 === PATCH ===
 
-
+* Improve TAddLabRequestData/TEditLabRequestData validity checking
 
 === MINOR ===
 
-
+[done] Add TLabApplication::mainFile and TLabApplication::files files methods
+[done] Add TEditLabRequestData::setId method
+[done] Export friend operators
+[done] Export TGetUserConnectionInfoListReplyData and TServerState
 
 === MAJOR ===
 
-
+* Pass TGroupInfoList in TLabInfo

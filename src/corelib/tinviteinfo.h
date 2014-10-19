@@ -79,9 +79,9 @@ public:
     bool operator ==(const TInviteInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info);
-    friend QDataStream &operator >>(QDataStream &stream, TInviteInfo &info);
-    friend QDebug operator <<(QDebug dbg, const TInviteInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TInviteInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TInviteInfo &info);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TInviteInfo &info);
 };
 
 Q_DECLARE_METATYPE(TInviteInfo)

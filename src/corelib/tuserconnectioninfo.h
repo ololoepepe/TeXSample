@@ -73,9 +73,9 @@ public:
     bool operator !=(const TUserConnectionInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TUserConnectionInfo &data);
-    friend QDataStream &operator >>(QDataStream &stream, TUserConnectionInfo &data);
-    friend QDebug operator <<(QDebug dbg, const TUserConnectionInfo &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TUserConnectionInfo &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TUserConnectionInfo &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TUserConnectionInfo &data);
 };
 
 Q_DECLARE_METATYPE(TUserConnectionInfo)

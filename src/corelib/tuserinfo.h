@@ -89,9 +89,9 @@ public:
     bool operator !=(const TUserInfo &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TUserInfo &info);
-    friend QDataStream &operator >>(QDataStream &stream, TUserInfo &info);
-    friend QDebug operator <<(QDebug dbg, const TUserInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TUserInfo &info);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TUserInfo &info);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TUserInfo &info);
 };
 
 Q_DECLARE_METATYPE(TUserInfo)

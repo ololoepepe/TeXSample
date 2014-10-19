@@ -24,6 +24,9 @@
 
 class TLabApplicationPrivate;
 
+class TBinaryFile;
+class TBinaryFileList;
+
 class QDataStream;
 class QDebug;
 class QString;
@@ -50,8 +53,10 @@ public:
     ~TLabApplication();
 public:
     void clear();
+    const TBinaryFileList &files() const;
     bool isValid() const;
     bool load(const QString &dir, const QString &relativeMainFileName, QStringList relativeFileNames = QStringList());
+    const TBinaryFile &mainFile() const;
     bool mayBeExecutable() const;
     BeQt::OSType os() const;
     bool save(const QString &dir) const;
@@ -62,9 +67,9 @@ public:
     bool operator ==(const TLabApplication &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TLabApplication &project);
-    friend QDataStream &operator >>(QDataStream &stream, TLabApplication &project);
-    friend QDebug operator <<(QDebug dbg, const TLabApplication &project);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TLabApplication &project);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TLabApplication &project);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TLabApplication &project);
 };
 
 Q_DECLARE_METATYPE(TLabApplication)

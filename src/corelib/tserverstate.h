@@ -28,6 +28,8 @@ class QDataStream;
 class QDebug;
 class QVariant;
 
+#include "tglobal.h"
+
 #include <BBase>
 
 #include <QMetaType>
@@ -36,7 +38,7 @@ class QVariant;
 ================================ TServerState ================================
 ============================================================================*/
 
-class TServerState : public BBase
+class T_CORE_EXPORT TServerState : public BBase
 {
     B_DECLARE_PRIVATE(TServerState)
 public:
@@ -55,9 +57,9 @@ public:
     bool operator !=(const TServerState &other) const;
     operator QVariant() const;
 public:
-    friend QDataStream &operator <<(QDataStream &stream, const TServerState &data);
-    friend QDataStream &operator >>(QDataStream &stream, TServerState &data);
-    friend QDebug operator <<(QDebug dbg, const TServerState &data);
+    T_CORE_EXPORT friend QDataStream &operator <<(QDataStream &stream, const TServerState &data);
+    T_CORE_EXPORT friend QDataStream &operator >>(QDataStream &stream, TServerState &data);
+    T_CORE_EXPORT friend QDebug operator <<(QDebug dbg, const TServerState &data);
 };
 
 Q_DECLARE_METATYPE(TServerState)

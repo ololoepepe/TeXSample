@@ -116,6 +116,11 @@ void TLabApplication::clear()
     d->os = BeQt::UnknownOS;
 }
 
+const TBinaryFileList &TLabApplication::files() const
+{
+    return d_func()->files;
+}
+
 bool TLabApplication::isValid() const
 {
     const B_D(TLabApplication);
@@ -155,6 +160,11 @@ bool TLabApplication::load(const QString &dir, const QString &relativeMainFileNa
         d->files << f;
     }
     return true;
+}
+
+const TBinaryFile &TLabApplication::mainFile() const
+{
+    return d_func()->mainFile;
 }
 
 bool TLabApplication::mayBeExecutable() const

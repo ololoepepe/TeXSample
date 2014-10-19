@@ -221,6 +221,11 @@ void TEditLabRequestData::setGroups(const TIdList &groups)
     bRemoveDuplicates(d->groups);
 }
 
+void TEditLabRequestData::setId(quint64 id)
+{
+    d_func()->id = id;
+}
+
 void TEditLabRequestData::setNewExtraFiles(const TBinaryFileList &extraFiles)
 {
     d_func()->newExtraFiles = extraFiles;
